@@ -16,4 +16,9 @@ class Convenio extends Model
     {
         return $this->belongsTo(Contacto::class);
     }
+    // Relación isomórfica para la columna 'pagador' en la tabla 'factura'
+    public function facturasComoPagador()
+    {
+        return $this->morphMany(Factura::class, 'pagador');
+    }
 }

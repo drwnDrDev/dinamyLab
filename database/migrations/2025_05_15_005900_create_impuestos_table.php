@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('descripcion')->nullable();
             $table->string('codigo')->unique();
             $table->decimal('tasa', 5, 2);
-            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }

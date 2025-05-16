@@ -25,7 +25,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('facturas')
                 ->onDelete('cascade');
-            $table->date('fecha')->nullable();
+            $table->date('fecha');
             $table->timestamps();
         });
     }

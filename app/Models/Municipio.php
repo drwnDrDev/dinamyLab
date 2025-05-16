@@ -7,4 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Municipio extends Model
 {
     //
+    protected $fillable = [
+        'nombre',
+        'codigo',
+        'departamento_id',
+    ];
+    public function pacientes()
+    {
+        return $this->hasMany(Persona::class);
+    }
 }

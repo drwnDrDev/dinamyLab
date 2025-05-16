@@ -18,7 +18,7 @@ return new class extends Migration
             $table->morphs('pagador');
             $table->decimal('subtotal', 12, 2);
             $table->decimal('total_ajustes', 12, 2)->default(0);
-            $table->json('impustos')->nullable();
+            $table->json('impuestos')->nullable();
             $table->decimal('total', 12, 2);
             $table->string('observaciones')->nullable();
             $table->timestamps();
