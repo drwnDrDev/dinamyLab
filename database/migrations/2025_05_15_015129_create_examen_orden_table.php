@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('examen_orden', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('orden_id')
+                ->constrained('ordenes_medicas')
+                ->onDelete('cascade');
+            $table->foreignId('examen_id')
+                ->constrained('examenes')
+                ->onDelete('cascade');
+            $table->enum('estado',['sala de espera','toma muestra','pendiente','terminado','entregado'])->default('pendiente');
+            $table->string('observacion')->nullable();
+            $table->string('resultado')->nullable();
             $table->timestamps();
         });
     }

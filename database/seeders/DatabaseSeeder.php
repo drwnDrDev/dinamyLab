@@ -38,6 +38,8 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('DinamycodeDC'),
         ]);
 
+        
+
         Role::create(['name' => 'admin']);
         Role::create(['name' => 'coordinador']);
         Role::create(['name' => 'empleado']);

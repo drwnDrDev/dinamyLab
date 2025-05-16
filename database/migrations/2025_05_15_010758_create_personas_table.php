@@ -13,6 +13,20 @@ return new class extends Migration
     {
         Schema::create('personas', function (Blueprint $table) {
             $table->id();
+            $table->string('priemr_nombre');
+            $table->string('segundo_nombre')->nullable();
+            $table->string('primer_apellido');
+            $table->string('segundo_apellido')->nullable();
+            $table->enum('tipo_documento',['CC','TI','CE','RC','PA','AS','MS','CD','PE','PT'])->default('CC');
+            $table->string('numero_documento')->unique();
+            $table->date('fecha_nacimiento')->nullable();
+            $table->enum('sexo',['F','M'])->nullable();
+            $table->boolean('nacional')->default(true);
+            $table->string('telefono')->nullable();
+            $table->foreignId('contacto_id')->nullable()
+            ->constrained('contactos')
+            ->nullOnDelete()
+            ->cascadeOnUpdate();
             $table->timestamps();
         });
     }

@@ -11,24 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tributos', function (Blueprint $table) {
+        Schema::create('contactos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('impuesto_id')
-                ->constrained('impuestos')
+            $table->foreignId('municipio_id')
+                ->constrained('municipios')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->foreignId('factura_id')
-                ->constrained('facturas')
+            $table->foreignId('pais_id')
+                ->constrained('paises')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-
-
-            $table->decimal('base', 12, 2);
-            $table->decimal('porcentaje', 5, 2);
-            $table->decimal('exento', 10, 2)->nullable();
-            $table->decimal('retencion', 10, 2)->nullable();
-            
-            $table->decimal('valor', 10, 2);
+            $table->string('telefono')->nullable();
+            $table->json('redes')->nullable();
             $table->timestamps();
         });
     }
@@ -38,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tributos');
+        Schema::dropIfExists('contactos');
     }
 };

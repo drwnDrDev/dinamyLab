@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Prestador;
+use App\Models\Empleado;
 use Illuminate\Http\Request;
 
-class PrestadorController extends Controller
+class EmpleadoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class PrestadorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Prestador $prestador)
+    public function show(Empleado $empleado)
     {
         //
     }
@@ -42,7 +42,7 @@ class PrestadorController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Prestador $prestador)
+    public function edit(Empleado $empleado)
     {
         //
     }
@@ -50,7 +50,7 @@ class PrestadorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Prestador $prestador)
+    public function update(Request $request, Empleado $empleado)
     {
         //
     }
@@ -58,7 +58,7 @@ class PrestadorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Prestador $prestador)
+    public function destroy(Empleado $empleado)
     {
         //
     }

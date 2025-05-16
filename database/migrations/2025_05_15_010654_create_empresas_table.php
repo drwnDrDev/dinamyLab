@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('empresas', function (Blueprint $table) {
             $table->id();
+            $table->string('razon_social')->unique();
+            $table->string('nit')->unique();
+            $table->foreignId('contacto_id')
+            ->constrained('contactos')
+            ->nullOnDelete()
+            ->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -22,6 +28,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('empresas', function (Blueprint $table) {
+            $table->dropColumn('website');
+        });
         Schema::dropIfExists('empresas');
     }
 };

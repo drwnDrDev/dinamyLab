@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('examenes', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre');
+            $table->string('cup');
+            $table->decimal('valor', 10, 2);
+            $table->json('plantilla')->nullable();
             $table->timestamps();
         });
     }

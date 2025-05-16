@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('impuestos', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre')->unique();
+            $table->string('descripcion')->nullable();
+            $table->string('codigo')->unique();
+            $table->decimal('tasa', 5, 2);
+            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }

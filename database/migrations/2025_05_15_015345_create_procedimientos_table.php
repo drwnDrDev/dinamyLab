@@ -13,6 +13,19 @@ return new class extends Migration
     {
         Schema::create('procedimientos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('orden_id')
+                ->constrained('ordenes_medicas')
+                ->onDelete('cascade');
+            $table->foreignId('empleado_id')
+                ->constrained('empleados')
+                ->onDelete('cascade');
+            $table->json('resultados');
+            $table->string('observacion')->nullable();
+            $table->foreignId('factura_id')
+                ->nullable()
+                ->constrained('facturas')
+                ->onDelete('cascade');
+            $table->date('fecha')->nullable();
             $table->timestamps();
         });
     }

@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('convenios', function (Blueprint $table) {
             $table->id();
+            $table->string('razon_social');
+            $table->string('nit')->unique();
+            $table->foreignId('contacto_id')
+                ->constrained('contactos')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }
