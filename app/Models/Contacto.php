@@ -35,5 +35,10 @@ class Contacto extends Model
             $query->where('telefono', 'like', '%' . $search . '%')
                 ->orWhere('redes', 'like', '%' . $search . '%');
         });
+
     }
+    protected $casts = [
+        'info_adicional' => 'array',
+    ];
+    
 }
