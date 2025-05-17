@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('empresas', function (Blueprint $table) {
             $table->id();
             $table->string('razon_social')->unique();
+            $table->string('nombre_comercial')->nullable();
             $table->string('nit')->unique();
             $table->foreignId('contacto_id')
             ->constrained('contactos')

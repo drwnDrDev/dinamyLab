@@ -22,7 +22,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('telefono')->nullable();
-            $table->json('redes')->nullable();
+            $table->json('info_adicional')->nullable();
             $table->timestamps();
         });
     }

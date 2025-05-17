@@ -14,7 +14,7 @@ class MunicipioSeeder extends Seeder
      */
     public function run(): void
     {
-        
+
 // INSERT INTO `municipios` (`id`, `departamento`, `cod_dep`, `municipio`, `cod_mun`, `nivel`, `created_at`, `updated_at`) VALUES
 // (5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL),
 // (5002, 'ANTIOQUIA', '5', 'ABEJORRAL', '2', NULL, NULL, NULL),
@@ -2301,7 +2301,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
 
 
         // Insert the municipios into the database
-       
+
             DB::table('municipios')->insert(
                 array_map(function ($municipio) {
                     return [
@@ -2317,11 +2317,11 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 }, $municipios)
             );
 
-            // $table->string('nombre')->unique();    
+            // $table->string('nombre')->unique();
             // $table->string('codigo_iso')->unique();
             // $table->string('codigo_telefono')->nullable();
             // $table->string('moneda')->nullable()
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Colombia',
                 'codigo_iso' => 'COL',
                 'codigo_telefono' => '+57',
@@ -2329,7 +2329,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Venezuela',
                 'codigo_iso' => 'VEN',
                 'codigo_telefono' => '+58',
@@ -2337,7 +2337,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Ecuador',
                 'codigo_iso' => 'ECU',
                 'codigo_telefono' => '+593',
@@ -2345,7 +2345,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Perú',
                 'codigo_iso' => 'PER',
                 'codigo_telefono' => '+51',
@@ -2353,7 +2353,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Brasil',
                 'codigo_iso' => 'BRA',
                 'codigo_telefono' => '+55',
@@ -2361,7 +2361,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Panamá',
                 'codigo_iso' => 'PAN',
                 'codigo_telefono' => '+507',
@@ -2369,7 +2369,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Guyana',
                 'codigo_iso' => 'GUY',
                 'codigo_telefono' => '+592',
@@ -2377,7 +2377,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Surinam',
                 'codigo_iso' => 'SUR',
                 'codigo_telefono' => '+597',
@@ -2385,7 +2385,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Francia',
                 'codigo_iso' => 'FRA',
                 'codigo_telefono' => '+33',
@@ -2393,7 +2393,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Holanda',
                 'codigo_iso' => 'NLD',
                 'codigo_telefono' => '+31',
@@ -2401,7 +2401,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Reino Unido',
                 'codigo_iso' => 'GBR',
                 'codigo_telefono' => '+44',
@@ -2409,7 +2409,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Estados Unidos',
                 'codigo_iso' => 'USA',
                 'codigo_telefono' => '+1',
@@ -2417,7 +2417,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Jamaica',
                 'codigo_iso' => 'JAM',
                 'codigo_telefono' => '+1-876',
@@ -2425,7 +2425,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Cuba',
                 'codigo_iso' => 'CUB',
                 'codigo_telefono' => '+53',
@@ -2433,7 +2433,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'República Dominicana',
                 'codigo_iso' => 'DOM',
                 'codigo_telefono' => '+1-809',
@@ -2441,7 +2441,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Haití',
                 'codigo_iso' => 'HTI',
                 'codigo_telefono' => '+509',
@@ -2449,7 +2449,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Puerto Rico',
                 'codigo_iso' => 'PRI',
                 'codigo_telefono' => '+1-787',
@@ -2457,7 +2457,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Bonaire',
                 'codigo_iso' => 'BES',
                 'codigo_telefono' => '+599',
@@ -2465,7 +2465,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Aruba',
                 'codigo_iso' => 'ABW',
                 'codigo_telefono' => '+297',
@@ -2473,7 +2473,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Curazao',
                 'codigo_iso' => 'CUW',
                 'codigo_telefono' => '+599',
@@ -2481,7 +2481,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Islas Vírgenes Británicas',
                 'codigo_iso' => 'VGB',
                 'codigo_telefono' => '+1-284',
@@ -2489,7 +2489,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            Pais::created([
+            Pais::create([
                 'nombre' => 'Chile',
                 'codigo_iso' => 'CHL',
                 'codigo_telefono' => '+56',

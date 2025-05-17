@@ -7,11 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Contacto extends Model
 {
     protected $fillable = [
-
         'municipio_id',
         'pais_id',
         'telefono',
-        'redes',
+        'info_adicional',
     ];
 
     public function empresa()

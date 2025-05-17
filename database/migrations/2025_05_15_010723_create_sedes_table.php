@@ -25,8 +25,6 @@ return new class extends Migration
                 ->constrained('contactos')
                 ->nullOnDelete()
                 ->cascadeOnUpdate();
-
-
             $table->timestamps();
         });
     }
