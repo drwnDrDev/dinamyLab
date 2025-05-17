@@ -18,8 +18,7 @@ return new class extends Migration
             $table->string('codigo_departamento');
             $table->string('municipio');
             $table->string('codigo_municipio');
-            $table->string('indicativo_telefono')->nullable();
-            $table->unsignedMediumInteger('nivel');
+            $table->unsignedMediumInteger('nivel')->nullable();
             $table->timestamps();
         });
     }
