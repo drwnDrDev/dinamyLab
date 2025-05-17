@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-    $admin = User::factory()->create([
+        $admin = User::factory()->create([
             'name' => 'Carlos Ramirez',
             'email' => 'admon@dinamycode.com',
             'password' => Hash::make('DinamycodeDC'),
@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('Danielito2006'),
         ]);
 
-        $coordinador = User::factory()->create([
+         $coordinador = User::factory()->create([
             'name' => 'Juan Perez',
             'email' => 'coordinador@dinamycode.com',
             'password' => Hash::make('DinamycodeDC'),
@@ -38,41 +38,31 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('DinamycodeDC'),
         ]);
 
-
-
         Role::create(['name' => 'admin']);
-        Role::create(['name' => 'coordinador']);
         Role::create(['name' => 'agente']);
         Role::create(['name' => 'prestador']);
         Role::create(['name' => 'paciente']);
         Role::create(['name' => 'contable']);
-
         Permission::create(['name' => 'ver_resultado']);
-
         Permission::create(['name' => 'crear_persona']);
         Permission::create(['name' => 'editar_persona']);
         Permission::create(['name' => 'ver_persona']);
         Permission::create(['name' => 'ver_orden']);
-
-
-
-
-
-
         Permission::create(['name' => 'eliminar_persona']);
+        Permission::create(['name' => 'ver_cuentas']);
 
 
         $role = Role::findByName('admin');
         $role->givePermissionTo(Permission::all());
 
-        $role = Role::findByName('coordinador');
-        $role->givePermissionTo(['crear_paciente', 'editar_paciente', 'eliminar_paciente', 'ver_paciente', 'asignar_paciente', 'ver_asignacion', 'editar_asignacion', 'eliminar_asignacion', 'ver_empleado', 'crear_empleado', 'editar_empleado', 'eliminar_empleado', 'ver_registro', 'crear_registro', 'editar_registro', 'eliminar_registro']);
+        $role = Role::findByName('prestador');
+        $role->givePermissionTo(['ver_resultado', 'crear_persona', 'editar_persona', 'ver_persona', 'ver_orden', 'eliminar_persona']);
 
-        $role = Role::findByName('empleado');
-        $role->givePermissionTo(['ver_paciente', 'ver_asignacion', 'ver_empleado', 'ver_registro', 'crear_registro', 'editar_registro', 'eliminar_registro']);
+        $role = Role::findByName('agente');
+        $role->givePermissionTo(['ver_resultado', 'crear_persona', 'editar_persona', 'ver_persona', 'ver_orden']);
 
-        $coordinador->assignRole('coordinador');
-        $empleado->assignRole('empleado');
+        
+        $empleado->assignRole('agente');
         $admin->assignRole('admin');
         $prestador->assignRole('prestador');
 
