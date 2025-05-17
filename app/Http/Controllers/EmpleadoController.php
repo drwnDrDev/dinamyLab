@@ -62,4 +62,10 @@ class EmpleadoController extends Controller
     {
         //
     }
+
+    public function dashboard()
+    {
+        $empleado= Empleado::where('user_id',auth()->user()->id)->first();
+        return view('dashboard',compact('empleado'));
+    }
 }

@@ -34,7 +34,7 @@ class EmpresaSeeder extends Seeder
                     "Whatsapp"=>'https://wa.me/573207001403',
                 ],
             'email'=>'cpbuitrago69@yahoo.com',
-            'direcion'=>'Diagonal 69 C sur # 78 C 36',
+            'direccion'=>'Diagonal 69 C sur # 78 C 36',
             ])
         ]);
 
