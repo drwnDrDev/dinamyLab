@@ -1,7 +1,7 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-cyan-600 border-b border-gray-100">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+    <div class="flex flex-col min-h-screen max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col min-h-screen justify-between">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
@@ -11,10 +11,18 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="flex flex-col">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <a class="text-white hoover:font-bold" href="">Personas</a>
+                    <a class="text-white hoover:font-bold" href="">Ordenes de Servicio</a>
+                    <a class="text-white hoover:font-bold" href="">Procedimientos</a>
+                    <a class="text-white hoover:font-bold" href="">Resultados</a>
+                    <a class="text-white hoover:font-bold" href="">Caja</a>
+                    <a class="text-white hoover:font-bold" href="">Facturacion</a>
+                    <a class="text-white hoover:font-bold" href="">Configuracion</a>
+                    <a class="text-white hoover:font-bold" href="">Reportes</a>
                 </div>
             </div>
 
