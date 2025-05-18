@@ -66,5 +66,11 @@ class DatabaseSeeder extends Seeder
         $admin->assignRole('admin');
         $prestador->assignRole('prestador');
 
+        $this->call([
+            MunicipioSeeder::class,
+            EmpresaSeeder::class,
+            ExamenSeeder::class,
+        ]);
+
     }
 }
