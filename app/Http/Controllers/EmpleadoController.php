@@ -66,7 +66,7 @@ class EmpleadoController extends Controller
     public function dashboard()
     {
         $usuario = auth()->user();
-        $empleado= Empleado::where('user_id',auth()->user()->id)->first();
+        $empleado= Empleado::where('user_id',$usuario->id)->first();
         if(!$usuario->hasRole('admin') && !$usuario->hasRole('prestador') && !$usuario->hasRole('coordinador') && !$empleado) {
             return view('paciente.dashboard');
         }
