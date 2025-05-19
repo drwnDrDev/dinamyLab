@@ -56,7 +56,7 @@ class EmpresaSeeder extends Seeder
         //     $table->timestamps();
 
         $persona = Persona::create([
-            'priemr_nombre'=>'Claudia',
+            'primer_nombre'=>'Claudia',
             'segundo_nombre'=>'Patricia',
             'primer_apellido'=>'Buitrago',
             'segundo_apellido'=>'Hernandez',
@@ -65,7 +65,6 @@ class EmpresaSeeder extends Seeder
             'fecha_nacimiento'=>'1969-01-11',
             'sexo'=>'F',
             'nacional'=>true,
-            'telefono'=>'3207001403',
             'contacto_id'=>$contacto->id,
         ]);
 
@@ -98,8 +97,6 @@ class EmpresaSeeder extends Seeder
             'empresa_id'=>$empresa->id,
             'contacto_id'=>$contacto->id,
         ]);
-
-
 
         $empleado = \App\Models\Empleado::create([
             'codigo'=>'110010822701',

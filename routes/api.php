@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PersonaController;
 
 Route::get('personas', [PersonaController::class, 'index']);
 Route::get('personas/{id}', [PersonaController::class, 'show']);
+Route::post('personas', [PersonaController::class, 'store']);
 
 Route::get('user', function (Request $request) {
     return $request->user();
