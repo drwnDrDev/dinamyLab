@@ -73,6 +73,24 @@
 
 </form>
 
+<div class="flex flex-col gap-2">
+    <h2>Buscar Persona</h2>
+    <div class="flex gap-2">
+        <label for="tipo_documento">Tipo de Documento</label>
+        <select name="tipo_documento" id="tipo_documento" class="form-select">
+            @foreach ($tipos_documento as $valor => $nombre)
+                <option value="{{ $valor }}">{{ $nombre }}</option>
+            @endforeach
+        </select>
+        <label for="numero_documento">Numero de Documento</label>
+        <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded">
+        <button id="buscarPersona" class="bg-blue-500 text-white p-2 rounded">Buscar Persona</button>
+    </div>
+
+    <div id="examenes" class="grid grid-cols-2 p-2 gap-2">
+        <h2 class="col-span-2">Examenes</h2>
+    </div>
+
     @vite('resources/js/buscarPersona.js')
 
 
