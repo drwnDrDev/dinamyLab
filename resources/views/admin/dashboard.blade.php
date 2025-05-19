@@ -40,5 +40,19 @@
                 </div>
 
     </div>
+    </div>
+<form action="" method="POST">
+    @csrf
+    <div class="flex flex-col gap-2">
+        <label for="nombre">Nombre</label>
+        <input type="text" name="nombre" id="nombre" class="border border-gray-300 p-2 rounded">
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded">Buscar</button>
+    </div>
+
+</form>
+
+    @vite('resources/js/buscarPersona.js')
+
+    
    
 </x-app-layout>
