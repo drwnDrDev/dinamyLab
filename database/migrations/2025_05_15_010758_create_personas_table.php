@@ -22,7 +22,6 @@ return new class extends Migration
             $table->date('fecha_nacimiento')->nullable();
             $table->enum('sexo',['F','M'])->nullable();
             $table->boolean('nacional')->default(true);
-            $table->string('telefono')->nullable();
             $table->foreignId('contacto_id')->nullable()
             ->constrained('contactos')
             ->nullOnDelete()
