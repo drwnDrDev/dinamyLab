@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empleado;
+use App\TipoDocumento;
 use Illuminate\Http\Request;
 
 class EmpleadoController extends Controller
@@ -76,8 +77,10 @@ class EmpleadoController extends Controller
             $roles = \Spatie\Permission\Models\Role::all();
             $sedes = \App\Models\Sede::all();
             $empresas = \App\Models\Empresa::all();
-           
-            return view('admin.dashboard',compact('empleados','usuarios','roles','sedes','empresas'));  
+            $tipos_documento = collect(TipoDocumento::cases())
+                ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
+
+            return view('admin.dashboard',compact('empleados','usuarios','roles','sedes','empresas','empleado','tipos_documento'));
         }
         return view('dashboard',compact('empleado'));
     }

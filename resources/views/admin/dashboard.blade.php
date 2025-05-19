@@ -40,19 +40,59 @@
                 </div>
 
     </div>
+
+
     </div>
-<form action="" method="POST">
+
+<form id="crearPeronsa" class="felx flex-col gap-3 max-w-[600px] p-4 mx-auto " method="POST">
     @csrf
     <div class="flex flex-col gap-2">
-        <label for="nombre">Nombre</label>
-        <input type="text" name="nombre" id="nombre" class="border border-gray-300 p-2 rounded">
-        <button type="submit" class="bg-blue-500 text-white p-2 rounded">Buscar</button>
+        <label for="tipo_documento">Tipo de Documento</label>
+        <select name="tipo_documento" id="tipo_documento" class="form-select">
+            @foreach ($tipos_documento as $valor => $nombre)
+                <option value="{{ $valor }}">{{ $nombre }}</option>
+            @endforeach
+        </select>
+        <label for="numero_documento">Numero de Documento</label>
+        <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded">
+        <label for="nombre">Nombres</label>
+        <input type="text" name="nombres" id="nombres" class="border border-gray-300 p-2 rounded">
+        <label for="apellidos">Apellidos</label>
+        <input type="text" name="apellidos" id="apellidos" class="border border-gray-300 p-2 rounded">
+        <label for="sexo">Sexo</label>
+        <select name="sexo" id="sexo" class="form-select">
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+        </select>
+        <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+        <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="border border-gray-300 p-2 rounded">
+
+
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded">Nueva Persona</button>
     </div>
 
 </form>
 
+<div class="flex flex-col gap-2">
+    <h2>Buscar Persona</h2>
+    <div class="flex gap-2">
+        <label for="tipo_documento">Tipo de Documento</label>
+        <select name="tipo_documento" id="tipo_documento" class="form-select">
+            @foreach ($tipos_documento as $valor => $nombre)
+                <option value="{{ $valor }}">{{ $nombre }}</option>
+            @endforeach
+        </select>
+        <label for="numero_documento">Numero de Documento</label>
+        <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded">
+        <button id="buscarPersona" class="bg-blue-500 text-white p-2 rounded">Buscar Persona</button>
+    </div>
+
+    <div id="examenes" class="grid grid-cols-2 p-2 gap-2">
+        <h2 class="col-span-2">Examenes</h2>
+    </div>
+
     @vite('resources/js/buscarPersona.js')
 
-    
-   
+
+
 </x-app-layout>
