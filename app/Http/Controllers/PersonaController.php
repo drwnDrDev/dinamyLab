@@ -12,7 +12,8 @@ class PersonaController extends Controller
      */
     public function index()
     {
-        //
+        $usuario = auth()->user()->id;
+        return view('personas.index',compact('usuario'));
     }
 
     /**
