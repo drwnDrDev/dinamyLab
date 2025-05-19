@@ -15,7 +15,8 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 display flex">
+        <div class="min-h-screen bg-gray-100 grid grid-rows-[auto_1fr] grid-cols-[250px_1fr] h-screen">
+            @include('layouts.header')
             @include('layouts.navigation')
 
             <!-- Page Heading -->
