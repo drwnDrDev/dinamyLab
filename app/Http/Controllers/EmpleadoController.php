@@ -65,7 +65,20 @@ class EmpleadoController extends Controller
 
     public function dashboard()
     {
-        $empleado= Empleado::where('user_id',auth()->user()->id)->first();
+        $usuario = auth()->user();
+        $empleado= Empleado::where('user_id',$usuario->id)->first();
+        if(!$usuario->hasRole('admin') && !$usuario->hasRole('prestador') && !$usuario->hasRole('coordinador') && !$empleado) {
+            return view('paciente.dashboard');
+        }
+        if ($usuario->hasRole('admin')) {
+            $empleados = Empleado::all();
+            $usuarios = \App\Models\User::all();
+            $roles = \Spatie\Permission\Models\Role::all();
+            $sedes = \App\Models\Sede::all();
+            $empresas = \App\Models\Empresa::all();
+           
+            return view('admin.dashboard',compact('empleados','usuarios','roles','sedes','empresas'));  
+        }
         return view('dashboard',compact('empleado'));
     }
 }
