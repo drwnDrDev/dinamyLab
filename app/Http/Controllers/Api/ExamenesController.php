@@ -21,10 +21,17 @@ class ExamenesController extends Controller
 
     public function show($id)
     {
+        $examen = Examen::find($id);
+        if (!$examen) {
+            return response()->json([
+                'message' => 'Examen no encontrado',
+                'data' => null
+            ], 404);
+        }
         return response()->json([
             'message' => 'Examen encontrado',
             'data' => [
-                "examen" => []
+                "examen" => $examen
             ]
         ]);
     }

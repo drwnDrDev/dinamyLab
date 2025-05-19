@@ -1,8 +1,11 @@
 import axios from "axios";
 
+
 axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 axios.defaults.headers.common["X-CSRF-TOKEN"] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 axios.defaults.headers.common["Accept"] = "application/json";
+
+const examenes= document.getElementById('examenes');
 
 document.getElementById('crearPeronsa').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -41,3 +44,25 @@ axios.get("/api/personas")
     });
 
 
+axios.get("/api/examenes")
+    .then(response => {
+        response.data.data.examenes.map(examen => {
+            const label = document.createElement('label');
+            label.classList.add('form-check-label');
+            label.setAttribute('for', examen.id);
+            label.textContent = examen.nombre;
+            examenes.appendChild(label);
+            const option = document.createElement('input');
+            option.classList.add('form-check-input');
+            option.type = 'checkbox';
+            option.name = 'examenes[]';
+            option.id = examen.id;
+            option.value = examen.id;
+            option.textContent = examen.nombre;
+            examenes.appendChild(option);
+        }
+        );
+    })
+    .catch(error => {
+        console.error("Error fetching examenes:", error);
+    });
