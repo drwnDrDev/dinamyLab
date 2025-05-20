@@ -22,13 +22,13 @@
             <!-- Page Content -->
             <main class="ml-60 mt-16 p-6 w-[calc(100vw-240px)] h-[calc(100vh-64px)] overflow-y-auto">
                  <!-- Page Heading -->
-            @isset($header)
-                 <header>
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 border-b-2 border-indigo-500">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+                    @isset($header)
+                        <header>
+                            <div class="mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                                {{ $header }}
+                            </div>
+                        </header>
+                    @endisset
 
                 {{ $slot }}
             </main>
