@@ -87,4 +87,36 @@ class PersonaController extends Controller
     {
         // Lógica para eliminar una persona
     }
+
+    public function buscar($numero_documento)
+    {
+
+        $persona = Persona::where('numero_documento', $numero_documento)->first();
+     
+
+        if (!$persona) {
+            return response()->json([
+                'message' => 'Persona no encontrada',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Persona encontrada',
+            'persona' => [
+                "id" => $persona->id,
+                "nombre" => implode(' ',[$persona->primer_nombre,$persona->segundo_nombre?? '']), 
+                "apellido" => implode(' ',[$persona->primer_apellido,$persona->segundo_apellido?? '']),
+                "tipo_documento" => $persona->tipo_documento,
+                "numero_documento" => $persona->numero_documento,
+                "fecha_nacimiento" => $persona->fecha_nacimiento,
+                "sexo" => $persona->sexo,
+                "nacional" => $persona->nacional,              
+                "telefono" => $persona->contacto->telefono ?? 'No disponible',
+                "direccion" => $persona->contacto->info_adicional['direccion'] ?? 'No disponible',
+                "ciudad" => $persona->contacto->municipio->municipio . ', ' . $persona->contacto->municipio->departamento,
+   
+            ]
+        ]);
+    }
 }

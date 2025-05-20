@@ -6,6 +6,26 @@ axios.defaults.headers.common["X-CSRF-TOKEN"] = document.querySelector('meta[nam
 axios.defaults.headers.common["Accept"] = "application/json";
 
 const examenes= document.getElementById('examenes');
+const buscarPersona = document.getElementById('buscarPersona');
+
+const persona = new Object();
+
+const setPersona = (data) => {
+    persona.id = data.id;
+    persona.nombre = data.nombre;
+    persona.apellido = data.apellido;
+    persona.numero_documento = data.numero_documento;
+    persona.fecha_nacimiento = data.fecha_nacimiento;
+    persona.direccion = data.direccion;
+    persona.telefono = data.telefono;
+    persona.email = data.email;
+    persona.sexo = data.sexo;
+    persona.tipo_documento = data.tipo_documento;
+ 
+}
+
+
+
 
 document.getElementById('crearPeronsa').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -34,14 +54,28 @@ document.getElementById('crearPeronsa').addEventListener('submit', function (e) 
 });
 
 
+buscarPersona.addEventListener('click', function (e) {
+    e.preventDefault();
+    const baseUrl = '/api/personas/buscar/';
+    const numero_documento = document.getElementById('numero_documento').value;
+    const fullUrl = baseUrl + numero_documento;
 
-axios.get("/api/personas")
-    .then(response => {
-        console.log(response.data);
-    })
-    .catch(error => {
-        console.error("Error fetching personas:", error);
-    });
+    axios.get(fullUrl)
+        .then(response => {
+           
+            if (response.data) {
+                setPersona(response.data.persona);
+                console.log(persona);
+     
+            } else {
+                alert("No se encontró la persona");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching persona:", error);
+        });
+}
+);
 
 
 axios.get("/api/examenes")
