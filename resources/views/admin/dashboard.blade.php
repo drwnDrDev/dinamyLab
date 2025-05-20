@@ -44,17 +44,20 @@
 
     </div>
 
-<form id="crearPeronsa" class="felx flex-col gap-3 max-w-[600px] p-4 mx-auto " method="POST">
+<form id="crearPeronsa" class="w-full max-w-[600px] p-4 mx-auto" method="POST">
     @csrf
-    <div class="flex flex-col gap-2">
+    <div class="grid grid-cols-2 justify-around items-center gap-2">
         <label for="tipo_documento">Tipo de Documento</label>
         <select name="tipo_documento" id="tipo_documento" class="form-select">
             @foreach ($tipos_documento as $valor => $nombre)
                 <option value="{{ $valor }}">{{ $nombre }}</option>
             @endforeach
         </select>
-        <label for="numero_documento">Numero de Documento</label>
-        <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded">
+        <div class="flex justify-around items-center col-span-2 gap-2">
+            <label for="numero_documento" class="flex items-end">Numero de Documento</label>
+            <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded">
+            <button id="buscarPersona" class="flex gap-2 bg-blue-500 text-white p-2 rounded">Buscar <span class="hidden sm:flex">Persona</span> </button>
+        </div>
         <label for="nombre">Nombres</label>
         <input type="text" name="nombres" id="nombres" class="border border-gray-300 p-2 rounded">
         <label for="apellidos">Apellidos</label>
@@ -73,19 +76,7 @@
 
 </form>
 
-<div class="flex flex-col gap-2">
-    <h2>Buscar Persona</h2>
-    <div class="flex gap-2">
-        <label for="tipo_documento">Tipo de Documento</label>
-        <select name="tipo_documento" id="tipo_documento" class="form-select">
-            @foreach ($tipos_documento as $valor => $nombre)
-                <option value="{{ $valor }}">{{ $nombre }}</option>
-            @endforeach
-        </select>
-        <label for="numero_documento">Numero de Documento</label>
-        <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded">
-        <button id="buscarPersona" class="bg-blue-500 text-white p-2 rounded">Buscar Persona</button>
-    </div>
+
 
     <div id="examenes" class="grid grid-cols-2 p-2 gap-2">
         <h2 class="col-span-2">Examenes</h2>

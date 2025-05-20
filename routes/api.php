@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\PersonaController;
 Route::get('personas', [PersonaController::class, 'index']);
 Route::get('personas/{id}', [PersonaController::class, 'show']);
 Route::post('personas', [PersonaController::class, 'store']);
+Route::put('personas/{id}', [PersonaController::class, 'update']);
+Route::get('personas/buscar/{numero_documento}', [PersonaController::class, 'buscar']);
 
 Route::get('examenes', [ExamenesController::class, 'index']);
 Route::get('examenes/{id}', [ExamenesController::class, 'show']);
