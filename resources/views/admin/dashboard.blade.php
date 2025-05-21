@@ -57,6 +57,9 @@
             <label for="numero_documento" class="flex items-end">Numero de Documento</label>
             <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded">
             <button id="buscarPersona" class="flex gap-2 bg-blue-500 text-white p-2 rounded">Buscar <span class="hidden sm:flex">Persona</span> </button>
+            <select name="datos_adicionales[pais]" id="pais" class="hidden">
+                <option value="COL">Colombia</option>
+            </select>
         </div>
         <label for="nombre">Nombres</label>
         <input type="text" name="nombres" id="nombres" class="border border-gray-300 p-2 rounded">
@@ -76,7 +79,12 @@
         <label for="direccion">Direccion</label>
         <input type="text" name="datos_adicionales[direccion]" id="direccion" class="border border-gray-300 p-2 rounded">
         <label for="eps">EPS</label>
-        <input type="text" name="datos_adicionales[eps]" id="eps" class="border border-gray-300 p-2 rounded">
+        <input list="eps" name="datos_adicionales[eps]" id="prestador" class="form-select">
+        <datalist id="eps">
+            @foreach ($eps as $prestador)
+            <option value="{{ $prestador->nombre }}"></option>
+            @endforeach
+        </datalist>
         <label for="afiliacion">Afiliacion</label>
         <select name="datos_adicionales[afiliacion]" id="afiliacion" class="form-select">
             <option value="1">Contributivo</option>
@@ -95,7 +103,7 @@
         <h2 class="col-span-2">Examenes</h2>
     </div>
 
-    @vite('resources/js/buscarPersona.js')
+    @vite('resources/js/formularioPersona.js')
 
 
 

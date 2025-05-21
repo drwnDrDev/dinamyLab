@@ -59,20 +59,6 @@ class EmpresaSeeder extends Seeder
             'contacto_id'=>$contacto->id,
         ]);
 
-        //     $table->string('nombre')->unique();
-        //     $table->string('res_facturacion')->nullable();
-        //     $table->bigInteger('incio_facturacion')->nullable();
-        //     $table->bigInteger('fin_facturacion')->nullable();
-        //     $table->foreignId('empresa_id')
-        //         ->constrained('empresas')
-        //         ->cascadeOnDelete()
-        //         ->cascadeOnUpdate();
-        //     $table->foreignId('contacto_id')
-        //         ->constrained('contactos')
-        //         ->nullOnDelete()
-        //         ->cascadeOnUpdate();
-
-
         $sede = \App\Models\Sede::create([
             'nombre'=>'Biotek Bosa',
             'res_facturacion'=>'ASD234164416',

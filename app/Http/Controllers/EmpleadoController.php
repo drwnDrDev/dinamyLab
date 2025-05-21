@@ -77,10 +77,13 @@ class EmpleadoController extends Controller
             $roles = \Spatie\Permission\Models\Role::all();
             $sedes = \App\Models\Sede::all();
             $empresas = \App\Models\Empresa::all();
+            $eps = \App\Models\Eps::all();
+            $municipios = \App\Models\Municipio::all();
+            $paises = \App\Models\Pais::all();
             $tipos_documento = collect(TipoDocumento::cases())
                 ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
 
-            return view('admin.dashboard',compact('empleados','usuarios','roles','sedes','empresas','empleado','tipos_documento'));
+            return view('admin.dashboard',compact('empleados','usuarios','roles','sedes','empresas','empleado','tipos_documento','eps','municipios','paises'));
         }
         return view('dashboard',compact('empleado'));
     }
