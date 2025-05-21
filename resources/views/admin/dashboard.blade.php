@@ -69,8 +69,21 @@
         </select>
         <label for="fecha_nacimiento">Fecha de Nacimiento</label>
         <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="border border-gray-300 p-2 rounded">
+        <label for="telefono">Telefono</label>
+        <input type="text" name="telefono" id="telefono" class="border border-gray-300 p-2 rounded">
+        <label for="email">Email</label>
+        <input type="email" name="datos_adicionales[email]" id="email" class="border border-gray-300 p-2 rounded">
+        <label for="direccion">Direccion</label>
+        <input type="text" name="datos_adicionales[direccion]" id="direccion" class="border border-gray-300 p-2 rounded">
+        <label for="eps">EPS</label>
+        <input type="text" name="datos_adicionales[eps]" id="eps" class="border border-gray-300 p-2 rounded">
+        <label for="afiliacion">Afiliacion</label>
+        <select name="datos_adicionales[afiliacion]" id="afiliacion" class="form-select">
+            <option value="1">Contributivo</option>
+            <option value="2">Subsidiado</option>
+        </select>
 
-
+        
         <button type="submit" class="bg-blue-500 text-white p-2 rounded">Nueva Persona</button>
     </div>
 

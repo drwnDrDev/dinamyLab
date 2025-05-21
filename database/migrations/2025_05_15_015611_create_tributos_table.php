@@ -22,12 +22,11 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-
             $table->decimal('base', 12, 2);
             $table->decimal('porcentaje', 5, 2);
             $table->decimal('exento', 10, 2)->nullable();
             $table->decimal('retencion', 10, 2)->nullable();
-            
+
             $table->decimal('valor', 10, 2);
             $table->timestamps();
         });

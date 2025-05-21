@@ -2317,188 +2317,274 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
                 }, $municipios)
             );
 
+
+
             // $table->string('nombre')->unique();
             // $table->string('codigo_iso')->unique();
             // $table->string('codigo_telefono')->nullable();
             // $table->string('moneda')->nullable()
-            Pais::create([
-                'nombre' => 'Colombia',
-                'codigo_iso' => 'COL',
-                'codigo_telefono' => '+57',
-                'moneda' => 'COP',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Venezuela',
-                'codigo_iso' => 'VEN',
-                'codigo_telefono' => '+58',
-                'moneda' => 'VEF',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Ecuador',
-                'codigo_iso' => 'ECU',
-                'codigo_telefono' => '+593',
-                'moneda' => 'USD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Perú',
-                'codigo_iso' => 'PER',
-                'codigo_telefono' => '+51',
-                'moneda' => 'PEN',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Brasil',
-                'codigo_iso' => 'BRA',
-                'codigo_telefono' => '+55',
-                'moneda' => 'BRL',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Panamá',
-                'codigo_iso' => 'PAN',
-                'codigo_telefono' => '+507',
-                'moneda' => 'PAB',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Guyana',
-                'codigo_iso' => 'GUY',
-                'codigo_telefono' => '+592',
-                'moneda' => 'GYD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Surinam',
-                'codigo_iso' => 'SUR',
-                'codigo_telefono' => '+597',
-                'moneda' => 'SRD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Francia',
-                'codigo_iso' => 'FRA',
-                'codigo_telefono' => '+33',
-                'moneda' => 'EUR',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Holanda',
-                'codigo_iso' => 'NLD',
-                'codigo_telefono' => '+31',
-                'moneda' => 'EUR',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Reino Unido',
-                'codigo_iso' => 'GBR',
-                'codigo_telefono' => '+44',
-                'moneda' => 'GBP',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Estados Unidos',
-                'codigo_iso' => 'USA',
-                'codigo_telefono' => '+1',
-                'moneda' => 'USD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Jamaica',
-                'codigo_iso' => 'JAM',
-                'codigo_telefono' => '+1-876',
-                'moneda' => 'JMD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Cuba',
-                'codigo_iso' => 'CUB',
-                'codigo_telefono' => '+53',
-                'moneda' => 'CUP',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'República Dominicana',
-                'codigo_iso' => 'DOM',
-                'codigo_telefono' => '+1-809',
-                'moneda' => 'DOP',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Haití',
-                'codigo_iso' => 'HTI',
-                'codigo_telefono' => '+509',
-                'moneda' => 'HTG',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Puerto Rico',
-                'codigo_iso' => 'PRI',
-                'codigo_telefono' => '+1-787',
-                'moneda' => 'USD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Bonaire',
-                'codigo_iso' => 'BES',
-                'codigo_telefono' => '+599',
-                'moneda' => 'USD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Aruba',
-                'codigo_iso' => 'ABW',
-                'codigo_telefono' => '+297',
-                'moneda' => 'AWG',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Curazao',
-                'codigo_iso' => 'CUW',
-                'codigo_telefono' => '+599',
-                'moneda' => 'ANG',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Islas Vírgenes Británicas',
-                'codigo_iso' => 'VGB',
-                'codigo_telefono' => '+1-284',
-                'moneda' => 'USD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            Pais::create([
-                'nombre' => 'Chile',
-                'codigo_iso' => 'CHL',
-                'codigo_telefono' => '+56',
-                'moneda' => 'CLP',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
 
+$paisesCSV = "Afganistán;AFG
+Albania;ALB
+Alemania;DEU
+Andorra;AND
+Angola;AGO
+Anguila;AIA
+Antártida;ATA
+Antigua y Barbuda;ATG
+Arabia Saudita;SAU
+Argelia;DZA
+Argentina;ARG
+Armenia;ARM
+Aruba;ABW
+Australia;AUS
+Austria;AUT
+Azerbaiyán;AZE
+Bahamas;BHS
+Bahrein;BHR
+Bangladesh;BGD
+Barbados;BRB
+Belarús;BLR
+Bélgica;BEL
+Belice;BLZ
+Benin;BEN
+Bermuda;BMU
+Bhután;BTN
+Bolivia (Estado Plurinacional de);BOL
+Bonaire, San Eustaquio y Saba;BES
+Bosnia y Herzegovina;BIH
+Botswana;BWA
+Brasil;BRA
+Brunei Darussalam;BRN
+Bulgaria;BGR
+Burkina Faso;BFA
+Burundi;BDI
+Cabo Verde;CPV
+Camboya;KHM
+Camerún;CMR
+Canadá;CAN
+Chad;TCD
+Chequia;CZE
+Chile;CHL
+China;CHN
+China, región administrativa especial de Hong Kong;HKG
+China, región administrativa especial de Macao;MAC
+Chipre;CYP
+Colombia;COL
+Comoras;COM
+Congo;COG
+Costa Rica;CRI
+Côte d’Ivoire;CIV
+Croacia;HRV
+Cuba;CUB
+Curazao;CUW
+Dinamarca;DNK
+Djibouti;DJI
+Dominica;DMA
+Ecuador;ECU
+Egipto;EGY
+El Salvador;SLV
+Emiratos Árabes Unidos;ARE
+Eritrea;ERI
+Eslovaquia;SVK
+Eslovenia;SVN
+España;ESP
+Estado de Palestina;PSE
+Estados Unidos de América;USA
+Estonia;EST
+Eswatini;SWZ
+Etiopía;ETH
+Federación de Rusia;RUS
+Fiji;FJI
+Filipinas;PHL
+Finlandia;FIN
+Francia;FRA
+Gabón;GAB
+Gambia;GMB
+Georgia;GEO
+Georgia del Sur y las Islas Sandwich del Sur;SGS
+Ghana;GHA
+Gibraltar;GIB
+Granada;GRD
+Grecia;GRC
+Groenlandia;GRL
+Guadalupe;GLP
+Guam;GUM
+Guatemala;GTM
+Guayana Francesa;GUF
+Guernsey;GGY
+Guinea;GIN
+Guinea Ecuatorial;GNQ
+Guinea-Bissau;GNB
+Guyana;GUY
+Haití;HTI
+Honduras;HND
+Hungría;HUN
+India;IND
+Indonesia;IDN
+Irán (República Islámica del);IRN
+Iraq;IRQ
+Irlanda;IRL
+Isla Bouvet;BVT
+Isla Christmas;CXR
+Isla de Man;IMN
+Isla Norfolk;NFK
+Islandia;ISL
+Islas Åland;ALA
+Islas Caimán;CYM
+Islas Cocos ;CCK
+Islas Cook;COK
+Islas Feroe;FRO
+Islas Heard y McDonald;HMD
+Islas Malvinas;FLK
+Islas Marianas Septentrionales;MNP
+Islas Marshall;MHL
+Islas menores alejadas de Estados Unidos;UMI
+Islas Salomón;SLB
+Islas Svalbard y Jan Mayen;SJM
+Islas Turcas y Caicos;TCA
+Islas Vírgenes Británicas;VGB
+Islas Vírgenes de los Estados Unidos;VIR
+Islas Wallis y Futuna;WLF
+Israel;ISR
+Italia;ITA
+Jamaica;JAM
+Japón;JPN
+Jersey;JEY
+Jordania;JOR
+Kazajstán;KAZ
+Kenya;KEN
+Kirguistán;KGZ
+Kiribati;KIR
+Kuwait;KWT
+Lesotho;LSO
+Letonia;LVA
+Líbano;LBN
+Liberia;LBR
+Libia;LBY
+Liechtenstein;LIE
+Lituania;LTU
+Luxemburgo;LUX
+Macedonia del Norte;MKD
+Madagascar;MDG
+Malasia;MYS
+Malawi;MWI
+Maldivas;MDV
+Malí;MLI
+Malta;MLT
+Marruecos;MAR
+Martinica;MTQ
+Mauricio;MUS
+Mauritania;MRT
+Mayotte;MYT
+México;MEX
+Micronesia (Estados Federados de);FSM
+Mónaco;MCO
+Mongolia;MNG
+Montenegro;MNE
+Montserrat;MSR
+Mozambique;MOZ
+Myanmar;MMR
+Namibia;NAM
+Nauru;NRU
+Nepal;NPL
+Nicaragua;NIC
+Níger;NER
+Nigeria;NGA
+Niue;NIU
+Noruega;NOR
+Nueva Caledonia;NCL
+Nueva Zelandia;NZL
+Omán;OMN
+Países Bajos;NLD
+Pakistán;PAK
+Palau;PLW
+Panamá;PAN
+Papua Nueva Guinea;PNG
+Paraguay;PRY
+Perú;PER
+Pitcairn;PCN
+Polinesia Francesa;PYF
+Polonia;POL
+Portugal;PRT
+Puerto Rico;PRI
+Qatar;QAT
+Reino Unido de Gran Bretaña e Irlanda del Norte;GBR
+República Árabe Siria;SYR
+República Centroafricana;CAF
+República de Corea;KOR
+República de Moldova;MDA
+República Democrática del Congo;COD
+República Democrática Popular Lao;LAO
+República Dominicana;DOM
+República Popular Democrática de Corea;PRK
+República Unida de Tanzanía;TZA
+Reunión;REU
+Rumania;ROU
+Rwanda;RWA
+Sáhara Occidental;ESH
+Saint Kitts y Nevis;KNA
+Samoa;WSM
+Samoa Americana;ASM
+San Barthélemy;BLM
+San Marino;SMR
+San Martín (parte francesa);MAF
+San Martín (parte Holandesa);SXM
+San Pedro y Miquelón;SPM
+San Vicente y las Granadinas;VCT
+Santa Elena;SHN
+Santa Lucía;LCA
+Santa Sede;VAT
+Santo Tomé y Príncipe;STP
+Senegal;SEN
+Serbia;SRB
+Seychelles;SYC
+Sierra Leona;SLE
+Singapur;SGP
+Somalia;SOM
+Sri Lanka;LKA
+Sudáfrica;ZAF
+Sudán;SDN
+Sudán del Sur;SSD
+Suecia;SWE
+Suiza;CHE
+Suriname;SUR
+Tailandia;THA
+Tayikistán;TJK
+Territorio Británico del Océano Índico;IOT
+Territorio de las Tierras Australes Francesas;ATF
+Timor-Leste;TLS
+Togo;TGO
+Tokelau;TKL
+Tonga;TON
+Trinidad y Tabago;TTO
+Túnez;TUN
+Türkiye;TUR
+Turkmenistán;TKM
+Tuvalu;TUV
+Ucrania;UKR
+Uganda;UGA
+Uruguay;URY
+Uzbekistán;UZB
+Vanuatu;VUT
+Venezuela;VEN
+Viet Nam;VNM
+Yemen;YEM
+Zambia;ZMB
+Zimbabwe;ZWE";
+        $paises = explode("\n", $paisesCSV);
+        $paises = array_map(function ($pais) {
+            return explode(";", $pais);
+        }, $paises);
+        $paises = array_map(function ($pais) {
+            return [
+                'nombre' => $pais[0],
+                'codigo_iso' => $pais[1],
+            ];
+        }, $paises);
 
+        // Insert the paises into the database
+        DB::table('paises')->insert($paises);
     }
 }
 

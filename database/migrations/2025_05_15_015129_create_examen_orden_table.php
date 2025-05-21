@@ -19,9 +19,9 @@ return new class extends Migration
             $table->foreignId('examen_id')
                 ->constrained('examenes')
                 ->onDelete('cascade');
-            $table->enum('estado',['sala de espera','toma muestra','pendiente','terminado','entregado'])->default('pendiente');
+            $table->string('estado')->default('pendiente');
             $table->string('observacion')->nullable();
-            $table->string('resultado')->nullable();
+    
             $table->timestamps();
         });
     }

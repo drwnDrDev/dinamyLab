@@ -17,10 +17,6 @@ return new class extends Migration
                 ->constrained('municipios')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->foreignId('pais_id')
-                ->constrained('paises')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
             $table->string('telefono')->nullable();
             $table->json('info_adicional')->nullable();
             $table->timestamps();
