@@ -34,15 +34,15 @@ tipoDocumento.addEventListener('change', function (e) {
         pais.addEventListener('focus', function (e) {
             axios.get('/api/paises')
                 .then(response => {
-                  
+
                     if (response.data) {
-                        
+
                         response.data.data.paises.forEach(p => {
                             const option = document.createElement('option');
                             option.value = p.codigo_iso;
                             option.textContent = p.nombre;
                             option.className= ['text-gray-900', 'dark:text-gray-100'];
-                            
+
                             pais.appendChild(option);
                         });
                     } else {
@@ -59,12 +59,76 @@ tipoDocumento.addEventListener('change', function (e) {
 
 pais.addEventListener('change', function (e) {
     const paisSeleccionado = pais;
-    
+
 
     if (paisSeleccionado !== 'COL') {
       numeroDocumento.value = paisSeleccionado.value;
     }
 })
+
+
+
+        const typeableInput = document.getElementById('municipioBusqueda');
+        const optionsList = document.getElementById('opciones');
+        const hiddenSelect = document.getElementById('municipio');
+        let allOptions = Array.from(hiddenSelect.options).map(option => ({
+            value: option.value,
+            text: option.text
+        }));
+        // Inicializar la lista de opciones
+        console.log(allOptions);
+
+        function filterOptions(query) {
+            const filteredOptions = allOptions.filter(option =>
+                option.text.toLowerCase().includes(query.toLowerCase())
+            );
+            displayOptions(filteredOptions);
+        }
+
+        function displayOptions(options) {
+            optionsList.innerHTML = ''; // Limpiar la lista anterior
+            if (options.length > 0) {
+                options.forEach(option => {
+                    const optionElement = document.createElement('div');
+                    optionElement.classList.add('p-2', 'cursor-pointer', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+                    optionElement.textContent = option.text;
+                    optionElement.addEventListener('click', () => {
+                        typeableInput.value = option.text;
+                        hiddenSelect.value = option.value;
+                        optionsList.classList.remove('block');
+                    });
+                    optionsList.appendChild(optionElement);
+                });
+                 optionsList.classList.remove('hidden');
+                optionsList.classList.add('block');
+            } else {
+                optionsList.classList.remove('block');
+                optionsList.classList.add('hidden');
+            }
+        }
+
+        typeableInput.addEventListener('input', () => {
+            const query = typeableInput.value;
+            filterOptions(query);
+        });
+
+        // Ocultar la lista al perder el foco del input
+        typeableInput.addEventListener('blur', () => {
+            // Pequeño retraso para permitir que se dispare el clic de la opción
+            setTimeout(() => {
+                optionsList.classList.remove('block');
+            }, 200);
+        });
+
+        // Mostrar todas las opciones al enfocar el input (opcional)
+        typeableInput.addEventListener('focus', () => {
+            filterOptions(typeableInput.value); // Mostrar las opciones filtradas o todas si el input está vacío
+        });
+
+        // Inicializar la lista (opcional, si quieres mostrar algo al cargar)
+        // displayOptions(allOptions);
+
+
 // let municipios = axios.get('/api/municipios')
 //     .then(response => {
 //         if (response.data) {
