@@ -103,7 +103,7 @@ pais.addEventListener('change', function (e) {
                 optionsList.classList.add('block');
             } else {
                 optionsList.classList.remove('block');
-                optionsList.classList.add('hidden');
+
             }
         }
 
@@ -117,6 +117,7 @@ pais.addEventListener('change', function (e) {
             // Pequeño retraso para permitir que se dispare el clic de la opción
             setTimeout(() => {
                 optionsList.classList.remove('block');
+                optionsList.classList.add('hidden');
             }, 200);
         });
 
