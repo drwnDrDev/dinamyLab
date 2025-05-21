@@ -67,9 +67,9 @@ class PersonaController extends Controller
         $apellidos = explode(' ', trim($request->input('apellidos')), 2);
         // Crear la persona
         $persona = Persona::create( [
-            'primer_nombre' => $nombres[0] ?? '',
+            'primer_nombre' => $nombres[0],
             'segundo_nombre' => $nombres[1] ?? '',
-            'primer_apellido' => $apellidos[0] ?? '',
+            'primer_apellido' => $apellidos[0],
             'segundo_apellido' => $apellidos[1] ?? '',
             'numero_documento' => $request->input('numero_documento'),
             'tipo_documento' => $request->input('tipo_documento', 'CC'),
@@ -77,7 +77,7 @@ class PersonaController extends Controller
             'sexo' => $request->input('sexo'),
             'nacional' => $request->input('nacional', true),
             'contacto_id' => $contacto->id,
-        ])->assignRole($request->input('rol', 'paciente'));
+        ]);
 
 
         return response()->json([
