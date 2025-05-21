@@ -78,6 +78,18 @@
         <input type="email" name="datos_adicionales[email]" id="email" class="border border-gray-300 p-2 rounded">
         <label for="direccion">Direccion</label>
         <input type="text" name="datos_adicionales[direccion]" id="direccion" class="border border-gray-300 p-2 rounded">
+
+        <label for="ciudad">Ciudad</label>
+        <div class="relative w-96">
+        <input text="text" id="municipioBusqueda" class="border border-gray-300 p-2 rounded">
+             <div id="opciones" class="absolute bg-white border border-gray-300 w-full max-h-60 overflow-y-auto z-10 hidden">
+             </div>
+        <select name="municipio" id="municipio" class="hidden">
+            @foreach ($municipios as $municipio)
+                <option value="{{ $municipio->codigo }}">{{ $municipio->municipio }}</option>
+            @endforeach
+        </select>
+        </div>
         <label for="eps">EPS</label>
         <input list="eps" name="datos_adicionales[eps]" id="prestador" class="form-select">
         <datalist id="eps">
@@ -91,7 +103,6 @@
             <option value="2">Subsidiado</option>
         </select>
 
-        
         <button type="submit" class="bg-blue-500 text-white p-2 rounded">Nueva Persona</button>
     </div>
 
@@ -102,9 +113,5 @@
     <div id="examenes" class="grid grid-cols-2 p-2 gap-2">
         <h2 class="col-span-2">Examenes</h2>
     </div>
-
     @vite('resources/js/formularioPersona.js')
-
-
-
 </x-app-layout>
