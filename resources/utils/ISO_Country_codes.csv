@@ -1,5 +1,4 @@
-﻿Country or Area;ISO_code
-Afganistán;AFG
+﻿"Afganistán;AFG
 Albania;ALB
 Alemania;DEU
 Andorra;AND
@@ -107,11 +106,11 @@ Isla Norfolk;NFK
 Islandia;ISL
 Islas Åland;ALA
 Islas Caimán;CYM
-Islas Cocos (Keeling);CCK
+Islas Cocos ;CCK
 Islas Cook;COK
 Islas Feroe;FRO
 Islas Heard y McDonald;HMD
-Islas Malvinas (Falkland);FLK
+Islas Malvinas;FLK
 Islas Marianas Septentrionales;MNP
 Islas Marshall;MHL
 Islas menores alejadas de Estados Unidos;UMI
@@ -171,7 +170,7 @@ Noruega;NOR
 Nueva Caledonia;NCL
 Nueva Zelandia;NZL
 Omán;OMN
-Países Bajos (Reino de los);NLD
+Países Bajos;NLD
 Pakistán;PAK
 Palau;PLW
 Panamá;PAN
@@ -242,8 +241,8 @@ Uganda;UGA
 Uruguay;URY
 Uzbekistán;UZB
 Vanuatu;VUT
-Venezuela (República Bolivariana de);VEN
+Venezuela;VEN
 Viet Nam;VNM
 Yemen;YEM
 Zambia;ZMB
-Zimbabwe;ZWE
+Zimbabwe;ZWE"

@@ -52,11 +52,20 @@ class PersonaController extends Controller
             'apellidos' => 'required|string|max:255',
             'numero_documento'=>'required|string|max:20'
         ]);
+
+        // Contacto
+        $telefono = $request->input('telefono', null);
+        $municipio_id = $request->input('municipio_id', 155);
+        $info_adicional =$request->info_adicional;
+        $contacto = \App\Models\Contacto::create([
+            'municipio_id' => $municipio_id,
+            'telefono' => $telefono,
+            'info_adicional' => json_encode($info_adicional),
+        ]);
         // Dividir nombres y apellidos en primer y segundo nombre
         $nombres = explode(' ', trim($request->input('nombres')), 2);
         $apellidos = explode(' ', trim($request->input('apellidos')), 2);
-
-
+        // Crear la persona
         $persona = Persona::create( [
             'primer_nombre' => $nombres[0] ?? '',
             'segundo_nombre' => $nombres[1] ?? '',
@@ -67,8 +76,9 @@ class PersonaController extends Controller
             'fecha_nacimiento' => $request->input('fecha_nacimiento'),
             'sexo' => $request->input('sexo'),
             'nacional' => $request->input('nacional', true),
-            'contacto_id' => $request->input('contacto_id',1),
-        ]);
+            'contacto_id' => $contacto->id,
+        ])->assignRole($request->input('rol', 'paciente'));
+
 
         return response()->json([
             'message' => 'Persona creada con éxito',
@@ -92,7 +102,7 @@ class PersonaController extends Controller
     {
 
         $persona = Persona::where('numero_documento', $numero_documento)->first();
-     
+
 
         if (!$persona) {
             return response()->json([
@@ -105,17 +115,17 @@ class PersonaController extends Controller
             'message' => 'Persona encontrada',
             'persona' => [
                 "id" => $persona->id,
-                "nombre" => implode(' ',[$persona->primer_nombre,$persona->segundo_nombre?? '']), 
+                "nombre" => implode(' ',[$persona->primer_nombre,$persona->segundo_nombre?? '']),
                 "apellido" => implode(' ',[$persona->primer_apellido,$persona->segundo_apellido?? '']),
                 "tipo_documento" => $persona->tipo_documento,
                 "numero_documento" => $persona->numero_documento,
                 "fecha_nacimiento" => $persona->fecha_nacimiento,
                 "sexo" => $persona->sexo,
-                "nacional" => $persona->nacional,              
+                "nacional" => $persona->nacional,
                 "telefono" => $persona->contacto->telefono ?? 'No disponible',
                 "direccion" => $persona->contacto->info_adicional['direccion'] ?? 'No disponible',
                 "ciudad" => $persona->contacto->municipio->municipio . ', ' . $persona->contacto->municipio->departamento,
-   
+
             ]
         ]);
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Persona;
+use App\TipoDocumento;
 use Illuminate\Http\Request;
 
 class PersonaController extends Controller
@@ -12,8 +13,8 @@ class PersonaController extends Controller
      */
     public function index()
     {
-        $usuario = auth()->user()->id;
-        return view('personas.index',compact('usuario'));
+
+        return view('personas.index');
     }
 
     /**
@@ -21,7 +22,9 @@ class PersonaController extends Controller
      */
     public function create()
     {
-        //
+              $tipos_documento = collect(TipoDocumento::cases())
+                ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
+        return view('personas.create',compact('tipos_documento'));
     }
 
     /**
@@ -29,7 +32,7 @@ class PersonaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $request->all();
     }
 
     /**
@@ -37,7 +40,7 @@ class PersonaController extends Controller
      */
     public function show(Persona $persona)
     {
-        //
+        return view('personas.show',compact('persona'));
     }
 
     /**
