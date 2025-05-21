@@ -21,6 +21,8 @@ Route::get('municipios/buscar', [MunicipioController::class, 'buscarMunicipioPor
 Route::get('municipios/{id}', [MunicipioController::class, 'show']);
 Route::get('departamento/{departamento_id}', [MunicipioController::class, 'departamento']);
 
+Route::get('paises', [\App\Http\Controllers\Api\PaisController::class, 'index']);
+
 
 Route::get('user', function (Request $request) {
     return $request->user();

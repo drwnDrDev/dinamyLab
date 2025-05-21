@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('paises', function (Blueprint $table) {
             $table->string('codigo_iso')->primary();
             $table->string('nombre')->unique();
+            $table->unsignedTinyInteger('nivel')->nullable();
         });
     }
 
