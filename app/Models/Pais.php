@@ -11,7 +11,7 @@ class Pais extends Model
         'nombre',
         'codigo_iso',
         'codigo_telefono',
-        'moneda'
+        'nivel',
     ];
 
     protected $table = 'paises';

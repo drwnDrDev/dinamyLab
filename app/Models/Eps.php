@@ -10,6 +10,8 @@ class Eps extends Model
         'nombre',
         'descripcion',
         'codigo',
+        'nivel',
+        'verificada',
     ];
 
     public function scopeFilter($query, array $filters)

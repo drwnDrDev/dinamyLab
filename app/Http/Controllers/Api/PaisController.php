@@ -7,5 +7,22 @@ use Illuminate\Http\Request;
 
 class PaisController extends Controller
 {
-    //
+
+    public function index()
+    {
+        $paises = \App\Models\Pais::all();
+        if($paises->isEmpty()) {
+            return response()->json([
+                'message' => 'No hay paises registrados',
+                'data' => []
+            ], 404);
+        }
+        return response()->json([
+            'message' => 'Lista de paises',
+            'data' => [
+                "paises" => $paises
+            ]
+        ]);
+    }
+
 }

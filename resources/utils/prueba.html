@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Typeable</title>
+    <style>
+        .select-typeable-container {
+            position: relative;
+            width: 200px; /* Ajusta el ancho según tus necesidades */
+        }
+
+        .typeable-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .options-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border: 1px solid #ccc;
+            border-top: none;
+            background-color: #fff;
+            z-index: 10;
+            display: none; /* Oculto inicialmente */
+            max-height: 150px; /* Ajusta la altura máxima según tus necesidades */
+            overflow-y: auto;
+        }
+
+        .options-list.show {
+            display: block;
+        }
+
+        .option {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="select-typeable-container">
+        <input type="text" class="typeable-input" placeholder="Escribe para buscar...">
+        <div class="options-list">
+        </div>
+        <select class="hidden-select" style="display: none;">
+            <option value="opcion1">Opción 1</option>
+            <option value="opcion2">Opción Dos</option>
+            <option value="opcion3">Tercera Opción</option>
+            <option value="opcion4">Una Cuarta Selección</option>
+            <option value="opcion5">Opción Cinco</option>
+            <option value="otra">Otra Opción</option>
+        </select>
+    </div>
+
+    <script>
+        const typeableInput = document.querySelector('.typeable-input');
+        const optionsList = document.querySelector('.options-list');
+        const hiddenSelect = document.querySelector('.hidden-select');
+        let allOptions = Array.from(hiddenSelect.options).map(option => ({
+            value: option.value,
+            text: option.text
+        }));
+
+        function filterOptions(query) {
+            const filteredOptions = allOptions.filter(option =>
+                option.text.toLowerCase().includes(query.toLowerCase())
+            );
+            displayOptions(filteredOptions);
+        }
+
+        function displayOptions(options) {
+            optionsList.innerHTML = ''; // Limpiar la lista anterior
+            if (options.length > 0) {
+                options.forEach(option => {
+                    const optionElement = document.createElement('div');
+                    optionElement.classList.add('option');
+                    optionElement.textContent = option.text;
+                    optionElement.addEventListener('click', () => {
+                        typeableInput.value = option.text;
+                        hiddenSelect.value = option.value;
+                        optionsList.classList.remove('show');
+                    });
+                    optionsList.appendChild(optionElement);
+                });
+                optionsList.classList.add('show');
+            } else {
+                optionsList.classList.remove('show');
+            }
+        }
+
+        typeableInput.addEventListener('input', () => {
+            const query = typeableInput.value;
+            filterOptions(query);
+        });
+
+        // Ocultar la lista al perder el foco del input
+        typeableInput.addEventListener('blur', () => {
+            // Pequeño retraso para permitir que se dispare el clic de la opción
+            setTimeout(() => {
+                optionsList.classList.remove('show');
+            }, 200);
+        });
+
+        // Mostrar todas las opciones al enfocar el input (opcional)
+        typeableInput.addEventListener('focus', () => {
+            filterOptions(typeableInput.value); // Mostrar las opciones filtradas o todas si el input está vacío
+        });
+
+        // Inicializar la lista (opcional, si quieres mostrar algo al cargar)
+        // displayOptions(allOptions);
+    </script>
+
+</body>
+</html>
