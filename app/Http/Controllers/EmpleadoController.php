@@ -78,7 +78,7 @@ class EmpleadoController extends Controller
             $sedes = \App\Models\Sede::all();
             $empresas = \App\Models\Empresa::all();
             $eps = \App\Models\Eps::all();
-            $municipios = \App\Models\Municipio::all();
+            $municipios = \App\Models\Municipio::orderBy('nivel','desc')->get();
             $paises = \App\Models\Pais::all();
             $tipos_documento = collect(TipoDocumento::cases())
                 ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);

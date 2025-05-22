@@ -44,7 +44,7 @@
 
     </div>
 
-<form id="crearPeronsa" class="w-full max-w-[600px] p-4 mx-auto" method="POST">
+<form action="{{route('personas.store')}}" id="crearPeronsa" class="w-full max-w-[600px] p-4 mx-auto" method="POST">
     @csrf
     <div class="grid grid-cols-2 justify-around items-center gap-2">
         <label for="tipo_documento">Tipo de Documento</label>
@@ -67,8 +67,8 @@
         <input type="text" name="apellidos" id="apellidos" class="border border-gray-300 p-2 rounded">
         <label for="sexo">Sexo</label>
         <select name="sexo" id="sexo" class="form-select">
-            <option value="M">Masculino</option>
             <option value="F">Femenino</option>
+            <option value="M">Masculino</option>
         </select>
         <label for="fecha_nacimiento">Fecha de Nacimiento</label>
         <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="border border-gray-300 p-2 rounded">
@@ -81,12 +81,12 @@
 
         <label for="ciudad">Ciudad</label>
         <div class="relative w-96">
-        <input text="text" id="municipioBusqueda" class="border border-gray-300 p-2 rounded">
+        <input text="text" id="municipioBusqueda" class="border border-gray-300 p-2 rounded" placeholder="Bosa">
              <div id="opciones" class="absolute bg-white border border-gray-300 w-full max-h-60 overflow-y-auto z-10 hidden">
              </div>
-        <select name="municipio" id="municipio" class="hidden">
+        <select name="municipio" id="municipio" class="hidden" >
             @foreach ($municipios as $municipio)
-                <option value="{{ $municipio->codigo }}">{{ $municipio->municipio }}</option>
+                <option value="{{ $municipio->codigo }}" >{{ strtoupper($municipio->municipio) }}</option>
             @endforeach
         </select>
         </div>
