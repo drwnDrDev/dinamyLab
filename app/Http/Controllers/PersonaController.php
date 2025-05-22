@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Persona;
+use App\Models\Pais;
+use App\Models\Municipio;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
 
@@ -22,9 +24,11 @@ class PersonaController extends Controller
      */
     public function create()
     {
-              $tipos_documento = collect(TipoDocumento::cases())
-                ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
-        return view('personas.create',compact('tipos_documento'));
+        $paises=Pais::all();
+        $ciudades = Municipio::all();
+        $tipos_documento = collect(TipoDocumento::cases())
+            ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
+        return view('personas.create', compact('tipos_documento', 'ciudades','paises'));
     }
 
     /**
