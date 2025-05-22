@@ -47,6 +47,7 @@ class PersonaController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
