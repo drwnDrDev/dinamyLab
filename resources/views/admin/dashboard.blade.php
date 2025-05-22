@@ -55,16 +55,26 @@
         </select>
         <div class="flex justify-around items-center col-span-2 gap-2">
             <label for="numero_documento" class="flex items-end">Numero de Documento</label>
-            <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded">
+            <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded" value="{{ old('numero_documento') }}">
+            @error('numero_documento')
+                <p class="text-red-500 text-xs italic col-span-2">{{ $message }}</p>
+            @enderror
             <button id="buscarPersona" class="flex gap-2 bg-blue-500 text-white p-2 rounded">Buscar <span class="hidden sm:flex">Persona</span> </button>
             <select name="datos_adicionales[pais]" id="pais" class="hidden">
                 <option value="COL">Colombia</option>
             </select>
         </div>
         <label for="nombre">Nombres</label>
-        <input type="text" name="nombres" id="nombres" class="border border-gray-300 p-2 rounded">
+        <input type="text" name="nombres" id="nombres" class="border border-gray-300 p-2 rounded" value="{{ old('nombres') }}">
+        @error('nombres')
+            <p class="text-red-500 text-xs italic col-span-2">{{ $message }}</p>
+        @enderror
         <label for="apellidos">Apellidos</label>
-        <input type="text" name="apellidos" id="apellidos" class="border border-gray-300 p-2 rounded">
+        <input type="text" name="apellidos" id="apellidos" class="border border-gray-300 p-2 rounded" value="{{ old('apellidos') }}">
+        @error('apellidos')
+            <p class="text-red-500 text-xs italic col-span-2">{{ $message }}</p>
+        @enderror
+
         <label for="sexo">Sexo</label>
         <select name="sexo" id="sexo" class="form-select">
             <option value="F">Femenino</option>
@@ -72,6 +82,9 @@
         </select>
         <label for="fecha_nacimiento">Fecha de Nacimiento</label>
         <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="border border-gray-300 p-2 rounded">
+        @error('fecha_nacimiento')
+            <p class="text-red-500 text-xs italic col-span-2">{{ $message }}</p>
+        @enderror
         <label for="telefono">Telefono</label>
         <input type="text" name="telefono" id="telefono" class="border border-gray-300 p-2 rounded">
         <label for="email">Email</label>

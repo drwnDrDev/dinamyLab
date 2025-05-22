@@ -22,6 +22,8 @@ class StorePersonaRequest extends FormRequest
      */
     public function rules(): array
     {
+
+
         return [
             'nombres' => ['required', 'string', 'max:255'],
             'apellidos' => ['required', 'string', 'max:255'],
@@ -31,14 +33,21 @@ class StorePersonaRequest extends FormRequest
                         $fail('El tipo de documento no es válido.');
                     }
                 },],
-            'numero_documento' => ['required', 'string','min:3', 'max:16',
+            'numero_documento' => ['required', 'string','min:3', 'max:16','regex:/^[a-zA-Z0-9]+$/',
             function ($attribute, $value, $fail) {
-                    if ($this->tipo_documento == 'CC'|| $this->tipo_documento == 'RC' || $this->tipo_documento == 'TI' && strlen($value) > 10) {
-                        $fail('El número de documento supera la longitud permitida.');
+                if (in_array($this->tipo_documento, ['CC', 'RC', 'TI'])) {
+                    if (!ctype_digit($value)) {
+                        $fail('El número de documento debe ser numérico para el tipo de documento seleccionado.');
                     }
-                }],
-        
+                    if (strlen($value) > 10) {
+                        $fail('El número de documento no puede superar los 10 caracteres para el tipo de documento seleccionado.');
+                    }
+                }
+            },
+            'unique:personas,numero_documento'],
+            'fecha_nacimiento' => ['nullable','date','before:tomorrow'],
+            'telefono' => ['nullable', 'string', 'size:10'],
         ];
-       
+
     }
 }
