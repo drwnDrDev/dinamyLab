@@ -6,6 +6,7 @@ use App\Models\Contacto;
 use App\Models\Persona;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
+use App\Http\Requests\StorePersonaRequest;
 
 class PersonaController extends Controller
 {
@@ -31,15 +32,9 @@ class PersonaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePersonaRequest $request)
     {
-        $request->validate([
-            'tipo_documento' => 'required',
-            'numero_documento' => 'required|unique:personas,numero_documento',
-            'nombres' => 'required:string|max:255',
-            'apellidos' => 'required:string|max:255',
-            'sexo' => 'required',
-        ]);
+        $request->validated();
         $telefono = $request->input('telefono', null);
         $municipio_id = $request->input('municipio_id', 155);
         $info_adicional =$request->datos_adicionales;
