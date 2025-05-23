@@ -21,8 +21,10 @@ const setPersona = (data) => {
     persona.email = data.email;
     persona.sexo = data.sexo;
     persona.tipo_documento = data.tipo_documento;
- 
+
 }
+
+const titulo = document.querySelector('h1');
 
 
 
@@ -47,6 +49,21 @@ document.getElementById('crearPeronsa').addEventListener('submit', function (e) 
     .catch(error => {
         if (error.response?.status === 422) {
             console.warn('Errores de validación:', error.response.data.errors);
+            const errors = error.response.data.errors;
+            const errorMessages = Object.values(errors).flat();
+            const errorList = document.createElement('ul');
+            errorMessages.forEach(errorMessage => {
+                const listItem = document.createElement('li');
+                listItem.textContent = errorMessage;
+                errorList.appendChild(listItem);
+            });
+            const errorContainer = document.createElement('div');
+            errorContainer.classList.add('text-sm','text-red-600','space-y-1');
+            errorContainer.appendChild(errorList);
+            form.appendChild(errorContainer);
+            setTimeout(() => {
+                errorContainer.remove();
+            }, 5000);
         } else {
             console.error('Error desconocido:', error);
         }
@@ -62,11 +79,11 @@ buscarPersona.addEventListener('click', function (e) {
 
     axios.get(fullUrl)
         .then(response => {
-           
+
             if (response.data) {
                 setPersona(response.data.persona);
                 console.log(persona);
-     
+
             } else {
                 alert("No se encontró la persona");
             }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePersonaRequest;
 use Illuminate\Http\Request;
 use App\Models\Persona;
 
@@ -45,14 +46,10 @@ class PersonaController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StorePersonaRequest $request)
     {
 
-        $request->validate([
-            'nombres' => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'numero_documento'=>'required|string|max:20'
-        ]);
+        $request->validated();
 
         // Contacto
         $telefono = $request->input('telefono', null);
