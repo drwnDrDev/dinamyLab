@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* Corrección del autofill en todos los navegadores */
+input:-webkit-autofill {
+    background-color: #f9fafb !important; /* Color secundario */
+    border: 1px solid #088eaf !important;
+    box-shadow: 0 0 0px 1000px #f9fafb inset !important;
+}
+
+input:autofill {
+    background-color: #f9fafb !important; /* Para navegadores que no usan `-webkit-` */
+}
+
