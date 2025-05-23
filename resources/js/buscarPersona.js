@@ -8,6 +8,7 @@ axios.defaults.headers.common["Accept"] = "application/json";
 const examenes= document.getElementById('examenes');
 const buscarPersona = document.getElementById('buscarPersona');
 
+
 const persona = new Object();
 
 const setPersona = (data) => {
@@ -82,8 +83,18 @@ buscarPersona.addEventListener('click', function (e) {
 
             if (response.data) {
                 setPersona(response.data.persona);
-                console.log(persona);
-
+                console.log( );
+                document.getElementById('nombres').value = persona.nombre;
+                document.getElementById('apellidos').value = persona.apellido;
+                document.getElementById('numero_documento').value = persona.numero_documento;
+                document.getElementById('fecha_nacimiento').value = persona.fecha_nacimiento;
+                document.getElementById('direccion').value = persona.direccion; 
+                document.getElementById('telefono').value = persona.telefono;
+                document.getElementById('email').value = persona.email;
+                document.getElementById('sexo').value = persona.sexo;
+                document.getElementById('tipo_documento').value = persona.tipo_documento;
+                // document.getElementById('ciudad').value = persona.municipio_id;
+       
             } else {
                 alert("No se encontró la persona");
             }
