@@ -54,7 +54,13 @@ class PersonaController extends Controller
         // Contacto
         $telefono = $request->input('telefono', null);
         $municipio_id = $request->input('municipio_id', 155);
-        $info_adicional =$request->info_adicional;
+        // Filtrar solo los datos cuyo valor sea diferente de null
+        $info_adicional = array_filter(
+            $request->datos_adicionales ?? [],
+            function ($value) {
+            return !is_null($value);
+            }
+        );
         $contacto = \App\Models\Contacto::create([
             'municipio_id' => $municipio_id,
             'telefono' => $telefono,
@@ -117,11 +123,13 @@ class PersonaController extends Controller
                 "apellido" => implode(' ',[$persona->primer_apellido,$persona->segundo_apellido?? '']),
                 "tipo_documento" => $persona->tipo_documento,
                 "numero_documento" => $persona->numero_documento,
-                "fecha_nacimiento" => $persona->fecha_nacimiento,
+                "fecha_nacimiento" => $persona->fecha_nacimiento->format('Y-m-d'),
                 "sexo" => $persona->sexo,
                 "nacional" => $persona->nacional,
-                "telefono" => $persona->contacto->telefono ?? 'No disponible',
-                "direccion" => $persona->contacto->info_adicional['direccion'] ?? 'No disponible',
+                "telefono" => $persona->contacto->telefono,
+                "direccion" => $persona->contacto->infoAdicional('direccion'),
+                "email" => $persona->contacto->infoAdicional('email'),
+                "pais" => $persona->contacto->infoAdicional('pais'),   
                 "ciudad" => $persona->contacto->municipio->municipio . ', ' . $persona->contacto->municipio->departamento,
 
             ]

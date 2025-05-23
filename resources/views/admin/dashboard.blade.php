@@ -5,7 +5,7 @@
         </h1>
 
     </x-slot>
-<div class="w-full min-w-96 flex flex-col justify-around">
+    <!-- <div class="w-full min-w-96 flex flex-col justify-around">
             <div class="p-4">
                 <h2>Empleados</h2>
                 <div class="grid grid-cols-3 justify-around gap-2">
@@ -43,7 +43,8 @@
     </div>
 
 
-    </div>
+    </div> -->
+
 
 <form action="{{route('personas.store')}}" id="crearPeronsa" class="w-full max-w-[600px] p-4 mx-auto" method="POST">
     @csrf
