@@ -21,6 +21,23 @@ class EmpresaSeeder extends Seeder
         'telefono'=>'NO REFIERE',
 
         ]);
+
+        $extranjero = Contacto::create([
+            'municipio_id'=>Municipio::where('codigo','11007')->first()->id,
+            'telefono'=>'NO REFIERE',
+            'info_adicional'=>json_encode([
+                'redes'=>[
+                    "Google"=>'https://g.co/kgs/gkv1pHU',
+                    "Facebook"=>'https://www.facebook.com/search/top?q=mcdonalds',
+                    "Linkedin"=>'https://www.linkedin.com/company/mcdonalds',
+                    "Whatsapp"=>'https://wa.me/18002446227',
+                ],
+                'email'=>'ronaldmac@mcdonalds.com',
+                'direccion'=>'Diagonal 69 C sur # 78 C 36',
+                'pais'=>'USA',
+            ])
+        ]);
+
         $contacto = Contacto::create([
             'municipio_id'=>Municipio::where('codigo','11007')->first()->id,
             'telefono'=>'3207001403',
@@ -75,6 +92,48 @@ class EmpresaSeeder extends Seeder
             'user_id'=>2,
             'sede_id'=>1,
         ]);
+
+        $coordi =  Persona::create([
+            'primer_nombre'=>'Diana',
+            'segundo_nombre'=>'Carolina',
+            'primer_apellido'=>'Arboleda',
+            'segundo_apellido'=>'Hernandez',
+            'tipo_documento'=>'CC',
+            'numero_documento'=>'123456',
+            'fecha_nacimiento'=>'1989-11-12',
+            'sexo'=>'F',
+            'nacional'=>true,
+            'contacto_id'=>1,
+        ]);
+        $agente =  Persona::create([
+            'primer_nombre'=>'Ronald',
+    
+            'primer_apellido'=>'McDonald',
+           
+            'tipo_documento'=>'CC',
+            'numero_documento'=>'123456789',
+            'fecha_nacimiento'=>'1929-01-11',
+            'sexo'=>'M',
+            'nacional'=>false,
+            'contacto_id'=>$extranjero->id,
+        ]);
+
+        $empleado2 = \App\Models\Empleado::create([
+            'codigo'=>'110010822701',
+            'cargo'=>'contador',
+            'persona_id'=>$agente->id,
+            'user_id'=>3,
+            'sede_id'=>1,
+        ]);
+
+        $empleado3 = \App\Models\Empleado::create([
+            'codigo'=>'110010822701',
+            'cargo'=>'secretaria',
+            'persona_id'=>$coordi->id,
+            'user_id'=>4,
+            'sede_id'=>1,
+        ]);
+
 
     }
 }

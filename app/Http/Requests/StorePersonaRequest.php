@@ -23,7 +23,6 @@ class StorePersonaRequest extends FormRequest
     public function rules(): array
     {
 
-
         return [
             'nombres' => ['required', 'string', 'max:255'],
             'apellidos' => ['required', 'string', 'max:255'],
@@ -47,6 +46,9 @@ class StorePersonaRequest extends FormRequest
             'unique:personas,numero_documento'],
             'fecha_nacimiento' => ['nullable','date','before:tomorrow'],
             'telefono' => ['nullable', 'string', 'size:10'],
+            'email' => ['nullable', 'string', 'email', 'max:255'],
+            'direccion' => ['nullable', 'string', 'max:255'],
+            'ciudad' => ['nullable', 'string', 'max:255'],
         ];
 
     }
