@@ -12,15 +12,15 @@
                 <div class="row-inputs pt-2 w-full flex justify-between gap-2">
                     @csrf
 
-                    <select name="tipo_documento" id="tipo_documento" class="form-select">
+                    <select name="tipo_documento" id="tipo_documento" class="form-select" required>
                         @foreach ($tipos_documento as $valor => $nombre)
                         <option value="{{ $valor }}">{{ $nombre }}</option>
                         @endforeach
                     </select>
 
-                    <x-text-input type="number" placeholder="numero_documento" id="numero_documento" name="numero_documento" class="max-w-40" />
+                    <x-text-input type="number" placeholder="numero_documento" id="numero_documento" name="numero_documento" class="max-w-40" required/>
 
-                    <x-text-input list="paises" placeholder="Nacionalidad" id="pais" name="pais" class="overflow-hidden" />
+                    <x-text-input list="paises" placeholder="Nacionalidad" id="pais" name="pais" class="overflow-hidden" required/>
 
                     <datalist id="paises">
                         <option value="100101">Bogotá</option>
@@ -38,7 +38,7 @@
 
                 </div>
                 <div class="row-inputs pt-2 w-full flex justify-between gap-2">
-                    <x-date-input type="date" placeholder="fecha_nacimiento" id="fecha_nacimiento" name="fecha_nacimiento" />
+                    <x-date-input type="date" placeholder="fecha_nacimiento" id="fecha_nacimiento" name="fecha_nacimiento" required/>
 
                     <x-input-label>Sexo</x-input-label>
                     <x-input-label for="sexo">F</x-input-label><input type="radio" id="sexo" name="sexo" value="F">
@@ -51,12 +51,13 @@
             <div class="w-full min-w-80 bg-purple-50 p-4 rounded-sm shadow-md">
 
                 <div class="row-inputs pt-2 w-full flex justify-between gap-2">
-                    <x-text-input type="number" placeholder="telefono" id="telefono" name="telefono"/>
-                    <x-text-input type="text" placeholder="direccion" id="direccion" name="direccion"/>
-                    <x-text-input type="email" placeholder="example@mail.com" id="correo" name="correo"/>
+                    <x-text-input type="number" placeholder="telefono" id="telefono" name="telefono" class="max-w-60" required/>
+                    <x-text-input type="text" placeholder="direccion" id="direccion" name="direccion" required/>
+                    
                 </div>
                 <div class="row-inputs pt-2 w-full flex justify-between gap-2">
-                    <x-text-input list="ciudades" placeholder="ciudad" id="ciudad" name="ciudad" class="w-96"/>
+                    <x-text-input type="email" placeholder="example@mail.com" id="correo" name="correo" required/>
+                    <x-text-input list="ciudades" placeholder="ciudad" id="ciudad" name="ciudad" class="w-96" required/>
                     <datalist id="ciudades">
                         <option value="100101">Bogotá</option>
                         @foreach($ciudades as $ciudad)
@@ -65,11 +66,12 @@
                     </datalist>
 
                     <!-- La EPS va a un campo de la tabla contacto -->
-                    <x-text-input type="text" placeholder="EPS" id="EPS" name="EPS"/> <br><br>
+                    <x-text-input type="text" placeholder="EPS" id="EPS" name="EPS" required/>
                 </div>
-
-                <x-primary-button>Guardar</x-primary-button>
-                <x-secondary-button>Cancelar</x-secondary-button>
+                <div class="row-inputs py-8 w-full flex justify-center gap-2">
+                    <x-primary-button>Guardar</x-primary-button>
+                    <x-secondary-button>Cancelar</x-secondary-button>
+                </div>
             </div>
 
         
