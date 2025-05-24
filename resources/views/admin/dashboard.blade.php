@@ -50,11 +50,9 @@
     @csrf
     <div class="grid grid-cols-2 justify-around items-center gap-2">
         <label for="tipo_documento">Tipo de Documento</label>
-        <select name="tipo_documento" id="tipo_documento" class="form-select">
-            @foreach ($tipos_documento as $valor => $nombre)
-                <option value="{{ $valor }}">{{ $nombre }}</option>
-            @endforeach
-        </select>
+        <x-select-input name="tipo_documento" id="tipo_documento" class="form-select" :options="$tipos_documento" required>
+
+        </x-select-input>
         <div class="flex justify-around items-center col-span-2 gap-2">
             <label for="numero_documento" class="flex items-end">Numero de Documento</label>
             <input type="text" name="numero_documento" id="numero_documento" class="border border-gray-300 p-2 rounded" value="{{ old('numero_documento') }}" required>
