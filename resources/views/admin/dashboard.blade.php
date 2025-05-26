@@ -59,7 +59,6 @@
             @error('numero_documento')
                 <p class="text-red-500 text-xs italic col-span-2">{{ $message }}</p>
             @enderror
-            <button id="buscarPersona" class="flex gap-2 bg-blue-500 text-white p-2 rounded">Buscar <span class="hidden sm:flex">Persona</span> </button>
             <select name="datos_adicionales[pais]" id="pais" class="hidden">
                 <option value="COL">Colombia</option>
             </select>
@@ -99,7 +98,7 @@
              </div>
         <select name="municipio" id="municipio" class="hidden" >
             @foreach ($municipios as $municipio)
-                <option value="{{ $municipio->codigo }}" >{{ strtoupper($municipio->municipio) }}</option>
+                <option value="{{ $municipio->codigo }}" class="capitalize" >{{ strtoupper($municipio->municipio) }} - {{strtoupper($municipio->departamento) }}</option>
             @endforeach
         </select>
         </div>
