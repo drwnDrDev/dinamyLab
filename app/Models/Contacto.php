@@ -36,8 +36,11 @@ class Contacto extends Model
         });
 
     }
-    protected $casts = [
-        'info_adicional' => 'array',
-    ];
+    public function infoAdicional($dato)
+    {
+        $info_adicional = json_decode($this->info_adicional, true);
+        return $info_adicional[$dato] ?? null;
+    }
+
     
 }
