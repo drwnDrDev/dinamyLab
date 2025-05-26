@@ -46,15 +46,10 @@ tipoDocumento.addEventListener('change', function (e) {
 
 pais.addEventListener('change', function (e) {
     const paisSeleccionado = pais;
-
-
     if (paisSeleccionado !== 'COL') {
       numeroDocumento.value = paisSeleccionado.value;
     }
 })
-
-
-
         const typeableInput = document.getElementById('municipioBusqueda');
         const optionsList = document.getElementById('opciones');
         const hiddenSelect = document.getElementById('municipio');
@@ -113,37 +108,3 @@ pais.addEventListener('change', function (e) {
             filterOptions(typeableInput.value); // Mostrar las opciones filtradas o todas si el input está vacío
         });
 
-        // Inicializar la lista (opcional, si quieres mostrar algo al cargar)
-        // displayOptions(allOptions);
-
-
-// let municipios = axios.get('/api/municipios')
-//     .then(response => {
-//         if (response.data) {
-//             municipios = response.data;
-//         } else {
-//             alert("No se encontró el municipio");
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error fetching municipios:', error);
-//     });
-
-
-// // Función para mostrar resultados (puedes adaptarla a tu HTML)
-// function mostrarResultados(resultados) {
-//     // Ejemplo: mostrar en consola
-//     console.log('Resultados:', resultados);
-// }
-
-// busqudaMunicipio.addEventListener('keyup', function (e) {
-//     const busqueda = busqudaMunicipio.value.trim().toLowerCase();
-//     if (busqueda.length === 0) {
-//         mostrarResultados([]);
-//         return;
-//     }
-//     const resultados = municipios.filter(municipio =>
-//         municipio.nombre.toLowerCase().includes(busqueda)
-//     );
-//     mostrarResultados(resultados);
-// });

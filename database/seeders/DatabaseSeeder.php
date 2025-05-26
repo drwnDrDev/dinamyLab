@@ -65,6 +65,7 @@ class DatabaseSeeder extends Seeder
         $empleado->assignRole('agente');
         $admin->assignRole('admin');
         $prestador->assignRole('prestador');
+        $coordinador->assignRole('contable');
 
         $this->call([
             MunicipioSeeder::class,
