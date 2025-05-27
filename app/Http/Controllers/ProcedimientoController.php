@@ -12,7 +12,9 @@ class ProcedimientoController extends Controller
      */
     public function index()
     {
-        //
+        $procedimientos= Procedimiento::with(['examenes','pacientes','facturas'])
+            ->orderBy('nombre')
+            ->get();
     }
 
     /**
@@ -20,7 +22,11 @@ class ProcedimientoController extends Controller
      */
     public function create()
     {
-        //
+        $ordenes =Orden::with(['paciente'])
+            ->where('estado', '!=', 'CANCELADA')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return view('procedimientos.resultados', compact('ordenes'));
     }
 
     /**

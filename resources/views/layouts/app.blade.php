@@ -17,6 +17,17 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-50 grid grid-rows-[auto_1fr] grid-cols-[250px_1fr] h-screen">
             @include('layouts.header')
+         @if(session('success'))
+            <div class="text-xs bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-100 t border border-red-400 text-xs text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
             @include('layouts.navigation')
 
             <!-- Page Content -->
