@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Orden;
+use App\Models\Municipio;
+use App\Models\Examen;
+use App\TipoDocumento;
 use Illuminate\Http\Request;
 
 class OrdenController extends Controller
