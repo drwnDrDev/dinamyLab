@@ -1,4 +1,4 @@
-const examenes= document.getElementById('examenes');
+
 const buscarPersona = document.getElementById('buscarPersona');
 const tipoDocumento = document.getElementById('tipo_documento');
 const numeroDocumento = document.getElementById('numero_documento');
@@ -54,7 +54,7 @@ const setPaciente = (data) => {
     paciente.telefono = data.telefono;
 }
 
-document.getElementById('crearPeronsa').addEventListener('submit', function (e) {
+document.getElementById('crearPersona').addEventListener('submit', function (e) {
     e.preventDefault();
 
     const form = e.target;
@@ -128,62 +128,7 @@ numeroDocumento.addEventListener('blur', function (e) {
 );
 
 
-axios.get("/api/examenes")
-    .then(response => {
-        response.data.data.examenes.map(examen => {
-            const label = document.createElement('label');
-            label.classList.add('form-check-label');
-            label.setAttribute('for', examen.id);
-            label.textContent = examen.nombre;
-            examenes.appendChild(label);
-            const option = document.createElement('input');
-            option.classList.add('form-check-input');
-            option.type = 'checkbox';
-            option.name = 'examenes[]';
-            option.id = examen.id;
-            option.value = examen.id;
-            option.textContent = examen.nombre;
-            examenes.appendChild(option);
-        }
-        );
-    })
-    .catch(error => {
-        console.error("Error fetching examenes:", error);
-    });
-tipoDocumento.addEventListener('change', function (e) {
-    const tipo = tipoDocumento.value;
-    if (tipo === 'CC'|| tipo === 'RC' || tipo === 'TI' || tipo === 'CE') {
 
-        numeroDocumento.setAttribute('maxlength', '10');
-        numeroDocumento.setAttribute('placeholder', 'Número de documento');
-        pais.style.display = 'none';
-
-    }  else if (tipo === 'PA' || tipo === 'PP' || tipo === 'PE' || tipo === 'PS' || tipo === 'PT' || tipo === 'AS'|| tipo ==="MS") {
-        numeroDocumento.setAttribute('maxlength', '16');
-        numeroDocumento.setAttribute('placeholder', 'Identificación temporal');
-        pais.style.display = 'flex';
-        pais.addEventListener('focus', function (e) {
-            axios.get('/api/paises')
-                .then(response => {
-                    if (response.data) {
-                        response.data.data.paises.forEach(p => {
-                            const option = document.createElement('option');
-                            option.value = p.codigo_iso;
-                            option.textContent = p.nombre;
-                            option.className= ['text-gray-900', 'dark:text-gray-100'];
-                            pais.appendChild(option);
-                        });
-                    } else {
-                        alert("No se encontró el país");
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching countries:', error);
-                });
-        });
-
-    }
-});
       const typeableInput = document.getElementById('municipioBusqueda');
         const optionsList = document.getElementById('opciones');
         const hiddenSelect = document.getElementById('municipio');
@@ -192,6 +137,7 @@ tipoDocumento.addEventListener('change', function (e) {
             text: option.text
         }));
         // Inicializar la lista de opciones
+        console.log(allOptions)
 
 
         function filterOptions(query) {
@@ -216,9 +162,9 @@ tipoDocumento.addEventListener('change', function (e) {
                     optionsList.appendChild(optionElement);
                 });
                  optionsList.classList.remove('hidden');
-                optionsList.classList.add('block');
+                optionsList.classList.add('flex');
             } else {
-                optionsList.classList.remove('block');
+                optionsList.classList.remove('flex');
 
             }
         }
@@ -232,7 +178,7 @@ tipoDocumento.addEventListener('change', function (e) {
         typeableInput.addEventListener('blur', () => {
             // Pequeño retraso para permitir que se dispare el clic de la opción
             setTimeout(() => {
-                optionsList.classList.remove('block');
+                optionsList.classList.remove('flex');
                 optionsList.classList.add('hidden');
             }, 200);
         });

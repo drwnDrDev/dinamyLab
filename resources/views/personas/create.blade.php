@@ -1,4 +1,5 @@
 <x-app-layout>
+    @vite('resources/js/buscarPersona.js')
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Pacientes
@@ -6,7 +7,7 @@
     </x-slot>
     <x-canva class="max-w-5xl">
 
-        <form action="{{route('personas.store')}}" method="post">
+        <form action="{{route('personas.store')}}" method="post" id="crearPersona">
 
             <div class="w-full min-w-80 bg-white p-4 border border-gray-300 rounded-sm shadow-md my-4">
                 <h2 class="font-bold mb-4 text-xl text-secondary">Datos personales</h2>
@@ -26,14 +27,9 @@
 
                     <div class="w-full pb-2 col-span-2">
                         <x-input-label for="pais">Nacionalidad</x-input-label>
-                        <x-text-input list="paises" id="pais" name="pais" class="overflow-hidden" required />
+                        <x-select-input id="pais" name="pais" class="hidden" :options="['COL'=>'Colombia']" :required="false" />
                     </div>
-                    <datalist id="paises">
-                        <option value="100101">Bogotá</option>
-                        @foreach($paises as $pais)
-                        <option value="{{ $pais->codigo_iso }}">{{$pais->nombre}}</option>
-                        @endforeach
-                    </datalist>
+
                 </div>
 
                 <div class="row-inputs pt-2 w-full md:flex justify-between gap-2">
@@ -80,18 +76,19 @@
                 </div>
                 <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2">
 
-                    <div class="w-full pb-2">
+                    <div class="w-full pb-2 relative">
                         <x-input-label for="ciudad">Ciudad</x-input-label>
-                        <x-text-input list="ciudades" id="ciudad" name="ciudad" class="w-96" required />
-                        <datalist id="ciudades">
-                            <option value="100101">Bogotá</option>
+                        <x-text-input id="municipioBusqueda" name="municipio" required />
+                        <div class="w-full absolute flex-col-reverse bottom-10 bg-white border border-primary max-h-60 overflow-y-auto 
+                        z-10 hidden rounded-md shadow-lg" id="opciones"></div>
+                        <select name="minicipio" id="municipio" class="hidden">
                             @foreach($ciudades as $ciudad)
-                            <option value="{{ $ciudad->codigo }}">{{$ciudad->departamento}}, {{$ciudad->municipio}}</option>
+                            <option value="{{ $ciudad->codigo }}">{{$ciudad->municipio}} - {{$ciudad->departamento}}</option>
                             @endforeach
-                        </datalist>
+                        </select>
                     </div>
-                    <!-- La EPS va a un campo de la tabla contacto -->
 
+                    <!-- La EPS va a un campo de la tabla contacto -->
                     <div class="w-full pb-2 md:col-span-2">
                         <x-input-label for="direccion">Dirección</x-input-label>
                         <x-text-input type="text" id="direccion" name="direccion" required />

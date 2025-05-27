@@ -27,7 +27,7 @@ class PersonaController extends Controller
     public function create()
     {
         $paises=Pais::all();
-        $ciudades = Municipio::all();
+        $ciudades = Municipio::all()->sortByDesc('nivel');
         $tipos_documento = collect(TipoDocumento::cases())
             ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
         return view('personas.create', compact('tipos_documento', 'ciudades','paises'));
