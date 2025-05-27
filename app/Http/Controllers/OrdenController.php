@@ -12,7 +12,8 @@ class OrdenController extends Controller
      */
     public function index()
     {
-        //
+        $ordenes = Orden::with(['paciente', 'acompaniante'])->groupBy('estado')->get();
+        return view('ordenes.index', compact('ordenes'));
     }
 
     /**
@@ -20,7 +21,11 @@ class OrdenController extends Controller
      */
     public function create()
     {
-        //
+        $ciudades = Municipio::all();
+        $tipos_documento = collect(TipoDocumento::cases())
+            ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
+        $examenes = Examen::all();
+        return view('ordenes.create', compact('tipos_documento', 'ciudades', 'examenes'));
     }
 
     /**
@@ -44,7 +49,7 @@ class OrdenController extends Controller
      */
     public function edit(Orden $orden)
     {
-        //
+        return view('ordenes.edit', compact('orden'));
     }
 
     /**
@@ -60,6 +65,10 @@ class OrdenController extends Controller
      */
     public function destroy(Orden $orden)
     {
-        //
+        can('eliminar_orden_medica', function () use ($orden) {
+            $orden->delete();
+            return redirect()->route('ordenes')->with('success', 'Orden médica eliminada correctamente');
+        });
+        return redirect()->route('ordenes')->with('error', 'No tienes permiso para eliminar esta orden médica');
     }
 }
