@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Orden;
 use App\Models\Municipio;
 use App\Models\Examen;
+use App\Models\Eps;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
 
@@ -25,10 +26,11 @@ class OrdenController extends Controller
     public function create()
     {
         $ciudades = Municipio::all();
+        $eps =Eps::all()->sortBy('nombre');
         $tipos_documento = collect(TipoDocumento::cases())
             ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
         $examenes = Examen::all();
-        return view('ordenes.create', compact('tipos_documento', 'ciudades', 'examenes'));
+        return view('ordenes.create', compact('tipos_documento', 'ciudades', 'examenes', 'eps'));
     }
 
     /**

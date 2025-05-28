@@ -11,11 +11,11 @@
             @csrf
             <div class="w-full min-w-80 bg-white p-4 border border-gray-300 rounded-sm shadow-md my-4">
                 <h2 class="font-bold mb-4 text-xl text-secondary">Datos personales</h2>
-                     <span>
-                        <label for="perfil">Perfil</label>
-                        <x-select-input name="perfil" id="perfil" class="form-select uppercase"
-                         :options="['1'=>'paciente','2'=>'acompañante','3'=>'pagador']" required />
-                    </span>
+                <span>
+                    <label for="perfil">Perfil</label>
+                    <x-select-input name="perfil" id="perfil" class="form-select uppercase"
+                        :options="['1'=>'paciente','2'=>'acompañante','3'=>'pagador']" required />
+                </span>
                 <div class="row-inputs w-full md:grid lg:grid-cols-4 md:grid-cols-2 gap-2">
 
                     <div class="w-full pb-2 lg:max-w-60">
@@ -52,12 +52,10 @@
                     </div>
                     <div class="w-full pb-2 flex gap-2 items-center">
                         <span>Sexo</span>
-                        <x-input-label for="sexo" class="font-bold text-2xl">F</x-input-label>
-
-                        <input type="radio" id="sexo" name="sexo" value="F">
-                        <x-input-label for="sexo" class="font-bold text-2xl">M</x-input-label>
-
-                        <input type="radio" id="sexo" name="sexo" value="M">
+                        <x-input-label for="sexo_femenino" class="font-bold text-2xl">F</x-input-label>
+                        <input type="radio" id="sexo_femenino" name="sexo" value="F">
+                        <x-input-label for="sexo_masculino" class="font-bold text-2xl">M</x-input-label>
+                        <input type="radio" id="sexo_masculino" name="sexo" value="M">
                     </div>
                 </div>
 
@@ -70,15 +68,15 @@
                 <div class="row-inputs pt-2 w-full md:flex justify-between gap-2">
                     <div class="w-full pb-2">
                         <x-input-label for="telefono">Teléfono</x-input-label>
-                        <x-text-input type="number" id="telefono" name="telefono"  />
+                        <x-text-input type="number" id="telefono" name="telefono" />
                     </div>
                     <div class="w-full pb-2">
                         <x-input-label for="correo">Correo</x-input-label>
-                        <x-text-input type="email" placeholder="example@mail.com" id="correo" name="correo"  />
+                        <x-text-input type="email" placeholder="example@mail.com" id="correo" name="correo" />
                     </div>
                     <div class="w-full pb-2">
                         <x-input-label for="EPS">EPS</x-input-label>
-                        <x-text-input list="lista_eps" name="eps"  />
+                        <x-text-input list="lista_eps" name="eps" />
                         <datalist id="lista_eps">
                             @foreach ($eps as $prestador)
                             <option value="{{ $prestador->nombre }}"></option>
@@ -86,6 +84,7 @@
                         </datalist>
                     </div>
                 </div>
+                
                 <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2">
 
                     <div class="w-full pb-2 relative">
