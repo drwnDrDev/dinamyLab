@@ -1,23 +1,15 @@
 @props([
-'type' => 'paciente', // Valores posibles: paciente, acompañante, pagador
+'perfil' => 'paciente', // Valores posibles: paciente, acompañante, pagador
 'eps' => [], // Lista de EPS
 'ciudades' => [], // Lista de ciudades
 'tipos_documento' => [] // Lista de tipos de documento
 ])
 
 
-<form action="{{ route('personas.store') }}" method="post" id="crearPersona">
+<form action="{{ route('personas.store') }}" method="post" id="crear{{$perfil}}">
     @csrf
     <div class="w-full min-w-80 bg-white p-4 border border-gray-300 rounded-sm shadow-md my-4">
-        <h2 class="font-bold mb-4 text-xl text-secondary">Datos personales</h2>
-
-        <!-- Perfil -->
-        <span>
-            <label for="perfil">Perfil</label>
-            <x-select-input name="perfil" id="perfil" class="form-select uppercase"
-                :options="['paciente'=>'Paciente','acompañante'=>'Acompañante','pagador'=>'Pagador']" required />
-        </span>
-
+        <h2 class="font-bold mb-4 text-xl text-secondary">Datos {{$perfil}}</h2>
         <div class="row-inputs w-full md:grid lg:grid-cols-4 md:grid-cols-2 gap-2">
             <div class="w-full pb-2 lg:max-w-60">
                 <x-input-label for="numero_documento">Número de documento</x-input-label>
@@ -45,7 +37,7 @@
         </div>
 
         <!-- Información opcional (Solo para 'paciente') -->
-        @if($type === 'paciente')
+        @if($perfil === 'paciente')
 
         <div class="row-inputs pt-2 w-full md:grid md:grid-cols-2 gap-2">
             <div class="w-full pb-2 flex gap-2 items-center">
@@ -62,7 +54,6 @@
         </div>
 
         <hr class="my-8 border-1 border-gray-200">
-        <h2 class="font-bold mb-4 text-xl text-secondary">Datos de contacto</h2>
         <div class="row-inputs pt-2 w-full md:flex justify-between gap-2">
             <div class="w-full pb-2">
                 <x-input-label for="telefono">Teléfono</x-input-label>
@@ -104,10 +95,10 @@
         </div>
 
      @endif
-
+{{-- 
         <div class="row-inputs py-8 w-full flex justify-center gap-2">
             <x-primary-button>Guardar</x-primary-button>
             <x-secondary-button>Cancelar</x-secondary-button>
-        </div>
+        </div> --}}
     </div>
 </form>
