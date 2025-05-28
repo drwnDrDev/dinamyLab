@@ -100,9 +100,9 @@ numeroDocumento.addEventListener('blur', function (e) {
         })
         .catch(error => {
             console.error("Error fetching persona:", error);
-        });
+        }).then(() => {setTipoGuardado()});
 }
-setTipoGuardado();
+;
 
 }
 );
