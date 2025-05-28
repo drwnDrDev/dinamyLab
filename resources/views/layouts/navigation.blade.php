@@ -27,19 +27,22 @@
             {{ __('Cash register') }}
         </x-nav-link>
 
-        <x-nav-link :href="route('facturas')" :active="request()->routeIs('facturas*')">
-            {{ __('Billing') }}
-        </x-nav-link>
+        @can('ver_facturas')
+            <x-nav-link :href="route('facturas')" :active="request()->routeIs('facturas*')">
+                {{ __('Invoices') }}
+            </x-nav-link>
+            
+        @endcan
+
 
         <x-nav-link :href="route('personas')" :active="request()->routeIs('reportes*')">      
             {{ __('Reportes') }}
         </x-nav-link>
    
-        @can('administracion')
+        @can('ver_empresa')
             <x-nav-link :href="route('personas')" :active="request()->routeIs('administracion*')">    
                 {{ __('Adminstration') }}
             </x-nav-link>
-
          @endcan
 
                 
