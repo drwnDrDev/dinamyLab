@@ -96,37 +96,6 @@ document.getElementById('crearPeronsa').addEventListener('submit', function (e) 
 });
 
 
-numeroDocumento.addEventListener('blur', function (e) {
-    e.preventDefault();
-    const baseUrl = '/api/personas/buscar/';
-    const numero_documento = document.getElementById('numero_documento').value;
-    if (numero_documento.length>3) {
-    const fullUrl = baseUrl + numero_documento;
-
-    axios.get(fullUrl)
-        .then(response => {
-            if (response.data?.persona?.nombre) {
-                setPersona(response.data.persona);
-                document.getElementById('nombres').value = persona.nombre;
-                document.getElementById('apellidos').value = persona.apellido;
-                document.getElementById('numero_documento').value = persona.numero_documento;
-                document.getElementById('fecha_nacimiento').value = persona.fecha_nacimiento;
-                document.getElementById('direccion').value = persona.direccion;
-                document.getElementById('telefono').value = persona.telefono;
-                document.getElementById('email').value = persona.email;
-                document.getElementById('sexo').value = persona.sexo;
-                document.getElementById('tipo_documento').value = persona.tipo_documento;
-
-            } else {
-                alert("No se encontró la persona");
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching persona:", error);
-        });
-}}
-);
-
 
 // axios.get("/api/examenes")
 //     .then(response => {
