@@ -8,12 +8,15 @@
     <x-canva class="max-w-5xl">
 
         <form action="{{route('personas.store')}}" method="post" id="crearPersona">
-
+            @csrf
             <div class="w-full min-w-80 bg-white p-4 border border-gray-300 rounded-sm shadow-md my-4">
                 <h2 class="font-bold mb-4 text-xl text-secondary">Datos personales</h2>
+                     <span>
+                        <label for="perfil">Perfil</label>
+                        <x-select-input name="perfil" id="perfil" class="form-select uppercase"
+                         :options="['1'=>'paciente','2'=>'acompañante','3'=>'pagador']" required />
+                    </span>
                 <div class="row-inputs w-full md:grid lg:grid-cols-4 md:grid-cols-2 gap-2">
-
-                    @csrf
 
                     <div class="w-full pb-2 lg:max-w-60">
                         <x-input-label for="numero_documento">Número de documento</x-input-label>
@@ -45,12 +48,16 @@
                 <div class="row-inputs pt-2 w-full md:grid md:grid-cols-2 justify-center gap-2">
                     <div class="w-full pb-2 flex gap-2 items-center">
                         <x-input-label for="fecha_nacimiento">Fecha de Nacimiento</x-input-label>
-                        <x-date-input type="date" placeholder="fecha_nacimiento" id="fecha_nacimiento" name="fecha_nacimiento" required />
+                        <x-date-input type="date" placeholder="fecha_nacimiento" id="fecha_nacimiento" name="fecha_nacimiento" :required="false" />
                     </div>
                     <div class="w-full pb-2 flex gap-2 items-center">
                         <span>Sexo</span>
-                        <x-input-label for="sexo" class="font-bold text-2xl">F</x-input-label><input type="radio" id="sexo" name="sexo" value="F">
-                        <x-input-label for="sexo" class="font-bold text-2xl">M</x-input-label><input type="radio" id="sexo" name="sexo" value="M">
+                        <x-input-label for="sexo" class="font-bold text-2xl">F</x-input-label>
+
+                        <input type="radio" id="sexo" name="sexo" value="F">
+                        <x-input-label for="sexo" class="font-bold text-2xl">M</x-input-label>
+
+                        <input type="radio" id="sexo" name="sexo" value="M">
                     </div>
                 </div>
 
@@ -63,25 +70,30 @@
                 <div class="row-inputs pt-2 w-full md:flex justify-between gap-2">
                     <div class="w-full pb-2">
                         <x-input-label for="telefono">Teléfono</x-input-label>
-                        <x-text-input type="number" id="telefono" name="telefono" required />
+                        <x-text-input type="number" id="telefono" name="telefono"  />
                     </div>
                     <div class="w-full pb-2">
                         <x-input-label for="correo">Correo</x-input-label>
-                        <x-text-input type="email" placeholder="example@mail.com" id="correo" name="correo" required />
+                        <x-text-input type="email" placeholder="example@mail.com" id="correo" name="correo"  />
                     </div>
                     <div class="w-full pb-2">
                         <x-input-label for="EPS">EPS</x-input-label>
-                        <x-text-input type="text" id="EPS" name="EPS" required />
+                        <x-text-input list="lista_eps" name="eps"  />
+                        <datalist id="lista_eps">
+                            @foreach ($eps as $prestador)
+                            <option value="{{ $prestador->nombre }}"></option>
+                            @endforeach
+                        </datalist>
                     </div>
                 </div>
                 <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2">
 
                     <div class="w-full pb-2 relative">
                         <x-input-label for="ciudad">Ciudad</x-input-label>
-                        <x-text-input id="municipioBusqueda" name="municipio" required />
-                        <div class="w-full absolute flex-col-reverse bottom-10 bg-white border border-primary max-h-60 overflow-y-auto 
+                        <x-text-input id="municipioBusqueda" />
+                        <div class="w-full absolute flex-col-reverse bottom-10 bg-white border border-primary max-h-60 overflow-y-auto
                         z-10 hidden rounded-md shadow-lg" id="opciones"></div>
-                        <select name="minicipio" id="municipio" class="hidden">
+                        <select name="municipio" id="municipio" class="hidden">
                             @foreach($ciudades as $ciudad)
                             <option value="{{ $ciudad->codigo }}">{{$ciudad->municipio}} - {{$ciudad->departamento}}</option>
                             @endforeach
@@ -91,12 +103,12 @@
                     <!-- La EPS va a un campo de la tabla contacto -->
                     <div class="w-full pb-2 md:col-span-2">
                         <x-input-label for="direccion">Dirección</x-input-label>
-                        <x-text-input type="text" id="direccion" name="direccion" required />
+                        <x-text-input type="text" id="direccion" name="direccion" :required="false" />
                     </div>
 
                 </div>
                 <div class="row-inputs py-8 w-full flex justify-center gap-2">
-                    <x-primary-button>Guardar</x-primary-button>
+                    <x-primary-button id="tipoGuardado">Guardar</x-primary-button>
                     <x-secondary-button>Cancelar</x-secondary-button>
                 </div>
             </div>
