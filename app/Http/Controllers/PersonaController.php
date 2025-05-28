@@ -9,6 +9,7 @@ use App\Models\Municipio;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePersonaRequest;
+use App\Models\Eps;
 
 class PersonaController extends Controller
 {
@@ -28,9 +29,10 @@ class PersonaController extends Controller
     {
         $paises=Pais::all();
         $ciudades = Municipio::all()->sortByDesc('nivel');
+        $eps =Eps::all()->sortBy('nombre');
         $tipos_documento = collect(TipoDocumento::cases())
             ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
-        return view('personas.create', compact('tipos_documento', 'ciudades','paises'));
+        return view('personas.create', compact('tipos_documento', 'ciudades','paises', 'eps'));
     }
 
     /**

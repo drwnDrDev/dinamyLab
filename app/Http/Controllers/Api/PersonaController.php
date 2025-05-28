@@ -49,6 +49,7 @@ class PersonaController extends Controller
     public function store(StorePersonaRequest $request)
     {
 
+
         $request->validated();
 
         // Contacto
@@ -56,7 +57,7 @@ class PersonaController extends Controller
         $municipio_id = $request->input('municipio_id', 155);
         // Filtrar solo los datos cuyo valor sea diferente de null
         $info_adicional = array_filter(
-            $request->datos_adicionales ?? [],
+            $request->only('email','eps','direccion','pais','correo') ?? [],
             function ($value) {
             return !is_null($value);
             }
@@ -129,7 +130,7 @@ class PersonaController extends Controller
                 "telefono" => $persona->contacto->telefono,
                 "direccion" => $persona->contacto->infoAdicional('direccion'),
                 "email" => $persona->contacto->infoAdicional('email'),
-                "pais" => $persona->contacto->infoAdicional('pais'),   
+                "pais" => $persona->contacto->infoAdicional('pais'),
                 "ciudad" => $persona->contacto->municipio->municipio . ', ' . $persona->contacto->municipio->departamento,
 
             ]
