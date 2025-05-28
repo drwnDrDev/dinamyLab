@@ -8,6 +8,7 @@ use App\Models\Examen;
 use App\Models\Eps;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrdenController extends Controller
 {
@@ -25,7 +26,7 @@ class OrdenController extends Controller
      */
     public function create()
     {
-        $ciudades = Municipio::all();
+        $ciudades = Municipio::orderBy('nivel','desc')->get();
         $eps =Eps::all()->sortBy('nombre');
         $tipos_documento = collect(TipoDocumento::cases())
             ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
@@ -70,10 +71,10 @@ class OrdenController extends Controller
      */
     public function destroy(Orden $orden)
     {
-        can('eliminar_orden_medica', function () use ($orden) {
+        if (Auth::user()->can('eliminar_orden_medica')) {
             $orden->delete();
             return redirect()->route('ordenes')->with('success', 'Orden médica eliminada correctamente');
-        });
+        }
         return redirect()->route('ordenes')->with('error', 'No tienes permiso para eliminar esta orden médica');
     }
 }
