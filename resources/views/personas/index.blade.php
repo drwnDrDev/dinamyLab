@@ -1,8 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Pacientes') }}
+            {{ __('Patients') }}
         </h2>
+        <a class="bg-blue-500 text-white mt-4 hover:bg-slate-700 px-4 py-2 rounded" href="{{route('personas.create')}}">Nuevo paciente</a>
     </x-slot>
 
     <form  class="mb-4 flex items-center gap-2">
@@ -50,5 +51,5 @@
                 @endforeach --}}
             </div>
 
-@vite('resources/js/busquedaAvanzada.js')
+
 </x-app-layout>
