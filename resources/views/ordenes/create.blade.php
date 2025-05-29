@@ -18,19 +18,28 @@
         <form  method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
             @csrf
     <h2 class="font-bold mb-4 text-xl text-secondary">Datos de la Orden</h2>
-
-        <div x-data="{ open: false }">
-            <label for="mostrarAcompaniante">Pago</label>
-            <input type="checkbox" id="mostrarAcompaniante" @change="open = !$event.target.checked" checked>
-
-            <div x-show="open" x-transition>
-                <x-input-label for="abono">Abono</x-input-label>
-                <x-text-input type="number" id="abono" name="abono" value="0" class="form-input w-32"/>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="w-full">
+                <x-input-label for="numero_orden">Número de Orden</x-input-label>
+                <x-text-input type="text" id="numero_orden" name="numero_orden" class="form-input w-32" readonly />
+            </div>
+            <div class="w-full">
+               
+                <x-input-label for="fecha_orden">Fecha de la Orden</x-input-label>
+                <x-date-input type="date" id="fecha_orden" name="fecha_orden"  class="form-input w-32"/>
+            </div>
+            <div x-data="{ open: false }">
+                <label for="mostrarAcompaniante">Pago</label>
+                <input type="checkbox" id="mostrarAcompaniante" @change="open = !$event.target.checked" checked>
+                <div x-show="open" x-transition>
+                    <x-input-label for="abono">Abono</x-input-label>
+                    <x-text-input type="number" id="abono" name="abono" value="0" class="form-input w-32"/>
+                </div>
             </div>
         </div>
         <section class="section_examenes bg-white p-4" x-data="{ examenes: [] }">	
             <h2 class="font-bold mb-4 text-xl text-secondary">Exámenes</h2>
-           
+            
                 @foreach($examenes as $examen)
                     <div class="examen-item grid grid-cols-4 items-center gap-4 p-2 border-b border-gray-200">
                         <input type="checkbox" name="examenes[{{ $examen->id }}]" @change="examenes.push({{ $examen->id }})" class="form-checkbox">
@@ -41,6 +50,8 @@
                 @endforeach
                <input type="text" name="examenes_seleccionados" x-model="examenes" class="hidden">
                <input type="hidden" name="paciente_id" id="paciente_id" >
+               <input type="hidden" name="paciente_id" id="paciente_id" >
+
             <div class="w-full bg-white p-4 border border-gray-300 rounded-sm shadow-md my-4" x-data="{ open: false }">
             <label for="mostrarObservaciones">Observaciones</label>
             <input type="checkbox" id="mostrarObservaciones" @change="open = $event.target.checked">
