@@ -47,6 +47,7 @@ document.getElementById('crearPaciente').addEventListener('submit', function (e)
         }
     })
     .then(response => {
+        console.log('Respuesta del servidor:', response);
         usuario.id= response.data.data.persona.id;
         asignarPaciente(usuario);
 
@@ -84,7 +85,7 @@ numeroDocumento.addEventListener('blur', function (e) {
     const fullUrl = baseUrl + numero_documento;
     axios.get(fullUrl)
         .then(response => {
-            if (response.data?.persona?.nombre) {
+            if (response.data && response.data.persona) {
 
                 const persona =response.data.persona;
                 usuario.id = persona.id;
@@ -108,7 +109,7 @@ numeroDocumento.addEventListener('blur', function (e) {
                 document.getElementById('eps').value = persona.eps || '';
                 asignarPaciente(persona);
             } else {
-                alert("No se encontró la persona");
+                setTipoGuardado();
             }
         })
         .catch(error => {
