@@ -17,6 +17,8 @@ const pais = document.getElementById('pais');
 //     }
 // })
 
+
+
 const usuario = {
     id: null
 }
@@ -47,9 +49,10 @@ document.getElementById('crearPaciente').addEventListener('submit', function (e)
         }
     })
     .then(response => {
-        console.log('Respuesta del servidor:', response);
+
         usuario.id= response.data.data.persona.id;
         asignarPaciente(usuario);
+        console.log(usuario);
 
     })
     .catch(error => {
