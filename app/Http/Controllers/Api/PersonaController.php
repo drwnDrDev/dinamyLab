@@ -49,7 +49,6 @@ class PersonaController extends Controller
     public function store(StorePersonaRequest $request)
     {
 
-
         $request->validated();
 
         // Contacto
@@ -108,12 +107,8 @@ class PersonaController extends Controller
 
         $persona = Persona::where('numero_documento', $numero_documento)->first();
 
-
         if (!$persona) {
-            return response()->json([
-                'message' => 'Persona no encontrada',
-                'data' => null
-            ], 404);
+            return response()->json([], 204 );
         }
 
         return response()->json([
@@ -124,7 +119,7 @@ class PersonaController extends Controller
                 "apellido" => implode(' ',[$persona->primer_apellido,$persona->segundo_apellido?? '']),
                 "tipo_documento" => $persona->tipo_documento,
                 "numero_documento" => $persona->numero_documento,
-                "fecha_nacimiento" => $persona->fecha_nacimiento->format('Y-m-d'),
+                "fecha_nacimiento" => $persona->fecha_nacimiento? $persona->fecha_nacimiento->format('Y-m-d') : null,
                 "sexo" => $persona->sexo,
                 "nacional" => $persona->nacional,
                 "telefono" => $persona->contacto->telefono,
