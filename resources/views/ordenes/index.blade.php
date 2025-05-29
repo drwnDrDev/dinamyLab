@@ -4,24 +4,26 @@
            {{ __('Medical order') }}
         </h2>
     </x-slot>
-    <x-canva>        
+    <x-canva>
         <div class="flex justify-between items-center mb-4">
                 <a href="{{ route('ordenes.create') }}" class="p-4 bg-slate-300 text-2xl rounded-md hover:bg-blue-300">Nueva orden</a>
         </div>
 
         <div class="grid grid-cols-5">
-            <p >Orden</p><p class="col-span-2">progreso</p><p class="col-span-2">fecha estimada de entrega</p>
+            <p >Orden</p><p class="col-span-2">PASAR RESULTAODS</p><p class="col-span-2">fecha estimada de entrega</p>
         </div>
-        <a href=""  class="grid grid-cols-5">
-            <p class="text-primary">#12345</p>
-            <p class="col-span-2">
+        @foreach ($ordenes as $orden)
+        <div class="grid grid-cols-5 p-2">
+            <p class="text-primary">#{{$orden->numero}}</p>
+            <div class="col-span-2 grid">
+                @foreach ($orden->examenes as $item)
+                <a href="{{route('resultados.create',[$orden,$item->id])}}"  class=" hover:bg-gray-100 border-b border-gray-200" >  {{$item->nombre}} </a>
+                @endforeach
+            </div>
+            <p class="col-span-2">{{$orden->updated_at}}</p>
+        </div>
+        @endforeach
 
-                <progress id="progrso" max="100" value="70" class="text-red-600" >70%</progress>
-
-            </p>
-            <p class="col-span-2">2023-10-31</p>
-
-        </a>
 
     </x-canva>
 </x-app-layout>

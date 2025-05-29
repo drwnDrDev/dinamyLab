@@ -107,7 +107,9 @@ numeroDocumento.addEventListener('blur', function (e) {
                 document.getElementById('municipioBusqueda').value = persona.ciudad || '';
                 document.getElementById('pais').value = persona.pais || 'COL'; // Asignar país, por defecto 'COL'
                 document.getElementById('eps').value = persona.eps || '';
+
                 asignarPaciente(persona);
+                console.log('Persona encontrada:', persona);
             } else {
                 setTipoGuardado();
             }
