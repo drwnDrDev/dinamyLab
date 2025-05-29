@@ -6,8 +6,7 @@
 ])
 
 
-<form action="{{ route('personas.store') }}" method="post" id="crear{{$perfil}}">
-    @csrf
+<form  id="crear{{$perfil}}">
     <div class="w-full min-w-80 bg-white p-4 border border-gray-300 rounded-sm shadow-md my-4">
         <h2 class="font-bold mb-4 text-xl text-secondary">Datos {{$perfil}}</h2>
         <div class="row-inputs w-full md:grid lg:grid-cols-4 md:grid-cols-2 gap-2">
@@ -37,7 +36,7 @@
         </div>
 
         <!-- Información opcional (Solo para 'paciente') -->
-        @if($perfil === 'paciente')
+        @if($perfil === 'Paciente')
 
         <div class="row-inputs pt-2 w-full md:grid md:grid-cols-2 gap-2">
             <div class="w-full pb-2 flex gap-2 items-center">
@@ -95,10 +94,10 @@
         </div>
 
      @endif
-{{-- 
+
         <div class="row-inputs py-8 w-full flex justify-center gap-2">
-            <x-primary-button>Guardar</x-primary-button>
+            <x-primary-button id="tipoGuardado" >Guardar</x-primary-button>
             <x-secondary-button>Cancelar</x-secondary-button>
-        </div> --}}
+        </div> 
     </div>
 </form>
