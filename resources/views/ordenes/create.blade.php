@@ -5,7 +5,6 @@
         </h2>
     </x-slot>
 
-    @dump($errors->all())
     <x-canva>
         <div class="section_paciente bg-white">
             <x-formPersona perfil="Paciente" :tipos_documento="$tipos_documento" :ciudades="$ciudades" :eps="$eps"/>

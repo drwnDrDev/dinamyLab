@@ -18,7 +18,7 @@ class OrdenController extends Controller
      */
     public function index()
     {
-        $ordenes = Orden::with(['paciente', 'acompaniante'])->groupBy('estado')->get();
+        $ordenes = Orden::with(['paciente', 'acompaniante'])->get();
         return view('ordenes.index', compact('ordenes'));
     }
 
@@ -51,12 +51,10 @@ class OrdenController extends Controller
             'abono' => 'nullable|numeric|min:0',
         ]);
 
-
-
         $orden = Orden::create([
             'numero' => $request->input('numero_orden'),
             'paciente_id' => $request->input('paciente_id'),
-            'acomanhante_id' => 1,
+            'acomanhante_id' => $request->input('acompaniante_id'),
             'descripcion' => $request->input('observaciones'),
             'abono' => $request->input('abono'),
             'estado' => Estado::ESPERA,
