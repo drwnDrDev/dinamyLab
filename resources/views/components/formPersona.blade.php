@@ -64,7 +64,7 @@
             </div>
             <div class="w-full pb-2">
                 <x-input-label for="EPS">EPS</x-input-label>
-                <x-text-input list="lista_eps" name="eps" />
+                <x-text-input list="lista_eps" id="eps" name="eps" />
                 <datalist id="lista_eps">
                     @foreach ($eps as $prestador)
                     <option value="{{ $prestador->nombre }}"></option>

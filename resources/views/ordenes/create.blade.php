@@ -11,12 +11,15 @@
         <div x-data="{ open: false }">
             <label for="mostrarAcompaniante">Acompañante</label>
             <input type="checkbox" id="mostrarAcompaniante" @change="open = $event.target.checked">
-
             <div x-show="open" x-transition>
                 <x-formPersona perfil="acompaniante" :tipos_documento="$tipos_documento" :ciudades="$ciudades" />
             </div>
         </div>
-            <div x-data="{ open: false }">
+        <form  method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
+            @csrf
+    <h2 class="font-bold mb-4 text-xl text-secondary">Datos de la Orden</h2>
+
+        <div x-data="{ open: false }">
             <label for="mostrarAcompaniante">Pago</label>
             <input type="checkbox" id="mostrarAcompaniante" @change="open = !$event.target.checked" checked>
 
@@ -37,7 +40,19 @@
                     </div>
                 @endforeach
                <input type="text" name="examenes_seleccionados" x-model="examenes" class="hidden">
-            <button type="submit" class="btn btn-primary mt-4">Crear Orden</button>
+               <input type="hidden" name="paciente_id" id="paciente_id" >
+            <div class="w-full bg-white p-4 border border-gray-300 rounded-sm shadow-md my-4" x-data="{ open: false }">
+            <label for="mostrarObservaciones">Observaciones</label>
+            <input type="checkbox" id="mostrarObservaciones" @change="open = $event.target.checked">
+            <div x-show="open" x-transition>
+                <x-input-label for="observaciones">Observaciones</x-input-label>
+
+            <textarea id="observaciones" name="observaciones" class="form-textarea w-full h-32" placeholder="Escribe aquí las observaciones..."></textarea>
+            </div>
+        </div>
+
+            <x-primary-button id="enviarOrden" class="btn btn-primary mt-4">Crear Orden</x-primary-button>
+            </form>
         </section>
     </x-canva>
     @vite('resources/js/crearOrdenes.js')
