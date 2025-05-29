@@ -57,7 +57,7 @@ class PersonaController extends Controller
         $municipio_id = $request->input('municipio_id', 155);
         // Filtrar solo los datos cuyo valor sea diferente de null
         $info_adicional = array_filter(
-            $request->only('email','eps','direccion','pais','correo') ?? [],
+            $request->only('eps','direccion','pais','correo') ?? [],
             function ($value) {
             return !is_null($value);
             }
@@ -129,9 +129,11 @@ class PersonaController extends Controller
                 "nacional" => $persona->nacional,
                 "telefono" => $persona->contacto->telefono,
                 "direccion" => $persona->contacto->infoAdicional('direccion'),
-                "email" => $persona->contacto->infoAdicional('email'),
+                "correo" => $persona->contacto->infoAdicional('correo'),
                 "pais" => $persona->contacto->infoAdicional('pais'),
-                "ciudad" => $persona->contacto->municipio->municipio . ', ' . $persona->contacto->municipio->departamento,
+                "municipio" => $persona->contacto->municipio->codigo,
+                "ciudad" => $persona->contacto->municipio->municipio,
+                'eps' => $persona->contacto->infoAdicional('eps'),
 
             ]
         ]);

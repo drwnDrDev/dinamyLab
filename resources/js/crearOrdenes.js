@@ -20,6 +20,9 @@ const pais = document.getElementById('pais');
 const usuario = {
     id: null
 }
+const asignarPaciente = (paciente) => {
+        document.getElementById('paciente_id').value = paciente.id;
+}
 
 
 
@@ -45,6 +48,7 @@ document.getElementById('crearPaciente').addEventListener('submit', function (e)
     })
     .then(response => {
         usuario.id= response.data.data.persona.id;
+        asignarPaciente(usuario);
 
     })
     .catch(error => {
@@ -91,13 +95,18 @@ numeroDocumento.addEventListener('blur', function (e) {
                 document.getElementById('fecha_nacimiento').value = persona.fecha_nacimiento;
                 document.getElementById('direccion').value = persona.direccion;
                 document.getElementById('telefono').value = persona.telefono;
-                document.getElementById('correo').value = persona.email;
+                document.getElementById('correo').value = persona.correo;
                 document.getElementsByName('sexo').forEach(sexo => {
                     if (sexo.value === persona.sexo) {
                         sexo.checked = true;
                     }
                 });
                 document.getElementById('tipo_documento').value = persona.tipo_documento;
+                document.getElementById('municipio').value = persona.municipio;
+                document.getElementById('municipioBusqueda').value = persona.ciudad || '';
+                document.getElementById('pais').value = persona.pais || 'COL'; // Asignar país, por defecto 'COL'
+                document.getElementById('eps').value = persona.eps || '';
+                asignarPaciente(persona);
             } else {
                 alert("No se encontró la persona");
             }
@@ -122,6 +131,7 @@ tipoDocumento.addEventListener('change', function (e) {
     }  else if (tipo === 'PA' || tipo === 'PP' || tipo === 'PE' || tipo === 'PS' || tipo === 'PT' || tipo === 'AS'|| tipo ==="MS") {
         numeroDocumento.setAttribute('maxlength', '16');
         numeroDocumento.setAttribute('placeholder', 'Identificación temporal');
+        numeroDocumento.setAttribute('type', 'text');
         pais.style.display = 'flex';
         pais.addEventListener('focus', function (e) {
             axios.get('/api/paises')
