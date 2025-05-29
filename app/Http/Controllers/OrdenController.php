@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Estado;
 use App\Models\Orden;
 use App\Models\Municipio;
 use App\Models\Examen;
@@ -39,8 +40,31 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
-        return  $request->all();
-       
+
+
+         $request->validate([
+            'paciente_id' => 'required|exists:personas,id',
+            'acompaniante_id' => 'nullable|exists:personas,id',
+            'numero_orden' => 'required|string|max:20|unique:ordenes_medicas,numero',
+            'examenes' => 'required|array',
+            'examenes.*.id' => 'nullable|exists:examenes,id',
+            'abono' => 'nullable|numeric|min:0',
+        ]);
+
+
+
+        $orden = Orden::create([
+            'numero' => $request->input('numero_orden'),
+            'paciente_id' => $request->input('paciente_id'),
+            'acomanhante_id' => 1,
+            'descripcion' => $request->input('observaciones'),
+            'abono' => $request->input('abono'),
+            'estado' => Estado::ESPERA,
+        ]);
+        $examenes = array_keys($request->input('examenes', []));
+
+        $orden->examenes()->attach($examenes);
+        return redirect()->route('ordenes')->with('success', 'Orden médica creada correctamente');
     }
 
     /**
@@ -66,6 +90,13 @@ class OrdenController extends Controller
     {
         //
     }
+
+    public function resultados(Orden $orden,Examen $examen)
+    {
+        $orden->load(['paciente', 'acompaniante', 'examenes']);
+        return view('procedimientos.resultados', compact('orden', 'examen'));
+    }
+
 
     /**
      * Remove the specified resource from storage.

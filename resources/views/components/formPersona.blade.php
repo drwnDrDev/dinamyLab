@@ -1,5 +1,5 @@
 @props([
-'perfil' => 'paciente', // Valores posibles: paciente, acompañante, pagador
+'perfil' => 'Paciente', // Valores posibles: paciente, acompañante, pagador
 'eps' => [], // Lista de EPS
 'ciudades' => [], // Lista de ciudades
 'tipos_documento' => [] // Lista de tipos de documento
@@ -9,7 +9,7 @@
 <form  id="crear{{$perfil}}">
     <div class="w-full min-w-80 bg-white p-4 border border-gray-300 rounded-sm shadow-md my-4">
         <h2 class="font-bold mb-4 text-xl text-secondary">Datos {{$perfil}}</h2>
-        <input type="hidden" name="perfil" value="{{ $perfil }}">
+        <input type="hidden" id="perfil" name="perfil" value="{{ $perfil }}">
         <div class="row-inputs w-full md:grid lg:grid-cols-4 md:grid-cols-2 gap-2">
             <div class="w-full pb-2 lg:max-w-60">
                 <x-input-label for="numero_documento">Número de documento</x-input-label>
