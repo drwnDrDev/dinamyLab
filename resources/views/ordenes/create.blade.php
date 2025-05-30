@@ -22,7 +22,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="w-full">
                 <x-input-label for="numero_orden">Número de Orden</x-input-label>
-                <x-text-input type="text" id="numero_orden" name="numero_orden" class="form-input w-32" />
+                <x-text-input type="text" id="numero_orden" name="numero_orden" class="form-input w-32" value="{{$orden_numero}}" />
             </div>
 
             <div x-data="{ open: false }" class="w-full flex flex-wrap items-center gap-2">

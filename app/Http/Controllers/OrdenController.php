@@ -32,7 +32,8 @@ class OrdenController extends Controller
         $tipos_documento = collect(TipoDocumento::cases())
             ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
         $examenes = Examen::all();
-        return view('ordenes.create', compact('tipos_documento', 'ciudades', 'examenes', 'eps'));
+        $orden_numero = Orden::max('numero') + 1;
+        return view('ordenes.create', compact('tipos_documento', 'ciudades', 'examenes', 'eps', 'orden_numero'));
     }
 
     /**
@@ -88,6 +89,7 @@ class OrdenController extends Controller
      */
     public function edit(Orden $orden)
     {
+        
         return view('ordenes.edit', compact('orden'));
     }
 

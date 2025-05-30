@@ -33,6 +33,7 @@ const tipoGuardado = document.getElementById('tipoGuardado');
 const setTipoGuardado = () => {
     const tipo = usuario.id ? 'actualizar' : 'crear';
     tipoGuardado.textContent = tipo;
+    tipoGuardado.url = usuario.id ? `/personas/${usuario.id}/editar` : '/personas/crear';
 }
 
 document.getElementById('crearPaciente').addEventListener('submit', function (e) {
@@ -50,7 +51,7 @@ document.getElementById('crearPaciente').addEventListener('submit', function (e)
     })
     .then(response => {
 
-        usuario.id= response.data.data.persona.id;
+        usuario.id= response.data.data.id;
         asignarPaciente(usuario);
         console.log(usuario);
 
@@ -88,9 +89,10 @@ numeroDocumento.addEventListener('blur', function (e) {
     const fullUrl = baseUrl + numero_documento;
     axios.get(fullUrl)
         .then(response => {
-            if (response.data && response.data.persona) {
+            
+            if (response.data && response.data.data) {
 
-                const persona =response.data.persona;
+                const persona =response.data.data;
                 usuario.id = persona.id;
 
                 document.getElementById('nombres').value = persona.nombre;
