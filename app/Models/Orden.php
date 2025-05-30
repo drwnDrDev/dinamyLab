@@ -38,9 +38,11 @@ class Orden extends Model
     {
         return $this->hasMany(Factura::class);
     }
-    public function examenes()
+    public function procedimientos()
     {
-        return $this->belongsToMany(Examen::class, 'examen_orden', 'orden_id', 'examen_id');
+        return $this->belongsToMany(Procedimiento::class, 'procedimientos_ordenes', 'orden_id', 'procedimiento_id')
+            ->withPivot('empleado_id', 'resultados', 'observacion', 'factura_id', 'fecha')
+            ->withTimestamps();
     }
 
     protected $table = 'ordenes_medicas';

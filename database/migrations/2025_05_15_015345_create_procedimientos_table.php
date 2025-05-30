@@ -17,10 +17,13 @@ return new class extends Migration
                 ->constrained('ordenes_medicas')
                 ->onDelete('cascade');
             $table->foreignId('empleado_id')
+                ->nullable()
                 ->constrained('empleados')
                 ->onDelete('cascade');
-            $table->json('resultados');
-            $table->string('observacion')->nullable();
+            $table->foreignId('examen_id')
+                ->constrained('examenes')
+                ->onDelete('cascade');
+            $table->json('resultados')->nullable();
             $table->foreignId('factura_id')
                 ->nullable()
                 ->constrained('facturas')
