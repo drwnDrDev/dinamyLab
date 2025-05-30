@@ -10,7 +10,7 @@ use App\Models\Eps;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\Procedimiento;
 class OrdenController extends Controller
 {
     /**
@@ -18,7 +18,7 @@ class OrdenController extends Controller
      */
     public function index()
     {
-        $ordenes = Orden::with(['paciente', 'acompaniante'])->get();
+        $ordenes = Orden::all()->sortByDesc('created_at');
         return view('ordenes.index', compact('ordenes'));
     }
 
@@ -64,12 +64,13 @@ class OrdenController extends Controller
             return [
                 'orden_id' => $orden->id,
                 'examen_id' => $examen,
+                'estado' => Estado::PENDIENTE,
                 'fecha' => now(),
             ];
         }, array_keys($request->input('examenes')));
-        return $procedimientos;
-
-        $orden->procedimientos()->createMany($procedimientos);
+        // Asignar los procedimientos a la orden
+       
+        Procedimiento::insert($procedimientos);
 
         return redirect()->route('ordenes')->with('success', 'Orden médica creada correctamente');
     }

@@ -44,7 +44,7 @@ class ProcedimientoController extends Controller
      */
     public function show(Procedimiento $procedimiento)
     {
-        //
+        return view('procedimientos.show', compact('procedimiento'));
     }
 
     /**

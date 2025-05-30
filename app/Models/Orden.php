@@ -40,9 +40,7 @@ class Orden extends Model
     }
     public function procedimientos()
     {
-        return $this->belongsToMany(Procedimiento::class, 'procedimientos_ordenes', 'orden_id', 'procedimiento_id')
-            ->withPivot('empleado_id', 'resultados', 'observacion', 'factura_id', 'fecha')
-            ->withTimestamps();
+        return $this->hasMany(Procedimiento::class);
     }
 
     protected $table = 'ordenes_medicas';

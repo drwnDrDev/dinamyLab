@@ -29,6 +29,10 @@ class Procedimiento extends Model
     {
         return $this->empleado->cargo == 'prestador';
     }
+    public function examen()
+    {
+        return $this->belongsTo(Examen::class);
+    }
     protected $casts = [
        
         'fecha' => 'date',
