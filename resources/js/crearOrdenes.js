@@ -1,62 +1,22 @@
 
-const buscarPersona = document.getElementById('buscarPersona');
-const tipoDocumento = document.getElementById('tipo_documento');
-const numeroDocumento = document.getElementById('numero_documento');
 
 const pais = document.getElementById('pais');
 
-// document.getElementById('perfil').addEventListener('change', function (e) {
-//     if(e.target.value === 1) {
-//         document.getElementById('fecha_nacimiento').setAttribute('required', 'required');
-//         document.getElementById('sexo').setAttribute('required', 'required');
-//         document.getElementById('municipio').setAttribute('required', 'required');
-//     }else{
-//         document.getElementById('fecha_nacimiento').removeAttribute('required');
-//         document.getElementById('sexo').removeAttribute('required');
-//         document.getElementById('municipio').removeAttribute('required');
-//     }
-// })
-
-
-
-const usuario = {
-    id: null
-}
-const asignarPaciente = (paciente) => {
-        document.getElementById('paciente_id').value = paciente.id;
-}
-
-
-
-const tipoGuardado = document.getElementById('tipoGuardado');
-
-const setTipoGuardado = () => {
-    const tipo = usuario.id ? 'actualizar' : 'crear';
-    tipoGuardado.textContent = tipo;
-    tipoGuardado.url = usuario.id ? `/personas/${usuario.id}/editar` : '/personas/crear';
-}
-
-document.getElementById('crearPaciente').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const form = e.target;
+const guardarPersona = (evento) => {
+    evento.preventDefault();
+    const form = evento.target;
     const formData = new FormData(form);
-
     axios.post('/api/personas', formData, {
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
             'Content-Type': 'multipart/form-data',
             'Accept': 'application/json'
         }
-    })
-    .then(response => {
-
+    }).then(response => {
         usuario.id= response.data.data.id;
         asignarPaciente(usuario);
         console.log(usuario);
-
-    })
-    .catch(error => {
+    }).catch(error => {
         if (error.response?.status === 422) {
             console.warn('Errores de validación:', error.response.data.errors);
             const errors = error.response.data.errors;
@@ -78,10 +38,10 @@ document.getElementById('crearPaciente').addEventListener('submit', function (e)
             console.error('Error desconocido:', error);
         }
     });
-});
 
+}
 
-numeroDocumento.addEventListener('blur', function (e) {
+const buscarDocuento = (e) => {
     e.preventDefault();
     const baseUrl = '/api/personas/buscar/';
     const numero_documento = document.getElementById('numero_documento').value;
@@ -89,59 +49,76 @@ numeroDocumento.addEventListener('blur', function (e) {
     const fullUrl = baseUrl + numero_documento;
     axios.get(fullUrl)
         .then(response => {
-            
+
             if (response.data && response.data.data) {
-
                 const persona =response.data.data;
-                usuario.id = persona.id;
-
-                document.getElementById('nombres').value = persona.nombre;
-                document.getElementById('apellidos').value = persona.apellido;
-                document.getElementById('numero_documento').value = persona.numero_documento;
-                document.getElementById('fecha_nacimiento').value = persona.fecha_nacimiento;
-                document.getElementById('direccion').value = persona.direccion;
-                document.getElementById('telefono').value = persona.telefono;
-                document.getElementById('correo').value = persona.correo;
-                document.getElementsByName('sexo').forEach(sexo => {
+                console.log(persona);
+                console.log(e.target);
+                e.target.form['numero_documento'].value = persona.numero_documento;
+                e.target.form['tipo_documento'].value = persona.tipo_documento;
+                e.target.form['nombres'].value = persona.nombre;
+                e.target.form['apellidos'].value = persona.apellido;
+                if (persona.pais){
+                    e.target.form['pais'].value = persona.pais || 'COL'; // Asignar país, por defecto 'COL'
+                }
+                if (e.target.form['perfil'].value === 'Paciente') {
+                document.getElementById('paciente_id').value = persona.id;
+                e.target.form['fecha_nacimiento'].value = persona.fecha_nacimiento;
+                e.target.form['direccion'].value = persona.direccion;
+                e.target.form['telefono'].value = persona.telefono;
+                e.target.form['correo'].value = persona.correo;
+                e.target.form['sexo'].forEach(sexo => {
                     if (sexo.value === persona.sexo) {
                         sexo.checked = true;
                     }
                 });
-                document.getElementById('tipo_documento').value = persona.tipo_documento;
-                document.getElementById('municipio').value = persona.municipio;
-                document.getElementById('municipioBusqueda').value = persona.ciudad || '';
-                document.getElementById('pais').value = persona.pais || 'COL'; // Asignar país, por defecto 'COL'
-                document.getElementById('eps').value = persona.eps || '';
+                e.target.form['municipio'].value = persona.municipio;
+                e.target.form['municipioBusqueda'].value = persona.ciudad || '';
+                e.target.form['eps'].value = persona.eps || '';
+            }else{
+                document.getElementById('acompaniante_id').value = persona.id;
+            }
 
-                asignarPaciente(persona);
-                console.log('Persona encontrada:', persona);
-            } else {
-                setTipoGuardado();
             }
         })
         .catch(error => {
             console.error("Error fetching persona:", error);
-        }).then(() => {setTipoGuardado()});
+        });
 }
 ;
-
 }
-);
 
-tipoDocumento.addEventListener('change', function (e) {
-    const tipo = tipoDocumento.value;
+
+document.getElementById('crearPaciente').addEventListener('submit', function (e) {
+    guardarPersona(e);
+});
+document.getElementById('crearacompaniante').addEventListener('submit', function (e) {
+    guardarPersona(e);
+});
+
+document.getElementsByName('numero_documento').forEach(input => {
+
+    input.addEventListener('blur', function (e) {
+
+        buscarDocuento(e);
+    });
+});
+
+document.getElementsByName('tipo_documento').forEach(input => {
+    input.addEventListener('change', function (e)  {
+    const tipo = input.value;
     if (tipo === 'CC'|| tipo === 'RC' || tipo === 'TI' || tipo === 'CE') {
 
-        numeroDocumento.setAttribute('maxlength', '10');
-        numeroDocumento.setAttribute('placeholder', 'Número de documento');
+        e.target.form['numero_documento'].setAttribute('maxlength', '10');
+        e.target.form['numero_documento'].setAttribute('placeholder', 'Número de documento');
         pais.style.display = 'none';
 
     }  else if (tipo === 'PA' || tipo === 'PP' || tipo === 'PE' || tipo === 'PS' || tipo === 'PT' || tipo === 'AS'|| tipo ==="MS") {
-        numeroDocumento.setAttribute('maxlength', '16');
-        numeroDocumento.setAttribute('placeholder', 'Identificación temporal');
-        numeroDocumento.setAttribute('type', 'text');
-        pais.style.display = 'flex';
-        pais.addEventListener('focus', function (e) {
+        e.target.form['numero_documento'].setAttribute('maxlength', '16');
+        e.target.form['numero_documento'].setAttribute('placeholder', 'Identificación temporal');
+        e.target.form['numero_documento'].setAttribute('type', 'text');
+        e.target.form['pais'].style.display = 'flex';
+        e.target.form['pais'].addEventListener('focus', function (e) {
             axios.get('/api/paises')
                 .then(response => {
                     if (response.data) {
@@ -150,7 +127,7 @@ tipoDocumento.addEventListener('change', function (e) {
                             option.value = p.codigo_iso;
                             option.textContent = p.nombre;
                             option.className= ['text-gray-900', 'dark:text-gray-100'];
-                            pais.appendChild(option);
+                            e.target.form['pais'].appendChild(option);
                         });
                     } else {
                         alert("No se encontró el país");
@@ -163,7 +140,7 @@ tipoDocumento.addEventListener('change', function (e) {
 
     }
 });
-
+})
     const typeableInput = document.getElementById('municipioBusqueda');
     const optionsList = document.getElementById('opciones');
     const hiddenSelect = document.getElementById('municipio');
@@ -221,3 +198,4 @@ tipoDocumento.addEventListener('change', function (e) {
             filterOptions(typeableInput.value); // Mostrar las opciones filtradas o todas si el input está vacío
         });
 
+    
