@@ -6,16 +6,16 @@
     </x-slot>
     <x-canva>
         <div class="flex justify-around">
-            <h2>{{$orden->paciente->nombres()}}</h2>
-            <h2>{{$orden->paciente->apellidos()}}</h2>
+            <h2>{{$procedimiento->orden->paciente->nombres()}}</h2>
+            <h2>{{$procedimiento->orden->paciente->apellidos()}}</h2>
 
-            <h2>Numero de orden{{$orden->numero}}</h2>
+            <h2>Numero de orden <span class="font-semibold">{{$procedimiento->orden->numero}}</span></h2>
         </div>
         <div>
             <h2 class="font-bold mb-4 text-xl text-secondary">Resultados del Examen</h2>
-            <p class="text-gray-600 mb-4">Examen: {{ $examen->nombre }}</p>
-            <p class="text-gray-600 mb-4">CUP: {{ $examen->cup }}</p>
-            <p class="text-gray-600 mb-4">Valor: ${{ number_format($examen->valor, 2) }}</p>
+            <p class="text-gray-600 mb-4">Examen: {{ $procedimiento->examen->nombre }}</p>
+            <p class="text-gray-600 mb-4">CUP: {{ $procedimiento->examen->cup }}</p>
+            <p class="text-gray-600 mb-4">Valor: ${{ number_format($procedimiento->examen->valor, 2) }}</p>
         </div>
         <form method="POST"  class="mt-4">
             @csrf

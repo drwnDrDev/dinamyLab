@@ -29,6 +29,7 @@ return new class extends Migration
                 ->constrained('facturas')
                 ->onDelete('cascade');
             $table->date('fecha');
+            $table->string('estado')->default('pendiente'); // Estado del procedimiento
             $table->timestamps();
         });
     }
