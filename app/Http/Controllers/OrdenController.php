@@ -57,11 +57,20 @@ class OrdenController extends Controller
             'acomanhante_id' => $request->input('acompaniante_id'),
             'descripcion' => $request->input('observaciones'),
             'abono' => $request->input('abono'),
-            'estado' => Estado::ESPERA,
-        ]);
-        $examenes = array_keys($request->input('examenes', []));
 
-        $orden->examenes()->attach($examenes);
+        ]);
+
+        $procedimientos = array_map(function ($examen) use ($orden) {
+            return [
+                'orden_id' => $orden->id,
+                'examen_id' => $examen,
+                'fecha' => now(),
+            ];
+        }, array_keys($request->input('examenes')));
+        return $procedimientos;
+
+        $orden->procedimientos()->createMany($procedimientos);
+
         return redirect()->route('ordenes')->with('success', 'Orden médica creada correctamente');
     }
 
