@@ -21,9 +21,8 @@ class PersonaController extends Controller
         }
        return response()->json([
             'message' => 'Lista de personas',
-            'data' => [
-                "personas" => $personas
-            ]
+            'data' =>  $personas
+     
         ]);
     }
 
@@ -40,9 +39,8 @@ class PersonaController extends Controller
 
         return response()->json([
             'message' => 'Persona encontrada',
-            'data' => [
-                "persona" => $persona
-            ]
+            'data' => $persona
+            
         ]);
     }
 
@@ -86,9 +84,8 @@ class PersonaController extends Controller
 
         return response()->json([
             'message' => 'Persona creada con éxito',
-            'data' => [
-                "persona" => $persona
-            ]
+            'data' => $persona
+            
         ], 201);
     }
 
@@ -113,7 +110,7 @@ class PersonaController extends Controller
 
         return response()->json([
             'message' => 'Persona encontrada',
-            'persona' => [
+            'data' => [
                 "id" => $persona->id,
                 "nombre" => implode(' ',[$persona->primer_nombre,$persona->segundo_nombre?? '']),
                 "apellido" => implode(' ',[$persona->primer_apellido,$persona->segundo_apellido?? '']),
