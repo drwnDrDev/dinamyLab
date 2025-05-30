@@ -1,13 +1,15 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-           Resultados de Exámenes
-        </h2>
+<x-app-layout >
+    <x-slot name="title">
+       {{$procedimiento->orden->paciente->nombreCompleto()}} - {{ $procedimiento->examen->nombre }}
+    </x-slot>
+<x-slot name="header">
+            <h2 class="text-xl font-semibold">{{$procedimiento->orden->paciente->nombreCompleto()}}</h2>
+          <p> Edad: {{ $procedimiento->orden->paciente->edad()}} </p>  <h2 class="text-xl font-semibold">{{$procedimiento->orden->paciente->tipo_documento}} {{$procedimiento->orden->paciente->numero_documento}}</h2>
+            
     </x-slot>
     <x-canva>
         <div class="flex justify-around">
-            <h2>{{$procedimiento->orden->paciente->nombres()}}</h2>
-            <h2>{{$procedimiento->orden->paciente->apellidos()}}</h2>
+ 
 
             <h2>Numero de orden <span class="font-semibold">{{$procedimiento->orden->numero}}</span></h2>
         </div>
