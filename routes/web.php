@@ -5,6 +5,7 @@ use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProcedimientoController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/facturas/{factura}',[FacturaController::class,'show'])->name('facturas.show');
     Route::get('/facturas/create',[FacturaController::class,'create'])->name('facturas.create');
     Route::post('/facturas/store',[FacturaController::class,'store'])->name('facturas.store');
+    Route::get('/resultados/{orden}/{examen}',[OrdenController::class,'resultados'])->name('resultados.create');
+
+    Route::get('/procedimientos/{procedimiento}',[ProcedimientoController::class,'show'])->name('procedimientos.show');
 
 });
 Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () {

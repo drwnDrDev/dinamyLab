@@ -5,22 +5,26 @@ const numeroDocumento = document.getElementById('numero_documento');
 
 const pais = document.getElementById('pais');
 
-document.getElementById('perfil').addEventListener('change', function (e) {
-    if(e.target.value === 1) {
-        document.getElementById('fecha_nacimiento').setAttribute('required', 'required');
-        document.getElementById('sexo').setAttribute('required', 'required');
-        document.getElementById('municipio').setAttribute('required', 'required');
-    }else{
-        document.getElementById('fecha_nacimiento').removeAttribute('required');
-        document.getElementById('sexo').removeAttribute('required');
-        document.getElementById('municipio').removeAttribute('required');
-    }
-})
+// document.getElementById('perfil').addEventListener('change', function (e) {
+//     if(e.target.value === 1) {
+//         document.getElementById('fecha_nacimiento').setAttribute('required', 'required');
+//         document.getElementById('sexo').setAttribute('required', 'required');
+//         document.getElementById('municipio').setAttribute('required', 'required');
+//     }else{
+//         document.getElementById('fecha_nacimiento').removeAttribute('required');
+//         document.getElementById('sexo').removeAttribute('required');
+//         document.getElementById('municipio').removeAttribute('required');
+//     }
+// })
+
+
 
 const usuario = {
     id: null
 }
-
+const asignarPaciente = (paciente) => {
+        document.getElementById('paciente_id').value = paciente.id;
+}
 
 
 
@@ -32,7 +36,7 @@ const setTipoGuardado = () => {
     tipoGuardado.url = usuario.id ? `/personas/${usuario.id}/editar` : '/personas/crear';
 }
 
-document.getElementById('crearPersona').addEventListener('submit', function (e) {
+document.getElementById('crearPaciente').addEventListener('submit', function (e) {
     e.preventDefault();
 
     const form = e.target;
@@ -46,7 +50,11 @@ document.getElementById('crearPersona').addEventListener('submit', function (e) 
         }
     })
     .then(response => {
+
         usuario.id= response.data.data.id;
+        asignarPaciente(usuario);
+        console.log(usuario);
+
     })
     .catch(error => {
         if (error.response?.status === 422) {
@@ -105,6 +113,8 @@ numeroDocumento.addEventListener('blur', function (e) {
                 document.getElementById('pais').value = persona.pais || 'COL'; // Asignar país, por defecto 'COL'
                 document.getElementById('eps').value = persona.eps || '';
 
+                asignarPaciente(persona);
+                console.log('Persona encontrada:', persona);
             } else {
                 setTipoGuardado();
             }

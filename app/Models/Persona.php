@@ -71,8 +71,10 @@ class Persona extends Model
     }
     public function edad()
     {
-        return $this->fecha_nacimiento ? now()->diffInYears($this->fecha_nacimiento) : null;
+        return $this->fecha_nacimiento ? $this->fecha_nacimiento->diffInYears(now()) : null;
     }
+
+    
 
     // Relación isomórfica para la columna 'pagador' en la tabla 'factura'
     public function facturasComoPagador()

@@ -44,7 +44,26 @@ class StorePersonaRequest extends FormRequest
                 }
             },
             'unique:personas,numero_documento'],
-            'fecha_nacimiento' => ['nullable','date','before:tomorrow'],
+            'fecha_nacimiento' => ['nullable','date',
+            function ($attribute, $value, $fail) {
+                if ($value && strtotime($value) > strtotime('today')) {
+                    $fail('La fecha de nacimiento no puede ser una fecha futura.');
+                }
+            }],
+
+            'perfil' => ['required',
+                function ($attribute, $value, $fail) {
+                    if ($value === 'Paciente'){
+                        if (empty($this->input('sexo'))) {
+                            $fail('El campo sexo es obligatorio para el perfil paciente.');
+                        }
+                        if (empty($this->input('fecha_nacimiento'))) {
+                            $fail('El campo fecha de nacimiento es obligatorio para el perfil paciente.');
+                        }
+                    }
+                },
+
+            ],
             'telefono' => ['nullable', 'string', 'size:10'],
             'email' => ['nullable', 'string', 'email', 'max:255'],
             'direccion' => ['nullable', 'string', 'max:255'],

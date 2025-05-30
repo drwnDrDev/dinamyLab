@@ -1,15 +1,15 @@
 @props([
-'perfil' => 'paciente', // Valores posibles: paciente, acompañante, pagador
+'perfil' => 'Paciente', // Valores posibles: paciente, acompañante, pagador
 'eps' => [], // Lista de EPS
 'ciudades' => [], // Lista de ciudades
 'tipos_documento' => [] // Lista de tipos de documento
 ])
 
 
-<form action="{{ route('personas.store') }}" method="post" id="crear{{$perfil}}">
-    @csrf
+<form  id="crear{{$perfil}}">
     <div class="w-full min-w-80 bg-white p-4 border border-gray-300 rounded-sm shadow-md my-4">
         <h2 class="font-bold mb-4 text-xl text-secondary">Datos {{$perfil}}</h2>
+        <input type="hidden" id="perfil" name="perfil" value="{{ $perfil }}">
         <div class="row-inputs w-full md:grid lg:grid-cols-4 md:grid-cols-2 gap-2">
             <div class="w-full pb-2 lg:max-w-60">
                 <x-input-label for="numero_documento">Número de documento</x-input-label>
@@ -37,7 +37,7 @@
         </div>
 
         <!-- Información opcional (Solo para 'paciente') -->
-        @if($perfil === 'paciente')
+        @if($perfil === 'Paciente')
 
         <div class="row-inputs pt-2 w-full md:grid md:grid-cols-2 gap-2">
             <div class="w-full pb-2 flex gap-2 items-center">
@@ -65,7 +65,7 @@
             </div>
             <div class="w-full pb-2">
                 <x-input-label for="EPS">EPS</x-input-label>
-                <x-text-input list="lista_eps" name="eps" />
+                <x-text-input list="lista_eps" id="eps" name="eps" />
                 <datalist id="lista_eps">
                     @foreach ($eps as $prestador)
                     <option value="{{ $prestador->nombre }}"></option>
@@ -95,10 +95,10 @@
         </div>
 
      @endif
-{{-- 
+
         <div class="row-inputs py-8 w-full flex justify-center gap-2">
-            <x-primary-button>Guardar</x-primary-button>
+            <x-primary-button id="tipoGuardado" >Guardar</x-primary-button>
             <x-secondary-button>Cancelar</x-secondary-button>
-        </div> --}}
+        </div>
     </div>
 </form>
