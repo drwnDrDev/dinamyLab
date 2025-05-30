@@ -38,7 +38,10 @@ class Orden extends Model
     {
         return $this->hasMany(Factura::class);
     }
-    
+    public function procedimientos()
+    {
+        return $this->hasMany(Procedimiento::class);
+    }
 
     protected $table = 'ordenes_medicas';
 }

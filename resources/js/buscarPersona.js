@@ -23,11 +23,13 @@ const usuario = {
 
 
 
+
 const tipoGuardado = document.getElementById('tipoGuardado');
 
 const setTipoGuardado = () => {
     const tipo = usuario.id ? 'actualizar' : 'crear';
     tipoGuardado.textContent = tipo;
+    tipoGuardado.url = usuario.id ? `/personas/${usuario.id}/editar` : '/personas/crear';
 }
 
 document.getElementById('crearPersona').addEventListener('submit', function (e) {
@@ -44,8 +46,7 @@ document.getElementById('crearPersona').addEventListener('submit', function (e) 
         }
     })
     .then(response => {
-        usuario.id= response.data.data.persona.id;
-
+        usuario.id= response.data.data.id;
     })
     .catch(error => {
         if (error.response?.status === 422) {
@@ -80,9 +81,10 @@ numeroDocumento.addEventListener('blur', function (e) {
     const fullUrl = baseUrl + numero_documento;
     axios.get(fullUrl)
         .then(response => {
-            if (response.data?.persona?.nombre) {
+            
+            if (response.data && response.data.data) {
 
-                const persona =response.data.persona;
+                const persona =response.data.data;
                 usuario.id = persona.id;
 
                 document.getElementById('nombres').value = persona.nombre;
@@ -91,11 +93,20 @@ numeroDocumento.addEventListener('blur', function (e) {
                 document.getElementById('fecha_nacimiento').value = persona.fecha_nacimiento;
                 document.getElementById('direccion').value = persona.direccion;
                 document.getElementById('telefono').value = persona.telefono;
-                document.getElementById('correo').value = persona.email;
-                document.getElementById('sexo').value = persona.sexo;
+                document.getElementById('correo').value = persona.correo;
+                document.getElementsByName('sexo').forEach(sexo => {
+                    if (sexo.value === persona.sexo) {
+                        sexo.checked = true;
+                    }
+                });
                 document.getElementById('tipo_documento').value = persona.tipo_documento;
+                document.getElementById('municipio').value = persona.municipio;
+                document.getElementById('municipioBusqueda').value = persona.ciudad || '';
+                document.getElementById('pais').value = persona.pais || 'COL'; // Asignar país, por defecto 'COL'
+                document.getElementById('eps').value = persona.eps || '';
+
             } else {
-                alert("No se encontró la persona");
+                setTipoGuardado();
             }
         })
         .catch(error => {
@@ -118,6 +129,7 @@ tipoDocumento.addEventListener('change', function (e) {
     }  else if (tipo === 'PA' || tipo === 'PP' || tipo === 'PE' || tipo === 'PS' || tipo === 'PT' || tipo === 'AS'|| tipo ==="MS") {
         numeroDocumento.setAttribute('maxlength', '16');
         numeroDocumento.setAttribute('placeholder', 'Identificación temporal');
+        numeroDocumento.setAttribute('type', 'text');
         pais.style.display = 'flex';
         pais.addEventListener('focus', function (e) {
             axios.get('/api/paises')

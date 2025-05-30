@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('ordenes_medicas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedMediumInteger('numero');
+            $table->string('numero');
             $table->foreignId('paciente_id')->constrained('personas')->onDelete('cascade');
-            $table->foreignId('acomanhante_id')->constrained('personas')->onDelete('cascade');
+            $table->unsignedBigInteger('acomanhante_id')->nullable();
+            $table->foreign('acomanhante_id')->references('id')->on('personas')->onDelete('cascade');
             $table->string('descripcion')->nullable();
             $table->decimal('abono', 10, 2)->nullable();
             $table->string('estado')->default('pendiente');

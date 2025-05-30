@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Examen;
 use App\Models\Procedimiento;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,7 @@ class ProcedimientoController extends Controller
         $procedimientos= Procedimiento::with(['examenes','pacientes','facturas'])
             ->orderBy('nombre')
             ->get();
+        return view('procedimientos.index', compact('procedimientos'));
     }
 
     /**
@@ -42,7 +44,7 @@ class ProcedimientoController extends Controller
      */
     public function show(Procedimiento $procedimiento)
     {
-        //
+        return view('procedimientos.show', compact('procedimiento'));
     }
 
     /**
@@ -67,5 +69,13 @@ class ProcedimientoController extends Controller
     public function destroy(Procedimiento $procedimiento)
     {
         //
+    }
+
+    public function examenes()
+    {
+        $examenes = Examen::with(['procedimientos', 'ordenes'])
+            ->orderBy('nombre')
+            ->get();
+        return view('procedimientos.examenes', compact('examenes'));
     }
 }

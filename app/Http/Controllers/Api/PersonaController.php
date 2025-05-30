@@ -21,9 +21,8 @@ class PersonaController extends Controller
         }
        return response()->json([
             'message' => 'Lista de personas',
-            'data' => [
-                "personas" => $personas
-            ]
+            'data' =>  $personas
+     
         ]);
     }
 
@@ -40,15 +39,13 @@ class PersonaController extends Controller
 
         return response()->json([
             'message' => 'Persona encontrada',
-            'data' => [
-                "persona" => $persona
-            ]
+            'data' => $persona
+            
         ]);
     }
 
     public function store(StorePersonaRequest $request)
     {
-
 
         $request->validated();
 
@@ -57,7 +54,7 @@ class PersonaController extends Controller
         $municipio_id = $request->input('municipio_id', 155);
         // Filtrar solo los datos cuyo valor sea diferente de null
         $info_adicional = array_filter(
-            $request->only('email','eps','direccion','pais','correo') ?? [],
+            $request->only('eps','direccion','pais','correo') ?? [],
             function ($value) {
             return !is_null($value);
             }
@@ -87,9 +84,8 @@ class PersonaController extends Controller
 
         return response()->json([
             'message' => 'Persona creada con éxito',
-            'data' => [
-                "persona" => $persona
-            ]
+            'data' => $persona
+            
         ], 201);
     }
 
@@ -108,30 +104,28 @@ class PersonaController extends Controller
 
         $persona = Persona::where('numero_documento', $numero_documento)->first();
 
-
         if (!$persona) {
-            return response()->json([
-                'message' => 'Persona no encontrada',
-                'data' => null
-            ], 404);
+            return response()->json([], 204 );
         }
 
         return response()->json([
             'message' => 'Persona encontrada',
-            'persona' => [
+            'data' => [
                 "id" => $persona->id,
                 "nombre" => implode(' ',[$persona->primer_nombre,$persona->segundo_nombre?? '']),
                 "apellido" => implode(' ',[$persona->primer_apellido,$persona->segundo_apellido?? '']),
                 "tipo_documento" => $persona->tipo_documento,
                 "numero_documento" => $persona->numero_documento,
-                "fecha_nacimiento" => $persona->fecha_nacimiento->format('Y-m-d'),
+                "fecha_nacimiento" => $persona->fecha_nacimiento? $persona->fecha_nacimiento->format('Y-m-d') : null,
                 "sexo" => $persona->sexo,
                 "nacional" => $persona->nacional,
                 "telefono" => $persona->contacto->telefono,
                 "direccion" => $persona->contacto->infoAdicional('direccion'),
-                "email" => $persona->contacto->infoAdicional('email'),
+                "correo" => $persona->contacto->infoAdicional('correo'),
                 "pais" => $persona->contacto->infoAdicional('pais'),
-                "ciudad" => $persona->contacto->municipio->municipio . ', ' . $persona->contacto->municipio->departamento,
+                "municipio" => $persona->contacto->municipio->codigo,
+                "ciudad" => $persona->contacto->municipio->municipio,
+                'eps' => $persona->contacto->infoAdicional('eps'),
 
             ]
         ]);
