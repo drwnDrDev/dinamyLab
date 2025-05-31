@@ -1,7 +1,4 @@
 
-
-const pais = document.getElementById('pais');
-
 const guardarPersona = (evento) => {
     evento.preventDefault();
     const form = evento.target;
@@ -13,9 +10,12 @@ const guardarPersona = (evento) => {
             'Accept': 'application/json'
         }
     }).then(response => {
-        usuario.id= response.data.data.id;
-        asignarPaciente(usuario);
-        console.log(usuario);
+        const usuario = response.data.data;
+        if(evento.target.perfil.value === 'Paciente'){
+            document.getElementById('paciente_id').value = usuario.id;
+        }else{
+            document.getElementById('acompaniante_id').value = usuario.id;
+        }
     }).catch(error => {
         if (error.response?.status === 422) {
             console.warn('Errores de validación:', error.response.data.errors);
@@ -44,7 +44,7 @@ const guardarPersona = (evento) => {
 const buscarDocuento = (e) => {
     e.preventDefault();
     const baseUrl = '/api/personas/buscar/';
-    const numero_documento = document.getElementById('numero_documento').value;
+    const numero_documento = e.target.form['numero_documento'].value;
     if (numero_documento.length>3) {
     const fullUrl = baseUrl + numero_documento;
     axios.get(fullUrl)
@@ -198,4 +198,4 @@ document.getElementsByName('tipo_documento').forEach(input => {
             filterOptions(typeableInput.value); // Mostrar las opciones filtradas o todas si el input está vacío
         });
 
-    
+
