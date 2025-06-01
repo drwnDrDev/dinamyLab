@@ -20,10 +20,8 @@ class MunicipioController extends Controller
         }
         return response()->json([
             'message' => 'Lista de municipios',
-            'data' => [
-                "municipios" => $municipios
-            ]
-        ]);
+            'data' =>$municipios       
+        ], 200);
     }
 
     public function show($id)
@@ -38,10 +36,8 @@ class MunicipioController extends Controller
 
         return response()->json([
             'message' => 'Municipio encontrado',
-            'data' => [
-                "municipio" => $municipio
-            ]
-        ]);
+            'data' =>  $municipio         
+        ], 200);
     }
     public function buscarMunicipioPorNombre(Request $request)
     {
@@ -57,11 +53,9 @@ class MunicipioController extends Controller
         }
 
         return response()->json([
-            'message' => 'Municipio encontrado',
-            'data' => [
-                "municipio" => $municipios
-            ]
-        ]);
+            'message' => 'Municipios encontrados',
+            'data' =>  $municipios
+        ], 200);
     }
 
     public function departamento($departamento_id)
@@ -76,10 +70,9 @@ class MunicipioController extends Controller
 
         return response()->json([
             'message' => 'Lista de municipios por departamento',
-            'data' => [
-                "municipios" => $municipios
-            ]
-        ]);
+            'data' => $municipios
+        ], 200);
+  
     }
 
 }
