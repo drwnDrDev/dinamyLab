@@ -7,7 +7,21 @@ const VARIABLES = {
     ACOMPANIANTE_ID: 'acompaniante_id',
     TIPO_DOCUMENTO: 'tipo_documento',
 };
+// Función asíncrona para obtener municipios desde la API
+async function obtenerMunicipios() {
 
+        const response = await axios.get('/api/municipios');
+        return response.data.data.map(municipio => {
+            return {
+                value: municipio.codigo,
+                text: municipio.municipio
+            };
+        } );
+
+}  
+const municipios = await obtenerMunicipios();
+
+console.log('Municipios obtenidos:', municipios);
 
 
 const guardarPersona = (evento,tipoGuardado=VARIABLES.NUEVO_USUARIO) => {

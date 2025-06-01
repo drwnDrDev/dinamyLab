@@ -1,10 +1,14 @@
 <?php
 
-use App\Http\Controllers\Api\ExamenesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PersonaController;
 use App\Http\Controllers\Api\MunicipioController;
+use App\Http\Controllers\Api\FrontendDataController;
+use App\Http\Controllers\Api\ExamenesController;
+
+
+Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
 
 
 Route::get('personas', [PersonaController::class, 'index']);
