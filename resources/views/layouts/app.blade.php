@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-50 grid grid-rows-[auto_1fr] grid-cols-[250px_1fr] h-screen">
+        <div class="min-h-screen bg-background md:grid md:grid-rows-[auto_1fr] md:grid-cols-[250px_1fr] h-screen">
             @include('layouts.header')
          @if(session('success'))
             <div class="text-xs bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -31,7 +31,7 @@
             @include('layouts.navigation')
 
             <!-- Page Content -->
-            <main class="ml-60 mt-16 p-6 w-[calc(100vw-240px)] h-[calc(100vh-64px)] overflow-y-auto">
+            <main class="w-full m-auto p-6 md:ml-60 md:mt-16 md:w-[calc(100vw-240px)] md:h-[calc(100vh-64px)] overflow-y-auto h-full">
                  <!-- Page Heading -->
                     @isset($header)
                         <header>

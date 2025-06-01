@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100 fixed top-16 left-0 w-60 row-span-1 h-full shadow-lg">
+<nav x-data="{ open: false }" class="fixed top-16 left-0 w-60 row-span-1 h-full hidden md:block">
 
  
         <div class="flex flex-col p-3 justify-between">
