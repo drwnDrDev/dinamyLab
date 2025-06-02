@@ -1,3 +1,4 @@
+
 const VARIABLES = {
     PACIENTE: 'Paciente',
     ACOMPANIANTE: 'Acompañante',
@@ -7,22 +8,18 @@ const VARIABLES = {
     ACOMPANIANTE_ID: 'acompaniante_id',
     TIPO_DOCUMENTO: 'tipo_documento',
 };
-// Función asíncrona para obtener municipios desde la API
-async function obtenerMunicipios() {
+const dataKeys = {
+    tiposDocumento: 'tipos_documento_data',
+    paises: 'paises_data',
+    municipios: 'municipios_data',
+    eps: 'eps_data',
+    lastUpdate: 'frontend_data_last_update'
+};
 
-        const response = await axios.get('/api/municipios');
-        return response.data.data.map(municipio => {
-            return {
-                value: municipio.codigo,
-                text: municipio.municipio
-            };
-        } );
-
-}  
-const municipios = await obtenerMunicipios();
-
-console.log('Municipios obtenidos:', municipios);
-
+const documentos = JSON.parse(localStorage.getItem(dataKeys.tiposDocumento)) || [];
+const paises = JSON.parse(localStorage.getItem(dataKeys.paises)) || [];
+const municipios = JSON.parse(localStorage.getItem(dataKeys.municipios)) || [];
+const eps = JSON.parse(localStorage.getItem(dataKeys.eps)) || [];
 
 const guardarPersona = (evento,tipoGuardado=VARIABLES.NUEVO_USUARIO) => {
 
@@ -155,37 +152,27 @@ document.getElementsByName('tipo_documento').forEach(input => {
        
         pais.removeAttribute('disabled');
         pais.addEventListener('focus', function (e) {
-            axios.get('/api/paises')
-                .then(response => {
-                    if (response.data) {
-                        response.data.data.paises.forEach(p => {
+        JSON.parse(localStorage.getItem(dataKeys.paises)).forEach(p => {
                             const option = document.createElement('option');
                             option.value = p.codigo_iso;
                             option.textContent = p.nombre;
                             option.className= ['text-gray-900', 'dark:text-gray-100'];
                             pais.appendChild(option);
-                        });
-                    } else {
-                        alert("No se encontró el país");
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching countries:', error);
-                });
-        });
-
+                        });   
+        }
+        , { once: true });
     }
-});
-})
+    }   );
+        })
 
 
     const typeableInput = document.getElementById('municipioBusqueda');
     const optionsList = document.getElementById('opciones');
     const hiddenSelect = document.getElementById('municipio');
-    let allOptions = Array.from(hiddenSelect.options).map(option => ({
-            value: option.value,
-            text: option.text
-        }));
+    let allOptions = municipios.map(option => ({
+        value: option.codigo,
+        text: option.municipio + ' - ' + option.departamento
+    }));
 
     // Inicializar la lista de opciones
         function filterOptions(query) {
