@@ -4,6 +4,7 @@
             tiposDocumento: 'tipos_documento_data',
             paises: 'paises_data',
             municipios: 'municipios_data',
+            eps: 'eps_data',
             lastUpdate: 'frontend_data_last_update'
         };
 
