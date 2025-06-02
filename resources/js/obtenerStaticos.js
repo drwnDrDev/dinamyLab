@@ -41,13 +41,16 @@
                 localStorage.setItem(dataKeys.municipios, JSON.stringify(serverData.municipios));
                 console.log('Municipios guardados en localStorage.');
             }
-
+            if (serverData.eps) {
+                localStorage.setItem(dataKeys.eps, JSON.stringify(serverData.eps));
+                console.log('EPS guardadas en localStorage.');
+            }
             if (serverData.timestamp) {
                 localStorage.setItem(dataKeys.lastUpdate, serverData.timestamp);
                 console.log('Timestamp de actualización guardado.');
             }
 
-            console.log('Todos los datos estáticos han sido cargados y almacenados en localStorage.');
+            console.log('Estáticos han sido cargados y almacenados en localStorage.');
 
         } catch (error) {
             console.error('Error al cargar o almacenar datos para el frontend:', error);

@@ -125,5 +125,5 @@
     <div id="examenes" class="grid grid-cols-2 p-2 gap-2">
         <h2 class="col-span-2">Examenes</h2>
     </div>
-    @vite('resources/js/buscarPersona.js')
+     @vite('resources/js/obtenerStaticos.js')
 </x-app-layout>

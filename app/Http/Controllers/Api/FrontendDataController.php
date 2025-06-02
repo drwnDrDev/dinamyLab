@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\PrepareFrontendCacheDataJob;
-use App\Enums\TipoDocumento; 
+use App\TipoDocumento; 
 use App\Models\Pais; 
 use App\Models\Municipio; 
 use App\Models\Eps; 

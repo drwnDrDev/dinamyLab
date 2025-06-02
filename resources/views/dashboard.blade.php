@@ -78,5 +78,5 @@
         
     </section>
 
-
+    @vite('resources/js/obtenerStaticos.js')
 </x-app-layout>
