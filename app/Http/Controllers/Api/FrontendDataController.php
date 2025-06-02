@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\PrepareFrontendCacheDataJob;
-use App\Enums\TipoDocumento; // Alternativa sin Job
-use App\Models\Pais; // Alternativa sin Job
-use App\Models\Municipio; // Alternativa sin Job
+use App\Enums\TipoDocumento; 
+use App\Models\Pais; 
+use App\Models\Municipio; 
+use App\Models\Eps; 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache; // Si usas caché con el Job
 use Illuminate\Support\Facades\Log;
@@ -37,13 +38,17 @@ class FrontendDataController extends Controller
             // }
 
             $tiposDocumento = TipoDocumento::forLocalStorage();
-            $paises = Pais::select('id', 'nombre', 'codigo_iso')->orderBy('nombre')->get();
-            $municipios = Municipio::select('id', 'nombre', 'departamento', 'pais_id')->orderBy('nombre')->get();
+            $paises = Pais::select('nombre', 'codigo_iso')->orderBy('nivel', 'desc')->get();
+            $municipios = Municipio::select('municipio', 'departamento', 'codigo')->orderBy('nivel','desc')->get();
+            $eps = Eps::select('nombre', 'id')
+            ->where('verificada', true) // Solo EPS verificadas
+            ->orderBy('nombre')->get();
 
             $data = [
                 'tipos_documento' => $tiposDocumento,
                 'paises' => $paises,
                 'municipios' => $municipios,
+                'eps' => $eps,
                 'timestamp' => now()->toIso8601String(),
             ];
 

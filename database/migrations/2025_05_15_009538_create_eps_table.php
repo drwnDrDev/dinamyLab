@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('nombre')->unique();
             $table->json('descripcion')->nullable();
-            $table->string('codigo')->nullable();
             $table->unsignedSmallInteger('nivel')->nullable();
             $table->boolean('verificada')->default(false);
             $table->timestamps();

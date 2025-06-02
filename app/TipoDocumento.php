@@ -29,5 +29,13 @@ enum TipoDocumento: string
 
         };
     }
+    public static function forLocalStorage(): array
+    {
+        $items = [];
+        foreach (self::cases() as $case) {
+            $items[] = ['value' => $case->value, 'label' => $case->nombre()];
+        }
+        return $items;
+    }
 
 }
