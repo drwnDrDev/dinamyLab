@@ -21,6 +21,8 @@ const paises = JSON.parse(localStorage.getItem(dataKeys.paises)) || [];
 const municipios = JSON.parse(localStorage.getItem(dataKeys.municipios)) || [];
 const eps = JSON.parse(localStorage.getItem(dataKeys.eps)) || [];
 
+
+
 const guardarPersona = (evento,tipoGuardado=VARIABLES.NUEVO_USUARIO) => {
 
     evento.preventDefault();
@@ -81,12 +83,19 @@ const buscarDocuento = (e) => {
 
             if (response.data && response.data.data) {
                 const persona =response.data.data;
+                
 
                 e.target.form['numero_documento'].value = persona.numero_documento;
                 e.target.form['tipo_documento'].value = persona.tipo_documento;
                 e.target.form['nombres'].value = persona.nombre;
                 e.target.form['apellidos'].value = persona.apellido;
                 if (persona.pais){
+                    const pais_origen  =paises.find(p => p.codigo_iso === persona.pais);
+                    const option = document.createElement('option');
+                    option.value = pais_origen.codigo_iso;
+                    option.textContent = pais_origen.nombre;
+                    option.className= ['text-gray-900', 'dark:text-gray-100'];
+                    e.target.form['pais'].appendChild(option);
                     e.target.form['pais'].value = persona.pais || 'COL'; // Asignar país, por defecto 'COL'
                 }
                 if (e.target.form['perfil'].value === VARIABLES.PACIENTE) {
@@ -128,7 +137,7 @@ document.getElementById('crearacompaniante').addEventListener('submit', function
 document.getElementsByName('numero_documento').forEach(input => {
 
     input.addEventListener('blur', function (e) {
-
+     
         buscarDocuento(e);
     });
 });
