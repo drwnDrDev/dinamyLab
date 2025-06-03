@@ -22,7 +22,7 @@ class PersonaController extends Controller
        return response()->json([
             'message' => 'Lista de personas',
             'data' =>  $personas
-     
+
         ]);
     }
 
@@ -40,7 +40,7 @@ class PersonaController extends Controller
         return response()->json([
             'message' => 'Persona encontrada',
             'data' => $persona
-            
+
         ]);
     }
 
@@ -85,7 +85,7 @@ class PersonaController extends Controller
         return response()->json([
             'message' => 'Persona creada con éxito',
             'data' => $persona
-            
+
         ], 201);
     }
 
@@ -99,38 +99,67 @@ class PersonaController extends Controller
                 'data' => null
             ], 404);
         }
+        if ($persona->numero_documento !== $request->input('numero_documento')) {
+            return response()->json([
+                'message' => 'El número de documento no puede ser modificado',
+                'data' => null
+            ], 400);
+        }
 
-        // Validar los datos de la solicitud
+
         $request->validate([
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'numero_documento' => 'required|string|max:20',
-            'tipo_documento' => 'required|string|max:10',
+            'tipo_documento' => 'required|string|max:2',
             'fecha_nacimiento' => 'nullable|date',
             'sexo' => 'nullable|string|max:10',
-            'nacional' => 'boolean',
-            'telefono' => 'nullable|string|max:20',
-            // Otros campos según sea necesario
+            'telefono' => 'nullable|string|size:10',
+            'municipio_id' => 'required|exists:municipios,id',
         ]);
 
         // Actualizar los campos de la persona
-        $nombres = explode(' ', trim($request->input('nombres')), 2);
-        $apellidos = explode(' ', trim($request->input('apellidos')), 2);
+        if($request->input('nombres')!==$persona->nombres()){
+             $nombres = explode(' ', trim($request->input('nombres')), 2);
+                $persona->primer_nombre = $nombres[0];
+                $persona->segundo_nombre = $nombres[1] ?? '';
+        }
+        if($request->input('apellidos')!==$persona->apellidos()){
+            $apellidos = explode(' ', trim($request->input('apellidos')), 2);
+            $persona->primer_apellido = $apellidos[0];
+            $persona->segundo_apellido = $apellidos[1] ?? '';
+        }
+        if($request->input('tipo_documento')!==$persona->tipo_documento){
+            $persona->tipo_documento = $request->input('tipo_documento', 'CC');
+        }
+        if($request->input('fecha_nacimiento')!==$persona->fecha_nacimiento){
+            $persona->fecha_nacimiento = $request->input('fecha_nacimiento');
+        }
+        if($request->input('sexo')!==$persona->sexo){
+            $persona->sexo = $request->input('sexo');
+        }
+        if($request->has('pais')){
+            if($request->input('pais')!=='COL'&& $request->input('pais')!=='' && $persona->nacional){
+                $persona->nacional = false;
+                $persona->contacto->info_adicional = json_encode(
+                    array_merge(
+                        json_decode($persona->contacto->info_adicional, true),
+                        ['pais' => $request->input('pais')]
+                    )
+                );
+            } elseif ($request->input('pais')==='COL' && !$persona->nacional) {
+                $persona->nacional = true;
+                $info_adicional = json_decode($persona->contacto->info_adicional, true);
+                unset($info_adicional['pais']);
+                $persona->contacto->info_adicional = json_encode($info_adicional);
 
-        $persona->primer_nombre = $nombres[0];
-        $persona->segundo_nombre = $nombres[1] ?? '';
-        $persona->primer_apellido = $apellidos[0];
-        $persona->segundo_apellido = $apellidos[1] ?? '';
-        $persona->numero_documento = $request->input('numero_documento');
-        $persona->tipo_documento = $request->input('tipo_documento', 'CC');
-        $persona->fecha_nacimiento = $request->input('fecha_nacimiento');
-        $persona->sexo = $request->input('sexo');
-        $persona->nacional = $request->input('nacional', true);
+            }
 
-        // Actualizar el contacto asociado
-        if ($persona->contacto) {
+        }
+
+
             $persona->contacto->telefono = $request->input('telefono', null);
-            // Filtrar solo los datos cuyo valor sea diferente de null
+            $persona->contacto->municipio_id = $request->input('municipio_id', 155);
+
             $info_adicional = array_filter(
                 $request->only('eps','direccion','pais','correo') ?? [],
                 function ($value) {
@@ -139,9 +168,10 @@ class PersonaController extends Controller
             );
             $persona->contacto->info_adicional = json_encode($info_adicional);
             $persona->contacto->save();
-        }
+
 
         // Guardar los cambios en la persona
+        
         $persona->save();
         return response()->json([
             'message' => 'Persona actualizada con éxito',
