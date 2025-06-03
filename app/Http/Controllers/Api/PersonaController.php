@@ -91,9 +91,63 @@ class PersonaController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Lógica para actualizar una persona existente
-    }
+        $persona = Persona::find($id);
 
+        if (!$persona) {
+            return response()->json([
+                'message' => 'Persona no encontrada',
+                'data' => null
+            ], 404);
+        }
+
+        // Validar los datos de la solicitud
+        $request->validate([
+            'nombres' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'numero_documento' => 'required|string|max:20',
+            'tipo_documento' => 'required|string|max:10',
+            'fecha_nacimiento' => 'nullable|date',
+            'sexo' => 'nullable|string|max:10',
+            'nacional' => 'boolean',
+            'telefono' => 'nullable|string|max:20',
+            // Otros campos según sea necesario
+        ]);
+
+        // Actualizar los campos de la persona
+        $nombres = explode(' ', trim($request->input('nombres')), 2);
+        $apellidos = explode(' ', trim($request->input('apellidos')), 2);
+
+        $persona->primer_nombre = $nombres[0];
+        $persona->segundo_nombre = $nombres[1] ?? '';
+        $persona->primer_apellido = $apellidos[0];
+        $persona->segundo_apellido = $apellidos[1] ?? '';
+        $persona->numero_documento = $request->input('numero_documento');
+        $persona->tipo_documento = $request->input('tipo_documento', 'CC');
+        $persona->fecha_nacimiento = $request->input('fecha_nacimiento');
+        $persona->sexo = $request->input('sexo');
+        $persona->nacional = $request->input('nacional', true);
+
+        // Actualizar el contacto asociado
+        if ($persona->contacto) {
+            $persona->contacto->telefono = $request->input('telefono', null);
+            // Filtrar solo los datos cuyo valor sea diferente de null
+            $info_adicional = array_filter(
+                $request->only('eps','direccion','pais','correo') ?? [],
+                function ($value) {
+                    return !is_null($value);
+                }
+            );
+            $persona->contacto->info_adicional = json_encode($info_adicional);
+            $persona->contacto->save();
+        }
+
+        // Guardar los cambios en la persona
+        $persona->save();
+        return response()->json([
+            'message' => 'Persona actualizada con éxito',
+            'data' => $persona
+        ]);
+    }
     public function destroy($id)
     {
         // Lógica para eliminar una persona
