@@ -20,19 +20,27 @@ const documentos = JSON.parse(localStorage.getItem(dataKeys.tiposDocumento)) || 
 const paises = JSON.parse(localStorage.getItem(dataKeys.paises)) || [];
 const municipios = JSON.parse(localStorage.getItem(dataKeys.municipios)) || [];
 const eps = JSON.parse(localStorage.getItem(dataKeys.eps)) || [];
+const crearPaciente = document.getElementById('crearPaciente');
+const crearAcompaniante = document.getElementById('crearacompaniante');
+const paciente = document.getElementById('paciente_id');
+const acompaniante = document.getElementById('acompaniante_id');
 
 
 
-const guardarPersona = (evento,tipoGuardado=VARIABLES.NUEVO_USUARIO) => {
+const guardarPersona = (evento) => {
 
     evento.preventDefault();
-   
+
     const form = evento.target;
+    const tipoGuardado = form['tipoGuardado'].value;
     const formData = new FormData(form);
-    const url = tipoGuardado === VARIABLES.ACTUALIZAR_USUARIO ?`/api/personas/${formData.get('perfil_id')}` : '/api/personas';
-    if (tipoGuardado === VARIABLES.ACTUALIZAR_USUARIO) {
+    const perfil = formData.get('perfil');
+    let url = '/api/personas';
+    if(form['tipoGuardado'].value === VARIABLES.ACTUALIZAR_USUARIO){
+        url = perfil === VARIABLES.PACIENTE ? `/api/personas/${paciente.value}` : `/api/personas/${acompaniante.value}`;
         formData.append('_method', 'PUT');
-    }
+    } 
+  
     axios.post(url, formData, {
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -40,11 +48,12 @@ const guardarPersona = (evento,tipoGuardado=VARIABLES.NUEVO_USUARIO) => {
             'Accept': 'application/json'
         }
     }).then(response => {
+        console.log('Usuario guardado exitosamente:', response.data);
         const usuario = response.data.data;
-        if(evento.target.perfil.value === VARIABLES.PACIENTE){
-            document.getElementById('paciente_id').value = usuario.id;
+        if(usuario.value === VARIABLES.PACIENTE){
+            paciente.value = usuario.id;
         }else{
-            document.getElementById(VARIABLES.ACOMPANIANTE_ID).value = usuario.id;
+            acompaniante.value = usuario.id;
         }
     }).catch(error => {
         if (error.response?.status === 422) {
@@ -83,8 +92,11 @@ const buscarDocuento = (e) => {
 
             if (response.data && response.data.data) {
                 const persona =response.data.data;
-                
 
+                
+                e.target.form['tipoGuardado'].value = VARIABLES.ACTUALIZAR_USUARIO;
+                e.target.form['tipoGuardado'].textContent = 'Actualizar usuario';
+                
                 e.target.form['numero_documento'].value = persona.numero_documento;
                 e.target.form['tipo_documento'].value = persona.tipo_documento;
                 e.target.form['nombres'].value = persona.nombre;
@@ -99,7 +111,7 @@ const buscarDocuento = (e) => {
                     e.target.form['pais'].value = persona.pais || 'COL'; // Asignar país, por defecto 'COL'
                 }
                 if (e.target.form['perfil'].value === VARIABLES.PACIENTE) {
-                document.getElementById('paciente_id').value = persona.id;
+                paciente.value = persona.id;
                 e.target.form['fecha_nacimiento'].value = persona.fecha_nacimiento;
                 e.target.form['direccion'].value = persona.direccion;
                 e.target.form['telefono'].value = persona.telefono;
@@ -114,9 +126,12 @@ const buscarDocuento = (e) => {
                 e.target.form['eps'].value = persona.eps || '';
 
             }else{
-                document.getElementById(VARIABLES.ACOMPANIANTE_ID).value = persona.id;
+                acompaniante.value = persona.id;
             }
 
+            }else{
+                e.target.form['tipoGuardado'].value = VARIABLES.NUEVO_USUARIO;
+                e.target.form['tipoGuardado'].textContent = 'Usuario nuevo';
             }
         })
         .catch(error => {
@@ -161,7 +176,7 @@ document.getElementsByName('tipo_documento').forEach(input => {
        
         pais.removeAttribute('disabled');
         pais.addEventListener('focus', function (e) {
-        JSON.parse(localStorage.getItem(dataKeys.paises)).forEach(p => {
+        paises.forEach(p => {
                             const option = document.createElement('option');
                             option.value = p.codigo_iso;
                             option.textContent = p.nombre;
