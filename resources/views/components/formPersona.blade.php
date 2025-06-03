@@ -97,8 +97,8 @@
      @endif
 
         <div class="row-inputs py-8 w-full flex justify-center gap-2">
-            <x-primary-button id="tipoGuardado" >Guardar</x-primary-button>
-            <x-secondary-button>Cancelar</x-secondary-button>
+            <x-primary-button id="tipoGuardado" name="tipoGuardado" class="w-40" >Guardar</x-primary-button>
+       
         </div>
     </div>
 </form>
