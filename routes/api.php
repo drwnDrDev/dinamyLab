@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\PersonaController;
 use App\Http\Controllers\Api\MunicipioController;
 use App\Http\Controllers\Api\FrontendDataController;
 use App\Http\Controllers\Api\ExamenesController;
+use App\Http\Controllers\Api\OrdenController;
 
 
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
@@ -26,6 +27,8 @@ Route::get('municipios/{id}', [MunicipioController::class, 'show']);
 Route::get('departamento/{departamento_id}', [MunicipioController::class, 'departamento']);
 
 Route::get('paises', [\App\Http\Controllers\Api\PaisController::class, 'index']);
+
+Route::get('orden/{id}', [OrdenController::class, 'show']);
 
 
 Route::get('user', function (Request $request) {

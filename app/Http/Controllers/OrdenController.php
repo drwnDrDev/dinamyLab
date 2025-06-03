@@ -42,7 +42,7 @@ class OrdenController extends Controller
     public function store(Request $request)
     {
 
-
+      
          $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'acompaniante_id' => 'nullable|exists:personas,id',
@@ -81,7 +81,10 @@ class OrdenController extends Controller
      */
     public function show(Orden $orden)
     {
-        //
+        $orden->load(['paciente', 'acompaniante', 'examenes']);
+        $examenes = $orden->examenes;
+        $procedimientos = $orden->procedimientos;
+        return view('ordenes.show', compact('orden', 'examenes', 'procedimientos'));
     }
 
     /**

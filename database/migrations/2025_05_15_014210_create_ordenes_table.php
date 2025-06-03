@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ordenes_medicas', function (Blueprint $table) {
             $table->id();
-            $table->string('numero');
+            $table->unsignedMediumInteger('numero');
             $table->foreignId('paciente_id')->constrained('personas')->onDelete('cascade');
             $table->unsignedBigInteger('acomanhante_id')->nullable();
             $table->foreign('acomanhante_id')->references('id')->on('personas')->onDelete('cascade');
