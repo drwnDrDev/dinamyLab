@@ -37,10 +37,12 @@ const guardarPersona = (evento) => {
 
     const formData = new FormData(form);
     const isPaciente = formData.get('perfil')=== VARIABLES.PACIENTE;
-    console.log('Perfil seleccionado:', perfil);
+   
     let url = '/api/personas';
+    
     if(form['tipoGuardado'].value === VARIABLES.ACTUALIZAR_USUARIO){
         url = isPaciente ? `/api/personas/${paciente.value}` : `/api/personas/${acompaniante.value}`;
+       
         formData.append('_method', 'PUT');
     }
 
@@ -52,7 +54,7 @@ const guardarPersona = (evento) => {
             'Accept': 'application/json'
         }
     }).then(response => {
-
+        
         const usuario = response.data.data;
        
         if(isPaciente){
@@ -60,6 +62,7 @@ const guardarPersona = (evento) => {
         }else{
             acompaniante.value = usuario.id;
         }
+       
     }).catch(error => {
         if (error.response?.status === 422) {
             console.warn('Errores de validación:', error.response.data.errors);
@@ -79,6 +82,7 @@ const guardarPersona = (evento) => {
                 errorContainer.remove();
             }, 5000);
         } else {
+            error.response ? console.error('Error en la solicitud:', error.response.data) :
             console.error('Error desconocido:', error);
         }
     });
