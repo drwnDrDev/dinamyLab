@@ -16,6 +16,8 @@ const dataKeys = {
     lastUpdate: 'frontend_data_last_update'
 };
 
+
+
 const documentos = JSON.parse(localStorage.getItem(dataKeys.tiposDocumento)) || [];
 const paises = JSON.parse(localStorage.getItem(dataKeys.paises)) || [];
 const municipios = JSON.parse(localStorage.getItem(dataKeys.municipios)) || [];
@@ -40,7 +42,7 @@ const guardarPersona = (evento) => {
         url = perfil === VARIABLES.PACIENTE ? `/api/personas/${paciente.value}` : `/api/personas/${acompaniante.value}`;
         formData.append('_method', 'PUT');
     }
-    console.log(formData.entries());
+
 
     axios.post(url, formData, {
         headers: {
@@ -251,3 +253,19 @@ document.getElementsByName('tipo_documento').forEach(input => {
         });
 
 
+// Agregar opciones al datalist de los campos EPS en el formulario
+document.getElementsByName('eps').forEach(input => {
+    const datalistId = input.getAttribute('list');
+    if (datalistId) {
+        const datalist = document.getElementById(datalistId);
+        if (datalist) {
+            // Limpiar opciones previas para evitar duplicados
+            datalist.innerHTML = '';
+            eps.forEach(epsOption => {
+                const option = document.createElement('option');
+                option.value = epsOption.nombre;
+                datalist.appendChild(option);
+            });
+        }
+    }
+});
