@@ -36,10 +36,11 @@ const guardarPersona = (evento) => {
     const form = evento.target;
 
     const formData = new FormData(form);
-    const perfil = formData.get('perfil');
+    const isPaciente = formData.get('perfil')=== VARIABLES.PACIENTE;
+    console.log('Perfil seleccionado:', perfil);
     let url = '/api/personas';
     if(form['tipoGuardado'].value === VARIABLES.ACTUALIZAR_USUARIO){
-        url = perfil === VARIABLES.PACIENTE ? `/api/personas/${paciente.value}` : `/api/personas/${acompaniante.value}`;
+        url = isPaciente ? `/api/personas/${paciente.value}` : `/api/personas/${acompaniante.value}`;
         formData.append('_method', 'PUT');
     }
 
@@ -52,9 +53,9 @@ const guardarPersona = (evento) => {
         }
     }).then(response => {
 
-        const usuario = response.data;
-        console.log('Usuario guardado:', usuario);
-        if(usuario.value === VARIABLES.PACIENTE){
+        const usuario = response.data.data;
+       
+        if(isPaciente){
             paciente.value = usuario.id;
         }else{
             acompaniante.value = usuario.id;
