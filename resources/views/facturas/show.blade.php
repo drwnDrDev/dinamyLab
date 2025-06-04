@@ -1,6 +1,6 @@
 <x-app-layout >
     <x-slot name="title">
-     Requiescat in pace
+       Facturas
     </x-slot>
 <x-slot name="header">
 
