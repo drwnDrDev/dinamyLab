@@ -67,7 +67,7 @@ class StorePersonaRequest extends FormRequest
             'telefono' => ['nullable', 'string', 'size:10'],
             'email' => ['nullable', 'string', 'email', 'max:255'],
             'direccion' => ['nullable', 'string', 'max:255'],
-            'ciudad' => ['nullable', 'string', 'max:255'],
+            'municipio' => ['nullable', 'string', 'max:255'],
         ];
 
     }

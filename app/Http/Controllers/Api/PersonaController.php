@@ -51,7 +51,7 @@ class PersonaController extends Controller
 
         // Contacto
         $telefono = $request->input('telefono', null);
-        $municipio_id = $request->input('municipio_id', 155);
+        $municipio_id = $request->input('municipio', 11007); // Valor por defecto para Bogotá
         // Filtrar solo los datos cuyo valor sea diferente de null
         $info_adicional = array_filter(
             $request->only('eps','direccion','pais','correo') ?? [],
@@ -59,11 +59,13 @@ class PersonaController extends Controller
             return !is_null($value);
             }
         );
+
         $contacto = \App\Models\Contacto::create([
             'municipio_id' => $municipio_id,
             'telefono' => $telefono,
             'info_adicional' => json_encode($info_adicional),
         ]);
+
         // Dividir nombres y apellidos en primer y segundo nombre
         $nombres = explode(' ', trim($request->input('nombres')), 2);
         $apellidos = explode(' ', trim($request->input('apellidos')), 2);
@@ -91,6 +93,7 @@ class PersonaController extends Controller
 
     public function update(Request $request, $id)
     {
+        return $request->all();
         $persona = Persona::find($id);
 
         if (!$persona) {
@@ -114,7 +117,7 @@ class PersonaController extends Controller
             'fecha_nacimiento' => 'nullable|date',
             'sexo' => 'nullable|string|max:10',
             'telefono' => 'nullable|string|size:10',
-            'municipio_id' => 'required|exists:municipios,id',
+            'municipio' => 'required|exists:municipios,id',
         ]);
 
         // Actualizar los campos de la persona
@@ -158,7 +161,7 @@ class PersonaController extends Controller
 
 
             $persona->contacto->telefono = $request->input('telefono', null);
-            $persona->contacto->municipio_id = $request->input('municipio_id', 155);
+            $persona->contacto->municipio_id = $request->input('municipio', 11007); // Valor por defecto para Bogotá
 
             $info_adicional = array_filter(
                 $request->only('eps','direccion','pais','correo') ?? [],
@@ -171,7 +174,7 @@ class PersonaController extends Controller
 
 
         // Guardar los cambios en la persona
-        
+
         $persona->save();
         return response()->json([
             'message' => 'Persona actualizada con éxito',
@@ -207,7 +210,7 @@ class PersonaController extends Controller
                 "direccion" => $persona->contacto->infoAdicional('direccion'),
                 "correo" => $persona->contacto->infoAdicional('correo'),
                 "pais" => $persona->contacto->infoAdicional('pais'),
-                "municipio" => $persona->contacto->municipio->codigo,
+                "municipio" => $persona->contacto->municipio->id,
                 "ciudad" => $persona->contacto->municipio->municipio,
                 'eps' => $persona->contacto->infoAdicional('eps'),
 

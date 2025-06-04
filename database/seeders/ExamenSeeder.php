@@ -22,6 +22,7 @@ class ExamenSeeder extends Seeder
         $epsArray = array_map(function($prestador){
             return[
                 'nombre' => $prestador,
+                'verificada' => true,
             ];
         }
         , $epsArray);

@@ -17,13 +17,13 @@ class EmpresaSeeder extends Seeder
     public function run(): void
     {
          Contacto::create([
-        'municipio_id'=>Municipio::where('codigo','11007')->first()->id,
+        'municipio_id'=>11007,
         'telefono'=>'NO REFIERE',
 
         ]);
 
         $extranjero = Contacto::create([
-            'municipio_id'=>Municipio::where('codigo','11007')->first()->id,
+            'municipio_id'=>11007,
             'telefono'=>'NO REFIERE',
             'info_adicional'=>json_encode([
                 'redes'=>[
@@ -39,7 +39,7 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $contacto = Contacto::create([
-            'municipio_id'=>Municipio::where('codigo','11007')->first()->id,
+            'municipio_id'=>11007,
             'telefono'=>'3207001403',
             'info_adicional'=>json_encode([
             'redes'=>[
@@ -107,9 +107,9 @@ class EmpresaSeeder extends Seeder
         ]);
         $agente =  Persona::create([
             'primer_nombre'=>'Ronald',
-    
+
             'primer_apellido'=>'McDonald',
-           
+
             'tipo_documento'=>'CC',
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',

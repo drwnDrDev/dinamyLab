@@ -27,13 +27,12 @@ class OrdenController extends Controller
      */
     public function create()
     {
-        $ciudades = Municipio::orderBy('nivel','desc')->get();
-        $eps =Eps::all()->sortBy('nombre');
+
         $tipos_documento = collect(TipoDocumento::cases())
             ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
         $examenes = Examen::all();
         $orden_numero = Orden::max('numero') + 1;
-        return view('ordenes.create', compact('tipos_documento', 'ciudades', 'examenes', 'eps', 'orden_numero'));
+        return view('ordenes.create', compact('tipos_documento', 'examenes', 'orden_numero'));
     }
 
     /**
@@ -42,7 +41,7 @@ class OrdenController extends Controller
     public function store(Request $request)
     {
 
-      
+
          $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'acompaniante_id' => 'nullable|exists:personas,id',
@@ -70,7 +69,7 @@ class OrdenController extends Controller
             ];
         }, array_keys($request->input('examenes')));
         // Asignar los procedimientos a la orden
-       
+
         Procedimiento::insert($procedimientos);
 
         return redirect()->route('ordenes')->with('success', 'Orden médica creada correctamente');
@@ -92,7 +91,7 @@ class OrdenController extends Controller
      */
     public function edit(Orden $orden)
     {
-        
+
         return view('ordenes.edit', compact('orden'));
     }
 

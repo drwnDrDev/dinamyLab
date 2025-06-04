@@ -32,15 +32,16 @@ const guardarPersona = (evento) => {
     evento.preventDefault();
 
     const form = evento.target;
-    const tipoGuardado = form['tipoGuardado'].value;
+
     const formData = new FormData(form);
     const perfil = formData.get('perfil');
     let url = '/api/personas';
     if(form['tipoGuardado'].value === VARIABLES.ACTUALIZAR_USUARIO){
         url = perfil === VARIABLES.PACIENTE ? `/api/personas/${paciente.value}` : `/api/personas/${acompaniante.value}`;
         formData.append('_method', 'PUT');
-    } 
-  
+    }
+    console.log(formData.entries());
+
     axios.post(url, formData, {
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -48,8 +49,9 @@ const guardarPersona = (evento) => {
             'Accept': 'application/json'
         }
     }).then(response => {
-        console.log('Usuario guardado exitosamente:', response.data);
-        const usuario = response.data.data;
+
+        const usuario = response.data;
+        console.log('Usuario guardado:', usuario);
         if(usuario.value === VARIABLES.PACIENTE){
             paciente.value = usuario.id;
         }else{
@@ -82,7 +84,7 @@ const guardarPersona = (evento) => {
 
 const buscarDocuento = (e) => {
     e.preventDefault();
-   
+
     const baseUrl = '/api/personas/buscar/';
     const numero_documento = e.target.form['numero_documento'].value;
     if (numero_documento.length>3) {
@@ -93,10 +95,10 @@ const buscarDocuento = (e) => {
             if (response.data && response.data.data) {
                 const persona =response.data.data;
 
-                
+
                 e.target.form['tipoGuardado'].value = VARIABLES.ACTUALIZAR_USUARIO;
                 e.target.form['tipoGuardado'].textContent = 'Actualizar usuario';
-                
+
                 e.target.form['numero_documento'].value = persona.numero_documento;
                 e.target.form['tipo_documento'].value = persona.tipo_documento;
                 e.target.form['nombres'].value = persona.nombre;
@@ -152,7 +154,7 @@ document.getElementById('crearacompaniante').addEventListener('submit', function
 document.getElementsByName('numero_documento').forEach(input => {
 
     input.addEventListener('blur', function (e) {
-     
+
         buscarDocuento(e);
     });
 });
@@ -163,7 +165,7 @@ document.getElementsByName('tipo_documento').forEach(input => {
     const pais = e.target.form['pais'];
     const numeroDocumento = e.target.form['numero_documento'];
     if (tipo === 'CC'|| tipo === 'RC' || tipo === 'TI' || tipo === 'CE') {
-        
+
         numeroDocumento.setAttribute('maxlength', '10');
         numeroDocumento.setAttribute('placeholder', 'Número de documento');
         pais.value = 'COL'; // Asignar país por defecto
@@ -173,7 +175,7 @@ document.getElementsByName('tipo_documento').forEach(input => {
         numeroDocumento.setAttribute('maxlength', '16');
         numeroDocumento.setAttribute('placeholder', 'Identificación temporal');
         numeroDocumento.setAttribute('type', 'text');
-       
+
         pais.removeAttribute('disabled');
         pais.addEventListener('focus', function (e) {
         paises.forEach(p => {
@@ -182,7 +184,7 @@ document.getElementsByName('tipo_documento').forEach(input => {
                             option.textContent = p.nombre;
                             option.className= ['text-gray-900', 'dark:text-gray-100'];
                             pais.appendChild(option);
-                        });   
+                        });
         }
         , { once: true });
     }
@@ -194,9 +196,10 @@ document.getElementsByName('tipo_documento').forEach(input => {
     const optionsList = document.getElementById('opciones');
     const hiddenSelect = document.getElementById('municipio');
     let allOptions = municipios.map(option => ({
-        value: option.codigo,
+        value: option.id,
         text: option.municipio + ' - ' + option.departamento
     }));
+
 
     // Inicializar la lista de opciones
         function filterOptions(query) {

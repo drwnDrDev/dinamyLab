@@ -20,7 +20,7 @@
                 <x-select-input :options="$tipos_documento" name="tipo_documento" id="tipo_documento" class="form-select" required />
             </div>
             <div class="w-full pb-2 col-span-2">
-                <x-input-label for="pais">Nacionalidad</x-input-label>
+                <x-input-label for="pais">País de orígen</x-input-label>
                 <x-select-input id="pais" name="pais" class="hidden" :options="['COL'=>'Colombia']" />
             </div>
         </div>
@@ -67,9 +67,7 @@
                 <x-input-label for="EPS">EPS</x-input-label>
                 <x-text-input list="lista_eps" id="eps" name="eps" />
                 <datalist id="lista_eps">
-                    @foreach ($eps as $prestador)
-                    <option value="{{ $prestador->nombre }}"></option>
-                    @endforeach
+                    <option value="Salud Total"></option>
                 </datalist>
             </div>
         </div>
@@ -81,9 +79,7 @@
                 <div class="w-full absolute flex-col-reverse bottom-10 bg-background border border-borders max-h-60 overflow-y-auto
                         z-10 hidden rounded-md shadow-lg" id="opciones"></div>
                 <select name="municipio" id="municipio" class="hidden">
-                    @foreach($ciudades as $ciudad)
-                    <option value="{{ $ciudad->codigo }}">{{$ciudad->municipio}} - {{$ciudad->departamento}}</option>
-                    @endforeach
+                    <option value="11007">Bosa</option>
                 </select>
             </div>
 
@@ -98,7 +94,7 @@
 
         <div class="row-inputs py-8 w-full flex justify-center gap-2">
             <x-primary-button id="tipoGuardado" name="tipoGuardado" class="w-40" >Guardar</x-primary-button>
-       
+
         </div>
     </div>
 </form>
