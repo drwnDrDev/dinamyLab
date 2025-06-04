@@ -12,7 +12,10 @@ class FacturaController extends Controller
      */
     public function index()
     {
-        //
+        $facturas = Factura::with(['paciente', 'orden'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return view('facturas.index', compact('facturas'));
     }
 
     /**
@@ -20,7 +23,11 @@ class FacturaController extends Controller
      */
     public function create()
     {
-        //
+        $ordenes = \App\Models\Orden::with(['paciente'])
+            ->where('estado', '!=', 'CANCELADA')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return view('facturas.create', compact('ordenes'));
     }
 
     /**
@@ -36,7 +43,8 @@ class FacturaController extends Controller
      */
     public function show(Factura $factura)
     {
-        //
+        $factura->load(['paciente', 'orden.examenes']);
+        return view('facturas.show', compact('factura'));
     }
 
     /**

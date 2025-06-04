@@ -1,6 +1,6 @@
 <x-app-layout >
     <x-slot name="title">
-     Requiescat in pace
+       Resultados de Procedimientos
     </x-slot>
 <x-slot name="header">
 
