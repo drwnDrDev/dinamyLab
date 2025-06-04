@@ -93,7 +93,7 @@ class PersonaController extends Controller
 
     public function update(Request $request, $id)
     {
-        return $request->all();
+        
         $persona = Persona::find($id);
 
         if (!$persona) {
