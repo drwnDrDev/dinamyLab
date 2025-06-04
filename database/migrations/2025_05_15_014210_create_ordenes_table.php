@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedMediumInteger('numero');
             $table->foreignId('paciente_id')->constrained('personas')->onDelete('cascade');
-            $table->unsignedBigInteger('acomanhante_id')->nullable();
-            $table->foreign('acomanhante_id')->references('id')->on('personas')->onDelete('cascade');
+            $table->unsignedBigInteger('acompaniante_id')->nullable();
+            $table->foreign('acompaniante_id')->references('id')->on('personas')->onDelete('cascade');
             $table->string('descripcion')->nullable();
             $table->decimal('abono', 10, 2)->nullable();
             $table->string('estado')->default('pendiente');
