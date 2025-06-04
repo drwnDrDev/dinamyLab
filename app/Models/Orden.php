@@ -6,13 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Orden extends Model
 {
-    //
-            // $table->unsignedMediumInteger('numero');
-            // $table->foreignId('paciente_id')->constrained('personas')->onDelete('cascade');
-            // $table->foreignId('acomanhante_id')->constrained('personas')->onDelete('cascade');
-            // $table->string('descripcion')->nullable();
-            // $table->decimal('abono', 10, 2)->nullable();
-            // $table->string('estado')->default('pendiente');
+ 
 
     protected $fillable = [
         'numero',
