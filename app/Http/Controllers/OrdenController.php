@@ -54,10 +54,9 @@ class OrdenController extends Controller
         $orden = Orden::create([
             'numero' => $request->input('numero_orden'),
             'paciente_id' => $request->input('paciente_id'),
-            'acomanhante_id' => $request->input('acompaniante_id'),
+            'acompaniante_id' => $request->input('acompaniante_id'),
             'descripcion' => $request->input('observaciones'),
             'abono' => $request->input('abono'),
-
         ]);
 
         $procedimientos = array_map(function ($examen) use ($orden) {
@@ -80,10 +79,10 @@ class OrdenController extends Controller
      */
     public function show(Orden $orden)
     {
-        $orden->load(['paciente', 'acompaniante', 'examenes']);
-        $examenes = $orden->examenes;
+        $orden->load(['paciente', 'acompaniante']);
+       
         $procedimientos = $orden->procedimientos;
-        return view('ordenes.show', compact('orden', 'examenes', 'procedimientos'));
+        return view('ordenes.show', compact('orden', 'procedimientos'));
     }
 
     /**
