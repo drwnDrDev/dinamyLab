@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdministracionController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\OrdenController;
@@ -29,15 +30,34 @@ Route::middleware('auth')->group(function () {
     Route::get('/ordenes-medicas/{orden}/edit',[OrdenController::class,'edit'])->name('ordenes.edit');
     Route::put('/ordenes-medicas/{orden}',[OrdenController::class,'update'])->name('ordenes.update');
     Route::get('/ordenes-medicas/{orden}/ver',[OrdenController::class,'show'])->name('ordenes.show');
+
+    Route::get('/resultados/{orden}/{examen}',[OrdenController::class,'resultados'])->name('resultados.create');
+
+
+    Route::get('/procedimientos',[ProcedimientoController::class,'index'])->name('procedimientos');
+    Route::get('/procedimientos/{procedimiento}',[ProcedimientoController::class,'show'])->name('procedimientos.show');
+
+    Route::get('/resultados',[ProcedimientoController::class,'resultado'])->name('resultados');
+
+    Route::get('/caja',[AdministracionController::class,'caja'])->name('caja');
+
+
+
+
+    Route::post('/resultados/store',[ProcedimientoController::class,'store'])->name('resultados.store');
+    Route::get('/resultados/{orden}/ver',[ProcedimientoController::class,'show'])->name('resultados.show');
+
+    Route::get('reportes',[ProcedimientoController::class,'reportes'])->name('reportes');
+
+});
+
+Route::middleware('auth','verified','can:ver_facturas')->group(function () {
     Route::get('/facturas',[FacturaController::class,'index'])->name('facturas');
     Route::get('/facturas/{factura}',[FacturaController::class,'show'])->name('facturas.show');
     Route::get('/facturas/create',[FacturaController::class,'create'])->name('facturas.create');
     Route::post('/facturas/store',[FacturaController::class,'store'])->name('facturas.store');
-    Route::get('/resultados/{orden}/{examen}',[OrdenController::class,'resultados'])->name('resultados.create');
-
-    Route::get('/procedimientos/{procedimiento}',[ProcedimientoController::class,'show'])->name('procedimientos.show');
-
 });
+
 Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () {
     Route::delete('/personas/{persona}',[PersonaController::class,'destroy'])->name('personas.destroy');
     Route::get('/personas/{persona}/edit',[PersonaController::class,'edit'])->name('personas.edit');
