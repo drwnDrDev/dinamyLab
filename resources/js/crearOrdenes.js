@@ -62,6 +62,18 @@ const guardarPersona = (evento) => {
         }else{
             acompaniante.value = usuario.id;
         }
+        // Deshabilitar todos los campos del formulario después de guardar
+       
+        Array.from(form.elements).forEach(element => {
+            if (element.type !== 'hidden') {
+                element.setAttribute('disabled', 'disabled');
+                element.classList.add('bg-stone-300', 'dark:bg-gray-700', 'cursor-not-allowed');
+            }
+        });
+        form.classList.add('bg-green-100', 'pointer-events-none', 'transition', 'duration-50', 'ease-in-out');
+        form.querySelector('button[type="submit"]').classList.add('bg-green-600', 'text-white', 'cursor-not-allowed');
+        form.querySelector('button[type="submit"]').textContent = 'Guardado exitoso';
+        form.querySelector('button[type="submit"]').disabled = true;
        
     }).catch(error => {
         if (error.response?.status === 422) {
