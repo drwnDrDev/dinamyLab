@@ -1164,7 +1164,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 4, NULL, NULL],
             DB::table('municipios')->insert(
                 array_map(function ($municipio) {
                     return [
-                'codigo' => $municipio[0],
+                'id' => $municipio[0],
                 'departamento' => $municipio[1],
                 'codigo_departamento' => $municipio[2],
                 'municipio' => $municipio[3],

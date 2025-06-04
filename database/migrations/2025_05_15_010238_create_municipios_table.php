@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('municipios', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo');
+
             $table->string('departamento');
             $table->string('codigo_departamento');
             $table->string('municipio');

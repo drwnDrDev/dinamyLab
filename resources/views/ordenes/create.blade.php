@@ -7,13 +7,13 @@
 
     <x-canva>
         <div class="section_paciente">
-            <x-formPersona perfil="Paciente" :tipos_documento="$tipos_documento" :ciudades="$ciudades" :eps="$eps"/>
+            <x-formPersona perfil="Paciente" :tipos_documento="$tipos_documento" />
         </div>
         <div x-data="{ open: false }">
             <label for="mostrarAcompaniante">Acompañante</label>
             <input type="checkbox" id="mostrarAcompaniante" @change="open = $event.target.checked">
             <div x-show="open" x-transition>
-                <x-formPersona perfil="acompaniante" :tipos_documento="$tipos_documento" :ciudades="$ciudades" />
+                <x-formPersona perfil="acompaniante" :tipos_documento="$tipos_documento" />
             </div>
         </div>
         <form  method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
@@ -34,12 +34,12 @@
                 </div>
             </div>
         </div>
-        <section class="section_examenes p-4" x-data="{ examenes: [] }">
+        <section class="section_examenes p-4" >
             <h2 class="font-bold mb-4 text-xl text-text">Exámenes</h2>
 
                 @foreach($examenes as $examen)
                     <div class="examen-item grid grid-cols-4 items-center gap-4 p-2 border-b border-border">
-                        <input type="checkbox" name="examenes[{{ $examen->id }}]" @change="examenes.push({{ $examen->id }})" class="form-checkbox">
+                        <input type="checkbox" name="examenes[{{ $examen->id }}]"  class="form-checkbox">
                         <span>{{ $examen->cup }}</span>
                         <span>{{ $examen->nombre }}</span>
                         <span>${{ $examen->valor }}</span>

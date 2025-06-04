@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\PrepareFrontendCacheDataJob;
-use App\TipoDocumento; 
-use App\Models\Pais; 
-use App\Models\Municipio; 
-use App\Models\Eps; 
+use App\TipoDocumento;
+use App\Models\Pais;
+use App\Models\Municipio;
+use App\Models\Eps;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache; // Si usas caché con el Job
 use Illuminate\Support\Facades\Log;
@@ -39,7 +39,7 @@ class FrontendDataController extends Controller
 
             $tiposDocumento = TipoDocumento::forLocalStorage();
             $paises = Pais::select('nombre', 'codigo_iso')->orderBy('nivel', 'desc')->get();
-            $municipios = Municipio::select('municipio', 'departamento', 'codigo')->orderBy('nivel','desc')->get();
+            $municipios = Municipio::select('municipio', 'departamento', 'id')->orderBy('nivel','desc')->get();
             $eps = Eps::select('nombre', 'id')
             ->where('verificada', true) // Solo EPS verificadas
             ->orderBy('nombre')->get();

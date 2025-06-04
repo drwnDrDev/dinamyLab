@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Enums\TipoDocumento;
+use App\TipoDocumento;
 use App\Models\Pais;
 use App\Models\Municipio;
 use Illuminate\Bus\Queueable;
@@ -42,8 +42,11 @@ class PrepareFrontendCacheDataJob // implements ShouldQueue
         try {
             $tiposDocumento = TipoDocumento::forLocalStorage();
             // Selecciona solo las columnas necesarias para optimizar
-            $paises = Pais::select('id', 'nombre', 'codigo_iso')->orderBy('nombre')->get()->toArray();
-            $municipios = Municipio::select('id', 'nombre', 'departamento', 'pais_id')->orderBy('nombre')->get()->toArray();
+            $paises = Pais::select('id', 'nombre', 'codigo_iso')->orderBy('nivel','desc')->get()->toArray();
+            $municipios = Municipio::select('id', 'municipio', 'departamento')->orderBy('nivel','desc')->get()->toArray();
+            $eps = \App\Models\Eps::select('id', 'nombre')
+                ->where('verificada', true) // Solo EPS verificadas
+                ->orderBy('nombre')->get()->toArray();
 
             $this->dataForFrontend = [
                 'tipos_documento' => $tiposDocumento,
