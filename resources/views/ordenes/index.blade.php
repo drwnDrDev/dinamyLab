@@ -14,10 +14,10 @@
         </div>
         @foreach ($ordenes as $orden)
         <div class="grid grid-cols-5 p-2 justify-center border border-borders">
-            <p class="text-titles">#{{$orden->numero}}</p>
+            <a href="{{route('ordenes.show',$orden)}}" class="text-titles">#{{$orden->numero}}</a>
             <div class="col-span-2 grid">
                 @foreach ($orden->procedimientos as $item)
-                
+
                 <a href="{{route('procedimientos.show',$item)}}"  class=" hover:bg-gray-100 border-b border-gray-200" >  {{$item->examen->nombre}} </a>
                 @endforeach
             </div>
