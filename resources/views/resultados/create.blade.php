@@ -3,7 +3,7 @@
    Nuevo Resultado
     </x-slot>
     <x-slot name="header" >
-    <section class="grid grid-cols-2 p-2 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+    <section class="grid grid-cols-2 p-2 bg-white dark:bg-gray-800 dark:text-white shadow sm:rounded-lg">
     <div>
     <h2>{{$procedimiento->orden->paciente->nombreCompleto()}}</h2>
     <h3>{{$procedimiento->orden->paciente->tipo_documento}} {{$procedimiento->orden->paciente->numero_documento}}</h3>
@@ -16,6 +16,7 @@
     </div>
     </section>
     </x-slot>
+    {{'resultados.componentes.'.$procedimiento->examen->slug()}}
     <h1 class="text-2xl font-bold text-center">{{$procedimiento->examen->nombre}}</h1>
-            @includeIf('resultados.componentes.cuadro_hematico')
+    @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['procedimiento' => $procedimiento])
 </x-app-layout>

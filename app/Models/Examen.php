@@ -14,7 +14,13 @@ class Examen extends Model
         'plantilla'
     ];
 
-    
+    public function slug(){
+
+
+        return json_decode($this->plantilla, true)['componente'] ?? null;
+
+    }
+
     protected $table = 'examenes';
 
 }
