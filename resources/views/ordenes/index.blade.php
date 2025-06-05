@@ -18,7 +18,7 @@
             <div class="col-span-2 grid">
                 @foreach ($orden->procedimientos as $item)
 
-                <a href="{{route('procedimientos.show',$item)}}"  class=" hover:bg-gray-100 border-b border-gray-200" >  {{$item->examen->nombre}} </a>
+                <a href="{{route('resultados.create',$item)}}"  class=" hover:bg-gray-100 border-b border-gray-200" >  {{$item->examen->nombre}} </a>
                 @endforeach
             </div>
             <p class="col-span-2">{{$orden->updated_at}} {{$orden->estado}}</p>
