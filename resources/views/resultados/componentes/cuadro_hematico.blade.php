@@ -10,7 +10,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 font-semibold uppercase">hematocrito</div>
         <div class="p-2">
-            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="hto" id="hto">
+            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="hto"
+                id="hto">
         </div>
         <div class="p-2">%</div>
         <div class="p-2 text-center">42-52</div>
@@ -20,7 +21,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 font-semibold uppercase">hemoglobina</div>
         <div class="p-2">
-            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="hb" id="hb">
+            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="hb"
+                id="hb">
         </div>
         <div class="p-2">g%</div>
         <div class="p-2 text-center">13.5-16.5</div>
@@ -30,7 +32,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 font-semibold uppercase">recuento de leucocitos</div>
         <div class="p-2">
-            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="leu" id="leu">
+            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="leu"
+                id="leu">
         </div>
         <div class="p-2">leu/mm³</div>
         <div class="p-2 text-center">5000-10000</div>
@@ -43,7 +46,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 ml-1 uppercase">neutrofilos</div>
         <div class="p-2">
-            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="neutrofilos" id="neutrofilos">
+            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="neutrofilos"
+                id="neutrofilos">
         </div>
         <div class="p-2">%</div>
         <div class="p-2 text-center">52-67</div>
@@ -53,7 +57,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 ml-1 uppercase">linfocitos</div>
         <div class="p-2">
-            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="linfocitos" id="linfocitos">
+            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="linfocitos"
+                id="linfocitos">
         </div>
         <div class="p-2">%</div>
         <div class="p-2 text-center">27-42</div>
@@ -63,7 +68,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 ml-1 uppercase">eosinofilos</div>
         <div class="p-2">
-            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="eosinofilos" id="eosinofilos">
+            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="eosinofilos"
+                id="eosinofilos">
         </div>
         <div class="p-2">%</div>
         <div class="p-2 text-center">0-3</div>
@@ -73,7 +79,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 ml-1 uppercase">monocitos</div>
         <div class="p-2">
-            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="monocitos" id="monocitos">
+            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="monocitos"
+                id="monocitos">
         </div>
         <div class="p-2">%</div>
         <div class="p-2 text-center">3-7</div>
@@ -83,7 +90,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 ml-1 uppercase">celulas inmaduras</div>
         <div class="p-2">
-            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="inmaduras" id="inmaduras">
+            <input step="0.001" type="number" class="w-24 h-8 border border-spacing-0 rounded" name="inmaduras"
+                id="inmaduras">
         </div>
         <div class="p-2">%</div>
         <div class="p-2"></div>
@@ -93,7 +101,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 font-semibold uppercase">recuento de plaquetas</div>
         <div class="p-2">
-            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="rto_plaquetas" id="rto_plaquetas">
+            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="rto_plaquetas"
+                id="rto_plaquetas">
         </div>
         <div class="p-2">plaq/mm³</div>
         <div class="p-2 text-center">150000-450000</div>
@@ -103,7 +112,8 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-2 font-semibold uppercase">vsg</div>
         <div class="p-2">
-            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="vsg" id="vsg">
+            <input type="number" class="w-24 h-8 border border-spacing-0 rounded" step="0.001" name="vsg"
+                id="vsg">
         </div>
         <div class="p-2">mm/h</div>
         <div class="p-2 text-center">0-22</div>
