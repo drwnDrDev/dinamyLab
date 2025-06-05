@@ -7,6 +7,7 @@ use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProcedimientoController;
+use App\Http\Controllers\ResultadosController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -31,7 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/ordenes-medicas/{orden}',[OrdenController::class,'update'])->name('ordenes.update');
     Route::get('/ordenes-medicas/{orden}/ver',[OrdenController::class,'show'])->name('ordenes.show');
 
-    Route::get('/resultados/{orden}/{examen}',[OrdenController::class,'resultados'])->name('resultados.create');
+   
+    Route::get('/resultados/{procedimiento}',[ResultadosController::class,'create'])->name('resultados.create');
 
 
     Route::get('/procedimientos',[ProcedimientoController::class,'index'])->name('procedimientos');
