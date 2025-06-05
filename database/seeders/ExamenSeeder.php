@@ -29,9 +29,10 @@ class ExamenSeeder extends Seeder
 
         DB::table('eps')->insert($epsArray);
         Examen::create([
-            'nombre'=>'Glucosa',
+            'nombre'=>'Hemoclasificación',
             'cup'=>'4212',
             'valor'=>15000,
+            'plantilla'=>'[{\"parametro\": \"Grupo sanguíneo\", \"resultado\": {\"tipo\": \"lista\", \"nombre\": \"gs\", \"items\": [\"A\", \"B\", \"AB\", \"O\"]}}, {\"parametro\": \"RH\", \"resultado\": {\"tipo\": \"lista\", \"nombre\": \"rh\", \"items\": [\"positivo\", \"negativo\"]}}]'
         ]);
         Examen::create([
             'nombre'=>'Colesterol Total',
