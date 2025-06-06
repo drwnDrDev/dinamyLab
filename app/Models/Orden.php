@@ -36,6 +36,12 @@ class Orden extends Model
     {
         return $this->hasMany(Procedimiento::class);
     }
+    public function examenes()
+    {
+        return $this->belongsToMany(Examen::class, 'orden_examen')
+            ->withPivot('cantidad')
+            ->withTimestamps();
+    }
 
     protected $table = 'ordenes_medicas';
 }

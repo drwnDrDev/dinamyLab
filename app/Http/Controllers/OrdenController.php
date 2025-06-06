@@ -40,25 +40,41 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
+       
 
-
-         $request->validate([
+        $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'acompaniante_id' => 'nullable|exists:personas,id',
             'numero_orden' => 'required|string|max:20|unique:ordenes_medicas,numero',
-            'examenes' => 'required|array',
-            'examenes.*.id' => 'nullable|exists:examenes,id',
-            'abono' => 'nullable|numeric|min:0',
+            
         ]);
+        $examenes = array_filter(
+            $request->input('examenes', []),
+            function ($cantidad) {
+            return !is_null($cantidad) && $cantidad != 0;
+            }
+        );
 
+        if (empty($examenes)) {
+            return redirect()->back()->withErrors(['examenes' => 'Debe seleccionar al menos un examen.']);
+        }
+        
+        $total = Examen::whereIn('id', array_keys($examenes))
+            ->sum(function ($examen) use ($examenes) {
+                return $examen->valor * $examenes[$examen->id];
+            });
+        return $total;
+
+        $abono = $request->input('pago')==="on"? $total : $request->input('abono', 0);
+        
         $orden = Orden::create([
             'numero' => $request->input('numero_orden'),
             'paciente_id' => $request->input('paciente_id'),
             'acompaniante_id' => $request->input('acompaniante_id'),
             'descripcion' => $request->input('observaciones'),
-            'abono' => $request->input('abono'),
+            'abono' => $abono,
         ]);
-
+        return $orden;
         $procedimientos = array_map(function ($examen) use ($orden) {
             return [
                 'orden_id' => $orden->id,
