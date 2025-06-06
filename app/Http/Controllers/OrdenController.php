@@ -58,12 +58,13 @@ class OrdenController extends Controller
         if (empty($examenes)) {
             return redirect()->back()->withErrors(['examenes' => 'Debe seleccionar al menos un examen.']);
         }
-        
+       
         $total = Examen::whereIn('id', array_keys($examenes))
+            ->get()
             ->sum(function ($examen) use ($examenes) {
                 return $examen->valor * $examenes[$examen->id];
             });
-        return $total;
+   
 
         $abono = $request->input('pago')==="on"? $total : $request->input('abono', 0);
         
@@ -73,8 +74,9 @@ class OrdenController extends Controller
             'acompaniante_id' => $request->input('acompaniante_id'),
             'descripcion' => $request->input('observaciones'),
             'abono' => $abono,
+            'total' => $total,
         ]);
-        return $orden;
+        
         $procedimientos = array_map(function ($examen) use ($orden) {
             return [
                 'orden_id' => $orden->id,
