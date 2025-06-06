@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('acompaniante_id')->references('id')->on('personas')->onDelete('cascade');
             $table->string('descripcion')->nullable();
             $table->decimal('abono', 10, 2)->nullable();
-            $table->string('estado')->default('pendiente');
+            $table->decimal('total', 10, 2);
             $table->timestamps();
         });
     }
@@ -32,3 +32,4 @@ return new class extends Migration
         Schema::dropIfExists('ordenes_medicas');
     }
 };
+

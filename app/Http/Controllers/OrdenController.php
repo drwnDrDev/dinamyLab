@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Estado;
 use App\Models\Orden;
-use App\Models\Municipio;
 use App\Models\Examen;
-use App\Models\Eps;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +16,7 @@ class OrdenController extends Controller
      */
     public function index()
     {
-        $ordenes = Orden::all()->sortByDesc('created_at');
+        $ordenes = Orden::orderBy('created_at', 'desc')->get();
         return view('ordenes.index', compact('ordenes'));
     }
 
@@ -31,6 +29,7 @@ class OrdenController extends Controller
         $tipos_documento = collect(TipoDocumento::cases())
             ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
         $examenes = Examen::all();
+
         $orden_numero = Orden::max('numero') + 1;
         return view('ordenes.create', compact('tipos_documento', 'examenes', 'orden_numero'));
     }
@@ -42,32 +41,69 @@ class OrdenController extends Controller
     {
 
 
-         $request->validate([
+        $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'acompaniante_id' => 'nullable|exists:personas,id',
             'numero_orden' => 'required|string|max:20|unique:ordenes_medicas,numero',
-            'examenes' => 'required|array',
-            'examenes.*.id' => 'nullable|exists:examenes,id',
-            'abono' => 'nullable|numeric|min:0',
         ]);
+
+
+        $examenes = array_filter(
+            $request->input('examenes', []),
+            function ($cantidad) {
+            return !is_null($cantidad) && $cantidad != 0;
+            }
+        );
+        
+
+        if (empty($examenes)) {
+            return redirect()->back()->withErrors(['examenes' => 'Debe seleccionar al menos un examen.']);
+        }
+
+        $total = Examen::whereIn('id', array_keys($examenes))
+            ->get()
+            ->sum(function ($examen) use ($examenes) {
+                return $examen->valor * $examenes[$examen->id];
+            });
+
+
+        $abono = $request->input('pago')==="on"? $total : $request->input('abono', 0);
 
         $orden = Orden::create([
             'numero' => $request->input('numero_orden'),
             'paciente_id' => $request->input('paciente_id'),
             'acompaniante_id' => $request->input('acompaniante_id'),
             'descripcion' => $request->input('observaciones'),
-            'abono' => $request->input('abono'),
+            'abono' => $abono,
+            'total' => $total,
         ]);
 
-        $procedimientos = array_map(function ($examen) use ($orden) {
+
+
+        $orden_examen = array_map(function ($examen) use ($orden , $examenes) {
             return [
                 'orden_id' => $orden->id,
                 'examen_id' => $examen,
-                'estado' => Estado::PENDIENTE,
-                'fecha' => now(),
+                'cantidad' => $examenes[$examen],
+
             ];
-        }, array_keys($request->input('examenes')));
+        }, array_keys($examenes));
         // Asignar los procedimientos a la orden
+
+        $procedimientos = [];
+        foreach ($orden_examen as $examen) {
+            for ($i = 0; $i < $examen['cantidad']; $i++) {
+            $procedimientos[] = [
+                'orden_id' => $examen['orden_id'],
+                'empleado_id' => Auth::user()->id,
+                'examen_id' => $examen['examen_id'],
+                'fecha' => now(),
+                'estado' => Estado::PROCESO,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            }
+        }
 
         Procedimiento::insert($procedimientos);
 
@@ -80,7 +116,7 @@ class OrdenController extends Controller
     public function show(Orden $orden)
     {
         $orden->load(['paciente', 'acompaniante']);
-       
+
         $procedimientos = $orden->procedimientos;
         return view('ordenes.show', compact('orden', 'procedimientos'));
     }
