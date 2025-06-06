@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Orden extends Model
 {
- 
+
 
     protected $fillable = [
         'numero',
@@ -14,7 +14,8 @@ class Orden extends Model
         'acompaniante_id',
         'descripcion',
         'abono',
-        'estado'
+        'estado',
+        'total',
     ];
     protected $casts = [
         'numero' => 'integer',
@@ -35,6 +36,12 @@ class Orden extends Model
     public function procedimientos()
     {
         return $this->hasMany(Procedimiento::class);
+    }
+    public function examenes()
+    {
+        return $this->belongsToMany(Examen::class, 'orden_examen')
+            ->withPivot('cantidad')
+            ->withTimestamps();
     }
 
     protected $table = 'ordenes_medicas';

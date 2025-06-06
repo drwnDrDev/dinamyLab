@@ -5,6 +5,8 @@
         </h2>
     </x-slot>
 
+
+
     <x-canva>
         <div class="section_paciente">
             <x-formPersona perfil="Paciente" :tipos_documento="$tipos_documento" />
@@ -26,8 +28,8 @@
             </div>
 
             <div x-data="{ open: false }" class="w-full flex flex-wrap items-center gap-2">
-                <label for="mostrarAcompaniante">Pago</label>
-                <input type="checkbox" id="mostrarAcompaniante" @change="open = !$event.target.checked" checked>
+                <label for="pago">Pago</label>
+                <input type="checkbox" id="pago" name="pago" @change="open = !$event.target.checked" checked>
                 <div x-show="open" x-transition>
                     <x-input-label for="abono">Abono</x-input-label>
                     <x-text-input type="number" id="abono" name="abono" value="0" class="form-input w-32"/>
@@ -36,15 +38,22 @@
         </div>
         <section class="section_examenes p-4" >
             <h2 class="font-bold mb-4 text-xl text-text">Exámenes</h2>
-
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 @foreach($examenes as $examen)
-                    <div class="examen-item grid grid-cols-4 items-center gap-4 p-2 border-b border-border">
-                        <input type="checkbox" name="examenes[{{ $examen->id }}]"  class="form-checkbox">
-                        <span>{{ $examen->cup }}</span>
-                        <span>{{ $examen->nombre }}</span>
-                        <span>${{ $examen->valor }}</span>
+                    <div class="examen-item flex items-center gap-2 p-2 border border-borders rounded-sm shadow-sm">
+                        <input
+                            type="number"
+                            id="{{ $examen->id }}"
+                            name="examenes[{{ $examen->id }}]"
+                            class="w-8 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
+                            min="0"
+                            value="0"
+                            style="appearance: textfield; -moz-appearance: textfield;"
+                        >
+                        <label for="{{ $examen->id }}" class="text-lg font-semibold">{{ $examen->nombre }}</label>
                     </div>
                 @endforeach
+            </div>
                <input type="text" name="examenes_seleccionados" x-model="examenes" class="hidden">
                <input type="hidden" name="paciente_id" id="paciente_id" >
                <input type="hidden" name="acompaniante_id" id="acompaniante_id" >
