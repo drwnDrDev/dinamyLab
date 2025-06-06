@@ -30,16 +30,17 @@
         </div>
        
         <div class="grid grid-cols-5 p-2 justify-center border border-borders">
-           
-            <div class="col-span-3 grid grid-cols-3">
+           <p class="col-span-2">{{$orden->updated_at}} {{$orden->estado}}</p>
+            <div class="col-span-4 grid grid-cols-4">
                 @foreach ($orden->procedimientos as $item)
                 
                 <p>{{$item->examen->nombre}}</p> 
                 <p>1</p>
                 <p>{{$item->examen->valor}} </p>
+                <p>{{$item->estado}} </p>
                 @endforeach
             </div>
-            <p class="col-span-2">{{$orden->updated_at}} {{$orden->estado}}</p>
+            
         </div>
        
     </div>
