@@ -16,7 +16,11 @@
     </div>
     </section>
     </x-slot>
-    {{'resultados.componentes.'.$procedimiento->examen->slug()}}
+
     <h1 class="text-2xl font-bold text-center">{{$procedimiento->examen->nombre}}</h1>
-    @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['procedimiento' => $procedimiento])
+    <form action="{{ route('resultados.store', $procedimiento) }}" method="POST" class="p-4">
+        @csrf
+
+        @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['procedimiento' => $procedimiento])
+    </form>
 </x-app-layout>

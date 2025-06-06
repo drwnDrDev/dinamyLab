@@ -32,9 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/ordenes-medicas/{orden}',[OrdenController::class,'update'])->name('ordenes.update');
     Route::get('/ordenes-medicas/{orden}/ver',[OrdenController::class,'show'])->name('ordenes.show');
 
-   
     Route::get('/resultados/{procedimiento}',[ResultadosController::class,'create'])->name('resultados.create');
-
+    Route::post('/resultados/{procedimiento}/store',[ResultadosController::class,'store'])->name('resultados.store');
 
     Route::get('/procedimientos',[ProcedimientoController::class,'index'])->name('procedimientos');
     Route::get('/procedimientos/{procedimiento}',[ProcedimientoController::class,'show'])->name('procedimientos.show');
@@ -46,8 +45,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::post('/resultados/store',[ProcedimientoController::class,'store'])->name('resultados.store');
-    Route::get('/resultados/{orden}/ver',[ProcedimientoController::class,'show'])->name('resultados.show');
+    Route::get('/resultados/{procedimiento}/ver',[ResultadosController::class,'show'])->name('resultados.show');
 
     Route::get('reportes',[ProcedimientoController::class,'reportes'])->name('reportes');
 
