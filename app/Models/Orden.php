@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Orden extends Model
 {
- 
+
 
     protected $fillable = [
         'numero',
@@ -14,7 +14,8 @@ class Orden extends Model
         'acompaniante_id',
         'descripcion',
         'abono',
-        'estado'
+        'estado',
+        'total',
     ];
     protected $casts = [
         'numero' => 'integer',

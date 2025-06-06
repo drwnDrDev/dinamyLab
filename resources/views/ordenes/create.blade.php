@@ -5,6 +5,8 @@
         </h2>
     </x-slot>
 
+
+
     <x-canva>
         <div class="section_paciente">
             <x-formPersona perfil="Paciente" :tipos_documento="$tipos_documento" />
@@ -39,13 +41,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 @foreach($examenes as $examen)
                     <div class="examen-item flex items-center gap-2 p-2 border border-borders rounded-sm shadow-sm">
-                        <input 
-                            type="number" 
-                            id="{{ $examen->id }}" 
-                            name="examenes[{{ $examen->id }}]" 
-                            class="w-8 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none" 
-                            min="0" 
-                            value="0" 
+                        <input
+                            type="number"
+                            id="{{ $examen->id }}"
+                            name="examenes[{{ $examen->id }}]"
+                            class="w-8 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
+                            min="0"
+                            value="0"
                             style="appearance: textfield; -moz-appearance: textfield;"
                         >
                         <label for="{{ $examen->id }}" class="text-lg font-semibold">{{ $examen->nombre }}</label>
