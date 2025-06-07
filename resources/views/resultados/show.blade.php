@@ -21,5 +21,4 @@
 
     @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['paciente' => $procedimiento->orden->paciente,'resultados'=>$procedimiento->resultados['data'], 'isResultado' => true])
 
-
 </x-app-layout>
