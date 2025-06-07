@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Casts\AsDate;
 
 class Procedimiento extends Model
 {
@@ -33,8 +35,14 @@ class Procedimiento extends Model
     {
         return $this->belongsTo(Examen::class);
     }
-    protected $casts = [
-        'resultados' => 'json',
-        'fecha' => 'date',
-    ];
+
+    public function resultado(){
+        return json_decode($this->resultados);
+    }
+    protected function casts(): array
+    {
+        return [
+        'resultados' => AsCollection::class
+        ];
+    }
 }

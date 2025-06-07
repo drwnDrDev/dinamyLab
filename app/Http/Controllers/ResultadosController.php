@@ -30,7 +30,7 @@ class ResultadosController extends Controller
     {
 
 
-        $procedimiento->resultados = json_encode([
+        $procedimiento->resultados = [
             "data"=>$request->except('_token', 'submit'),
 
             "meta" => [
@@ -39,7 +39,8 @@ class ResultadosController extends Controller
                 "created_at" => now(),
             ]
 
-        ]);
+        ];
+
         $procedimiento->estado = Estado::TERMINADO; // Cambia el estado del procedimiento a 'terminado'
         $procedimiento->save();
 
