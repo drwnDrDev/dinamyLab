@@ -18,7 +18,8 @@
     </x-slot>
 
     <h1 class="text-2xl font-bold text-center">{{$procedimiento->examen->nombre}}</h1>
-    resultados:
-    {{$procedimiento->resultados}}
+
+    @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['paciente' => $procedimiento->orden->paciente,'resultados'=>$procedimiento->resultados['data'], 'isResultado' => true])
+
 
 </x-app-layout>
