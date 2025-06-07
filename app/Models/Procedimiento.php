@@ -34,7 +34,7 @@ class Procedimiento extends Model
         return $this->belongsTo(Examen::class);
     }
     protected $casts = [
-       
+        'resultados' => 'json',
         'fecha' => 'date',
     ];
 }

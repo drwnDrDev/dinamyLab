@@ -21,6 +21,6 @@
     <form action="{{ route('resultados.store', $procedimiento) }}" method="POST" class="p-4">
         @csrf
 
-        @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['procedimiento' => $procedimiento])
+        @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['procedimiento' => $procedimiento, 'isResultado' => false])
     </form>
 </x-app-layout>
