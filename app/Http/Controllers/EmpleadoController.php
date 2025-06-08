@@ -72,7 +72,7 @@ class EmpleadoController extends Controller
             return view('paciente.dashboard');
         }
         if ($usuario->hasRole('admin')) {
-         \App\Jobs\TestJob::dispatch();
+       
             $pendientes = \App\Models\Procedimiento::where('estado', 'pendiente')->get();
 
             return view('admin.dashboard',compact('pendientes'));
