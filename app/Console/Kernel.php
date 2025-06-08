@@ -9,11 +9,14 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new \App\Jobs\RevertirEstadoProcedimientos)->hourly();
+        // Ejecutar el Job cada minuto para pruebas
+        $schedule->job(new RevertirEstadoProcedimientos)->everyMinute();
+        
     }
 
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
+        require base_path('routes/console.php');
     }
 }

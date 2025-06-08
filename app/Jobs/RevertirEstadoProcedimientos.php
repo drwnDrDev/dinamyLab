@@ -13,7 +13,7 @@ use App\Estado;
 
 class RevertirEstadoProcedimientos implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
@@ -28,21 +28,21 @@ class RevertirEstadoProcedimientos implements ShouldQueue
      */
     public function handle(): void
     {
-        $limite = now()->subHours(24);
-
-        // Revertir a 'pendiente' si han pasado 24h y no tiene resultado
+        $limite = Carbon::now()->subHours(24); // 24 horas atrás
+     
         $revertidos = Procedimiento::where('estado', Estado::PROCESO)
             ->where('updated_at', '<=', $limite)
-            ->whereDoesntHave('resultado')
+            ->whereNull('resultados')
             ->update(['estado' => 'pendiente']);
+        if($revertidos !== 0) {
+            \Log::info("Se han revertido $revertidos procedimientos a 'pendiente'.");
+        }
 
-        Log::info("Procedimientos revertidos a 'pendiente': $revertidos");
-
-        // Cambiar a 'terminado' si tiene resultado
         $terminados = Procedimiento::whereNotIn('estado', [Estado::TERMINADO, Estado::ENTREGADO, Estado::ANULADO])
-            ->whereHas('resultado')
-            ->update(['estado' => Estado::TERMINADO]);
-
-        Log::info("Procedimientos actualizados a 'terminado': $terminados");
+            ->whereNotNull('resultados')
+            ->update(['estado' => Estado::TERMINADO]);  
+        if($terminados !== 0) {
+                \Log::info("Procedimientos actualizados a 'terminado': $terminados");
+            }
     }
 }
