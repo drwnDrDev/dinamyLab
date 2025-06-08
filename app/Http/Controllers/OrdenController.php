@@ -16,6 +16,7 @@ class OrdenController extends Controller
      */
     public function index()
     {
+        \App\Jobs\RevertirEstadoProcedimientos::dispatch();
         $ordenes = Orden::orderBy('created_at', 'desc')->get();
         return view('ordenes.index', compact('ordenes'));
     }
