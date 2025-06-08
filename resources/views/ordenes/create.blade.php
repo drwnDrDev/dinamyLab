@@ -45,7 +45,7 @@
                             type="number"
                             id="{{ $examen->id }}"
                             name="examenes[{{ $examen->id }}]"
-                            class="w-8 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
+                            class="w-16 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
                             min="0"
                             value="0"
                             style="appearance: textfield; -moz-appearance: textfield;"
