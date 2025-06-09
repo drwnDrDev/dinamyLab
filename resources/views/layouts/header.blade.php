@@ -1,9 +1,9 @@
-<nav x-data="{ open: false }" class="md:fixed border-b border-borders col-span-2 w-full">
+<nav x-data="{ open: false }" class="md:fixed border-b border-borders col-span-2 w-full print:hidden">
     <!-- Primary Navigation Menu -->
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-    
-            <div class="flex gap-2 items-center">    
+
+            <div class="flex gap-2 items-center">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
