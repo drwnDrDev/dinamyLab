@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/procedimientos',[ProcedimientoController::class,'index'])->name('procedimientos');
     Route::get('/procedimientos/{procedimiento}',[ProcedimientoController::class,'show'])->name('procedimientos.show');
+    Route::patch('/procedimientos/{procedimiento}/estado',[ProcedimientoController::class,'observaciones'])->name('procedimientos.observaciones');
 
     Route::get('/resultados',[ProcedimientoController::class,'resultado'])->name('resultados');
 

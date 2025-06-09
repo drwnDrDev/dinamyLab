@@ -1,4 +1,35 @@
+const examen = document.getElementById('form-examenes');
+console.log('Formulario de examen:', examen);
+const orden = document.getElementById('numero-orden').value;
 
+examen.addEventListener('submit', function(event) {
+  alert('Enviando datos del formulario');
+  event.preventDefault(); // Evita el envío del formulario
+  const formData = new FormData(examen);
+  const data = Object.fromEntries(formData.entries());
+  const url = examen.getAttribute('action');
+  axios.post(url, data, {
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'multipart/form-data',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-Order-Number': orden, // Agrega el número de orden al encabezado
+            'method': 'PATCH' // Método PATCH para actualizar datos
+        }
+    }).then(response => {
+      // Maneja la respuesta exitosa
+      console.log('Datos actualizados:', response.data);
+      alert('Datos actualizados correctamente');
+    }
+    )
+    .catch(error => {
+      // Maneja el error
+      console.error('Error al actualizar los datos:', error);
+      alert('Error al actualizar los datos');
+    }
+  );
+});
 
 function imprimirSeccion(selector) {
     alert('Imprimiendo sección: ' + selector);

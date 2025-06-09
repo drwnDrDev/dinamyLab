@@ -11,6 +11,7 @@ class Procedimiento extends Model
 
     protected $fillable = [
         'orden_id',
+        'examen_id',
         'empleado_id',
         'resultados',
         'observacion',

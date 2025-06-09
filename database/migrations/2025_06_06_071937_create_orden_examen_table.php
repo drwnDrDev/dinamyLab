@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('orden_examen', function (Blueprint $table) {
             $table->id();
             $table->foreignId('orden_medica_id')->constrained('ordenes_medicas')->onDelete('cascade');
-            $table->foreignId('examen_id')->constrained()->onDelete('cascade');
+            $table->foreignId('examen_id')->constrained('examenes')->onDelete('cascade');
             $table->unsignedTinyInteger('cantidad')->default(1);
-
+            $table->timestamps();
         });
     }
 
