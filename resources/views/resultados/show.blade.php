@@ -3,6 +3,11 @@
    Nuevo Resultado
     </x-slot>
     <x-slot name="header" >
+    <section class="hidden print:grid print:grid-cols-3">
+       Esta es la historia de un sabado
+
+    </section>
+
     <section class="grid grid-cols-2 p-2 bg-white dark:bg-gray-800 dark:text-white shadow sm:rounded-lg">
     <div>
     <h2>{{$procedimiento->orden->paciente->nombreCompleto()}}</h2>
@@ -19,6 +24,6 @@
 
     <h1 class="text-2xl font-bold text-center">{{$procedimiento->examen->nombre}}</h1>
 
-    @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['paciente' => $procedimiento->orden->paciente,'resultados'=>$procedimiento->resultados['data'], 'isResultado' => true])
+    @includeIf('resultados.resultados.'.$procedimiento->examen->slug(), ['paciente' => $procedimiento->orden->paciente,'resultados'=>$procedimiento->resultados['data'], 'isResultado' => true])
 
 </x-app-layout>

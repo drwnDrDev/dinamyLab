@@ -44,6 +44,7 @@
     <div class="grid grid-cols-4 text-lg gap-1">
         <div class="p-1 font-semibold uppercase">recuento de leucocitos</div>
         <div class="p-1 text-end">
+      
             @if (isset($isResultado) && $isResultado)
                 {{ $resultados['leu'] ?? '' }}
             @else

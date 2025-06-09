@@ -34,7 +34,7 @@
             <main class="w-full m-auto p-6 md:ml-60 md:mt-16 md:w-[calc(100vw-240px)] md:h-[calc(100vh-64px)] overflow-y-auto h-full">
                  <!-- Page Heading -->
                     @isset($header)
-                        <header>
+                        <header >
                             <div class="mx-auto py-6 px-4 sm:px-6 lg:px-8">
                                 {{ $header }}
                             </div>
