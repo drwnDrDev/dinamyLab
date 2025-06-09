@@ -8,6 +8,7 @@
         <div class=" items-center mb-4">
                 <a href="{{ route('ordenes.create') }}" class="p-4 bg-secondary rounded-md hover:bg-primary">Nueva orden</a>
         </div>
+
     <div class="container" id="ticket">
         <div class="grid grid-cols-5 border border-borders rounded-md">
             <div class="col-span-2 p-2">
@@ -28,7 +29,27 @@
             <p class="text-titles">#{{$orden->numero}} Inicio de Procedimiento {{$orden->created_at}}</p>
 
         </div>
+        <form action="{{route('ordenes.add',$orden)}}" method="POST" id="form-examenes" class="mt-4 p-2">
+
+        @csrf
+        @method('patch')
+        <input type="hidden" name="orden_id" id="numero-orden" value="{{$orden->id}}">
+         <h2 class="uppercase text-gray-950 text-xl">agregar examenes</h2> 
+        <label for="examen">
+            <select name="examen_id" id="examen" class="border border-borders rounded-md p-2">
+                @foreach ($examenes as $examen)
+                    <option value="{{$examen->id}}">{{$examen->nombre}}</option>
+                @endforeach
+            </select>
+            <label for="cantidad" class="ml-2">Cantidad</label>
+            
+            <input type="number" name="cantidad" id="cantidad"  class="border border-borders rounded-md p-2" value="1">
+            <x-primary-button type="submit" id="agregar-examen">
+                {{ __('Add') }}
+            </x-primary-button>
        
+        </form>
+
         <div class="grid grid-cols-5 p-2 justify-center border border-borders">
            <p class="col-span-2">{{$orden->updated_at}} {{$orden->estado}}</p>
             <div class="col-span-4 grid grid-cols-4">
