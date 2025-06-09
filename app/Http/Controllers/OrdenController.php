@@ -10,6 +10,8 @@ use App\TipoDocumento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Procedimiento;
+use Illuminate\Support\Facades\DB;
+
 class OrdenController extends Controller
 {
     /**
