@@ -29,6 +29,8 @@ Route::get('departamento/{departamento_id}', [MunicipioController::class, 'depar
 Route::get('paises', [\App\Http\Controllers\Api\PaisController::class, 'index']);
 
 Route::get('orden/{id}', [OrdenController::class, 'show']);
+Route::patch('/ordenes-medicas/{orden}',[OrdenController::class,'add'])->name('ordenes.add');
+
 
 
 Route::get('user', function (Request $request) {
