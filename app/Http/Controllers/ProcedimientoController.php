@@ -94,4 +94,28 @@ class ProcedimientoController extends Controller
             ->get();
         return view('procedimientos.examenes', compact('examenes'));
     }
+    public function observaciones(Request $request, Procedimiento $procedimiento)
+    {
+        $request->validate([
+            'observacion' => 'required|string|max:255',
+            'estado' => 'required|in:pendiente de muestra,anulado',
+        ]);
+         $usuario =  Auth()->user()->id;
+         $observacion = $request->input('observacion','SIN OBSERVACIÓN'); ;
+         $estado = $request->INPUT('estado', 'pendiente de muestra');
+        
+        
+        $procedimiento->estado = $estado;
+        $procedimiento->save();
+       
+         \Log::info("El usuario con ID $usuario ha actualizado la observación del procedimiento con ID {$procedimiento->id} a: $estado. Observación: $observacion");
+
+        return response()->json([
+            'message' => 'Observación actualizada correctamente',
+            'estado' => $procedimiento->estado,
+            'observacion' => $observacion,
+        ]);
+    }
+
+    
 }
