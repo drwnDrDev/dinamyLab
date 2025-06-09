@@ -42,7 +42,7 @@ class OrdenController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {   // 1. Validación inicial de la solicitud
+    {
         $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'acompaniante_id' => 'nullable|exists:personas,id',
@@ -50,12 +50,10 @@ class OrdenController extends Controller
             'examenes' => 'array', // Asegura que 'examenes' es un array
         ]);
 
-        // 2. Obtener la instancia del Paciente
-        // Necesitamos el modelo del paciente para la validación de género.
         $paciente = Persona::findOrFail($request->input('paciente_id'));
 
-        // 3. Filtrar y validar los exámenes seleccionados
-        // Elimina los exámenes con cantidad nula o cero.
+        $prueba = Examen::where('cup','904508')->first('id');
+
         $examenesSolicitados = array_filter(
             $request->input('examenes', []),
             fn ($cantidad) => !is_null($cantidad) && $cantidad != 0
@@ -66,53 +64,29 @@ class OrdenController extends Controller
             return redirect()->back()->withErrors(['examenes' => 'Debe seleccionar al menos un examen.'])->withInput();
         }
 
-        // 4. Cargar los detalles completos de los Exámenes desde la base de datos
-        // Usamos keyBy('id') para un acceso rápido a cada examen por su ID.
+        if(($paciente->edad()<10 || $paciente->sexo ==='M') &&  in_array($prueba->id, array_keys($examenesSolicitados)) ){
+             return redirect()->back()->withErrors(['examenes' => "Prueba de embarazo no viable para el paciente"])->withInput();
+        }
+
         $examenesData = Examen::whereIn('id', array_keys($examenesSolicitados))
             ->get()
             ->keyBy('id');
 
-        // 5. --- VALIDACIÓN DE GÉNERO PARA CADA EXAMEN CON POLICIES ---
         foreach ($examenesSolicitados as $examenId => $cantidad) {
             $examen = $examenesData->get($examenId);
-
-            // Asegurar que el examen realmente existe en los datos cargados.
             if (!$examen) {
                 return redirect()->back()->withErrors(['examenes' => "El examen con ID {$examenId} no se pudo encontrar."])->withInput();
             }
-
-            try {
-                // Realizar la autorización utilizando la Policy.
-                // Auth::user() es el empleado/doctor actualmente autenticado.
-                // Los argumentos adicionales ($paciente, $examen) se pasan al método performOnPatient de la Policy.
-                // Si la autorización falla, se lanzará una AuthorizationException.
-                Auth::user()->can(ExaminationPolicy::class . ':performOnPatient', [$paciente, $examen]);
-
-                // Si también tienes políticas para procedimientos y los procedimientos son una entidad diferente al examen
-                // y se basan en la misma lógica de restricción:
-                // Auth::user()->can(ProcedurePolicy::class . ':performOnPatient', [$paciente, $procedimiento_asociado]);
-
-            } catch (AuthorizationException $e) {
-                // Capturar la excepción de autorización y redirigir con un mensaje de error.
-                return redirect()->back()->withErrors([
-                    'examenes' => 'Restricción de género: No se puede solicitar el examen "' . $examen->nombre . '" para el paciente. ' . $e->getMessage()
-                ])->withInput(); // Mantener los datos del formulario para una mejor UX
-            }
         }
-        // --- FIN VALIDACIÓN DE GÉNERO ---
 
-        // 6. Envolver la creación de la orden y procedimientos en una transacción de base de datos
-        // Esto asegura que todas las operaciones se completen con éxito o ninguna lo haga (atomicidad).
         DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData) {
-            // 7. Calcular el total de la orden
+
             $total = $examenesData->sum(function ($examen) use ($examenesSolicitados) {
                 return $examen->valor * $examenesSolicitados[$examen->id];
             });
 
-            // 8. Determinar el abono (si se paga todo o una parte)
             $abono = $request->input('pago') === "on" ? $total : $request->input('abono', 0);
 
-            // 9. Crear la Orden Médica
             $orden = Orden::create([
                 'numero' => $request->input('numero_orden'),
                 'paciente_id' => $paciente->id, // Usar el ID del paciente cargado
@@ -121,8 +95,7 @@ class OrdenController extends Controller
                 'abono' => $abono,
                 'total' => $total,
             ]);
-
-            // 10. Preparar los datos para los Procedimientos (que se asocian a la Orden)
+            $orden->examenes()->attach($examenesSolicitados);
             $procedimientosParaInsertar = [];
             foreach ($examenesSolicitados as $examenId => $cantidad) {
                 for ($i = 0; $i < $cantidad; $i++) {
@@ -138,11 +111,9 @@ class OrdenController extends Controller
                 }
             }
 
-            // 11. Insertar los Procedimientos en la base de datos
             Procedimiento::insert($procedimientosParaInsertar);
         }); // Fin de la transacción
 
-        // 12. Redirigir con mensaje de éxito si todo fue bien
         return redirect()->route('ordenes')->with('success', 'Orden médica creada correctamente');
     }
 
