@@ -117,9 +117,10 @@ class OrdenController extends Controller
     public function show(Orden $orden)
     {
         $orden->load(['paciente', 'acompaniante']);
+        $examenes =Examen::all();
 
         $procedimientos = $orden->procedimientos;
-        return view('ordenes.show', compact('orden', 'procedimientos'));
+        return view('ordenes.show', compact('orden', 'procedimientos', 'examenes'));
     }
 
     /**
