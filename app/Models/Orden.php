@@ -39,9 +39,9 @@ class Orden extends Model
     }
     public function examenes()
     {
-        return $this->belongsToMany(Examen::class, 'orden_examen')
-            ->withPivot('cantidad')
-            ->withTimestamps();
+        return $this->belongsToMany(Examen::class, 'orden_examen', 'orden_medica_id', 'examen_id')
+            ->withPivot('cantidad');
+        
     }
 
     protected $table = 'ordenes_medicas';

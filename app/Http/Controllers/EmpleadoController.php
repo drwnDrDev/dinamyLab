@@ -72,18 +72,10 @@ class EmpleadoController extends Controller
             return view('paciente.dashboard');
         }
         if ($usuario->hasRole('admin')) {
-            $empleados = Empleado::all();
-            $usuarios = \App\Models\User::all();
-            $roles = \Spatie\Permission\Models\Role::all();
-            $sedes = \App\Models\Sede::all();
-            $empresas = \App\Models\Empresa::all();
-            $eps = \App\Models\Eps::all();
-            $municipios = \App\Models\Municipio::orderBy('nivel','desc')->get();
-            $paises = \App\Models\Pais::all();
-            $tipos_documento = collect(TipoDocumento::cases())
-                ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
+       
+            $pendientes = \App\Models\Procedimiento::where('estado', 'pendiente')->get();
 
-            return view('admin.dashboard',compact('empleados','usuarios','roles','sedes','empresas','empleado','tipos_documento','eps','municipios','paises'));
+            return view('admin.dashboard',compact('pendientes'));
         }
         return view('dashboard',compact('empleado'));
     }
