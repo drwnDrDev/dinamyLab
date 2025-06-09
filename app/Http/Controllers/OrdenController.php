@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Estado;
 use App\Models\Orden;
 use App\Models\Examen;
+use App\Models\Persona;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Procedimiento;
+use Illuminate\Support\Facades\DB;
+
 class OrdenController extends Controller
 {
     /**
@@ -16,6 +19,7 @@ class OrdenController extends Controller
      */
     public function index()
     {
+        \App\Jobs\RevertirEstadoProcedimientos::dispatch();
         $ordenes = Orden::orderBy('created_at', 'desc')->get();
         return view('ordenes.index', compact('ordenes'));
     }
@@ -39,73 +43,82 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
-
-
         $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'acompaniante_id' => 'nullable|exists:personas,id',
             'numero_orden' => 'required|string|max:20|unique:ordenes_medicas,numero',
+            'examenes' => 'array', // Asegura que 'examenes' es un array
         ]);
 
+        $paciente = Persona::findOrFail($request->input('paciente_id'));
 
-        $examenes = array_filter(
+        $prueba = Examen::where('cup','904508')->first('id');
+
+        $examenesSolicitados = array_filter(
             $request->input('examenes', []),
-            function ($cantidad) {
-            return !is_null($cantidad) && $cantidad != 0;
-            }
+            fn ($cantidad) => !is_null($cantidad) && $cantidad != 0
         );
-        
 
-        if (empty($examenes)) {
-            return redirect()->back()->withErrors(['examenes' => 'Debe seleccionar al menos un examen.']);
+        // Si no se seleccionó ningún examen válido, redirige con un error.
+        if (empty($examenesSolicitados)) {
+            return redirect()->back()->withErrors(['examenes' => 'Debe seleccionar al menos un examen.'])->withInput();
         }
 
-        $total = Examen::whereIn('id', array_keys($examenes))
+        if(($paciente->edad()<10 || $paciente->sexo ==='M') &&  in_array($prueba->id, array_keys($examenesSolicitados)) ){
+             return redirect()->back()->withErrors(['examenes' => "Prueba de embarazo no viable para el paciente"])->withInput();
+        }
+
+        $examenesData = Examen::whereIn('id', array_keys($examenesSolicitados))
             ->get()
-            ->sum(function ($examen) use ($examenes) {
-                return $examen->valor * $examenes[$examen->id];
+            ->keyBy('id');
+
+        $orden_examen = [];
+        foreach ($examenesSolicitados as $examenId => $cantidad) {
+            $examen = $examenesData->get($examenId);
+            if (!$examen) {
+                return redirect()->back()->withErrors(['examenes' => "El examen con ID {$examenId} no se pudo encontrar."])->withInput();
+            }
+            array_push($orden_examen,[
+                'examen_id'=>$examenId,
+                'cantidad'=>$cantidad
+            ]);
+
+        }
+
+        DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData,$orden_examen) {
+
+            $total = $examenesData->sum(function ($examen) use ($examenesSolicitados) {
+                return $examen->valor * $examenesSolicitados[$examen->id];
             });
 
+            $abono = $request->input('pago') === "on" ? $total : $request->input('abono', 0);
 
-        $abono = $request->input('pago')==="on"? $total : $request->input('abono', 0);
-
-        $orden = Orden::create([
-            'numero' => $request->input('numero_orden'),
-            'paciente_id' => $request->input('paciente_id'),
-            'acompaniante_id' => $request->input('acompaniante_id'),
-            'descripcion' => $request->input('observaciones'),
-            'abono' => $abono,
-            'total' => $total,
-        ]);
-
-
-
-        $orden_examen = array_map(function ($examen) use ($orden , $examenes) {
-            return [
-                'orden_id' => $orden->id,
-                'examen_id' => $examen,
-                'cantidad' => $examenes[$examen],
-
-            ];
-        }, array_keys($examenes));
-        // Asignar los procedimientos a la orden
-
-        $procedimientos = [];
-        foreach ($orden_examen as $examen) {
-            for ($i = 0; $i < $examen['cantidad']; $i++) {
-            $procedimientos[] = [
-                'orden_id' => $examen['orden_id'],
-                'empleado_id' => Auth::user()->id,
-                'examen_id' => $examen['examen_id'],
-                'fecha' => now(),
-                'estado' => Estado::PROCESO,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+            $orden = Orden::create([
+                'numero' => $request->input('numero_orden'),
+                'paciente_id' => $paciente->id, // Usar el ID del paciente cargado
+                'acompaniante_id' => $request->input('acompaniante_id'),
+                'descripcion' => $request->input('observaciones'),
+                'abono' => $abono,
+                'total' => $total,
+            ]);
+            $orden->examenes()->attach($orden_examen);
+            $procedimientosParaInsertar = [];
+            foreach ($examenesSolicitados as $examenId => $cantidad) {
+                for ($i = 0; $i < $cantidad; $i++) {
+                    $procedimientosParaInsertar[] = [
+                        'orden_id' => $orden->id, // ID de la orden recién creada
+                        'empleado_id' => Auth::user()->id, // ID del empleado/doctor autenticado
+                        'examen_id' => $examenId,
+                        'fecha' => now(),
+                        'estado' => Estado::PROCESO, // Asumo que Estado::PROCESO es una constante o Enum
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
             }
-        }
 
-        Procedimiento::insert($procedimientos);
+            Procedimiento::insert($procedimientosParaInsertar);
+        }); // Fin de la transacción
 
         return redirect()->route('ordenes')->with('success', 'Orden médica creada correctamente');
     }
@@ -115,10 +128,11 @@ class OrdenController extends Controller
      */
     public function show(Orden $orden)
     {
-        $orden->load(['paciente', 'acompaniante']);
+        $orden->load(['paciente', 'acompaniante','examenes']);
+        $examenes =Examen::all();
 
         $procedimientos = $orden->procedimientos;
-        return view('ordenes.show', compact('orden', 'procedimientos'));
+        return view('ordenes.show', compact('orden', 'procedimientos', 'examenes'));
     }
 
     /**

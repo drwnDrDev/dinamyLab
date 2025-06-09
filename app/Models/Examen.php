@@ -20,7 +20,7 @@ class Examen extends Model
    
     public function ordenes()
     {
-        return $this->belongsToMany(Orden::class, 'orden_examen')
+        return $this->belongsToMany(Orden::class, 'orden_examen','examen_id', 'orden_medica_id')
             ->withPivot('cantidad')
             ->withTimestamps();
     }
