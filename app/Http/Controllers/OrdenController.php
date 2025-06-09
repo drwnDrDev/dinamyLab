@@ -72,14 +72,20 @@ class OrdenController extends Controller
             ->get()
             ->keyBy('id');
 
+        $orden_examen = [];
         foreach ($examenesSolicitados as $examenId => $cantidad) {
             $examen = $examenesData->get($examenId);
             if (!$examen) {
                 return redirect()->back()->withErrors(['examenes' => "El examen con ID {$examenId} no se pudo encontrar."])->withInput();
             }
+            array_push($orden_examen,[
+                'examen_id'=>$examenId,
+                'cantidad'=>$cantidad
+            ]);
+
         }
 
-        DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData) {
+        DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData,$orden_examen) {
 
             $total = $examenesData->sum(function ($examen) use ($examenesSolicitados) {
                 return $examen->valor * $examenesSolicitados[$examen->id];
@@ -95,7 +101,7 @@ class OrdenController extends Controller
                 'abono' => $abono,
                 'total' => $total,
             ]);
-            $orden->examenes()->attach($examenesSolicitados);
+            $orden->examenes()->attach($orden_examen);
             $procedimientosParaInsertar = [];
             foreach ($examenesSolicitados as $examenId => $cantidad) {
                 for ($i = 0; $i < $cantidad; $i++) {
@@ -122,7 +128,7 @@ class OrdenController extends Controller
      */
     public function show(Orden $orden)
     {
-        $orden->load(['paciente', 'acompaniante']);
+        $orden->load(['paciente', 'acompaniante','examenes']);
         $examenes =Examen::all();
 
         $procedimientos = $orden->procedimientos;
