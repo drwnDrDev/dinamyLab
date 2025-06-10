@@ -62,14 +62,14 @@
                                     <p>{{$item->nombre}} - {{$item->pivot->cantidad}}</p>
                                  @endforeach
                                     
-                            </td>
+                            <!-- </td>
                             <td class="grid py-2 w-40 text-titles text-sm font-normal leading-normal">
                              <label for="pendiente">pendiente<meter min="0" max="100" low="10" high="3" optimum="0"  value="{{$orden->pendiente}}"></meter></label>
                              <label for="proceso">en proceso<meter min="0" max="100" low="66" high="33" optimum="0"  value="{{$orden->proceso}}"></meter></label>
                              <label for="entreagdo">entreagdo<meter min="0" max="100" low="66" high="33" optimum="0"  value="{{$orden->entreagdo}}"></meter></label>
                              <label for="terminado">terminado<meter min="0" max="100" low="45" high="66" optimum="100"  value="{{$orden->terminado}}"></meter></label>
                              <label for="anulado">anulado<meter min="0" max="100" low="0" high="0" optimum="0"  value="{{$orden->anulado}}"></meter></label>                    
-                            </td>
+                            </td> -->
                                 
                     </tr>
                     @endforeach
