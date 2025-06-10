@@ -1,0 +1,1 @@
+<div class="p-2 font-semibold uppercase">{{$slot}}</div>
