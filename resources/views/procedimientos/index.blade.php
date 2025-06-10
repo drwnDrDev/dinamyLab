@@ -52,7 +52,7 @@
                                 {{ $procedimiento->orden->id }}
                             </td>
                             <td class="px-4 py-2 w-60 text-sm font-normal leading-normal">
-                                {{ $procedimiento->orden->paciente->nombres() }}
+                                {{ $procedimiento->orden->paciente->nombreCompleto() }}
                             </td>
                             <td class="px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
                                 <a href="{{route('resultados.create',$procedimiento)}}" class="hover:bg-secondary">{{ $procedimiento->examen->nombre }}</a>
