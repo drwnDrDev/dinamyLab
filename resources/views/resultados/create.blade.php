@@ -1,26 +1,36 @@
-<x-app-layout >
+<x-app-layout>
     <x-slot name="title">
-   Nuevo Resultado
+        Nuevo Resultado
     </x-slot>
-    <x-slot name="header" >
-    <section class="grid grid-cols-2 p-2 bg-white dark:bg-gray-800 dark:text-white shadow sm:rounded-lg">
-    <div>
-    <h2>{{$procedimiento->orden->paciente->nombreCompleto()}}</h2>
-    <h3>{{$procedimiento->orden->paciente->tipo_documento}} {{$procedimiento->orden->paciente->numero_documento}}</h3>
-    <h3>Inicio de atencion  {{$procedimiento->orden->created_at}}</h3>
-    </div>
-    <div>
-        <h3>{{$procedimiento->orden->paciente->edad()}} años</h3>
-        <h3>Sexo: {{$procedimiento->orden->paciente->sexo}} </h3>
-
-    </div>
-    </section>
+    <x-slot name="header">
     </x-slot>
+    <x-canva>
+        <section class="grid grid-cols-2 py-4 mb-4 border-b border-t border-borders  ">
+            <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
 
-    <h1 class="text-2xl font-bold text-center">{{$procedimiento->examen->nombre}}</h1>
-    <form action="{{ route('resultados.store', $procedimiento) }}" method="POST" class="p-4">
-        @csrf
+                <span class="font-bold ">Paciente: </span>
+                <h3>{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
+                <span class="font-bold ">Identificación: </span>
+                <h3>{{$procedimiento->orden->paciente->tipo_documento}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
+                <span class="font-bold ">Sexo: </span>
+                <h3>{{$procedimiento->orden->paciente->sexo}} </h3>
 
-        @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['procedimiento' => $procedimiento, 'isResultado' => false])
-    </form>
+            </div>
+            <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
+                <span class="font-bold ">Fecha de atención: </span>
+                <h3>{{$procedimiento->orden->created_at}}</h3>
+                <span class="font-bold ">Número de órden: </span>
+                <h3>{{$procedimiento->orden->numero}}</h3>
+                <span class="font-bold ">Edad: </span>
+                <h3>{{$procedimiento->orden->paciente->edad()}} años</h3>
+
+            </div>
+        </section>
+        <h1 class="text-2xl font-bold text-center mb-4">{{$procedimiento->examen->nombre}}</h1>
+        <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
+            @csrf
+
+            @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['procedimiento' => $procedimiento, 'isResultado' => false])
+        </form>
+    </x-canva>
 </x-app-layout>
