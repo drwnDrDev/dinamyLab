@@ -19,8 +19,18 @@ class OrdenController extends Controller
      */
     public function index()
     {
-        \App\Jobs\RevertirEstadoProcedimientos::dispatch();
+        \App\Jobs\RevertirEstadoProcedimientos::dispatch()->delay(now()->addMinutes(5));
         $ordenes = Orden::orderBy('created_at', 'desc')->get();
+        $ordenes->load(['paciente','examenes']);
+        $ordenes->each(function ($orden) {
+            $orden->procedimientos_count = $orden->procedimientos()->count();
+            $orden->pendiente = ($orden->procedimientos()->where('estado', Estado::PENDIENTE)->count())*100/$orden->procedimientos_count;
+            $orden->proceso = ($orden->procedimientos()->where('estado', Estado::PROCESO)->count()) * 100 / $orden->procedimientos_count;
+            $orden->finalizado = ($orden->procedimientos()->where('estado', Estado::TERMINADO)->count()) * 100 / $orden->procedimientos_count;
+            $orden->entregado = ($orden->procedimientos()->where('estado', Estado::ENTREGADO)->count()) * 100 / $orden->procedimientos_count;
+            $orden->cancelado = ($orden->procedimientos()->where('estado', Estado::ANULADO)->count()) * 100 / $orden->procedimientos_count;
+            $orden->total_examenes = $orden->examenes()->sum('valor');
+        });
         return view('ordenes.index', compact('ordenes'));
     }
 

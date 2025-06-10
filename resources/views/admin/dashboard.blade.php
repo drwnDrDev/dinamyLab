@@ -22,7 +22,7 @@
                         <div class="flex flex-col gap-2">
                             <label for="estado">Estado</label>
                             <select name="estado" id="estado" class="border-2 border-gray-300 rounded-md">
-                                <option value="pendiente por muestra">Pendiente por muestra</option>
+                                <option value="pendiente de muestra">Pendiente por muestra</option>
                                 <option value="anulado">Anulado</option>
                             </select>
                             <label for="observacion">Observación</label>

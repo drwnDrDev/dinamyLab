@@ -53,23 +53,22 @@
                             <a href="{{route('ordenes.show',$orden)}}" class="text-titles">{{$orden->numero}}</a>
                         </td>
                         <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
-                            {{ $orden->paciente->nombres() }}
+                            {{ $orden->paciente->nombreCompleto() }}
                         </td>
                             
                             <td class="flex flex-col gap-2 px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
                                 <!-- no me di mañana de traer el nombre del examen -->
-                                 @foreach ($orden->procedimientos as $item)
-                                <a href="{{route('resultados.create',$item)}}" class="block hover:bg-secondary border-b border-borders">
-                                    {{$item->examen->nombre}} </a>
-                                @endforeach
+                                 @foreach ($orden->examenes as $item)
+                                    <p>{{$item->nombre}} - {{$item->pivot->cantidad}}</p>
+                                 @endforeach
+                                    
                             </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                @foreach ($orden->procedimientos as $item)
-                                <button class=" block bg-secondary text-text font-bold py-2 px-4 rounded-2xl">
-                                {{ $item->estado }}
-
-                                </button>
-                                @endforeach
+                            <td class="grid py-2 w-40 text-titles text-sm font-normal leading-normal">
+                             <label for="pendiente">pendiente<meter min="0" max="100" low="10" high="3" optimum="0"  value="{{$orden->pendiente}}"></meter></label>
+                             <label for="proceso">en proceso<meter min="0" max="100" low="66" high="33" optimum="0"  value="{{$orden->proceso}}"></meter></label>
+                             <label for="entreagdo">entreagdo<meter min="0" max="100" low="66" high="33" optimum="0"  value="{{$orden->entreagdo}}"></meter></label>
+                             <label for="terminado">terminado<meter min="0" max="100" low="45" high="66" optimum="100"  value="{{$orden->terminado}}"></meter></label>
+                             <label for="anulado">anulado<meter min="0" max="100" low="0" high="0" optimum="0"  value="{{$orden->anulado}}"></meter></label>                    
                             </td>
                                 
                     </tr>
