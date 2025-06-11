@@ -4,8 +4,16 @@
     </x-slot>
     <x-slot name="header">
         <section class="hidden print:grid print:grid-cols-3"> 
-            Esta es la historia de un sabado
-            <!-- ESTO QUE ES??? -->
+            <x-application-logo class="w-24 h-24 mx-auto p-0" />
+            <div class="col-span-2 text-center">
+                <h1 class="text-lg font-bold"></h1>
+                <h2 class="text-md font-semibold">Hospital San Juan de Dios</h2>
+                <p class="text-xs">Calle 123 # 456 - 789</p>
+                <p class="text-xs">Teléfono: (123) 456-7890</p>
+                <p class="text-xs">Email: </p>
+            </div>
+
+            <!-- Precuntece más bien que deberia ser??? -->
         </section>
     </x-slot>
     <x-canva>
