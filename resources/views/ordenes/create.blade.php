@@ -54,7 +54,6 @@
                     </div>
                 @endforeach
             </div>
-               <input type="text" name="examenes_seleccionados" x-model="examenes" class="hidden">
                <input type="hidden" name="paciente_id" id="paciente_id" >
                <input type="hidden" name="acompaniante_id" id="acompaniante_id" >
 

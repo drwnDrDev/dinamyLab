@@ -1,0 +1,13 @@
+examen
+nombre
+tipo_dato
+unidades
+v_ref
+metodo_vr
+munimo
+maximo
+descripcion
+grupo
+metodo_vr
+orden
+requerido
