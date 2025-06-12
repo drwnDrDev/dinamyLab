@@ -142,12 +142,20 @@
             <span>x campo</span>
         </div>
     </div>
+
+
+    
+
     <div class="grid grid-cols-4 text-sm items-center gap-1 py-1 border-b border-borders">
         <div class="pl-2 uppercase"> bacterias</div>
         <div class="text-end">
-            <input type="text" name="bacterias" id="bacterias" class="text-sm p-1 pr-6 rounded-md uppercase border-borders">
-        </div>
+            <p name="bacterias" id="bacterias" class="text-sm p-1 pr-6 rounded-md uppercase"></p>
+        </div> 
     </div>
+
+
+
+    @dump($paciente)
     <div class="grid grid-cols-4 text-sm items-center gap-1 py-1 border-b border-borders">
         <div class="pl-2 uppercase"> moco</div>
         <div class="text-end">
