@@ -75,6 +75,8 @@ public static function parsearPersona(string $nombres, string $apellidos): array
             'nombre_completo' => "$nombreFormateado $apellidoFormateado",
             'apellido_nombre' => "$apellidoFormateado, $nombreFormateado",
             'nombre_corto' => ucfirst($partes['primer_nombre']) . ' ' . strtoupper(mb_substr($partes['segundo_nombre'], 0, 1)) . '.',
+            'nombres'=>$nombreFormateado,
+            'apellidos'=>$apellidoFormateado,
             'iniciales' => $iniciales,
         ];
     }

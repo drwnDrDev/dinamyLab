@@ -53,14 +53,14 @@ class Persona extends Model
         ])['nombre_completo'];
     }
 
-    public function getApellidoNombreAttribute(): string
+    public function nombres() : string
     {
         return NombreParser::formatear([
             'primer_nombre' => $this->primer_nombre,
             'segundo_nombre' => $this->segundo_nombre,
             'primer_apellido' => $this->primer_apellido,
             'segundo_apellido' => $this->segundo_apellido,
-        ])['apellido_nombre'];
+        ])['nombres'];
     }
 
     public function getInicialesAttribute(): string
@@ -73,14 +73,14 @@ class Persona extends Model
         ])['iniciales'];
     }
 
-    public function getNombreCortoAttribute(): string
+    public function apellidos(): string
     {
         return NombreParser::formatear([
             'primer_nombre' => $this->primer_nombre,
             'segundo_nombre' => $this->segundo_nombre,
             'primer_apellido' => $this->primer_apellido,
             'segundo_apellido' => $this->segundo_apellido,
-        ])['nombre_corto'];
+        ])['apellidos'];
     }
 
     public function edad()
