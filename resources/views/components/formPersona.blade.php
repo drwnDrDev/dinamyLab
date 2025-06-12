@@ -1,8 +1,5 @@
 @props([
 'perfil' => 'Paciente', // Valores posibles: paciente, acompañante, pagador
-'eps' => [], // Lista de EPS
-'ciudades' => [], // Lista de ciudades
-'tipos_documento' => [] // Lista de tipos de documento
 ])
 
 
@@ -16,8 +13,18 @@
                 <x-text-input type="number" id="numero_documento" name="numero_documento" required />
             </div>
             <div class="w-full pb-2 lg:max-w-60">
-                <x-input-label for="tipo_documento">Tipo de documento</x-input-label>
-                <x-select-input :options="$tipos_documento" name="tipo_documento" id="tipo_documento" class="form-select" required />
+            <x-input-label for="tipo_documento">Tipo de documento</x-input-label>
+            <select id="tipo_documento" name="tipo_documento" 1="" class="text-sm h-8 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md">
+            <option value="CC">Cédula de Ciudadanía</option>
+            <option value="TI">Tarjeta de Identidad</option>
+            <option value="CE">Cédula de Extranjería</option>
+            <option value="RC">Registro Civil</option>
+            <option value="PA">Pasaporte</option>
+            <option value="AS">Adulto Sin Identificación</option>
+            <option value="MS">Menores Sin Identificación</option>
+            <option value="PE">Permiso Especial</option>
+            <option value="PT">Permiso de Permanencia</option>
+            </select>
             </div>
             <div class="w-full pb-2 col-span-2">
                 <x-input-label for="pais">País de orígen</x-input-label>
@@ -52,7 +59,7 @@
                 <input type="radio" id="sexo_masculino" name="sexo" value="M">
             </div>
         </div>
-
+     @endif
         <hr class="my-8 border-1 border-borders">
         <div class="row-inputs pt-2 w-full md:flex justify-between gap-2">
             <div class="w-full pb-2">
@@ -63,6 +70,8 @@
                 <x-input-label for="correo">Correo</x-input-label>
                 <x-text-input type="email" id="correo" name="correo" placeholder="example@mail.com" />
             </div>
+
+     @if($perfil === 'Paciente')
             <div class="w-full pb-2">
                 <x-input-label for="EPS">EPS</x-input-label>
                 <x-text-input list="lista_eps" id="eps" name="eps" />
@@ -70,6 +79,7 @@
                     <option value="Salud Total"></option>
                 </datalist>
             </div>
+
         </div>
         <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2">
 
@@ -89,8 +99,8 @@
             </div>
 
         </div>
-
      @endif
+
 
         <div class="row-inputs py-8 w-full flex justify-center gap-2">
             <x-primary-button id="tipoGuardado" name="tipoGuardado" class="w-40" >Guardar</x-primary-button>
