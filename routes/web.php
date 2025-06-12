@@ -54,9 +54,10 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth','verified','can:ver_facturas')->group(function () {
     Route::get('/facturas',[FacturaController::class,'index'])->name('facturas');
-    Route::get('/facturas/{factura}',[FacturaController::class,'show'])->name('facturas.show');
     Route::get('/facturas/create',[FacturaController::class,'create'])->name('facturas.create');
     Route::post('/facturas/store',[FacturaController::class,'store'])->name('facturas.store');
+    Route::get('/facturas/{factura}',[FacturaController::class,'show'])->name('facturas.show');
+
 });
 
 Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () {
