@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Convenio;
+use App\Models\Examen;
 use App\Models\Factura;
+use App\TipoDocumento;
 use Illuminate\Http\Request;
 
 class FacturaController extends Controller
@@ -23,11 +26,15 @@ class FacturaController extends Controller
      */
     public function create()
     {
+        $convenios = Convenio::orderBy('razon_social')->get();
+        $tipos_documento = collect(TipoDocumento::cases())
+            ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
+
         $ordenes = \App\Models\Orden::with(['paciente'])
             ->where('estado', '!=', 'CANCELADA')
             ->orderBy('created_at', 'desc')
             ->get();
-        return view('facturas.create', compact('ordenes'));
+        return view('facturas.create', compact('ordenes','tipos_documento','convenios'));
     }
 
     /**
