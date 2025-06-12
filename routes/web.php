@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::post('search',[SearchController::class,'search'])->name('search');
+    Route::get('search',[SearchController::class,'search'])->name('search');
 
     Route::get('/resultados/{procedimiento}/ver',[ResultadosController::class,'show'])->name('resultados.show');
 

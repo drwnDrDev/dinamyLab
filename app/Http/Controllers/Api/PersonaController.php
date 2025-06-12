@@ -71,10 +71,10 @@ class PersonaController extends Controller
         $apellidos = explode(' ', trim($request->input('apellidos')), 2);
         // Crear la persona
         $persona = Persona::create( [
-            'primer_nombre' => $nombres[0],
-            'segundo_nombre' => $nombres[1] ?? '',
-            'primer_apellido' => $apellidos[0],
-            'segundo_apellido' => $apellidos[1] ?? '',
+            'primer_nombre' => strtolower($nombres[0]),
+            'segundo_nombre' => isset($nombres[1])? strtolower($nombres[1]):'',
+            'primer_apellido' => strtolower($apellidos[0]),
+            'segundo_apellido' => isset($apellidos[1])? strtolower($apellidos[1]):'',
             'numero_documento' => $request->input('numero_documento'),
             'tipo_documento' => $request->input('tipo_documento', 'CC'),
             'fecha_nacimiento' => $request->input('fecha_nacimiento'),
@@ -93,7 +93,7 @@ class PersonaController extends Controller
 
     public function update(Request $request, $id)
     {
-        
+
         $persona = Persona::find($id);
 
         if (!$persona) {
