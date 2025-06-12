@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePersonaRequest;
 use Illuminate\Http\Request;
 use App\Models\Persona;
+use App\Services\NombreParser;
 
 class PersonaController extends Controller
 {
@@ -67,14 +68,16 @@ class PersonaController extends Controller
         ]);
 
         // Dividir nombres y apellidos en primer y segundo nombre
-        $nombres = explode(' ', trim($request->input('nombres')), 2);
-        $apellidos = explode(' ', trim($request->input('apellidos')), 2);
+        $parsed = NombreParser::parsearPersona(
+            $request->input('nombres'),
+            $request->input('apellidos')
+        );
         // Crear la persona
         $persona = Persona::create( [
-            'primer_nombre' => strtolower($nombres[0]),
-            'segundo_nombre' => isset($nombres[1])? strtolower($nombres[1]):'',
-            'primer_apellido' => strtolower($apellidos[0]),
-            'segundo_apellido' => isset($apellidos[1])? strtolower($apellidos[1]):'',
+            'primer_nombre' => $parsed['primer_nombre'],
+            'segundo_nombre'=> $parsed['segundo_nombre'],
+            'primer_apellido' => $parsed['primer_apellido'],
+            'segundo_apellido' => $parsed['segundo_apellido'],
             'numero_documento' => $request->input('numero_documento'),
             'tipo_documento' => $request->input('tipo_documento', 'CC'),
             'fecha_nacimiento' => $request->input('fecha_nacimiento'),
