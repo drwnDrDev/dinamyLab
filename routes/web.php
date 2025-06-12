@@ -60,6 +60,8 @@ Route::middleware('auth','verified','can:ver_facturas')->group(function () {
 });
 
 Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () {
+    Route::get('/admintracion/convenios/nuevo-convenio',[PersonaController::class,'show'])->name('convenios.create');
+    Route::post('/admintracion/convenios/store',[PersonaController::class,'store'])->name('convenios.store');
     Route::delete('/personas/{persona}',[PersonaController::class,'destroy'])->name('personas.destroy');
     Route::get('/personas/{persona}/edit',[PersonaController::class,'edit'])->name('personas.edit');
     Route::put('/personas/{persona}',[PersonaController::class,'update'])->name('personas.update');
