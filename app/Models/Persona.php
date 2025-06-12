@@ -3,23 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Services\NombreParser;
 
 class Persona extends Model
 {
-    //  $table->string('priemr_nombre');
-    //         $table->string('segundo_nombre')->nullable();
-    //         $table->string('primer_apellido');
-    //         $table->string('segundo_apellido')->nullable();
-    //         $table->enum('tipo_documento',['CC','TI','CE','RC','PA','AS','MS','CD','PE','PT'])->default('CC');
-    //         $table->string('numero_documento')->unique();
-    //         $table->date('fecha_nacimiento')->nullable();
-    //         $table->enum('sexo',['F','M'])->nullable();
-    //         $table->boolean('nacional')->default(true);
-    //         $table->string('telefono')->nullable();
-    //         $table->foreignId('contacto_id')->nullable()
-    //         ->constrained('contactos')
-    //         ->nullOnDelete()
-    //         ->cascadeOnUpdate();
+
 
     protected $fillable = [
         'primer_nombre',
@@ -53,28 +41,54 @@ class Persona extends Model
         return $this->belongsTo(Orden::class, 'paciente_id');
     }
 
-    public function acompaniante()
+
+
+    public function nombreCompleto(): string
     {
-        return $this->belongsTo(Orden::class, 'acompaniante_id');
+        return NombreParser::formatear([
+            'primer_nombre' => $this->primer_nombre,
+            'segundo_nombre' => $this->segundo_nombre,
+            'primer_apellido' => $this->primer_apellido,
+            'segundo_apellido' => $this->segundo_apellido,
+        ])['nombre_completo'];
     }
-    public function nombres()
+
+    public function getApellidoNombreAttribute(): string
     {
-        return $this->primer_nombre . ' ' . $this->segundo_nombre;
+        return NombreParser::formatear([
+            'primer_nombre' => $this->primer_nombre,
+            'segundo_nombre' => $this->segundo_nombre,
+            'primer_apellido' => $this->primer_apellido,
+            'segundo_apellido' => $this->segundo_apellido,
+        ])['apellido_nombre'];
     }
-    public function apellidos()
+
+    public function getInicialesAttribute(): string
     {
-        return $this->primer_apellido . ' ' . $this->segundo_apellido;
+        return NombreParser::formatear([
+            'primer_nombre' => $this->primer_nombre,
+            'segundo_nombre' => $this->segundo_nombre,
+            'primer_apellido' => $this->primer_apellido,
+            'segundo_apellido' => $this->segundo_apellido,
+        ])['iniciales'];
     }
-    public function nombreCompleto()
+
+    public function getNombreCortoAttribute(): string
     {
-        return $this->nombres() . ' ' . $this->apellidos();
+        return NombreParser::formatear([
+            'primer_nombre' => $this->primer_nombre,
+            'segundo_nombre' => $this->segundo_nombre,
+            'primer_apellido' => $this->primer_apellido,
+            'segundo_apellido' => $this->segundo_apellido,
+        ])['nombre_corto'];
     }
+
     public function edad()
     {
         return $this->fecha_nacimiento ? $this->fecha_nacimiento->diffInYears(now()) : null;
     }
 
-    
+
 
     // Relación isomórfica para la columna 'pagador' en la tabla 'factura'
     public function facturasComoPagador()
