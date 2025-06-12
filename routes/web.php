@@ -9,6 +9,7 @@ use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProcedimientoController;
 use App\Http\Controllers\ResultadosController;
+use App\Http\Controllers\SearchController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -45,7 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/caja',[AdministracionController::class,'caja'])->name('caja');
 
 
-
+    Route::post('search',[SearchController::class,'search'])->name('search');
 
     Route::get('/resultados/{procedimiento}/ver',[ResultadosController::class,'show'])->name('resultados.show');
 
