@@ -21,6 +21,21 @@
 
             <!-- Page Content -->
             <main class="w-full m-auto p-6 md:ml-60 md:mt-16 md:w-[calc(100vw-240px)] md:h-[calc(100vh-64px)] overflow-y-auto h-full">
+                
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    @if (session('success') || session('error'))
+                        @if (session('success'))
+                            <div class="text-xs bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if (session('error'))
+                            <div class="bg-red-100 border border-red-400 text-xs text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                    @endif
                  <!-- Page Heading -->
                     @isset($header)
                         <header >

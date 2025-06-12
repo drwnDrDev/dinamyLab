@@ -16,51 +16,32 @@
             </div>
 
             <!-- Mnesajes de session -->
-        <div class="w-1/2 flex items-center justify-end">
-         @if(session('success') || session('error'))
-             @if(session('success'))
-                <div class="text-xs bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    {{ session('success') }}
-                </div>
-         
-             @endif
+            <div class="w-1/2 flex items-center justify-end">
+                <form class="py-3" action="{{ route('search') }}" method="post">
+                    @csrf
+                    <label class="flex flex-col min-w-40 h-12 w-full">
+                        <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
+                            <div
+                                class="text-titles flex border-none bg-secondary items-center justify-center pl-4 rounded-l-xl border-r-0"
+                                data-icon="MagnifyingGlass"
+                                data-size="24px"
+                                data-weight="regular">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                    <path
+                                        d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+                                </svg>
+                            </div>
+                            <input
+                                placeholder="{{__('Search')}}"
+                                name="search"
+                                type="text"
+                                id="search"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" />
+                        </div>
+                    </label>
+                </form>
 
-             @if(session('error'))
-            <div class="bg-red-100 t border border-red-400 text-xs text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                {{ session('error') }}
             </div>
-             @endif
-    
-       
-        @else
-
-        <form class="py-3" action="{{ route('search') }}" method="post">
-            @csrf
-            <label class="flex flex-col min-w-40 h-12 w-full">
-                <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
-                    <div
-                        class="text-titles flex border-none bg-secondary items-center justify-center pl-4 rounded-l-xl border-r-0"
-                        data-icon="MagnifyingGlass"
-                        data-size="24px"
-                        data-weight="regular">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                            <path
-                                d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
-                        </svg>
-                    </div>
-                    <input
-                        placeholder="{{__('Search')}}"
-                        name="search"
-                        type="text"
-                        id="search"
-                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                         />
-                </div>
-            </label>
-        </form>
-
-        @endif
-             </div>
 
 
             <!-- Settings Dropdown -->
@@ -88,7 +69,7 @@
                             @csrf
 
                             <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
+                                onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
@@ -134,7 +115,7 @@
                     @csrf
 
                     <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
+                        onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
