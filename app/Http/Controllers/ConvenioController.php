@@ -20,7 +20,7 @@ class ConvenioController extends Controller
      */
     public function create()
     {
-        //
+       return view('convenios.create');
     }
 
     /**

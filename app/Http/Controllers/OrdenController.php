@@ -19,7 +19,7 @@ class OrdenController extends Controller
      */
     public function index()
     {
-        \App\Jobs\RevertirEstadoProcedimientos::dispatch()->delay(now()->addMinutes(5));
+        \App\Jobs\RevertirEstadoProcedimientos::dispatch();
         $ordenes = Orden::orderBy('created_at', 'desc')->get();
         $ordenes->load(['paciente','examenes']);
         $ordenes->each(function ($orden) {
