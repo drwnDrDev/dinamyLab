@@ -18,11 +18,11 @@ class HemogramaCompletoSeeder extends Seeder
     {
         // Define los datos del examen principal
         $examenData = [
-            'nombre' => 'Hemograma Completo',
-            'CUP' => '902001', // Asumiendo un CUP para el examen completo
-            'valor' => '50000.00', // Un valor de ejemplo
+            'nombre' => 'Cuadro Hemático',
+            'CUP' => '902207',
+            'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'Este examen evalúa los componentes de la sangre, incluyendo glóbulos rojos, glóbulos blancos y plaquetas.',
-            'nombre_alternativo' => 'Cuadro Hemático',
+            'nombre_alternativo' => 'Hemograma',
         ];
 
         // Crea el examen
@@ -129,7 +129,7 @@ class HemogramaCompletoSeeder extends Seeder
         }', true)['data']; // El 'true' es importante para obtener un array asociativo
 
         // Función auxiliar para procesar parámetros (incluyendo sub-parámetros)
-        $processParam = function($paramData, $examenInstance) {
+        $processParam = function($paramData, $examenInstance,$orden) {
             // Genera un slug basado en el nombre del parámetro (o nombre del grupo si es un grupo)
             $slug = Str::slug($paramData['resultado']['nombre'] ?? $paramData['grupo'] ?? $paramData['parametro']);
 
@@ -142,12 +142,14 @@ class HemogramaCompletoSeeder extends Seeder
                     'slug' => $slug,
                     'tipo_dato' => $paramData['resultado']['tipo'] ?? 'text', // Por defecto 'text' si no hay tipo
                     'unidades' => $paramData['unidades'] ?? null,
-                    'orden' => $paramData['orden'] ?? 0, // Puedes añadir un orden si lo tienes en tu JSON
                 ]
             );
 
             // Adjunta el parámetro al examen
-            $examenInstance->parametros()->syncWithoutDetaching([$parametro->id]);
+            $examenInstance->parametros()->syncWithoutDetaching([
+             'parametro_id'  =>  $parametro->id,
+             'orden'=>$orden
+            ]);
 
             // Procesa las referencias si existen
             if (isset($paramData['referencia'])) {
@@ -171,9 +173,13 @@ class HemogramaCompletoSeeder extends Seeder
 
         };
 
+        $orden = 0;
+
         // Itera sobre los datos y procesa cada parámetro/grupo
         foreach ($parametrosYReferencias as $item) {
-            $processParam($item, $examen);
+            $orden++;
+            $processParam($item, $examen,$orden);
+
         }
 
         $this->command->info('Hemograma Completo y sus parámetros sembrados exitosamente!');

@@ -13,13 +13,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('examen_parametro', function (Blueprint $table) {
-
         $table->foreignId('examen_id')->constrained('examenes')->onDelete('cascade');
         $table->foreignId('parametro_id')->constrained()->onDelete('cascade');
+        $table->unsignedTinyInteger('orden')->default(0);
         $table->primary(['examen_id', 'parametro_id']);
-
-
-            $table->timestamps(); // Para created_at y updated_at de la relación
+        $table->timestamps(); // Para created_at y updated_at de la relación
         });
     }
 

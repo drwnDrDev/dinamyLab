@@ -6,14 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Parametro extends Model
 {
-            //     $table->string('nombre');
-            // $table->string('grupo')->nullable();
-            // $table->string('slug');
-            // $table->string('tipo_dato');
-            // $table->string('por_defecto')->nullable();
-            // $table->string('unidades')->nullable();
-            // $table->string('metodo')->nullable();
-            // $table->unsignedTinyInteger('orden');
+
 
     protected $fillable = [
         'nombre',
@@ -23,7 +16,7 @@ class Parametro extends Model
         'por_defecto',
         'unidades',
         'metodo',
-        'orden'
+
     ];
 
     public function examenes()
