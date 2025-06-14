@@ -28,6 +28,7 @@ class Examen extends Model
     public function parametros()
     {
         return $this->belongsToMany(Parametro::class, 'examen_parametro','examen_id', 'parametro_id')
+            ->withPivot('orden')
             ->withTimestamps();
     }
 
