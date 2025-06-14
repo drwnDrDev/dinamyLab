@@ -29,8 +29,8 @@
         <h1 class="text-2xl font-bold text-center mb-4">{{$procedimiento->examen->nombre}}</h1>
         <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
             @csrf
+            @dump($procedimiento->examen->parametros)
 
-            @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['procedimiento' => $procedimiento, 'isResultado' => false])
         </form>
     </x-canva>
 </x-app-layout>
