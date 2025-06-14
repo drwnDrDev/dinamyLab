@@ -29,7 +29,24 @@
         <h1 class="text-2xl font-bold text-center mb-4">{{$procedimiento->examen->nombre}}</h1>
         <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
             @csrf
-            @dump($procedimiento->examen->parametros)
+
+            @foreach ($procedimiento->examen->parametros as $parametro)
+
+        @if($parametro->tipo_dato=='select' || $parametro->tipo_dato=='list')
+            <label for="{{$parametro->slug}}">{{$parametro->nombre}}</label>
+            <select name="$parametro->slug" id="{{$parametro->id}}">
+            @foreach ($parametro->opciones as $opcion)
+             <option value="{{$opcion->valor}}">{{$opcion->valor}}</option>
+            @endforeach
+
+
+            </select>
+            @endif
+
+
+
+            @endforeach
+
 
         </form>
     </x-canva>

@@ -8,7 +8,7 @@ class Opcion extends Model
 {
        protected $fillable = [
         'parametro_id',
-         'opcion'
+        'valor'
     ];
 
         /**
