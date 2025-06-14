@@ -5,6 +5,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Examen;
+use App\Models\Opcion;
 use App\Models\Parametro;
 use App\Models\ValorReferencia;
 use Illuminate\Support\Str; // Para generar slugs
@@ -47,7 +48,7 @@ class FrotisUretraSeeder extends Seeder
 },{
 "parametro":"reacción leucocitaria",
 "resultado":{
-    "tipo":"lista",
+    "tipo":"list",
     "nombre":"r_leuc",
     "items":["escasa","moderada","aumentada"]
 }
@@ -69,6 +70,7 @@ class FrotisUretraSeeder extends Seeder
                     'slug' => $slug,
                     'tipo_dato' => $paramData['resultado']['tipo'] ?? 'text', // Por defecto 'text' si no hay tipo
                     'unidades' => $paramData['unidades'] ?? null,
+                    'metodo'=>$paramData['subtitulo'] ?? null,
                 ]
             );
 
@@ -89,12 +91,21 @@ class FrotisUretraSeeder extends Seeder
                             'salida' => $refData['salida'] ?? null, // Columna 'salida'
                             'min' => $refData['minimo'] ?? null,   // Columna 'min'
                             'max' => $refData['maximo'] ?? null,   // Columna 'max'
-                            // Las columnas 'sexo', 'edad_min', 'edad_max', 'unidad', 'descripcion' ya no están en tu migración
-                            // Si las necesitas, tu migración de valor_referencias debe incluirlas
                         ]
                     );
                 }
             }
+
+            if (isset($paramData['resultado']['items'])) {
+
+                    foreach ($paramData['resultado']['items'] as $opcionValor) {
+                        Opcion::create([
+                            'parametro_id' => $parametro->id, // Asocia la opción con el parámetro correcto
+                            'valor' => $opcionValor // Usar 'valor' como nombre de columna para la opción
+                        ]);
+                    }
+                }
+
 
 
         };
