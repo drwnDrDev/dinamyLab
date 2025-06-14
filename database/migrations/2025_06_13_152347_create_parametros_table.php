@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('default')->nullable();
             $table->string('unidades')->nullable();
             $table->string('metodo')->nullable();
-            $table->unsignedTinyInteger('orden');
             $table->timestamps();
         });
     }

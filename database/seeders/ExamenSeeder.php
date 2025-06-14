@@ -73,7 +73,7 @@ class ExamenSeeder extends Seeder
                     'nombre' => $parametroData['nombre'],
                     'slug' => $parametroData['slug'],
                     'tipo_dato' => $parametroData['tipo_dato'],
-                    'orden' => $parametroData['orden']
+                   
                 ]);
 
                 // Adjunta el Parámetro recién creado al Examen
