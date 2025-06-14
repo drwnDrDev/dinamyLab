@@ -82,7 +82,8 @@ class DatabaseSeeder extends Seeder
             EmpresaSeeder::class,
             ExamenSeeder::class,
             HemogramaCompletoSeeder::class,
-            FrotisUretraSeeder::class
+            FrotisUretraSeeder::class,
+            UroanalisisSeeder::class
         ]);
 
     }
