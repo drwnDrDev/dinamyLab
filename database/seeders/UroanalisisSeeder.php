@@ -250,15 +250,20 @@ class UroanalisisSeeder extends Seeder
                         ]
                     );
                 }
-            }
-            if(isset($paramData['items'])){
-                foreach ($paramData['items']as $opcion) {
-            Opcion::create([
-                        'parametro_id' => $parametro->id,
-                        'valor' => $opcion
-                          ]);
-                 }
-            }
+            };
+            
+
+            if (isset($paramData['resultado']['items'])) {
+
+                    foreach ($paramData['resultado']['items'] as $opcionValor) {
+                        Opcion::create([
+                            'parametro_id' => $parametro->id, // Asocia la opción con el parámetro correcto
+                            'valor' => $opcionValor // Usar 'valor' como nombre de columna para la opción
+                        ]);
+                    }
+                }
+
+
 
         };
 
