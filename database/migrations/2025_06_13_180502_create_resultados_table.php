@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('examenes', function (Blueprint $table) {
+        Schema::create('resultados', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('cup');
-            $table->text('descripcion')->nullable();
-            $table->string('nombre_alternativo')->nullable();
-            $table->decimal('valor', 10, 2);
+            $table->string('resultado');
+            $table->boolean('es_normal')->default(true);
+            $table->foreignId('parametro_id')->constrained('parametros');
+            $table->foreignId('procedimiento_id')->constrained('procedimientos');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('examenes');
+        Schema::dropIfExists('resultados');
     }
 };

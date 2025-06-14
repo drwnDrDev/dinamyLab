@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('examenes', function (Blueprint $table) {
+        Schema::create('valor_referencias', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('cup');
-            $table->text('descripcion')->nullable();
-            $table->string('nombre_alternativo')->nullable();
-            $table->decimal('valor', 10, 2);
+            $table->foreignId('parametro_id')->constrained()->onDelete('cascade');
+            $table->string('demografia');
+            $table->string('salida');
+            $table->decimal('min', 10, 4)->nullable();
+            $table->decimal('max', 10, 4)->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('examenes');
+        Schema::dropIfExists('valor_referencias');
     }
 };
