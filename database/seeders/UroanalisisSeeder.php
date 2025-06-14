@@ -227,6 +227,7 @@ class UroanalisisSeeder extends Seeder
                     'slug' => $slug,
                     'tipo_dato' => $paramData['resultado']['tipo'] ?? 'text', // Por defecto 'text' si no hay tipo
                     'unidades' => $paramData['unidades'] ?? null,
+                    'metodo'=>$paramData['subtitulo'] ?? null,
                 ]
             );
 
@@ -251,7 +252,7 @@ class UroanalisisSeeder extends Seeder
                     );
                 }
             };
-            
+
 
             if (isset($paramData['resultado']['items'])) {
 

@@ -10,7 +10,7 @@ use App\Models\Parametro;
 use App\Models\ValorReferencia;
 use Illuminate\Support\Str; // Para generar slugs
 
-class FrotisUretraSeeder extends Seeder
+class ColesterolTotalSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -19,11 +19,11 @@ class FrotisUretraSeeder extends Seeder
     {
         // Define los datos del examen principal
         $examenData = [
-            'nombre' => 'Frotis de secreción uretral',
-            'CUP' => '901107',
+            'nombre' => 'Colesterol Total',
+            'CUP' => '903818',
             'valor' => '18000.00', // Un valor de ejemplo
-            'descripcion' => 'técnica de tinción bacteriana que diferencia las bacterias en dos grupos principales: grampositivas y gramnegativas, según la estructura de sus paredes celulares',
-            'nombre_alternativo' => 'Coloración de Gram',
+            'descripcion' => 'Cantidad total de colesterol en la sangre. Incluye ambos tipos: El colesterol de lipoproteína de baja densidad y el colesterol de lipoproteína de alta densidad ,suero o plasma sanguíneo',
+            'nombre_alternativo' => 'colesterol en la sangre',
         ];
 
         // Crea el examen
@@ -35,24 +35,20 @@ class FrotisUretraSeeder extends Seeder
         // Define los datos de los parámetros y referencias
         $parametrosYReferencias = json_decode('{
     "data": [
-{
-    "parametro":"Coloración de gram",
-    "resultado":{
-        "tipo":"datalist",
-        "nombre":"gram_a",
-        "items":[
-            "cocos Gram positivos aislados escasos",
-            "negativo para diplococos gram Negativos intra y extra celulares"
-        ]
-    }
-},{
-"parametro":"reacción leucocitaria",
-"resultado":{
-    "tipo":"list",
-    "nombre":"r_leuc",
-    "items":["escasa","moderada","aumentada"]
-}
-}
+        {
+            "parametro": "Colesterol total",
+            "subtitulo":"Método enzimático",
+            "resultado": {
+                "tipo": "number",
+                "nombre": "col_total"
+            },
+            "unidades":"mg/dL",
+            "referencia":{
+                "adultos":{"salida":"Hasta 200",
+                "maximo":200}
+
+            }
+        }
     ]
 }', true)['data']; // El 'true' es importante para obtener un array asociativo
 
@@ -105,8 +101,6 @@ class FrotisUretraSeeder extends Seeder
                         ]);
                     }
                 }
-
-
 
         };
 

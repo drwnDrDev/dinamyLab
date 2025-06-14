@@ -10,7 +10,7 @@ use App\Models\Parametro;
 use App\Models\ValorReferencia;
 use Illuminate\Support\Str; // Para generar slugs
 
-class FrotisUretraSeeder extends Seeder
+class GlucosaSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -19,11 +19,12 @@ class FrotisUretraSeeder extends Seeder
     {
         // Define los datos del examen principal
         $examenData = [
-            'nombre' => 'Frotis de secreción uretral',
-            'CUP' => '901107',
+            'nombre' => 'Glicemia',
+            'CUP' => '903841',
             'valor' => '18000.00', // Un valor de ejemplo
-            'descripcion' => 'técnica de tinción bacteriana que diferencia las bacterias en dos grupos principales: grampositivas y gramnegativas, según la estructura de sus paredes celulares',
-            'nombre_alternativo' => 'Coloración de Gram',
+            'descripcion' => 'concentración de glucosa libre en la sangre, ​​ suero o plasma sanguíneo',
+            'nombre_alternativo' => 'glucosa en la sangre',
+
         ];
 
         // Crea el examen
@@ -35,24 +36,21 @@ class FrotisUretraSeeder extends Seeder
         // Define los datos de los parámetros y referencias
         $parametrosYReferencias = json_decode('{
     "data": [
-{
-    "parametro":"Coloración de gram",
-    "resultado":{
-        "tipo":"datalist",
-        "nombre":"gram_a",
-        "items":[
-            "cocos Gram positivos aislados escasos",
-            "negativo para diplococos gram Negativos intra y extra celulares"
-        ]
-    }
-},{
-"parametro":"reacción leucocitaria",
-"resultado":{
-    "tipo":"list",
-    "nombre":"r_leuc",
-    "items":["escasa","moderada","aumentada"]
-}
-}
+        {
+            "parametro": "glicemia",
+            "subtitulo":"Método enzimático",
+            "resultado": {
+                "tipo": "number",
+                "nombre": "glicemia"
+            },
+            "unidades":"mg/dL",
+            "referencia":{
+                "adultos":{
+                "salida":"70-100",
+                "minimo":70,
+                "maximo":100}
+            }
+        }
     ]
 }', true)['data']; // El 'true' es importante para obtener un array asociativo
 
@@ -105,8 +103,6 @@ class FrotisUretraSeeder extends Seeder
                         ]);
                     }
                 }
-
-
 
         };
 
