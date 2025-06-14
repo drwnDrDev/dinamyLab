@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
         Permission::create(['name' => 'crear_cuenta']);
         Permission::create(['name' => 'editar_cuenta']);
         Permission::create(['name' => 'ver_examen']);
-        Permission::create(['name' => 'crear_examen']); 
+        Permission::create(['name' => 'crear_examen']);
         Permission::create(['name' => 'editar_examen']);
         Permission::create(['name' => 'ver_empresa']);
         Permission::create(['name' => 'ver_facturas']);
@@ -70,10 +70,10 @@ class DatabaseSeeder extends Seeder
 
         $role = Role::findByName('contable');
         $role->givePermissionTo(['ver_facturas']);
-        
+
         $empleado->assignRole('agente');
         $admin->assignRole('admin');
-        
+
         $prestador->assignRole('prestador');
         $coordinador->assignRole('contable');
 
@@ -81,6 +81,7 @@ class DatabaseSeeder extends Seeder
             MunicipioSeeder::class,
             EmpresaSeeder::class,
             ExamenSeeder::class,
+            HemogramaCompletoSeeder::class
         ]);
 
     }
