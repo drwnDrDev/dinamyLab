@@ -17,9 +17,10 @@ return new class extends Migration
             $table->string('nombre_comercial')->nullable();
             $table->string('nit')->unique();
             $table->foreignId('contacto_id')
-            ->constrained('contactos')
-            ->nullOnDelete()
-            ->cascadeOnUpdate();
+                ->nullable()
+                ->constrained('contactos')
+                ->nullOnDelete();
+         
             $table->timestamps();
         });
     }
