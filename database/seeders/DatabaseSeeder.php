@@ -81,7 +81,8 @@ class DatabaseSeeder extends Seeder
             MunicipioSeeder::class,
             EmpresaSeeder::class,
             ExamenSeeder::class,
-            HemogramaCompletoSeeder::class
+            HemogramaCompletoSeeder::class,
+            FrotisUretraSeeder::class
         ]);
 
     }
