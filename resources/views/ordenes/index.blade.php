@@ -1,15 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-text leading-tight">
+        <div class="flex flex-wrap justify-evenly items-center mb-4"> 
+         <h1 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
             {{ __('Medical order') }}
-        </h2>
+        </h1>      
+            <x-primary-button href="{{ route('ordenes.create') }}"  class="w-full sm:w-40">
+                {{ __('Create new order') }}
+            </x-primary-button> 
+        </div>
     </x-slot>
     <x-canva>
-        <div class=" items-center mb-4">
-            <a href="{{ route('ordenes.create') }}" class="p-4 bg-secondary rounded-md hover:bg-primary">Nueva orden</a>
-        </div>
 
-        <div class="py-3">
+    <section class="flex flex-wrap items-center justify-between mb-4">
+        <h2 class="font-semibold text-xl text-text leading-tight">Órdenes recientes</h2>
+
+        <div class="py-3 w-1/2 mx-auto">
             <label class="flex flex-col min-w-40 h-12 w-full">
                 <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
                     <div
@@ -30,7 +35,7 @@
             </label>
         </div>
 
-        <h2 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Órdenes recientes</h2>
+    </section>
         <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
             <table class="flex-1">
                 <thead>
@@ -57,19 +62,12 @@
                         </td>
                             
                             <td class="flex flex-col gap-2 px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-                                <!-- no me di mañana de traer el nombre del examen -->
+                               
                                  @foreach ($orden->examenes as $item)
                                     <p>{{$item->nombre}} - {{$item->pivot->cantidad}}</p>
                                  @endforeach
                                     
-                            <!-- </td>
-                            <td class="grid py-2 w-40 text-titles text-sm font-normal leading-normal">
-                             <label for="pendiente">pendiente<meter min="0" max="100" low="10" high="3" optimum="0"  value="{{$orden->pendiente}}"></meter></label>
-                             <label for="proceso">en proceso<meter min="0" max="100" low="66" high="33" optimum="0"  value="{{$orden->proceso}}"></meter></label>
-                             <label for="entreagdo">entreagdo<meter min="0" max="100" low="66" high="33" optimum="0"  value="{{$orden->entreagdo}}"></meter></label>
-                             <label for="terminado">terminado<meter min="0" max="100" low="45" high="66" optimum="100"  value="{{$orden->terminado}}"></meter></label>
-                             <label for="anulado">anulado<meter min="0" max="100" low="0" high="0" optimum="0"  value="{{$orden->anulado}}"></meter></label>                    
-                            </td> -->
+
                                 
                     </tr>
                     @endforeach
