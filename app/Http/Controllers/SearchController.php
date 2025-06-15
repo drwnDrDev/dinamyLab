@@ -43,10 +43,15 @@ class SearchController extends Controller
             }
         }
        
-        $this->buscarPersonaPorNombre($query);
-        $this->buscarExamenPorNombre($query);
+       $result =  $this->buscarPersonaPorNombre($query)
+            ?? $this->buscarExamenPorNombre($query);
+        if ($result) {
+            return $result;
+        }
+    
+      
         return view('search.busqueda_avanzada', compact('query'))
-            ->with('error', 'No results found for the search query');
+            ->with('error', __('No results found for the search query'));
     }
 
     private function buscarOrden($query)
