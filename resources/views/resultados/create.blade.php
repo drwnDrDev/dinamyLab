@@ -26,27 +26,33 @@
 
             </div>
         </section>
+
         <h1 class="text-2xl font-bold text-center mb-4">{{$procedimiento->examen->nombre}}</h1>
         <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
             @csrf
 
-            @foreach ($procedimiento->examen->parametros as $parametro)
+            @php
+            $lastGroup = null;
+            $parametros = $procedimiento->examen->parametros->sortBy('pivot.orden');
+            @endphp
 
-        @if($parametro->tipo_dato=='select' || $parametro->tipo_dato=='list')
-            <label for="{{$parametro->slug}}">{{$parametro->nombre}}</label>
-            <select name="$parametro->slug" id="{{$parametro->id}}">
-            @foreach ($parametro->opciones as $opcion)
-             <option value="{{$opcion->valor}}">{{$opcion->valor}}</option>
+            @foreach ($parametros as $parametro)
+                @if ($parametro->grupo && $parametro->grupo !== $lastGroup)
+                    <h3 class="font-bold text-xl">{{ $parametro->grupo }}</h3>
+                    @php
+                    $lastGroup = $parametro->grupo;
+                    @endphp
+                @endif
+
+                <div class="Componente_param pl-4 mb-2">
+
+                
+                    <label for="{{$parametro->slug}}">{{$parametro->nombre}}</label>
+                    <input type="text" name="$parametro->slug" id="{{$parametro->id}}"><span>{{$parametro->pivot->orden}}</span>
+                </div>
+
             @endforeach
-
-
-            </select>
-            @endif
-
-
-
-            @endforeach
-
+            @dump($parametro)
 
         </form>
     </x-canva>
