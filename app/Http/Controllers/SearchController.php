@@ -118,6 +118,14 @@ class SearchController extends Controller
         if ($examenes && $examenes->count() > 0) {
             return view('examenes.index', compact('examenes'));
         }
+        $examenes = \App\Models\Examen::where('nombre_alternativo', 'like', '%' . $query . '%')->get();
+        if ($examenes && $examenes->count() > 0) {
+            return view('examenes.index', compact('examenes'));
+        }
+        $examenes = \App\Models\Examen::where('descripcion', 'like', '%' . $query . '%')->get();
+        if ($examenes && $examenes->count() > 0) {
+            return view('examenes.index', compact('examenes'));
+        }
         
         return null;
     }
