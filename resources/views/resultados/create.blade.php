@@ -37,19 +37,25 @@
             @endphp
 
             @foreach ($parametros as $parametro)
+                <div class="Componente_param grid grid-cols-4 gap-4 pl-4 mb-2">
                 @if ($parametro->grupo && $parametro->grupo !== $lastGroup)
-                    <h3 class="font-bold text-xl">{{ $parametro->grupo }}</h3>
+                    <h3 class="font-bold text-xl uppercase col-span-full">{{ $parametro->grupo }}</h3>
                     @php
                     $lastGroup = $parametro->grupo;
                     @endphp
                 @endif
 
-                <div class="Componente_param pl-4 mb-2">
-
                 
-                    <label for="{{$parametro->slug}}">{{$parametro->nombre}}</label>
-                    <input type="text" name="$parametro->slug" id="{{$parametro->id}}"><span>{{$parametro->pivot->orden}}</span>
-                </div>
+
+
+                    <div><label for="{{$parametro->id}}">{{ucfirst($parametro->nombre)}}</label></div>
+                    <div><input type="text" name="$parametro->id" id="{{$parametro->id}}" value="{{$parametro->default}}">
+                    <span>{{$parametro->pivot->orden}}</span></div>
+                    <div><p>{{$parametro->unidades}}</p></div>
+                    <div><p>100 - 200</p></div>
+                    
+
+                 </div>
 
             @endforeach
             @dump($parametro)
