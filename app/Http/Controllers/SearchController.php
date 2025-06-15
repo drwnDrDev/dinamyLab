@@ -43,10 +43,15 @@ class SearchController extends Controller
             }
         }
        
-        $this->buscarPersonaPorNombre($query);
-        $this->buscarExamenPorNombre($query);
+       $result =  $this->buscarPersonaPorNombre($query)
+            ?? $this->buscarExamenPorNombre($query);
+        if ($result) {
+            return $result;
+        }
+    
+      
         return view('search.busqueda_avanzada', compact('query'))
-            ->with('error', 'No results found for the search query');
+            ->with('error', __('No results found for the search query'));
     }
 
     private function buscarOrden($query)
@@ -110,6 +115,14 @@ class SearchController extends Controller
     private function buscarExamenPorNombre($query)
     {
         $examenes = \App\Models\Examen::where('nombre', 'like', '%' . $query . '%')->get();
+        if ($examenes && $examenes->count() > 0) {
+            return view('examenes.index', compact('examenes'));
+        }
+        $examenes = \App\Models\Examen::where('nombre_alternativo', 'like', '%' . $query . '%')->get();
+        if ($examenes && $examenes->count() > 0) {
+            return view('examenes.index', compact('examenes'));
+        }
+        $examenes = \App\Models\Examen::where('descripcion', 'like', '%' . $query . '%')->get();
         if ($examenes && $examenes->count() > 0) {
             return view('examenes.index', compact('examenes'));
         }
