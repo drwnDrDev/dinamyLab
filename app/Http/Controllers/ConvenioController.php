@@ -59,7 +59,9 @@ class ConvenioController extends Controller
      */
     public function show(Convenio $convenio)
     {
-        //
+        return view('convenios.show', [
+            'convenio' => $convenio->load('contacto'),
+        ]); 
     }
 
     /**
