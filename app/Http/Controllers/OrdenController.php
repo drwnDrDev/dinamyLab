@@ -130,7 +130,7 @@ class OrdenController extends Controller
             Procedimiento::insert($procedimientosParaInsertar);
         }); // Fin de la transacción
 
-        return redirect()->route('ordenes')->with('success', 'Orden médica creada correctamente');
+        return redirect()->route('procedimientos')->with('success', 'Orden médica creada correctamente');
     }
 
     /**
