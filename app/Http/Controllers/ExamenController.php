@@ -12,7 +12,9 @@ class ExamenController extends Controller
      */
     public function index()
     {
-        //
+        $examenes = Examen::all();
+
+          return view('examenes.index', compact('examenes'));
     }
 
     /**
