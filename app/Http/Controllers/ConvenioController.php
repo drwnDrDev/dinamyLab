@@ -12,7 +12,9 @@ class ConvenioController extends Controller
      */
     public function index()
     {
-        //
+        return view('convenios.index', [
+            'convenios' => Convenio::with('contacto')->get(),
+        ]);
     }
 
     /**
@@ -28,7 +30,28 @@ class ConvenioController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        // Validar los datos del formulario
+        $request->validate([
+            'razon_social' => 'required|string|max:255',
+            'nit' => 'required|string|max:255|unique:convenios,nit',
+            'telefono' => 'nullable|string|size:10',
+        ]);
+        $contactoDatos = $request->only('telefono', 'municipio', 'direccion', 'pais', 'correo','whatsapp','maps','linkin','facebook','instagram','tiktok','youtube','website','otras_redes');
+
+        $contacto = \App\Services\GuardarContacto::guardar($contactoDatos);
+        if (!$contacto) {
+            Log::warning('contacto sin datos', ['user' => Auth::id()]);
+            $contacto = Contactato::find(1);
+        }
+        // Crear el convenio con los datos del contacto
+        Convenio::create( [
+            'razon_social' => $request->razon_social,
+            'nit' => $request->nit,
+            'contacto_id' => $contacto->id,
+        ]);
+
+        return redirect()->route('convenios.index')->with('success', 'Convenio creado exitosamente.');
     }
 
     /**
