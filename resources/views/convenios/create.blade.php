@@ -20,11 +20,14 @@
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="razon_social">Razón Social:</x-input-label>
                             <x-text-input type="text" name="razon_social" id="razon_social" required />
+                            <x-input-error :messages="$errors->get('razon_social')" class="mt-2" />
                         </div>
 
+                 
                         <div class="mb-4">
                             <x-input-label for="nit" class="block text-gray-700 text-sm font-bold mb-2">NIT:</x-input-label>
                             <input type="text" name="nit" id="nit" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <x-input-error :messages="$errors->get('nit')" class="mt-2" />
                         </div>
 
                         <hr class="my-8 border-1 border-borders">
@@ -55,8 +58,48 @@
                             </div>
                         </div>
 
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="pais">País:</x-input-label>
+                            <x-text-input type="text" name="pais" id="pais" />
+                        </div>
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="whatsapp">WhatsApp:</x-input-label>
+                            <x-text-input type="text" name="whatsapp" id="whatsapp" />
+                        </div>
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="maps">Google Maps:</x-input-label>
+                            <x-text-input type="text" name="maps" id="maps" />
+                        </div>
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="linkin">LinkedIn:</x-input-label>
+                            <x-text-input type="text" name="linkin" id="linkin" />
+                            <x-input-error :messages="$errors->get('linkin')" class="mt-2" />
+                        </div>
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="facebook">Facebook:</x-input-label>
+                            <x-text-input type="text" name="facebook" id="facebook" />
+                        </div>
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="instagram">Instagram:</x-input-label>
+                            <x-text-input type="text" name="instagram" id="instagram" />
+                        </div>
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="tiktok">TikTok:</x-input-label>
+                            <x-text-input type="text" name="tiktok" id="tiktok" />
+                        </div>
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="youtube">YouTube:</x-input-label>
+                            <x-text-input type="text" name="youtube" id="youtube" />
+                        </div>
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="website">Sitio Web:</x-input-label>
+                            <x-text-input type="text" name="website" id="website" />
+                        </div>
+                        <div class="mb-4 max-w-screen-sm">
+                            <x-input-label for="otras_redes">Otras Redes Sociales:</x-input-label>
+                            <x-text-input type="text" name="otras_redes" id="otras_redes" />
                         <div class="row-inputs py-8 w-full flex justify-center gap-2">
-                            <x-primary-button id="tipoGuardado" name="tipoGuardado" class="w-40">Guardar</x-primary-button>
+                            <x-primary-button type="submit" class="w-40">Guardar</x-primary-button>
                         </div>
                     </form>
                 </div>

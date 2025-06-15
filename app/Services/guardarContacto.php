@@ -46,8 +46,8 @@ class GuardarContacto
         $contacto = Contacto::create([
             'telefono' => $datos['telefono'] ?? null,
             'municipio_id' => $datos['municipio'] ?? 11007, // Valor por defecto para Bogotá
-            'info_adicional' => $info_adicional,
-            'usuario_id' => Auth::id(),
+            'info_adicional' => json_encode($info_adicional),
+            
         ]);
         return $contacto;
     }
