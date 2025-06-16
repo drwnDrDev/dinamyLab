@@ -32,21 +32,35 @@
 
             @foreach ($procedimiento->examen->parametros as $parametro)
 
-        @if($parametro->tipo_dato=='select' || $parametro->tipo_dato=='list')
-            <label for="{{$parametro->slug}}">{{$parametro->nombre}}</label>
-            <select name="$parametro->slug" id="{{$parametro->id}}">
+            @if($parametro->tipo_dato=='select' || $parametro->tipo_dato=='list')
+            <label for="{{$parametro->id}}">{{$parametro->nombre}}</label>
+            <select name="$parametro->id" id="{{$parametro->id}}">
             @foreach ($parametro->opciones as $opcion)
              <option value="{{$opcion->valor}}">{{$opcion->valor}}</option>
             @endforeach
 
 
             </select>
+
+            @elseif($parametro->tipo_dato=='text' || $parametro->tipo_dato=='number')
+            <label for="{{$parametro->id}}">{{$parametro->nombre}}</label>
+            <input type="{{$parametro->tipo_dato}}" name="{{$parametro->id}}" id="{{$parametro->id}}"
+                class="border border-borders rounded-md p-2 w-full" required>
+            @elseif($parametro->tipo_dato=='date')
+            <label for="{{$parametro->id}}">{{$parametro->nombre}}</label>
+            <input type="{{$parametro->tipo_dato}}" name="{{$parametro->id}}" id="{{$parametro->id}}"
+                class="border border-borders rounded-md p-2 w-full" required>
+            @elseif($parametro->tipo_dato=='textarea')
+            <label for="{{$parametro->id}}">{{$parametro->nombre}}</label>
+            <textarea name="{{$parametro->id}}" id="{{$parametro->id}}"
+                class="border border-borders rounded-md p-2 w-full" required></textarea>
             @endif
-
-
-
             @endforeach
-
+        <div>
+            <button type="submit"
+                class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Guardar
+                Resultado</button>
+        </div>
 
         </form>
     </x-canva>

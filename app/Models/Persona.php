@@ -83,10 +83,25 @@ class Persona extends Model
         ])['apellidos'];
     }
 
-    public function edad()
+    public function edad(date $fecha = null): ?string
     {
-        return $this->fecha_nacimiento ? $this->fecha_nacimiento->diffInYears(now()) : null;
+        // Si no se proporciona una fecha, se usa la fecha actual
+        $fecha = $fecha ?: now();
+        if (!$this->fecha_nacimiento) {
+            return null;
+        }
+
+        $diff = $this->fecha_nacimiento->diff($fecha);
+
+        if ($diff->y > 0) {
+            return $diff->y . ' año' . ($diff->y > 1 ? 's' : '');
+        } elseif ($diff->m > 0) {
+            return $diff->m . ' mes' . ($diff->m > 1 ? 'es' : '');
+        } else {
+            return $diff->d . ' día' . ($diff->d > 1 ? 's' : '');
+        }
     }
+
 
 
 
