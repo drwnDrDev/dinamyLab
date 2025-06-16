@@ -6,6 +6,9 @@ use App\Estado;
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
 use App\Models\Orden;
+use App\Models\Parametro;
+use App\Services\EscogerReferencia;
+use App\Models\Persona;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,8 +31,8 @@ class ResultadosController extends Controller
     }
     public function store(Request $request, Procedimiento $procedimiento)
     {
-
-
+        
+        return  EscogerReferencia::recorrerParamtrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
         $procedimiento->resultados = [
             "data"=>$request->except('_token', 'submit'),
 

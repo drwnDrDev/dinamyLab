@@ -1,0 +1,94 @@
+<?php
+
+namespace App\Services;
+
+use App\Support\StringHelper;
+use Illuminate\Support\Facades\Log;
+use App\Models\Persona;
+use App\Models\Parametro;
+use App\Models\Procedimiento;
+use App\Models\ValorReferencia;
+use Carbon\Carbon;
+
+
+class EscogerReferencia
+{
+    /**
+     * Filtra los valores de referencia para eliminar aquellos que son nulos o vacíos.
+     *
+     * @param array $datos Datos a filtrar.
+     * @return array Datos filtrados.
+     */
+    public static function datosDemograficos(Persona $paciente, Carbon $fecha): array
+    {
+        $sexo = $paciente->sexo === 'M' ? 'hombres' : 'mujeres';
+
+        $edad = $paciente->fecha_nacimiento ? $paciente->fecha_nacimiento->diffInYears($fecha) : null;
+        if ($edad === null || $edad < 0) {
+            Log::warning('No se puede calcular la edad: fecha de nacimiento no definida', [
+                'paciente_id' => $paciente->id
+            ]);
+            return [];
+        }
+        $etario = $edad < 5 ? 'menores' : 'adultos';
+
+        return [
+            'sexo' => $sexo,
+            'etario' => $etario,
+        ];
+    }
+
+
+    public static function estableceReferencia(array $datosDemograficos,Parametro $parametro): ?ValorReferencia
+    {
+        if(!$parametro->valoresReferencia || empty($parametro->valoresReferencia)){
+            return null;    
+        }
+        if(count($parametro->valoresReferencia) === 1){
+             return $parametro->valoresReferencia->first();
+        }
+
+        $sexo = $datosDemograficos['sexo'];
+        $etario = $datosDemograficos['etario'];
+        // Si $parametro->valoresReferencia es una colección, usamos los métodos de colección de Laravel
+        $referencias = $parametro->valoresReferencia->where('demografia', $etario);
+
+        if ($referencias->isNotEmpty()) {
+            return $referencias->first();
+        }
+        $referencias = $parametro->valoresReferencia->where('demografia', $sexo);
+
+        if ($referencias->isNotEmpty()) {
+            return $referencias->first();
+        }
+
+        return null;
+
+     
+    }
+    public static function recorrerParamtrosExamen(Procedimiento $procedimiento): array
+    {
+       
+        $datosDemograficos = self::datosDemograficos($procedimiento->orden->paciente,Carbon::parse($procedimiento->fecha) );
+      
+       
+        if(empty($datosDemograficos)){
+            return [];
+        }
+        $parametros = [];
+        foreach ($procedimiento->examen->parametros as $parametro) {
+            $referencia = self::estableceReferencia($datosDemograficos, $parametro);
+
+            $parametros[] = [
+                'nombre' => $parametro->nombre,
+                'grupo' => $parametro->grupo,
+                'tipo_dato' => $parametro->tipo_dato,
+                'metodo' => $parametro->metodo,                
+                'unidades' => $parametro->unidad,
+                'referencia' => $referencia,
+            ];
+        }
+        return $parametros;
+    }
+
+}
