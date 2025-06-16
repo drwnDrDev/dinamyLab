@@ -31,6 +31,7 @@
         <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
             @csrf
 
+<<<<<<< HEAD:resources/views/resultados/create.blade.php
             @php
             $lastGroup = null;
             $parametros = $procedimiento->examen->parametros->sortBy('pivot.orden');
@@ -103,6 +104,16 @@
 
             @endforeach
             @dump($parametro)
+=======
+            @foreach ($parametros as $parametro)
+                @dump($parametro)
+            @endforeach
+        <div>
+            <button type="submit"
+                class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Guardar
+                Resultado</button>
+        </div>
+>>>>>>> 281792cc2306ac71b98c3ac81e90b211f40595be:resources/views/resultados/create2.blade.php
 
         </form>
     </x-canva>
