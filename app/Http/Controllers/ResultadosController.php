@@ -23,15 +23,17 @@ class ResultadosController extends Controller
     public function show(Procedimiento $procedimiento)
     {
 
+
         return view('resultados.show', compact('procedimiento'));
     }
     public function create(Procedimiento $procedimiento)
     {
-        return view('resultados.create', ['procedimiento' => $procedimiento]);
+        $parametros = EscogerReferencia::recorrerParamtrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
+        return view('resultados.create', compact('parametros','procedimiento'));
     }
     public function store(Request $request, Procedimiento $procedimiento)
     {
-        
+
         return  EscogerReferencia::recorrerParamtrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
         $procedimiento->resultados = [
             "data"=>$request->except('_token', 'submit'),
