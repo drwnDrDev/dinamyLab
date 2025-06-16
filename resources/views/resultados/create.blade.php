@@ -45,17 +45,61 @@
                     @endphp
                 @endif
 
-                
+                @switch ($parametro->tipo_dato)
+                    @case ('texto'):
+                        
+                            <div><label for="{{$parametro->id}}">{{ucfirst($parametro->nombre)}}</label></div>
+                            <div><input type="text" name="$parametro->id" id="{{$parametro->id}}" value="{{$parametro->default}}">
+                            <div><p>{{$parametro->unidades}}</p></div>
+                            <div><p>100 - 200</p></div>
+                        
+                    @break
+                    @case ('numero')
+                        
+                            <div><label for="{{$parametro->id}}">{{ucfirst($parametro->nombre)}}</label></div>
+                            <div><input type="number" name="{{$parametro->id}}" id="{{$parametro->id}}" value="{{$parametro->default}}"></div>
+                            <div><p>{{$parametro->unidades}}</p></div>
+                            <div><p>100 - 200</p></div>
+                    @break
+                    @case ('date')
+                        
+                            <div><label for="{{$parametro->id}}">{{ucfirst($parametro->nombre)}}</label></div>
+                            <div><input type="date" name="{{$parametro->id}}" id="{{$parametro->id}}" value="{{$parametro->default}}"></div>
+                            <div><p>{{$parametro->unidades}}</p></div>
+                            <div><p>100 - 200</p></div>
+                    @break
+                    @case ('select')
+                        
+                            <div><label for="{{$parametro->id}}">{{ucfirst($parametro->nombre)}}</label></div>
+                            <div><select name="{{$parametro->id}}" id="{{$parametro->id}}">
+                                @foreach ($parametro->opciones as $opcion)
+                                    <option value="{{$opcion->valor}}" {{ $opcion->valor == $parametro->default ? 'selected' : '' }}>{{$opcion->nombre}}</option>
+                                @endforeach
+                            </select></div>
+                            <div><p>{{$parametro->unidades}}</p></div>
+                            <div><p>100 - 200</p></div>
+                        
+                    @break
+                    
+                    @default
+                        
+                            <div><label for="{{$parametro->id}}">{{ucfirst($parametro->nombre)}}</label></div>
+                            <div><input type="text" name="$parametro->id" id="{{$parametro->id}}" value="{{$parametro->default}}">
+                            <span>{{$parametro->pivot->orden}}</span></div>
+                            <div><p>{{$parametro->unidades}}</p></div>
+                            <div><p>100 - 200</p></div>
 
-
-                    <div><label for="{{$parametro->id}}">{{ucfirst($parametro->nombre)}}</label></div>
+                        
+                @endswitch
+               
+            
+                    <!-- <div><label for="{{$parametro->id}}">{{ucfirst($parametro->nombre)}}</label></div>
                     <div><input type="text" name="$parametro->id" id="{{$parametro->id}}" value="{{$parametro->default}}">
                     <span>{{$parametro->pivot->orden}}</span></div>
                     <div><p>{{$parametro->unidades}}</p></div>
-                    <div><p>100 - 200</p></div>
+                    <div><p>100 - 200</p></div> -->
                     
-
-                 </div>
+                </div>  
 
             @endforeach
             @dump($parametro)
