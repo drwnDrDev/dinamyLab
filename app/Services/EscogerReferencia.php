@@ -91,7 +91,7 @@ class EscogerReferencia
                 'tipo_dato' => $parametro->tipo_dato,
                 'defult'=>$parametro->default,
                 'metodo' => $parametro->metodo,
-                'unidades' => $parametro->unidad,
+                'unidades' => $parametro->unidades,
                 'referencia' => $referencia,
                 'opciones' => $parametro->opciones ? $parametro->opciones->map(function($opcion) {
                     return $opcion->valor;
