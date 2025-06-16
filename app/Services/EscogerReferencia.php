@@ -42,7 +42,7 @@ class EscogerReferencia
     public static function estableceReferencia(array $datosDemograficos,Parametro $parametro): ?ValorReferencia
     {
         if(!$parametro->valoresReferencia || empty($parametro->valoresReferencia)){
-            return null;    
+            return null;
         }
         if(count($parametro->valoresReferencia) === 1){
              return $parametro->valoresReferencia->first();
@@ -62,33 +62,44 @@ class EscogerReferencia
             return $referencias->first();
         }
 
-        return null;
+        return $parametro->valoresReferencia->first();;
 
-     
+
     }
     public static function recorrerParamtrosExamen(Procedimiento $procedimiento): array
     {
-       
+
         $datosDemograficos = self::datosDemograficos($procedimiento->orden->paciente,Carbon::parse($procedimiento->fecha) );
-      
-       
+        $parametrosE = $procedimiento->examen
+                                ->parametros()
+                                ->withPivot('orden')
+                                ->orderBy('pivot_orden')
+                                ->get();
+
+
         if(empty($datosDemograficos)){
             return [];
         }
         $parametros = [];
-        foreach ($procedimiento->examen->parametros as $parametro) {
+        foreach ($parametrosE as $parametro) {
             $referencia = self::estableceReferencia($datosDemograficos, $parametro);
 
             $parametros[] = [
+                'id'=>$parametro->id,
                 'nombre' => $parametro->nombre,
                 'grupo' => $parametro->grupo,
                 'tipo_dato' => $parametro->tipo_dato,
-                'metodo' => $parametro->metodo,                
+                'defult'=>$parametro->default,
+                'metodo' => $parametro->metodo,
                 'unidades' => $parametro->unidad,
                 'referencia' => $referencia,
+                'opciones' => $parametro->opciones ? $parametro->opciones->map(function($opcion) {
+                    return $opcion->valor;
+                })->all() : [],
             ];
         }
         return $parametros;
     }
 
 }
+

@@ -30,31 +30,8 @@
         <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
             @csrf
 
-            @foreach ($procedimiento->examen->parametros as $parametro)
-
-            @if($parametro->tipo_dato=='select' || $parametro->tipo_dato=='list')
-            <label for="{{$parametro->id}}">{{$parametro->nombre}}</label>
-            <select name="$parametro->id" id="{{$parametro->id}}">
-            @foreach ($parametro->opciones as $opcion)
-             <option value="{{$opcion->valor}}">{{$opcion->valor}}</option>
-            @endforeach
-
-
-            </select>
-
-            @elseif($parametro->tipo_dato=='text' || $parametro->tipo_dato=='number')
-            <label for="{{$parametro->id}}">{{$parametro->nombre}}</label>
-            <input type="{{$parametro->tipo_dato}}" name="{{$parametro->id}}" id="{{$parametro->id}}"
-                class="border border-borders rounded-md p-2 w-full" required>
-            @elseif($parametro->tipo_dato=='date')
-            <label for="{{$parametro->id}}">{{$parametro->nombre}}</label>
-            <input type="{{$parametro->tipo_dato}}" name="{{$parametro->id}}" id="{{$parametro->id}}"
-                class="border border-borders rounded-md p-2 w-full" required>
-            @elseif($parametro->tipo_dato=='textarea')
-            <label for="{{$parametro->id}}">{{$parametro->nombre}}</label>
-            <textarea name="{{$parametro->id}}" id="{{$parametro->id}}"
-                class="border border-borders rounded-md p-2 w-full" required></textarea>
-            @endif
+            @foreach ($parametros as $parametro)
+                @dump($parametro)
             @endforeach
         <div>
             <button type="submit"
