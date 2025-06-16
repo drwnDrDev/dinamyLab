@@ -15,12 +15,12 @@ class ValorReferencia extends Model
     protected $fillable = [
         'parametro_id',
         'demografia',
-        'tipo_dato',
+        'salida',
         'min',
         'max',
         'optimo'
     ];
-    
+
      /**
      * Get the parametro that owns the Opcion.
      */
