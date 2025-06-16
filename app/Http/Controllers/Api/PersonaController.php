@@ -49,23 +49,13 @@ class PersonaController extends Controller
     {
 
         $request->validated();
-
-        // Contacto
-        $telefono = $request->input('telefono', null);
-        $municipio_id = $request->input('municipio', 11007); // Valor por defecto para Bogotá
-        // Filtrar solo los datos cuyo valor sea diferente de null
-        $info_adicional = array_filter(
-            $request->only('eps','direccion','pais','correo') ?? [],
-            function ($value) {
-            return !is_null($value);
-            }
-        );
-
-        $contacto = \App\Models\Contacto::create([
-            'municipio_id' => $municipio_id,
-            'telefono' => $telefono,
-            'info_adicional' => json_encode($info_adicional),
-        ]);
+        $contactoDatos = $request->only('telefono', 'municipio', 'eps', 'direccion', 'pais', 'correo');
+  
+        $contacto = \App\Services\GuardarContacto::guardar($contactoDatos);
+        if (!$contacto) {
+            Log::warning('contacto sin datos', ['user' => Auth::id()]);
+            $contacto = Contactato::find(1);
+        }
 
         // Dividir nombres y apellidos en primer y segundo nombre
         $parsed = NombreParser::parsearPersona(
