@@ -38,7 +38,7 @@ class Procedimiento extends Model
     }
 
     public function resultado(){
-        return json_decode($this->resultados);
+        return $this->hasMany(Resultado::class);
     }
     protected function casts(): array
     {
