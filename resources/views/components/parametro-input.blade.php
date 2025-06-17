@@ -7,7 +7,7 @@
             @case ('text')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="text" name="$parametro['id']" id="{{$parametro['id']}}" value="{{$parametro['defult']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="text" name="$parametro['id']" id="{{$parametro['id']}}" value="{{$parametro['default']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>100 - 200</p></div>
@@ -16,7 +16,7 @@
             @case ('number')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="number" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{$parametro['defult']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="number" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{$parametro['default']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>100 - 200</p></div>
@@ -24,7 +24,7 @@
             @case ('date')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="date" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{$parametro['defult']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="date" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{$parametro['default']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md"></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>100 - 200</p></div>
@@ -32,7 +32,7 @@
             @case ('select')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><select name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['defult'] ?? '' }}" class="w-full p-2 pr-10 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><select name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['default'] ?? '' }}" class="w-full p-2 pr-10 border-borders focus:border-primary focus:ring-primary
             rounded-md">
                     @foreach ($parametro['opciones'] as $opcion)
                     <option value="{{$opcion}}" class="active:bg-titles">{{$opcion}}</option>
@@ -44,7 +44,7 @@
             @case ('list')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input list="opciones-{{$parametro['id']}}" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['defult'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input list="opciones-{{$parametro['id']}}" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['default'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require>
                     <datalist id="opciones-{{$parametro['id']}}">
                     @foreach ($parametro['opciones'] as $opcion)
