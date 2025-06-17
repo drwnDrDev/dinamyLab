@@ -123,6 +123,7 @@ class EscogerReferencia
                 'parametro_id'     => $parametro->id,
                 'resultado'        => $valorResultado,
                 'procedimiento_id' => $pro->id,
+                'valor_referencia' => $referencia ? $referencia->salida:null,
                 'es_normal'        => $isNormal,
             ]);
         }

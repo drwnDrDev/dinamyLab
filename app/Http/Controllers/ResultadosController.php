@@ -23,14 +23,11 @@ class ResultadosController extends Controller
     public function show(Procedimiento $procedimiento)
     {
 
-
-        return view('resultados.show', compact('procedimiento'));
+       return view('resultados.show', compact('procedimiento'));
     }
     public function create(Procedimiento $procedimiento)
     {
-        if($procedimiento->estado != Estado::PROCESO){
-            return redirect()->route('resultados.show', $procedimiento)->with('error', 'El procedimiento no está en estado "En Proceso".');
-        }
+
         $parametros = EscogerReferencia::recorrerParametrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
         return view('resultados.create', compact('parametros','procedimiento'));
     }
