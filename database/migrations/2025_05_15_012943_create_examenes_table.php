@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('cup');
+            $table->text('descripcion')->nullable();
+            $table->string('nombre_alternativo')->nullable();
             $table->decimal('valor', 10, 2);
-            $table->json('plantilla')->nullable();
             $table->timestamps();
         });
     }
