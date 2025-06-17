@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Persona;
 use App\Models\Parametro;
 use App\Models\Procedimiento;
+use App\Models\Resultado;
 use App\Models\ValorReferencia;
 use Carbon\Carbon;
 
@@ -89,16 +90,39 @@ class EscogerReferencia
                 'nombre' => $parametro->nombre,
                 'grupo' => $parametro->grupo,
                 'tipo_dato' => $parametro->tipo_dato,
-                'defult'=>$parametro->default,
+                'default'=>$parametro->default,
                 'metodo' => $parametro->metodo,
                 'unidades' => $parametro->unidades,
-                'referencia' => $referencia,
+                'referencia' => $referencia?$referencia['salida']:null,
                 'opciones' => $parametro->opciones ? $parametro->opciones->map(function($opcion) {
                     return $opcion->valor;
                 })->all() : [],
             ];
         }
         return $parametros;
+    }
+
+    public static function guardaResuldado(array $formData, Procedimiento $pro ){
+
+        $dDemograficos = self::datosDemograficos($pro->orden->paciente,Carbon::parse($pro->fecha) );
+
+        foreach ( $formData as $parametro => $resultado ){
+            $parametro = Parametro::find($parametro);
+            $ref = self::estableceReferencia($dDemograficos,$parametro);
+            $isNormal = true;
+            if($ref !== null){
+                $isNormal = $resultado<$ref['max'] && $resultado>$ref['min'];
+            }
+            Resultado::create([
+                'parametro_id'=>$parametro->id,
+                'resultado'=>$resultado,
+                'procedimiento_id'=>$pro->id,
+                'is_normal'=>$isNormal
+            ]);
+
+        }
+
+
     }
 
 }
