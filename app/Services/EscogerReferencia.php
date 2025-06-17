@@ -92,13 +92,25 @@ class EscogerReferencia
                 'defult'=>$parametro->default,
                 'metodo' => $parametro->metodo,
                 'unidades' => $parametro->unidades,
-                'referencia' => $referencia,
+                'referencia' => $referencia?$referencia['salida']:null,
                 'opciones' => $parametro->opciones ? $parametro->opciones->map(function($opcion) {
                     return $opcion->valor;
                 })->all() : [],
             ];
         }
         return $parametros;
+    }
+
+    public static function guardaResuldado(array $formData, Procedimiento $pro ){
+
+        $dDemograficos = self::datosDemograficos($pro->orden->paciente,Carbon::parse($pro->fecha) );
+
+        foreach ( $formData as $paramtero => $resultado ){
+            $parametro = null;
+
+        }
+
+
     }
 
 }
