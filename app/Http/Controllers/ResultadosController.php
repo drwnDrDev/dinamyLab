@@ -28,13 +28,16 @@ class ResultadosController extends Controller
     }
     public function create(Procedimiento $procedimiento)
     {
-        $parametros = EscogerReferencia::recorrerParamtrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
+        if($procedimiento->estado != Estado::PROCESO){
+            return redirect()->route('resultados.show', $procedimiento)->with('error', 'El procedimiento no está en estado "En Proceso".');
+        }
+        $parametros = EscogerReferencia::recorrerParametrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
         return view('resultados.create', compact('parametros','procedimiento'));
     }
     public function store(Request $request, Procedimiento $procedimiento)
     {
 
-         EscogerReferencia::guardaResuldado($request->except(['_token','submit']),$procedimiento);
+         EscogerReferencia::guardaResultado($request->except(['_token','submit']),$procedimiento);
 
         $procedimiento->estado = Estado::TERMINADO; // Cambia el estado del procedimiento a 'terminado'
         $procedimiento->save();

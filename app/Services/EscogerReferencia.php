@@ -1,129 +1,130 @@
 <?php
-
 namespace App\Services;
-
-use App\Support\StringHelper;
-use Illuminate\Support\Facades\Log;
-use App\Models\Persona;
 use App\Models\Parametro;
+use App\Models\Persona;
 use App\Models\Procedimiento;
 use App\Models\Resultado;
 use App\Models\ValorReferencia;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Log;
 
 class EscogerReferencia
 {
     /**
-     * Filtra los valores de referencia para eliminar aquellos que son nulos o vacíos.
-     *
-     * @param array $datos Datos a filtrar.
-     * @return array Datos filtrados.
+     * Obtiene los datos demográficos necesarios para escoger una referencia.
      */
     public static function datosDemograficos(Persona $paciente, Carbon $fecha): array
     {
-        $sexo = $paciente->sexo === 'M' ? 'hombres' : 'mujeres';
+        $edad = optional($paciente->fecha_nacimiento)->diffInYears($fecha);
 
-        $edad = $paciente->fecha_nacimiento ? $paciente->fecha_nacimiento->diffInYears($fecha) : null;
-        if ($edad === null || $edad < 0) {
-            Log::warning('No se puede calcular la edad: fecha de nacimiento no definida', [
-                'paciente_id' => $paciente->id
-            ]);
+        if (is_null($edad) || $edad < 0) {
+            Log::warning('Edad inválida para paciente.', ['paciente_id' => $paciente->id]);
             return [];
         }
-        $etario = $edad < 5 ? 'menores' : 'adultos';
 
         return [
-            'sexo' => $sexo,
-            'etario' => $etario,
+            'sexo'   => $paciente->sexo === 'M' ? 'hombres' : 'mujeres',
+            'etario' => $edad < 5 ? 'menores' : 'adultos',
         ];
     }
 
-
-    public static function estableceReferencia(array $datosDemograficos,Parametro $parametro): ?ValorReferencia
+    /**
+     * Selecciona el valor de referencia más apropiado según datos demográficos.
+     */
+    public static function estableceReferencia(array $datosDemograficos, Parametro $parametro): ?ValorReferencia
     {
-        if(!$parametro->valoresReferencia || empty($parametro->valoresReferencia)){
-            return null;
-        }
-        if(count($parametro->valoresReferencia) === 1){
-             return $parametro->valoresReferencia->first();
-        }
+        $referencias = $parametro->valoresReferencia ?? collect();
 
-        $sexo = $datosDemograficos['sexo'];
-        $etario = $datosDemograficos['etario'];
-        // Si $parametro->valoresReferencia es una colección, usamos los métodos de colección de Laravel
-        $referencias = $parametro->valoresReferencia->where('demografia', $etario);
+        if ($referencias->isEmpty()) return null;
+        if ($referencias->count() === 1) return $referencias->first();
 
-        if ($referencias->isNotEmpty()) {
-            return $referencias->first();
-        }
-        $referencias = $parametro->valoresReferencia->where('demografia', $sexo);
-
-        if ($referencias->isNotEmpty()) {
-            return $referencias->first();
+        foreach (['etario', 'sexo'] as $clave) {
+            $valor = $datosDemograficos[$clave] ?? null;
+            if ($valor) {
+                $match = $referencias->firstWhere('demografia', $valor);
+                if ($match) return $match;
+            }
         }
 
-        return $parametro->valoresReferencia->first();;
-
-
+        return $referencias->first();
     }
-    public static function recorrerParamtrosExamen(Procedimiento $procedimiento): array
+
+    /**
+     * Recorre los parámetros de un procedimiento y obtiene sus referencias.
+     */
+    public static function recorrerParametrosExamen(Procedimiento $procedimiento): array
     {
+        $datosDemograficos = self::datosDemograficos(
+            $procedimiento->orden->paciente,
+            Carbon::parse($procedimiento->fecha)
+        );
 
-        $datosDemograficos = self::datosDemograficos($procedimiento->orden->paciente,Carbon::parse($procedimiento->fecha) );
-        $parametrosE = $procedimiento->examen
-                                ->parametros()
-                                ->withPivot('orden')
-                                ->orderBy('pivot_orden')
-                                ->get();
+        if (empty($datosDemograficos)) return [];
 
-
-        if(empty($datosDemograficos)){
-            return [];
-        }
         $parametros = [];
+
+        $parametrosE = $procedimiento->examen
+            ->parametros()
+            ->with(['valoresReferencia', 'opciones']) // eager load
+            ->withPivot('orden')
+            ->orderBy('pivot_orden')
+            ->get();
+
         foreach ($parametrosE as $parametro) {
             $referencia = self::estableceReferencia($datosDemograficos, $parametro);
 
             $parametros[] = [
-                'id'=>$parametro->id,
-                'nombre' => $parametro->nombre,
-                'grupo' => $parametro->grupo,
+                'id'        => $parametro->id,
+                'nombre'    => $parametro->nombre,
+                'grupo'     => $parametro->grupo,
                 'tipo_dato' => $parametro->tipo_dato,
-                'default'=>$parametro->default,
-                'metodo' => $parametro->metodo,
-                'unidades' => $parametro->unidades,
-                'referencia' => $referencia?$referencia['salida']:null,
-                'opciones' => $parametro->opciones ? $parametro->opciones->map(function($opcion) {
-                    return $opcion->valor;
-                })->all() : [],
+                'default'   => $parametro->default,
+                'metodo'    => $parametro->metodo,
+                'unidades'  => $parametro->unidades,
+                'referencia'=> optional($referencia)->salida,
+                'opciones'  => $parametro->opciones->pluck('valor')->all(),
             ];
         }
+
         return $parametros;
     }
 
-    public static function guardaResuldado(array $formData, Procedimiento $pro ){
+    /**
+     * Guarda resultados para un procedimiento.
+     */
+    public static function guardaResultado(array $formData, Procedimiento $pro): void
+    {
+        $datosDemograficos = self::datosDemograficos(
+            $pro->orden->paciente,
+            Carbon::parse($pro->fecha)
+        );
 
-        $dDemograficos = self::datosDemograficos($pro->orden->paciente,Carbon::parse($pro->fecha) );
+        foreach ($formData as $parametroId => $valorResultado) {
+            $parametro = Parametro::with('valoresReferencia')->find($parametroId);
+            if (!$parametro) continue;
 
-        foreach ( $formData as $parametro => $resultado ){
-            $parametro = Parametro::find($parametro);
-            $ref = self::estableceReferencia($dDemograficos,$parametro);
+            $referencia = self::estableceReferencia($datosDemograficos, $parametro);
+
             $isNormal = true;
-            if($ref !== null){
-                $isNormal = $resultado<$ref['max'] && $resultado>$ref['min'];
+            if ($referencia) {
+                try {
+                    $valorResultado = floatval($valorResultado);
+                } catch (\Exception $e) {
+                    Log::error('Error al convertir el valor del resultado a float.', [
+                        'parametro_id' => $parametro->id,
+                        'valor' => $valorResultado,
+                        'error' => $e->getMessage(),
+                    ]);
+                    continue; // Skip this parameter if conversion fails
+                }
+                $isNormal = $valorResultado < $referencia->max && $valorResultado > $referencia->min;
             }
             Resultado::create([
-                'parametro_id'=>$parametro->id,
-                'resultado'=>$resultado,
-                'procedimiento_id'=>$pro->id,
-                'is_normal'=>$isNormal
+                'parametro_id'     => $parametro->id,
+                'resultado'        => $valorResultado,
+                'procedimiento_id' => $pro->id,
+                'es_normal'        => $isNormal,
             ]);
-
         }
-
-
     }
-
 }
-

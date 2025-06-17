@@ -34,8 +34,7 @@
         </section>
 
         <h1 class="text-2xl font-bold text-center mb-4">{{$procedimiento->examen->nombre}}</h1>
-
-    @includeIf('resultados.resultados.'.$procedimiento->examen->slug(), ['paciente' => $procedimiento->orden->paciente,'resultados'=>$procedimiento->resultados['data'], 'isResultado' => true])
+        @dump($procedimiento->resultado)
 
     </x-canva>
 
