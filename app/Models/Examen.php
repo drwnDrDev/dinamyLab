@@ -11,19 +11,27 @@ class Examen extends Model
         'nombre',
         'cup',
         'valor',
-        'plantilla'
+        'desripcion',
+        'nombre_alternativo'
+
     ];
 
-    public function slug(){
-        return json_decode($this->plantilla, true)['componente'] ?? null;
-    }
-   
+
     public function ordenes()
     {
         return $this->belongsToMany(Orden::class, 'orden_examen','examen_id', 'orden_medica_id')
             ->withPivot('cantidad')
             ->withTimestamps();
     }
+
+
+    public function parametros()
+    {
+        return $this->belongsToMany(Parametro::class, 'examen_parametro','examen_id', 'parametro_id')
+            ->withPivot('orden')
+            ->withTimestamps();
+    }
+
 
     protected $table = 'examenes';
 

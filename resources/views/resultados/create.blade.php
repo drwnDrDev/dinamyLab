@@ -26,11 +26,34 @@
 
             </div>
         </section>
-        <h1 class="text-2xl font-bold text-center mb-4">{{$procedimiento->examen->nombre}}</h1>
+
+        <h1 class="text-2xl font-bold text-center mb-4 uppercase">{{$procedimiento->examen->nombre}}</h1>
+
+        <div class="header_resultado grid grid-cols-4 gap-2 pl-4 mb-2 border-b border-t border-borders items-center text-titles">
+            <h2 class="text-lg font-bold">Parametro</h2>
+            <h2 class="text-lg text-end font-bold">Resultado</h2>
+            <h2 class="text-lg font-bold">U. Medida</h2>
+            <h2 class="text-lg font-bold">Valor de Referencia</h2>
+        </div>
         <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
             @csrf
+            @php
+            $lastGroup = null;
+            @endphp
 
-            @includeIf('resultados.componentes.'.$procedimiento->examen->slug(), ['procedimiento' => $procedimiento, 'isResultado' => false])
-        </form>
+            @foreach ($parametros as $parametro)
+
+                @if ($parametro['grupo'] && $parametro['grupo'] !== $lastGroup)
+                    <h3 class="pt-4 font-semibold uppercase col-span-full">{{ $parametro['grupo'] }}</h3>
+                    @php
+                    $lastGroup = $parametro['grupo'];
+                    @endphp
+                @endif
+
+                <x-parametro-input :parametro="$parametro"/>
+            @endforeach
+      <x-primary-button>guardar</x-primary-button>
+         </form>
+
     </x-canva>
 </x-app-layout>

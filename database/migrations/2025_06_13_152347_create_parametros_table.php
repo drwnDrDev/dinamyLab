@@ -11,13 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('examenes', function (Blueprint $table) {
+//Nobre	Grupo	order	Parametro	Tipo_dato	UniMedida
+
+
+        Schema::create('parametros', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('cup');
-            $table->text('descripcion')->nullable();
-            $table->string('nombre_alternativo')->nullable();
-            $table->decimal('valor', 10, 2);
+            $table->string('grupo')->nullable();
+            $table->string('slug');
+            $table->string('tipo_dato');
+            $table->string('default')->nullable();
+            $table->string('unidades')->nullable();
+            $table->string('metodo')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('examenes');
+        Schema::dropIfExists('parametros');
     }
 };

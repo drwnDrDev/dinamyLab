@@ -57,18 +57,18 @@
                     <table class="w-full table-auto">
                         <thead>
                             <tr class="text-left">
-                                <th class="px-4 py-2 text-text font-semibold">ID</th>
+                                <th class="px-4 py-2 text-text font-semibold">CUP</th>
                                 <th class="px-4 py-2 text-text font-semibold">Nombre</th>
-                                <th class="px-4 py-2 text-text font-semibold">Fecha de creación</th>
+                                <th class="px-4 py-2 text-text font-semibold">Descripcion</th>
                                 <th class="px-4 py-2 text-text font-semibold">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($examenes as $examen)
                                 <tr class="border-b border-borders">
-                                    <td class="px-4 py-2">{{ $examen->id }}</td>
+                                    <td class="px-4 py-2">{{ $examen->cup }}</td>
                                     <td class="px-4 py-2">{{ $examen->nombre }}</td>
-                                    <td class="px-4 py-2">{{ $examen->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="px-4 py-2">{{ $examen->descripcion }}</td>
                                     <td class="px-4 py-2">
                                         <a href=""
                                             class="text-primary hover:underline">Ver</a>

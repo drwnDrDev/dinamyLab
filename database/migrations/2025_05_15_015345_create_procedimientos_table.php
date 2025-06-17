@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreignId('examen_id')
                 ->constrained('examenes')
                 ->onDelete('cascade');
-            $table->json('resultados')->nullable();
+
             $table->foreignId('factura_id')
                 ->nullable()
                 ->constrained('facturas')
