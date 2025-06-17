@@ -4,17 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Resultado extends Model
 {
 
-        protected $fillable = [
+    protected $fillable = [
         'procedimiento_id',
         'parametro_id',
         'es_normal',
-        'resultado'
+        'resultado',
+        'valor_referencia'
     ];
 
-
+    public function parametro(){
+        return $this->belongsTo(Parametro::class);
+    }
 
 
 }

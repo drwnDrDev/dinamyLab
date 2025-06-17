@@ -42,6 +42,7 @@
             @endphp
 
             @foreach ($parametros as $parametro)
+
                 @if ($parametro['grupo'] && $parametro['grupo'] !== $lastGroup)
                     <h3 class="pt-4 font-semibold uppercase col-span-full">{{ $parametro['grupo'] }}</h3>
                     @php
@@ -53,6 +54,6 @@
             @endforeach
       <x-primary-button>guardar</x-primary-button>
          </form>
-   
+
     </x-canva>
 </x-app-layout>
