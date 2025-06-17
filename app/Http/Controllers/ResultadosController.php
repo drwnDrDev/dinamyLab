@@ -34,17 +34,7 @@ class ResultadosController extends Controller
     public function store(Request $request, Procedimiento $procedimiento)
     {
 
-        return  EscogerReferencia::recorrerParamtrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
-        $procedimiento->resultados = [
-            "data"=>$request->except('_token', 'submit'),
-
-            "meta" => [
-                "created_by" => Auth::user()->id,
-                "procedimiento_id" => $procedimiento->id,
-                "created_at" => now(),
-            ]
-
-        ];
+         EscogerReferencia::guardaResuldado($request->except(['_token','submit']),$procedimiento);
 
         $procedimiento->estado = Estado::TERMINADO; // Cambia el estado del procedimiento a 'terminado'
         $procedimiento->save();
