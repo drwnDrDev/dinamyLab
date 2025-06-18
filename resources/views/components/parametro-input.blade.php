@@ -10,7 +10,7 @@
             <div class="text-end"><input type="text" name="$parametro['id']" id="{{$parametro['id']}}" value="{{$parametro['default']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
-            <div><p>100 - 200</p></div>
+            <div><p>{{$parametro['referencia']}}</p></div>
 
             @break
             @case ('number')
@@ -19,7 +19,7 @@
             <div class="text-end"><input type="number" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{$parametro['default']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
-            <div><p>100 - 200</p></div>
+            <div><p>{{$parametro['referencia']}}</p></div>
             @break
             @case ('date')
 
@@ -27,7 +27,7 @@
             <div class="text-end"><input type="date" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{$parametro['default']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md"></div>
             <div><p>{{$parametro['unidades']}}</p></div>
-            <div><p>100 - 200</p></div>
+            <div><p>{{$parametro['referencia']}}</p></div>
             @break
             @case ('select')
 
@@ -39,7 +39,7 @@
                     @endforeach
                 </select></div>
             <div><p>{{$parametro['unidades']}}</p></div>
-            <div><p>100 - 200</p></div>
+            <div><p>{{$parametro['referencia']}}</p></div>
             @break
             @case ('list')
 
@@ -53,7 +53,7 @@
                     </datalist>
             </div>
             <div><p>{{$parametro['unidades']}}</p></div>
-            <div><p>100 - 200</p></div>
+            <div><p>{{$parametro['referencia']}}</p></div>
             @break
 
             @case ('textarea')
@@ -70,7 +70,7 @@
             <div class="text-end"><input type="text" name="$parametro['id']" id="{{$parametro['id']}}" value="{{$parametro['id']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
-            <div><p>100 - 200</p></div>
+            <div><p>{{$parametro['referencia']}}</p></div>
 
 
         @endswitch
