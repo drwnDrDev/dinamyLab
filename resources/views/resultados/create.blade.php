@@ -52,8 +52,9 @@
 
                 <x-parametro-input :parametro="$parametro"/>
             @endforeach
-      <x-primary-button>guardar</x-primary-button>
+                
          </form>
+         <x-primary-button>guardar</x-primary-button>
 
     </x-canva>
 </x-app-layout>
