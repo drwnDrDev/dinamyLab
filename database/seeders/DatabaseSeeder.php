@@ -86,7 +86,10 @@ class DatabaseSeeder extends Seeder
             UroanalisisSeeder::class,
             GlucosaSeeder::class,
             TrigliceridosSeeder::class,
-            ColesterolTotalSeeder::class
+            ColesterolTotalSeeder::class,
+            ColesterolHDLSeeder::class,
+            ColesterolLDLSeeder::class,
+            AcidoUricoSeeder::class,
         ]);
 
     }
