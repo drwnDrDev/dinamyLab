@@ -17,7 +17,7 @@
             @include('layouts.navigation')
 
             <!-- Page Content -->
-            <main class="w-full m-auto p-6 md:ml-60 md:mt-16 md:w-[calc(100vw-240px)] md:h-[calc(100vh-64px)] overflow-y-auto h-full">
+            <main class="w-full m-auto p-6 md:ml-60 md:mt-16 md:w-[calc(100vw-240px)] md:h-[calc(100vh-64px)] overflow-y-auto h-full print:!p-0">
                 
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     @if (session('success') || session('error'))
