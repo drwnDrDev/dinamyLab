@@ -3,25 +3,28 @@
         resultado_{{$procedimiento->orden->paciente->tipo_documento}}
     </x-slot>
 
-    <x-canva class="print:!p-0 print:!bg-white print:w-letter print:!h-letter print:!m-0 print:!border-none print:text-xs print:!overflow-hidden">
-        <section class="hidden print:grid print:grid-cols-3">
-            <x-application-logo class="w-24 h-24 mx-auto p-0" />
+    <article class="print_resultado max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:text-[0.6rem] print:!p:0">
+        <section class="print_header hidden print:flex w-full">
+            <figure class="w-12 mx-auto p-0">
+            <x-application-logo/>
+            </figure>
+            <div>
             <h1 class="font-bold"></h1>
             <h2 class="font-semibold">Hospital San Juan de Dios</h2>
             <p class="">Calle 123 # 456 - 789</p>
             <p class="">Teléfono: (123) 456-7890</p>
             <p class="">Email: </p>
-
+            </div>
         </section>
-        <h1 class="font-bold text-center mb-4 uppercase">{{$procedimiento->examen->nombre}}</h1>
-        <section class="grid grid-cols-2 py-4 border-t border-borders  ">
+        
+        <section class="print_paciente grid grid-cols-2 py-4 border-t border-b border-borders w-full">
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
 
                 <span class="font-bold ">Paciente: </span>
                 <h3>{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
                 <span class="font-bold ">Identificación: </span>
                 
-                <div class="flex">
+                <div class="flex flex-wrap">
                     <h3>{{$procedimiento->orden->paciente->tipo_documento}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
                     <div class="flex pl-4 gap-2">
                         <span class="font-bold ">Sexo: </span>
@@ -42,31 +45,33 @@
 
             </div>
         </section>
+            
+        <section class="print_paramentros w-full print:!text-[0.5rem]">
+            <h1 class="font-bold text-center my-4 uppercase">{{$procedimiento->examen->nombre}}</h1>
+            <div class="header_resultado grid [grid-template-columns:2fr_1fr_1fr_1fr] gap-2 pl-4 mb-2 bg-secondary text-titles">
+                <h2 class="font-semibold">Parametro</h2>
+                <h2 class="font-semibold text-end">Resultado</h2>
+                <h2 class="font-semibold">U. Medida</h2>
+                <h2 class="font-semibold">Valor de Referencia</h2>
+            </div>
+            @php
+            $lastGroup = null;
+            @endphp
 
-        <div class="header_resultado grid [grid-template-columns:2fr_1fr_1fr_1fr] gap-2 pl-4 mb-2 bg-secondary text-titles">
-            <h2 class="font-bold">Parametro</h2>
-            <h2 class="font-bold text-end">Resultado</h2>
-            <h2 class="font-bold">U. Medida</h2>
-            <h2 class="font-bold">Valor de Referencia</h2>
-        </div>
+            @foreach ( $procedimiento->resultado as $p)
 
-        @php
-        $lastGroup = null;
-        @endphp
+            @if ($p->parametro->grupo && $p->parametro->grupo !== $lastGroup)
+            <h3 class="pt-2 pl-2 font-semibold uppercase col-span-full">{{ $p->parametro->grupo}}</h3>
+            @php
+            $lastGroup = $p->parametro->grupo;
+            @endphp
+            @endif
+            <x-parametro-print :item="$p" />
 
-        @foreach ( $procedimiento->resultado as $p)
-
-        @if ($p->parametro->grupo && $p->parametro->grupo !== $lastGroup)
-        <h3 class="pt-2 pl-2 font-semibold uppercase col-span-full">{{ $p->parametro->grupo}}</h3>
-        @php
-        $lastGroup = $p->parametro->grupo;
-        @endphp
-        @endif
-        <x-parametro-print :item="$p" />
-
-        @endforeach
-        @dump($procedimiento->resultado)
-    </x-canva>
+            @endforeach
+            @dump($procedimiento->resultado)
+        </section>    
+</article>
 
 
 
