@@ -14,8 +14,13 @@ class ProcedimientoController extends Controller
      */
     public function index()
     {
-        $procedimientos= Procedimiento::orderBy('updated_at', 'desc')
-            ->get();
+        $procedimientos = Procedimiento::with(['orden.paciente', 'examen'])
+            ->where('updated_at', '>=', now()->subDays(2))
+            ->orderBy('updated_at', 'desc')
+     
+            ->get() 
+            ->groupBy('estado');
+
         return view('procedimientos.index', compact('procedimientos'));
     }
 
