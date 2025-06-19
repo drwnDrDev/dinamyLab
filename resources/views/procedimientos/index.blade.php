@@ -42,20 +42,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($procedimientos as $procedimiento)
+                    @foreach ($procedimientos['en proceso'] as $procedimiento)
                     
                         <tr data-url="{{ route('resultados.create', $procedimiento) }}" onclick="window.location.href=this.dataset.url" class="cursor-pointer border-t border-borders hover:bg-secondary">
                             <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
                                 {{ $procedimiento->created_at->format('Y-m-d') }}
                             </td>
                             <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->orden->id }}
+                                {{ $procedimiento->orden_id }}
                             </td>
                             <td class="px-4 py-2 w-60 text-sm font-normal leading-normal">
                                 {{ $procedimiento->orden->paciente->nombreCompleto() }}
                             </td>
                             <td class="px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-                                <a href="{{route('resultados.create',$procedimiento)}}" class="hover:bg-secondary">{{ $procedimiento->examen->nombre }}</a>
+                                {{ $procedimiento->examen->nombre }}
                             </td>
                             <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
                                 {{ $procedimiento->estado }}
@@ -63,6 +63,52 @@
                         </tr>
                     
                     @endforeach
+                   @isset($procedimientos['en proceso'])
+                        @if ($procedimientos['en proceso']->isEmpty())
+                            <tr>
+                                <td colspan="5" class="px-4 py-2 text-center text-titles text-sm font-normal leading-normal">
+                                    No hay procedimientos en proceso.
+                                </td>
+                            </tr>
+                        @endif
+                    @endisset
+
+                  @isset($procedimientos['terminado'])
+                        @if ($procedimientos['terminado']->isEmpty())
+                            <tr>
+                                <td colspan="5" class="px-4 py-2 text-center text-titles text-sm font-normal leading-normal">
+                                    No hay procedimientos terminados.
+                                </td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td colspan="5" class="px-4 py-2 text-center text-titles text-sm font-normal leading-normal">
+                                    Procedimientos terminados
+                                </td>
+                            </tr>
+                    @foreach ($procedimientos['terminado'] as $procedimiento)
+                    
+                        <tr data-url="{{ route('resultados.show', $procedimiento) }}" onclick="window.location.href=this.dataset.url" class="cursor-pointer border-t border-borders hover:bg-secondary">
+                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
+                                {{ $procedimiento->created_at->format('Y-m-d') }}
+                            </td>
+                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
+                                {{ $procedimiento->orden_id }}
+                            </td>
+                            <td class="px-4 py-2 w-60 text-sm font-normal leading-normal">
+                                {{ $procedimiento->orden->paciente->nombreCompleto() }}
+                            </td>
+                            <td class="px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
+                                {{ $procedimiento->examen->nombre }}
+                            </td>
+                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
+                                {{ $procedimiento->estado }}
+                            </td>
+                        </tr>
+                    
+                    @endforeach
+                        @endif
+                  @endisset
 
                 </tbody>
             </table>
