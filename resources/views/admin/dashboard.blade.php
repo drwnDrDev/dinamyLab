@@ -1,10 +1,12 @@
 <x-app-layout>
-    
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
 
+    <x-slot name="header">
+        <nav>
+            <x-primary-button class="bg-red-300" href="{{route('convenios.index')}}">Convenios</x-primary-button>
+            <x-primary-button class="bg-green-300" href="{{route('examenes')}}">Examenes</x-primary-button>
+            <x-primary-button class="bg-violet-300" href="{{route('facturas')}}">Facturar</x-primary-button>
+
+        </nav>
     </x-slot>
 
         Procedimientos Pendientes:
@@ -13,11 +15,11 @@
             <div class="grid grid-cols-7">
                 <p class="p-1 col-span-3 bg-slate-100 hover:bg-violet-300 rounded-md" >{{ $procedimiento->examen->nombre }} - {{ $procedimiento->fecha}}</p>
                 <a class="bg-green-100 hover:bg-green-300 p-2" href="{{route('resultados.create',$procedimiento)}}">Ir a reultado</a>
-                
+
                 <details class="col-span-3">
                     <summary class="bg-blue-100 hover:bg-blue-300 p-2">Cambiar estado manualmente</summary>
                     <form action="{{route('procedimientos.observaciones',$procedimiento)}}" method="POST">
-                    @method('patch')    
+                    @method('patch')
                     @csrf
                         <div class="flex flex-col gap-2">
                             <label for="estado">Estado</label>
@@ -35,6 +37,6 @@
             </div>
             @endforeach
         </div>
-   
+
      @vite('resources/js/obtenerStaticos.js')
 </x-app-layout>
