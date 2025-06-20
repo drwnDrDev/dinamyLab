@@ -1,101 +1,15 @@
 <?php
+/**
+ * Export to PHP Array plugin for PHPMyAdmin
+ * @version 5.2.2
+ */
 
-namespace Database\Seeders;
+/**
+ * Database `eventos6_lara764`
+ */
 
-use Illuminate\Database\Seeder;
-use App\models\Examen;
-use Illuminate\Support\Facades\DB;
-
-use App\Models\Opcion;
-use App\Models\Parametro;
-
-class ExamenSeeder extends Seeder
-{
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
-    {
-        // $epsCSV = "EPS
-        $epsCSV = "Dusakawi,Salud Bolívar,Savia Salud,Mutual Ser,Salud Total,Coomeva,Compensar,Sanitas,Aliansalud,SOS(Servicio Occidental de Salud)";
-
-        $epsArray = explode(',', $epsCSV);
-        $epsArray = array_map(
-            function ($prestador) {
-                return [
-                    'nombre' => $prestador,
-                    'verificada' => true,
-                ];
-            },
-            $epsArray
-        );
-
-        DB::table('eps')->insert($epsArray);
-        $examenesData = array( // Renombrado para evitar confusión con la instancia del modelo
-            array(
-                'nombre' => 'Hemoclasificación',
-                'CUP' => '911017',
-                'valor' => '10000.00',
-                'descripcion' => 'permite determinar los grupos sanguíneos en el sistema ABO y el factor RH',
-                'nombre_alternativo' => 'RH',
-                'parametros' => array(
-                    array('nombre' => 'Grupo Sanguineo', 'slug' => 'gs', 'tipo_dato' => 'select', 'orden' => 1, 'opciones' => array('A', 'B', 'O', 'AB')),
-                    array('nombre' => 'RH', 'slug' => 'rh', 'tipo_dato' => 'select', 'orden' => 2, 'opciones' => array('Positivo', 'Negativo'))
-                )
-            ),
-            array(
-                'nombre' => 'Prueba de embarazo',
-                'CUP' => '904508',
-                'valor' => '16000.00',
-                'descripcion' => 'prueba de sangre cuantitativa mide la cantidad exacta de GCH en la sangre, y una prueba de sangre cualitativa de GCH le da un simple sí o no respuesta a si usted está embarazada o no',
-                'nombre_alternativo' => 'Test de embarazo en sangre o en orina',
-                'parametros' => array(
-                    array('nombre' => 'Resultado', 'slug' => 'resultado', 'tipo_dato' => 'select', 'orden' => 1, 'opciones' => array('Positivo', 'Negativo')),
-                    array('nombre' => 'FUR', 'slug' => 'fur', 'tipo_dato' => 'date', 'orden' => 2)
-                )
-            )
-        );
-
-        foreach ($examenesData as $examenData) {
-            // Crea el registro del Examen en la tabla 'examenes'
-            $examen = Examen::create([
-                'nombre' => $examenData['nombre'],
-                'cup' => $examenData['CUP'],
-                'valor' => $examenData['valor'],
-                'nombre_alternativo' => $examenData['nombre_alternativo'] ?? null,
-                'descripcion' => $examenData['descripcion'] ?? null,
-            ]);
-
-            // Itera sobre los parámetros definidos para cada examen
-            foreach ($examenData['parametros'] as $parametroData) {
-                // Crea el registro del Parámetro en la tabla 'parametros'
-                $parametro = Parametro::create([
-                    'nombre' => $parametroData['nombre'],
-                    'slug' => $parametroData['slug'],
-                    'tipo_dato' => $parametroData['tipo_dato'],
-                   
-                ]);
-
-                // Adjunta el Parámetro recién creado al Examen
-                // Esto crea la entrada en la tabla intermedia 'examen_parametro' (o 'resultados')
-                // Se usa el ID del parámetro ($parametro->id) para adjuntarlo al examen ($examen)
-                $examen->parametros()->attach($parametro->id);
-
-
-                // Si el parámetro tiene opciones, itera y crea los registros de Opcion
-                if (isset($parametroData['opciones'])) {
-                    foreach ($parametroData['opciones'] as $opcionValor) {
-                        Opcion::create([
-                            'parametro_id' => $parametro->id, // Asocia la opción con el parámetro correcto
-                            'valor' => $opcionValor // Usar 'valor' como nombre de columna para la opción
-                        ]);
-                    }
-                }
-            }
-        }
-
-// Aquí puedes agregar más exámenes si es necesario
-        $examens = array(
+/* considera el siguiente array */
+$examens = array(
 //   array('parametros' => '[{"parametro": "Grupo sanguíneo", "resultado": {"tipo": "lista", "nombre": "gs", "items": ["A", "B", "AB", "O"]}}, {"parametro": "RH", "resultado": {"tipo": "lista", "nombre": "rh", "items": ["positivo", "negativo"]}}]','nombre_examen' => 'Hemoclasificación','nombre_alternativo' => 'RH','descripcion' => 'permite determinar los grupos sanguíneos en el sistema ABO y el factor RH','CUP' => '911017','valor' => '10000.00'),
 //   array('parametros' => '[{"parametro": "resultado", "resultado": {"tipo": "lista", "nombre": "resultado", "items": ["positivo", "negativo"]}}, {"parametro": "FUR", "resultado": {"tipo": "date", "nombre": "fur"}}]','nombre_examen' => 'Prueba de embarazo','nombre_alternativo' => 'Test de embarazo en sangre o en orina','descripcion' => 'prueba de sangre cuantitativa mide la cantidad exacta de GCH en la sangre, y una prueba de sangre cualitativa de GCH le da un simple sí o no respuesta a si usted está embarazada o no','CUP' => '904508','valor' => '16000.00'),
 //   array('parametros' => '[{"parametro": "hematocrito", "resultado": {"tipo": "number", "nombre": "hto"}, "unidades": "%", "referencia": {"adultos": {"salida": "42-52", "minimo": 42, "maximo": 52}, "menores": {"salida": "35-44", "minimo": 35, "maximo": 44}}}, {"parametro": "hemoglobina", "resultado": {"tipo": "number", "nombre": "hb"}, "unidades": "g%", "referencia": {"adultos": {"salida": "13.5-16.5", "minimo": 13.5, "maximo": 16.5}, "menores": {"salida": "11.0-13.5", "minimo": 11, "maximo": 13.5}}}, {"parametro": "recuento de leucocitos", "resultado": {"tipo": "number", "nombre": "leu"}, "unidades": "leu/mm³", "referencia": {"adultos": {"salida": "5000-10000", "minimo": 5000, "maximo": 10000}, "menores": {"salida": "7000-13000", "minimo": 7000, "maximo": 13000}}}, {"grupo": "recuento diferencial", "parametros": [{"parametro": "neutrofilos", "resultado": {"tipo": "number", "nombre": "neutrofilos"}, "unidades": "%", "referencia": {"adultos": {"salida": "52-67", "minimo": 52, "maximo": 67}, "menores": {"salida": "35-60", "minimo": 35, "maximo": 60}}}, {"parametro": "linfocitos", "resultado": {"tipo": "number", "nombre": "linfocitos"}, "unidades": "%", "referencia": {"adultos": {"salida": "27-42", "minimo": 27, "maximo": 42}, "menores": {"salida": "25-50", "minimo": 25, "maximo": 50}}}, {"parametro": "eosinofilos", "resultado": {"tipo": "number", "nombre": "eosinofilos"}, "unidades": "%", "referencia": {"adultos": {"salida": "0-3", "maximo": 3}}}, {"parametro": "monocitos", "resultado": {"tipo": "number", "nombre": "monocitos"}, "unidades": "%", "referencia": {"adultos": {"salida": "3-7", "minimo": 3, "maximo": 7}}}, {"parametro": "celulas inmaduras", "resultado": {"tipo": "number", "nombre": "inmaduras"}, "unidades": "%"}]}, {"parametro": "recuento de plaquetas", "resultado": {"tipo": "number", "nombre": "rto_plaquetas"}, "unidades": "plaq/mm³", "referencia": {"adultos": {"salida": "150000-450000", "minimo": 150000, "maximo": 450000}}}, {"parametro": "vsg", "resultado": {"tipo": "number", "nombre": "vsg"}, "unidades": "mm/h", "referencia": {"adultos": {"salida": "0-22", "minimo": 0, "maximo": 22}}}, {"parametro": "observaciones", "resultado": {"tipo": "textarea", "nombre": "observacion", "items": ["muestra contaminda, se solicita nueva muestra"]}}]','nombre_examen' => 'Cuadro Hematico','nombre_alternativo' => 'CH','descripcion' => 'Conjunto de pruebas de laboratorio médico realizadas a la sangre del paciente con el fin de obtener información sobre el número, composición y proporciones de los elementos figurados de la sangre. ','CUP' => '902207','valor' => '16000.00'),
@@ -129,15 +43,6 @@ foreach ($examens as &$examen) {
     $parametros = json_decode($parametros_json, true);
 
     $new_parametros = [];
-    $nuevoExamen = Examen::firstOrCreate(
-        [
-            'nombre_examen' => $examen['nombre_examen'],
-            'nombre_alternativo' => $examen['nombre_alternativo'],
-            'descripcion' => $examen['descripcion'],
-            'CUP' => $examen['CUP'],
-            'valor' => $examen['valor']
-        ]
-    );
 
     foreach ($parametros as $param) {
         // Si el parámetro es un grupo con sub-parámetros
@@ -157,61 +62,7 @@ foreach ($examens as &$examen) {
         }
     }
 
-           // Función auxiliar para procesar parámetros (incluyendo sub-parámetros)
-        $processParam = function($paramData, $examenInstance,$orden) {
-            // Genera un slug basado en el nombre del parámetro (o nombre del grupo si es un grupo)
-            $slug = Str::slug($paramData['resultado']['nombre'] ?? $paramData['grupo'] ?? $paramData['parametro']);
-
-            // Crea o encuentra el Parámetro
-            $parametro = Parametro::firstOrCreate(
-                ['slug' => $slug], // Usar slug para buscar, asumiendo que es único
-                [
-                    'nombre' => $paramData['parametro'],
-                    'grupo'=> $paramData['grupo']??null,
-                    'slug' => $slug,
-                    'tipo_dato' => $paramData['resultado']['tipo'] ?? 'text', // Por defecto 'text' si no hay tipo
-                    'unidades' => $paramData['unidades'] ?? null,
-                    'metodo'=>$paramData['subtitulo'] ?? null,
-                ]
-            );
-
-            // Adjunta el parámetro al examen
-            $examenInstance->parametros()->syncWithoutDetaching([
-                $parametro->id => ['orden' => $orden]
-            ]);
-
-            // Procesa las referencias si existen
-            if (isset($paramData['referencia'])) {
-                foreach ($paramData['referencia'] as $demografia => $refData) { // Cambiado $grupoPoblacional a $demografia
-                    ValorReferencia::firstOrCreate(
-                        [
-                            'parametro_id' => $parametro->id,
-                            'demografia' => $demografia, // Usamos 'demografia' aquí
-                        ],
-                        [
-                            'salida' => $refData['salida'] ?? null, // Columna 'salida'
-                            'min' => $refData['minimo'] ?? null,   // Columna 'min'
-                            'max' => $refData['maximo'] ?? null,   // Columna 'max'
-                        ]
-                    );
-                }
-            }
-
-
-        };
-
-        $orden = 0;
-
-        // Itera sobre los datos y procesa cada parámetro/grupo
-        foreach ($parametrosYReferencias as $item) {
-            $orden++;
-            $processParam($item, $examen,$orden);
-        }
-
 }
 
 
-
-
-    }
-}
+?>
