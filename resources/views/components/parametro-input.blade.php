@@ -7,7 +7,7 @@
             @case ('text')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="text" name="$parametro['id']" id="{{$parametro['id']}}" value="{{$parametro['default']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="text" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['default'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>{{$parametro['referencia']}}</p></div>
@@ -16,7 +16,7 @@
             @case ('number')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="number" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{$parametro['default']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="number" step="0.005" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['default'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>{{$parametro['referencia']}}</p></div>
@@ -24,7 +24,7 @@
             @case ('date')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="date" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{$parametro['default']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="date" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['default'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md"></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>{{$parametro['referencia']}}</p></div>
@@ -59,7 +59,7 @@
             @case ('textarea')
 
             <div class="pt-4 uppercase font-semibold"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="pt-4 col-span-3"><textarea name="$parametro['id']" id="{{$parametro['id']}}" value="{{$parametro['id']}}" rows="2" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="pt-4 col-span-3"><textarea name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['default'] ?? '' }}" rows="2" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md"></textarea>
             
             @break
@@ -67,11 +67,11 @@
             @default
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="text" name="$parametro['id']" id="{{$parametro['id']}}" value="{{$parametro['id']}}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="text" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['default'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>{{$parametro['referencia']}}</p></div>
-
+            @break
 
         @endswitch
     </div>

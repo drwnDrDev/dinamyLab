@@ -52,9 +52,11 @@
 
                 <x-parametro-input :parametro="$parametro"/>
             @endforeach
-                
+            <div class="col-span-full text-center mt-4">
+                <x-primary-button>guardar resultado</x-primary-button>
+            </div>       
          </form>
-         <x-primary-button>guardar</x-primary-button>
+         @dump($parametros)
 
     </x-canva>
 </x-app-layout>
