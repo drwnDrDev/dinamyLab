@@ -163,7 +163,7 @@ class UroanalisisSeeder extends Seeder
                     "grupo": "examen microscopico",
                     "parametro": "cel epiteliales",
                     "resultado": {
-                        "tipo": "range",
+                        "tipo": "text",
                         "nombre": "epiteliales"
                     },
                     "unidades": "x campo"
@@ -172,7 +172,7 @@ class UroanalisisSeeder extends Seeder
                      "grupo": "examen microscopico",
                     "parametro": "leucocitos",
                     "resultado": {
-                        "tipo": "range",
+                        "tipo": "text",
                         "nombre": "leucocitos"
                     },
                     "unidades": "x campo"
@@ -181,7 +181,7 @@ class UroanalisisSeeder extends Seeder
                      "grupo": "examen microscopico",
                     "parametro": "hematies",
                     "resultado": {
-                        "tipo": "range",
+                        "tipo": "text",
                         "nombre": "hematies"
                     },
                     "unidades": "x campo"
@@ -190,7 +190,7 @@ class UroanalisisSeeder extends Seeder
                      "grupo": "examen microscopico",
                     "parametro": "bacterias",
                     "resultado": {
-                        "tipo": "range",
+                        "tipo": "text",
                         "nombre": "bacterias"
                     }
                 },
@@ -198,7 +198,7 @@ class UroanalisisSeeder extends Seeder
                      "grupo": "examen microscopico",
                     "parametro": "moco",
                     "resultado": {
-                        "tipo": "range",
+                        "tipo": "text",
                         "nombre": "moco"
                     }
                 },
