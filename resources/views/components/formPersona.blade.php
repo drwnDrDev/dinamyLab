@@ -14,7 +14,7 @@
             </div>
             <div class="w-full pb-2 lg:max-w-60">
             <x-input-label for="tipo_documento">Tipo de documento</x-input-label>
-            <select id="tipo_documento" name="tipo_documento" 1="" class="text-sm h-8 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md">
+            <select id="tipo_documento" name="tipo_documento" class="text-sm h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md">
             <option value="CC">Cédula de Ciudadanía</option>
             <option value="TI">Tarjeta de Identidad</option>
             <option value="CE">Cédula de Extranjería</option>
@@ -34,12 +34,12 @@
 
         <div class="row-inputs pt-2 w-full md:flex justify-between gap-2">
             <div class="w-full pb-2">
-                <x-input-label for="nombres">Nombres</x-input-label>
-                <x-text-input type="text" id="nombres" name="nombres" required />
+                <x-input-label class="w-1/3" for="nombres">Nombres</x-input-label>
+                <x-text-input class="w-1/3" type="text" id="nombres" name="nombres" required />
             </div>
             <div class="w-full pb-2">
                 <x-input-label for="apellidos">Apellidos</x-input-label>
-                <x-text-input type="text" id="apellidos" name="apellidos" required />
+                <x-text-input  type="text" id="apellidos" name="apellidos" required />
             </div>
         </div>
 
