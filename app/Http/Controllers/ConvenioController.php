@@ -12,6 +12,7 @@ class ConvenioController extends Controller
      */
     public function index()
     {
+
         return view('convenios.index', [
             'convenios' => Convenio::with('contacto')->get(),
         ]);
@@ -59,9 +60,11 @@ class ConvenioController extends Controller
      */
     public function show(Convenio $convenio)
     {
+
+        // Cargar el contacto relacionado con el convenio
         return view('convenios.show', [
             'convenio' => $convenio->load('contacto'),
-        ]); 
+        ]);
     }
 
     /**

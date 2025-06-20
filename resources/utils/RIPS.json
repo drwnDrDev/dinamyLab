@@ -1,0 +1,30 @@
+{
+  "usuario": {
+    "tipo_id": "CC",
+    "numero_id": "123456789",
+    "edad": 32,
+    "sexo": "M"
+  },
+  "consulta": [],
+  "procedimientos": [
+    {
+      "codigo_cups": "906200",
+      "descripcion": "Laboratorio clínico general",
+      "fecha": "2025-06-18",
+      "valor": 40000
+    },
+    {
+      "codigo_cups": "906205",
+      "descripcion": "Prueba de hemoglobina y hematocrito",
+      "fecha": "2025-06-18",
+      "valor": 25000
+    },
+    {
+      "codigo_cups": "906210",
+      "descripcion": "Toma de muestra",
+      "fecha": "2025-06-18",
+      "valor": 10000
+    }
+  ],
+  "total_facturado": 75000
+}
