@@ -3,38 +3,37 @@
         resultado_{{$procedimiento->orden->paciente->tipo_documento}}
     </x-slot>
 
-    <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!text-xs print:!p-0 print:!bg-white print:!text-black">
-        <section class="print_header hidden print:flex w-full">
-            <figure class="w-12 mx-auto p-0">
+    <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!min-h-screen print:!text-xs print:!p-0 print:!bg-white print:!text-black">
+        <section class="print_header p-4 flex w-full">
+            <figure class="w-12 my-auto p-0">
                 <x-application-logo />
             </figure>
-            <div>
+            <div class="pl-4">
                 <h1 class="font-bold"></h1>
                 <h2 class="font-semibold">Hospital San Juan de Dios</h2>
-                <p class="">Calle 123 # 456 - 789</p>
-                <p class="">Teléfono: (123) 456-7890</p>
-                <p class="">Email: </p>
+                <p class="font-light">Colombia potencia de la vida</p>
+                <p class="font-semibold">NIT: 800111456-5</p>
             </div>
         </section>
 
-        <section class="print_paciente grid grid-cols-2 py-4 border-t border-b border-borders w-full">
+        <section class="print_paciente grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
 
                 <span class="font-bold ">Paciente: </span>
                 <h3>{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
                 <span class="font-bold ">Identificación: </span>
+                <h3>{{$procedimiento->orden->paciente->tipo_documento}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
 
-                <div class="flex flex-wrap">
-                    <h3>{{$procedimiento->orden->paciente->tipo_documento}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
-                    <div class="flex pl-4 gap-2">
+                
+                    <div class="flex gap-2">
                         <span class="font-bold ">Sexo: </span>
                         <h3>{{$procedimiento->orden->paciente->sexo}} </h3>
                     </div>
-                    <div class="flex pl-4 gap-2">
+                    <div class="flex gap-2">
                         <span class="font-bold ">Edad: </span>
                         <h3>{{$procedimiento->orden->paciente->edad()}}</h3>
                     </div>
-                </div>
+                
 
             </div>
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
@@ -69,18 +68,18 @@
             <x-parametro-print :item="$p" />
 
             @endforeach
-            @dump($procedimiento->resultado)
+            
+            
         </section>
-        <footer class="print_footer sticky bottom-0 left-0 w-full print:!text-[0.6rem] items-center mt-4">
-            <div class="">
-                <p class="font-semibold">Fecha de impresión: {{ now()->format('d/m/Y H:i') }}</p>
-                <p class="font-semibold">Usuario: {{ auth()->user()->name }}</p>
+        
+        
+        <footer class="print_footer hidden bottom-0 left-0 w-full m-auto items-center print:!block print:!absolute">
+            <div class="font-light border-t border-borders text-center p-2">
+                
+                <spam class="">Teléfono: (123) 456-7890</spam>
+                <spam class="">Dirección: Carrera 01 #56-13 </spam>
+                <spam class="">Email: sanjuandedios@gobierno.gov.vo </spam>
             </div>
-            <div class="">
-                <p class="font-semibold">Firma del médico:</p>
-                <p class="border-b border-borders w-48 h-8"></p>
-            </div>
-
         </footer>
     </article>
 
