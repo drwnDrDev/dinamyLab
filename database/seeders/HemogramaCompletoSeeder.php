@@ -163,8 +163,6 @@ class HemogramaCompletoSeeder extends Seeder
                             'salida' => $refData['salida'] ?? null, // Columna 'salida'
                             'min' => $refData['minimo'] ?? null,   // Columna 'min'
                             'max' => $refData['maximo'] ?? null,   // Columna 'max'
-                            // Las columnas 'sexo', 'edad_min', 'edad_max', 'unidad', 'descripcion' ya no están en tu migración
-                            // Si las necesitas, tu migración de valor_referencias debe incluirlas
                         ]
                     );
                 }
