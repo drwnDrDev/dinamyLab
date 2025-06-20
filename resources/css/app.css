@@ -13,4 +13,3 @@ input:-webkit-autofill {
 input:autofill {
     background-color: #f9fafb !important; /* Para navegadores que no usan `-webkit-` */
 }
-
