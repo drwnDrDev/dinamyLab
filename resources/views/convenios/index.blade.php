@@ -6,8 +6,8 @@
     <x-canva>
     <div class="flex items-center justify-between mb-4">
       <h1 class="text-2xl font-bold">Convenios y Colaboradores</h1>
-      <div class="py-3 w-1/2 mx-auto">
-        
+      <div class="py-3 w-1/3 mx-auto">
+
       <label class="flex flex-col min-w-40 h-12 w-full">
         <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
           <div
@@ -21,16 +21,17 @@
             </svg>
           </div>
           <input
-            placeholder="Search by number invoice or orden ID"
+            type="search"
+            placeholder="{{__('Search')}}"
             class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-            value="" />
+             />
         </div>
       </label>
     </div>
     <x-primary-button  href="{{ route('convenios.create') }}" class="w-40" id="tipoGuardado" name="tipoGuardado">Nuevo Convenio</x-primary-button>
-      
+
     </div>
-    
+
 
     <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
       <table class="flex-1">
@@ -39,11 +40,11 @@
           <tr class="bg-background">
             <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Razon Social</th>
             <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">NIT</th>
-            <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Telefono</th>       
+            <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Telefono</th>
           </tr>
         </thead>
         <tbody>
-            
+
         @if($convenios->isEmpty())
             <p>No hay convenios registrados.</p>
         @else
@@ -61,7 +62,7 @@
               {{ $convenio->contacto->telefono }}
             </td>
             <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
-              <a href="{{ route('convenios.show', $convenio->id) }}" class="text-blue-500 hover:underline">Ver Detalles</a> 
+              <a href="{{ route('convenios.show', $convenio->id) }}" class="text-blue-500 hover:underline">Ver Detalles</a>
             </td>
           </tr>
           @endforeach

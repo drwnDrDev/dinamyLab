@@ -27,14 +27,11 @@ class FacturaController extends Controller
     public function create()
     {
         $convenios = Convenio::orderBy('razon_social')->get();
-        $tipos_documento = collect(TipoDocumento::cases())
-            ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
-
-        $ordenes = \App\Models\Orden::with(['paciente'])
-            ->where('estado', '!=', 'CANCELADA')
+        $ordenes = \App\Models\Orden::with(['paciente', 'examenes'])
+            ->where('estado', '!=', 'facturada')
             ->orderBy('created_at', 'desc')
             ->get();
-        return view('facturas.create', compact('ordenes','tipos_documento','convenios'));
+        return view('facturas.create', compact('ordenes','convenios'));
     }
 
     /**

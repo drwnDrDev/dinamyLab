@@ -1,13 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-text leading-tight">
-            {{ __('Crear Orden') }}
-        </h2>
-    </x-slot>
-
-
-
-    <x-canva>
+ <x-canva>
         <div class="section_paciente">
             <x-formPersona perfil="Paciente" :tipos_documento="$tipos_documento" />
         </div>
@@ -18,7 +10,7 @@
                 <x-formPersona perfil="acompaniante" :tipos_documento="$tipos_documento" />
             </div>
         </div>
-        <form  method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
+<form  method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
             @csrf
     <h2 class="font-bold mb-4 text-xl text-text">Datos de la Orden</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
