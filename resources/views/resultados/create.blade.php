@@ -56,7 +56,7 @@
                 <x-primary-button>guardar resultado</x-primary-button>
             </div>       
          </form>
-         @dump($parametros)
+         
 
     </x-canva>
 </x-app-layout>
