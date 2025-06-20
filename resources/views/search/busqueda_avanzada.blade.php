@@ -6,7 +6,7 @@
     </x-slot>
     <x-canva>
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold">Advanced Search</h2>
+            <h2 class="text-2xl font-bold">{{__('Advanced Search')}}</h2>
         </div>
 
    @if ($error)
@@ -54,15 +54,15 @@
 
         @if(isset($results) && $results->isNotEmpty())
             <div class="mt-6">
-                <h3 class="text-xl font-semibold mb-4">Search Results</h3>
+                <h3 class="text-xl font-semibold mb-4">{{__('Search,[name=> Results]')}}</h3>
                 <ul class="space-y-2">
                     @foreach($results as $result)
                         <li class="p-4 bg-white shadow rounded-lg">
-                            <p><strong>Name:</strong> {{ $result->name }}</p>
-                            <p><strong>Document Number:</strong> {{ $result->document_number }}</p>
+                            <p><strong>{{__('Name')}}:</strong> {{ $result->name }}</p>
+                            <p><strong>{{__('Document Number')}}:</strong> {{ $result->document_number }}</p>
                             <p><strong>Email:</strong> {{ $result->email }}</p>
-                            <p><strong>Phone:</strong> {{ $result->phone }}</p>
-                            <p><strong>Address:</strong> {{ $result->address }}</p>
+                            <p><strong>{{__('Phone')}}:</strong> {{ $result->phone }}</p>
+                            <p><strong>{{__('Address')}}:</strong> {{ $result->address }}</p>
                         </li>
                     @endforeach
                 </ul>
