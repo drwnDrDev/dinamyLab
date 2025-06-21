@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
-use Illuminate\Database\Eloquent\Casts\AsDate;
 
 class Procedimiento extends Model
 {
@@ -40,10 +39,5 @@ class Procedimiento extends Model
     public function resultado(){
         return $this->hasMany(Resultado::class);
     }
-    protected function casts(): array
-    {
-        return [
-        'resultados' => AsCollection::class
-        ];
-    }
+
 }
