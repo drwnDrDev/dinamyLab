@@ -16,15 +16,15 @@
             </div>
         </section>
 
-        <section class="print_paciente grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
-            <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
+        <section class="print_paciente grid grid-cols-3 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
+            <div class="col-span-2 w-full grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
 
                 <span class="font-bold ">Paciente: </span>
-                <h3>{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
+                <h3 class="text-md">{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
                 <span class="font-bold ">Identificación: </span>
                 <h3>{{$procedimiento->orden->paciente->tipo_documento}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
 
-                
+
                     <div class="flex gap-2">
                         <span class="font-bold ">Sexo: </span>
                         <h3>{{$procedimiento->orden->paciente->sexo}} </h3>
@@ -33,14 +33,14 @@
                         <span class="font-bold ">Edad: </span>
                         <h3>{{$procedimiento->orden->paciente->edad()}}</h3>
                     </div>
-                
+
 
             </div>
-            <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
+            <div class="grid  gap-x-4 gap-y-0">
                 <span class="font-bold ">Fecha de atención: </span>
                 <h3>{{$procedimiento->orden->created_at}}</h3>
-                <span class="font-bold ">Número de órden: </span>
-                <h3>{{$procedimiento->orden->numero}}</h3>
+               <h3><span class="font-bold ">Órden Nº: </span>
+                {{$procedimiento->orden->numero}}</h3>
 
             </div>
         </section>
@@ -68,14 +68,14 @@
             <x-parametro-print :item="$p" />
 
             @endforeach
-            
-            
+
+
         </section>
-        
-        
+
+
         <footer class="print_footer hidden bottom-0 left-0 w-full m-auto items-center print:!block print:!absolute">
             <div class="font-light border-t border-borders text-center p-2">
-                
+
                 <spam class="">Teléfono: (123) 456-7890</spam>
                 <spam class="">Dirección: Carrera 01 #56-13 </spam>
                 <spam class="">Email: sanjuandedios@gobierno.gov.vo </spam>
