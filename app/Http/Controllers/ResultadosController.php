@@ -23,8 +23,11 @@ class ResultadosController extends Controller
     }
     public function create(Procedimiento $procedimiento)
     {
+
         // Verifica si el procedimiento ya tiene resultados
         $parametros = EscogerReferencia::recorrerParametrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
+
+
         return view('resultados.create', compact('parametros','procedimiento'));
     }
     public function store(Request $request, Procedimiento $procedimiento)
