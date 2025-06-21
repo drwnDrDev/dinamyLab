@@ -16,11 +16,15 @@ return new class extends Migration
             $table->unsignedBigInteger('numero')->unique();
             $table->string('cufe', 64)->unique();
             $table->date('fecha_emision');
+            $table->date('fecha_vencimiento')->nullable();
             $table->morphs('pagador');
             $table->decimal('subtotal', 12, 2);
             $table->decimal('total_ajustes', 12, 2)->default(0);
             $table->foreignId('impuestos_id')->nullable()
                 ->constrained('impuestos')
+                ->nullOnDelete();
+            $table->foreignId('empresa')->nullable()
+                ->constrained('empresas')
                 ->nullOnDelete();
             $table->decimal('total', 12, 2);
             $table->string('observaciones')->nullable();
