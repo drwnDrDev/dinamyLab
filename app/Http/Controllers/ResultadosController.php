@@ -3,14 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Estado;
+use App\Models\Examen;
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
-use App\Models\Orden;
-use App\Models\Parametro;
 use App\Services\EscogerReferencia;
-use App\Models\Persona;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class ResultadosController extends Controller
 {
@@ -27,7 +23,7 @@ class ResultadosController extends Controller
     }
     public function create(Procedimiento $procedimiento)
     {
-
+        // Verifica si el procedimiento ya tiene resultados
         $parametros = EscogerReferencia::recorrerParametrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
         return view('resultados.create', compact('parametros','procedimiento'));
     }
