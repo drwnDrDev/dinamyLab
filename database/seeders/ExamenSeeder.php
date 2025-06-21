@@ -99,7 +99,7 @@ class ExamenSeeder extends Seeder
 
 
         // Función auxiliar para procesar parámetros (incluyendo sub-parámetros)
-        $processParam = function($paramData, $examenInstance,$orden) {
+        $processParam = function($paramData, $examenInstance,$ordenPar) {
             // Genera un slug basado en el nombre del parámetro (o nombre del grupo si es un grupo)
             $slug = Str::slug($paramData['resultado']['nombre'] ?? $paramData['grupo'] ?? $paramData['parametro']);
 
@@ -118,7 +118,7 @@ class ExamenSeeder extends Seeder
 
             // Adjunta el parámetro al examen
             $examenInstance->parametros()->syncWithoutDetaching([
-                $parametro->id => ['orden' => $orden]
+                $parametro->id => ['orden' => $ordenPar]
             ]);
 
             // Procesa las referencias si existen
