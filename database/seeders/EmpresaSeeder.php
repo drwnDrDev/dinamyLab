@@ -54,6 +54,23 @@ class EmpresaSeeder extends Seeder
             ])
         ]);
 
+        $contacto2 = Contacto::create([
+            'municipio_id'=>11007,
+            'telefono'=>'3207001403',
+            'info_adicional'=>json_encode([
+            'redes'=>[
+                    "Google"=>'https://g.co/kgs/gkv1pHU',
+                    "Facebook"=>'https://www.facebook.com/search/top?q=biotek',
+                    "Linkedin"=>'https://www.linkedin.com/company/dinamycode',
+                    "Whatsapp"=>'https://wa.me/573207001403',
+                ],
+            'email'=>'lab.biotek@gmail.com',
+            'direccion'=>'TV 78 L Diagonal 69 C sur 58',
+            'pais'=>'COL',
+            ])
+        ]);
+
+
 
 
         $persona = Persona::create([
@@ -78,12 +95,17 @@ class EmpresaSeeder extends Seeder
 
         $sede = \App\Models\Sede::create([
             'nombre'=>'Biotek Bosa',
-            'res_facturacion'=>'ASD234164416',
-            'incio_facturacion'=>200000,
-            'fin_facturacion'=>2999999,
             'empresa_id'=>$empresa->id,
             'contacto_id'=>$contacto->id,
         ]);
+
+        $sede2 = \App\Models\Sede::create([
+            'nombre'=>'Biotek Bosa',
+            'empresa_id'=>$empresa->id,
+            'contacto_id'=>$contacto2->id,
+        ]);
+
+
 
         $empleado = \App\Models\Empleado::create([
             'codigo'=>'110010822701',
