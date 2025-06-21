@@ -49,7 +49,31 @@
                                     No hay procedimientos en proceso.
                                 </td>
                             </tr>
+
+                        @else
+                    @foreach ($procedimientos['en proceso'] as $procedimiento)
+
+                        <tr data-url="{{ route('resultados.create', $procedimiento) }}" onclick="window.location.href=this.dataset.url" class="cursor-pointer border-t border-borders hover:bg-secondary">
+                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
+                                {{ $procedimiento->created_at->format('Y-m-d') }}
+                            </td>
+                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
+                                {{ $procedimiento->orden_id }}
+                            </td>
+                            <td class="px-4 py-2 w-60 text-sm font-normal leading-normal">
+                                {{ $procedimiento->orden->paciente->nombreCompleto() }}
+                            </td>
+                            <td class="px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
+                                {{ $procedimiento->examen->nombre }}
+                            </td>
+                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
+                                {{ $procedimiento->estado }}
+                            </td>
+                        </tr>
+
+                    @endforeach
                         @endif
+
                     @endisset
 
                   @isset($procedimientos['terminado'])
@@ -66,7 +90,7 @@
                                 </td>
                             </tr>
                     @foreach ($procedimientos['terminado'] as $procedimiento)
-                    
+
                         <tr data-url="{{ route('resultados.show', $procedimiento) }}" onclick="window.location.href=this.dataset.url" class="cursor-pointer border-t border-borders hover:bg-secondary">
                             <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
                                 {{ $procedimiento->created_at->format('Y-m-d') }}
@@ -84,7 +108,7 @@
                                 {{ $procedimiento->estado }}
                             </td>
                         </tr>
-                    
+
                     @endforeach
                         @endif
                   @endisset
