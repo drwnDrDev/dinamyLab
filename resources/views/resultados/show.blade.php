@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="title">
-        resultado_{{$procedimiento->orden->paciente->->nombreCompleto()}}
+        resultado_{{$procedimiento->orden->paciente->nombreCompleto()}}
     </x-slot>
 
     <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!min-h-screen print:!text-xs print:!p-0 print:!bg-white print:!text-black">
