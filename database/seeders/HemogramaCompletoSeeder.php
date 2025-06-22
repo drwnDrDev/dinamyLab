@@ -148,7 +148,7 @@ class HemogramaCompletoSeeder extends Seeder
 
             // Adjunta el parámetro al examen
             $examenInstance->parametros()->syncWithoutDetaching([
-                $parametro->id => ['orden' => $orden]
+                $parametro->id => ['posicion' => $orden]
             ]);
 
             // Procesa las referencias si existen
