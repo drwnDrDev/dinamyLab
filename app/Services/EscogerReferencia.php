@@ -127,6 +127,7 @@ class EscogerReferencia
 
         $resultadosP = Resultado::where('procedimiento_id', $proc->id)
             ->with('parametro.valoresReferencia')
+            ->orderBy('posicion')
             ->get();
 
         if ($resultadosP->isEmpty()) {
