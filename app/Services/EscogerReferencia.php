@@ -92,40 +92,77 @@ class EscogerReferencia
     /**
      * Guarda resultados para un procedimiento.
      */
-    public static function guardaResultado(array $formData, Procedimiento $pro): void
+    public static function guardaResultado(array $formData, Procedimiento $proc): void
     {
+
+      foreach ($formData as $parametroId => $valorResultado) {
+            if (!Parametro::where('id', $parametroId)->exists()) {
+                Log::warning('Parámetro no encontrado.', ['parametro_id' => $parametroId]);
+                continue; // Skip this parameter if not found
+            }
+            $parametro = (object)['id' => $parametroId];
+            if (is_null($valorResultado) || $valorResultado === '') {
+                //Politica de  guardardado resultados vacíos
+                continue; // Skip empty results
+            }        
+
+            Resultado::create([
+                'parametro_id'     => $parametro->id,
+                'resultado'        => $valorResultado,
+                'procedimiento_id' => $proc->id,
+            ]);
+        }
+    }
+
+    /**
+     * Obtiene los resultados de un procedimiento.
+     */
+    public static function obtenerResultados(Procedimiento $proc): array
+    {
+
         $datosDemograficos = self::datosDemograficos(
-            $pro->orden->paciente,
-            Carbon::parse($pro->fecha)
+            $proc->orden->paciente,
+            Carbon::parse($proc->fecha)
         );
 
-        foreach ($formData as $parametroId => $valorResultado) {
-            $parametro = Parametro::with('valoresReferencia')->find($parametroId);
-            if (!$parametro) continue;
+        $resultadosP = Resultado::where('procedimiento_id', $proc->id)
+            ->with('parametro.valoresReferencia')
+            ->get();
 
-            $referencia = self::estableceReferencia($datosDemograficos, $parametro);
-
+        if ($resultadosP->isEmpty()) {
+            Log::info('No se encontraron resultados para el procedimiento.', ['procedimiento_id' => $proc->id]);
+            return ['info' => 'No se encontraron resultados para este procedimiento.'];
+        }
+        foreach ($resultadosP as $resultado) {
+            $referencia = self::estableceReferencia($datosDemograficos, $resultado->parametro);
             $isNormal = true;
             if ($referencia) {
                 try {
-                    $valorResultado = floatval($valorResultado);
+                    $valorResultado = floatval($resultado->resultado);
                 } catch (\Exception $e) {
                     Log::error('Error al convertir el valor del resultado a float.', [
-                        'parametro_id' => $parametro->id,
-                        'valor' => $valorResultado,
+                        'parametro_id' => $resultado->parametro->id,
+                        'valor' => $resultado->resultado,
                         'error' => $e->getMessage(),
                     ]);
                     continue; // Skip this parameter if conversion fails
                 }
                 $isNormal = $valorResultado < $referencia->max && $valorResultado > $referencia->min;
             }
-            Resultado::create([
-                'parametro_id'     => $parametro->id,
-                'resultado'        => $valorResultado,
-                'procedimiento_id' => $pro->id,
-                'valor_referencia' => $referencia ? $referencia->salida:null,
-                'es_normal'        => $isNormal,
-            ]);
+
+            $parametros[] = [
+                'id'        => $resultado->parametro->id,
+                'nombre'    => $resultado->parametro->nombre,
+                'grupo'     => $resultado->parametro->grupo,
+                'orden'     => $resultado->parametro->pivot->orden,
+                'es_normal' => $isNormal,
+                'resultado' => $resultado->resultado,
+                'metodo'    => $resultado->parametro->metodo,
+                'unidades'  => $resultado->parametro->unidades,
+                'referencia'=> optional($referencia)->salida,
+            ];
         }
+ 
+        return $parametros ?? [];     
     }
 }
