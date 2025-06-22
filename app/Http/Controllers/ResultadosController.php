@@ -27,7 +27,7 @@ class ResultadosController extends Controller
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
     $parametros = EscogerReferencia::obtenerResultados($procedimiento);
-    return dd($parametros);
+
 
     return view('resultados.show', compact('procedimiento', 'parametros'));
     }
