@@ -75,13 +75,10 @@ class ExamenSeeder extends Seeder
                     'nombre' => $parametroData['nombre'],
                     'slug' => $parametroData['slug'],
                     'tipo_dato' => $parametroData['tipo_dato'],
-
+                    'posicion' => $parametroData['posicion'],
+                    'examen_id' => $examen->id,
                 ]);
 
-                // Adjunta el Parámetro recién creado al Examen
-                // Esto crea la entrada en la tabla intermedia 'examen_parametro' (o 'resultados')
-                // Se usa el ID del parámetro ($parametro->id) para adjuntarlo al examen ($examen)
-                $examen->parametros()->attach($parametro->id);
 
 
                 // Si el parámetro tiene opciones, itera y crea los registros de Opcion
@@ -104,8 +101,7 @@ class ExamenSeeder extends Seeder
             $slug = Str::slug($paramData['resultado']['nombre'] ?? $paramData['grupo'] ?? $paramData['parametro']);
 
             // Crea o encuentra el Parámetro
-            $parametro = Parametro::firstOrCreate(
-                ['slug' => $slug], // Usar slug para buscar, asumiendo que es único
+            $parametro = Parametro::create(
                 [
                     'nombre' => $paramData['parametro'],
                     'grupo'=> $paramData['grupo']??null,
@@ -113,13 +109,11 @@ class ExamenSeeder extends Seeder
                     'tipo_dato' => $paramData['resultado']['tipo'] ?? 'text', // Por defecto 'text' si no hay tipo
                     'unidades' => $paramData['unidades'] ?? null,
                     'metodo'=>$paramData['subtitulo'] ?? null,
+                    'posicion' => $ordenPar,
+                    'examen_id' => $examenInstance->id,
                 ]
             );
 
-            // Adjunta el parámetro al examen
-            $examenInstance->parametros()->syncWithoutDetaching([
-                $parametro->id => ['posicion' => $ordenPar]
-            ]);
 
             // Procesa las referencias si existen
             if (isset($paramData['referencia'])) {
@@ -178,6 +172,7 @@ foreach ($examens as &$examen) {
 
     $new_parametros = [];
     $nuevoExamen = Examen::firstOrCreate(
+        ['nombre' => $examen['nombre_examen']],
         [
             'nombre' => $examen['nombre_examen'],
             'nombre_alternativo' => $examen['nombre_alternativo'],

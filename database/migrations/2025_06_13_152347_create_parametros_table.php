@@ -18,11 +18,13 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('grupo')->nullable();
+            $table->unsignedTinyInteger('posicion')->default(0);
             $table->string('slug');
             $table->string('tipo_dato');
             $table->string('default')->nullable();
             $table->string('unidades')->nullable();
             $table->string('metodo')->nullable();
+            $table->foreignId('examen_id')->constrained('examenes')->onDelete('cascade');
             $table->timestamps();
         });
     }
