@@ -11,19 +11,19 @@ class Parametro extends Model
     protected $fillable = [
         'nombre',
         'grupo',
+        'posicion',
         'tipo_dato',
         'slug',
         'por_defecto',
         'unidades',
         'metodo',
-
+        'examen_id'
     ];
 
-    public function examenes()
+    public function examen()
     {
-        return $this->belongsToMany(Examen::class, 'examen_parametro','examen_id', 'parametro_id')
-            ->withPivot('posicion')
-            ->withTimestamps();
+        return $this->belongsTo(Examen::class,'examenes');
+
     }
 
         /**

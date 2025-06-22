@@ -27,9 +27,7 @@ class Examen extends Model
 
     public function parametros()
     {
-        return $this->belongsToMany(Parametro::class, 'examen_parametro','examen_id', 'parametro_id')
-            ->withPivot('posicion')
-            ->withTimestamps();
+        return $this->hasMany(Parametro::class);
     }
 
 

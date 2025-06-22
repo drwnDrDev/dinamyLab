@@ -60,8 +60,7 @@ class GlucosaSeeder extends Seeder
             $slug = Str::slug($paramData['resultado']['nombre'] ?? $paramData['grupo'] ?? $paramData['parametro']);
 
             // Crea o encuentra el Parámetro
-            $parametro = Parametro::firstOrCreate(
-                ['slug' => $slug], // Usar slug para buscar, asumiendo que es único
+            $parametro = Parametro::create(
                 [
                     'nombre' => $paramData['parametro'],
                     'grupo'=> $paramData['grupo']??null,
@@ -69,13 +68,10 @@ class GlucosaSeeder extends Seeder
                     'tipo_dato' => $paramData['resultado']['tipo'] ?? 'text', // Por defecto 'text' si no hay tipo
                     'unidades' => $paramData['unidades'] ?? null,
                     'metodo'=>$paramData['subtitulo'] ?? null,
+                    'posicion' => $orden,
+                    'examen_id' => $examenInstance->id,
                 ]
             );
-
-            // Adjunta el parámetro al examen
-            $examenInstance->parametros()->syncWithoutDetaching([
-                $parametro->id => ['posicion' => $orden]
-            ]);
 
             // Procesa las referencias si existen
             if (isset($paramData['referencia'])) {

@@ -65,9 +65,7 @@ class EscogerReferencia
 
         $parametrosE = $procedimiento->examen
             ->parametros()
-            ->with(['valoresReferencia', 'opciones']) // eager load
-            ->withPivot('posicion')
-            ->orderBy('pivot_posicion')
+            ->orderBy('posicion')
             ->get();
 
         foreach ($parametrosE as $parametro) {
@@ -108,6 +106,7 @@ class EscogerReferencia
 
             Resultado::create([
                 'parametro_id'     => $parametro->id,
+                'posicion'         => $parametro->posicion ?? 0, // Default to 0 if position is not set
                 'resultado'        => $valorResultado,
                 'procedimiento_id' => $proc->id,
             ]);
@@ -155,7 +154,7 @@ class EscogerReferencia
                 'id'        => $resultado->parametro->id,
                 'nombre'    => $resultado->parametro->nombre,
                 'grupo'     => $resultado->parametro->grupo,
-               // 'orden'     => $resultado->parametro->pivot->orden,
+                'posicion' => $resultado->parametro->posicion,
                 'es_normal' => $isNormal,
                 'resultado' => $resultado->resultado,
                 'metodo'    => $resultado->parametro->metodo,
