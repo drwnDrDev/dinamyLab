@@ -6,18 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sede extends Model
 {
-            //     $table->string('nombre')->unique();
-            // $table->string('res_facturacion')->nullable();
-            // $table->bigInteger('incio_facturacion')->nullable();
-            // $table->bigInteger('fin_facturacion')->nullable();
-            // $table->foreignId('empresa_id')
-            //     ->constrained('empresas')
-            //     ->cascadeOnDelete()
-            //     ->cascadeOnUpdate();
-            // $table->foreignId('contacto_id')
-            //     ->constrained('contactos')
-            //     ->nullOnDelete()
-            //     ->cascadeOnUpdate();
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'nombre',
         'res_facturacion',

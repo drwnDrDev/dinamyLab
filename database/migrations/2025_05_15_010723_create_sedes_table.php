@@ -14,9 +14,6 @@ return new class extends Migration
         Schema::create('sedes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre')->unique();
-            $table->string('res_facturacion')->nullable();
-            $table->bigInteger('incio_facturacion')->nullable();
-            $table->bigInteger('fin_facturacion')->nullable();
             $table->foreignId('empresa_id')
                 ->constrained('empresas')
                 ->cascadeOnDelete()
