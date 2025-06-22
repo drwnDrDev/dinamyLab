@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('resultados', function (Blueprint $table) {
             $table->id();
-            $table->string('resultado');
-            $table->boolean('es_normal')->default(true);
-            $table->string('valor_referencia')->nullable();
+            $table->string('resultado')->nullable();
+            $table->unsignedTinyInteger('posicion')->default(0);
             $table->foreignId('parametro_id')->constrained('parametros');
             $table->foreignId('procedimiento_id')->constrained('procedimientos');
             $table->timestamps();

@@ -22,7 +22,7 @@ class Parametro extends Model
     public function examenes()
     {
         return $this->belongsToMany(Examen::class, 'examen_parametro','examen_id', 'parametro_id')
-            ->withPivot('orden')
+            ->withPivot('posicion')
             ->withTimestamps();
     }
 
