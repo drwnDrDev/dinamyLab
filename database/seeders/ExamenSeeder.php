@@ -41,8 +41,8 @@ class ExamenSeeder extends Seeder
                 'descripcion' => 'permite determinar los grupos sanguíneos en el sistema ABO y el factor RH',
                 'nombre_alternativo' => 'RH',
                 'parametros' => array(
-                    array('nombre' => 'Grupo Sanguineo', 'slug' => 'gs', 'tipo_dato' => 'select', 'orden' => 1, 'opciones' => array('A', 'B', 'O', 'AB')),
-                    array('nombre' => 'RH', 'slug' => 'rh', 'tipo_dato' => 'select', 'orden' => 2, 'opciones' => array('Positivo', 'Negativo'))
+                    array('nombre' => 'Grupo Sanguineo', 'slug' => 'gs', 'tipo_dato' => 'select', 'posicion' => 1, 'opciones' => array('A', 'B', 'O', 'AB')),
+                    array('nombre' => 'RH', 'slug' => 'rh', 'tipo_dato' => 'select', 'posicion' => 2, 'opciones' => array('Positivo', 'Negativo'))
                 )
             ),
             array(
@@ -52,8 +52,8 @@ class ExamenSeeder extends Seeder
                 'descripcion' => 'prueba de sangre cuantitativa mide la cantidad exacta de GCH en la sangre, y una prueba de sangre cualitativa de GCH le da un simple sí o no respuesta a si usted está embarazada o no',
                 'nombre_alternativo' => 'Test de embarazo en sangre o en orina',
                 'parametros' => array(
-                    array('nombre' => 'Resultado', 'slug' => 'resultado', 'tipo_dato' => 'select', 'orden' => 1, 'opciones' => array('Positivo', 'Negativo')),
-                    array('nombre' => 'FUR', 'slug' => 'fur', 'tipo_dato' => 'date', 'orden' => 2)
+                    array('nombre' => 'Resultado', 'slug' => 'resultado', 'tipo_dato' => 'select', 'posicion' => 1, 'opciones' => array('Positivo', 'Negativo')),
+                    array('nombre' => 'FUR', 'slug' => 'fur', 'tipo_dato' => 'date', 'posicion' => 2)
                 )
             )
         );
@@ -118,7 +118,7 @@ class ExamenSeeder extends Seeder
 
             // Adjunta el parámetro al examen
             $examenInstance->parametros()->syncWithoutDetaching([
-                $parametro->id => ['orden' => $ordenPar]
+                $parametro->id => ['posicion' => $ordenPar]
             ]);
 
             // Procesa las referencias si existen
