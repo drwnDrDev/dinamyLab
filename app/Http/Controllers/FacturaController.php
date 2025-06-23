@@ -5,8 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Convenio;
 use App\Models\Examen;
 use App\Models\Factura;
+use App\Models\Procedimiento;
+use App\Models\Persona;
+use App\Models\Resultados;
+use App\Services\ElegirEmpresa;
+use App\Estado;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class FacturaController extends Controller
 {
@@ -24,14 +30,19 @@ class FacturaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Persona $persona)
     {
+
         $convenios = Convenio::orderBy('razon_social')->get();
-        $ordenes = \App\Models\Orden::with(['paciente', 'examenes'])
-            ->where('estado', '!=', 'facturada')
-            ->orderBy('created_at', 'desc')
+        $ordenes = \App\Models\Orden::with(['paciente', 'procedimientos' => function($query) {
+            $query->whereIn('estado', [Estado::TERMINADO, Estado::ENTREGADO])
+                  ->whereNull('factura_id')
+                  ->with('examen');
+            }])
+            ->where('paciente_id', $persona->id)
             ->get();
-        return view('facturas.create', compact('ordenes','convenios'));
+   
+        return view('facturas.create', compact('ordenes','convenios', 'persona'));
     }
 
     /**
@@ -39,7 +50,34 @@ class FacturaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+   
+    $validacion = $request->validate([
+            'paciente_id' => 'required|exists:personas,id',
+            'pagador_type' => 'required|in:persona,convenio',
+            'numero_factura' => 'required|unique:facturas,numero',
+            'procedimientos' => 'required|array',
+            'subtotal' => 'required|numeric',
+            'total' => 'required|numeric',
+        ]);
+
+        $empresa = ElegirEmpresa::elegirEmpresa(array_keys($validacion['procedimientos'])[0]);
+        if (!$empresa) {
+            return redirect()->back()->withErrors(['error' => 'No se pudo determinar la empresa para la factura.']);
+        }
+
+        $facturaData = [
+            'paciente_id' => $validacion['paciente_id'],
+            'pagador_type' => $validacion['pagador_type'],
+            'pagador_id' => $validacion['pagador_type'] === 'persona' ? $validacion['paciente_id'] : null,
+            'numero' => $validacion['numero_factura'],
+            'empresa_id' => $empresa->id,
+            'subtotal' => $validacion['subtotal'],
+            'total' => $validacion['total'],
+            'fecha_emision' => Carbon::now(),
+            'fecha_vencimiento' => Carbon::now()->addDays(30),
+        ];
+        $factura = Factura::create($facturaData);
+        return redirect()->route('facturas.show', $factura);
     }
 
     /**
@@ -59,19 +97,5 @@ class FacturaController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Factura $factura)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Factura $factura)
-    {
-        //
-    }
 }

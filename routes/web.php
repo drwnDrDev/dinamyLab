@@ -65,7 +65,7 @@ Route::middleware('auth','verified','can:ver_facturas')->group(function () {
     Route::put('/convenios/{convenio}',[ConvenioController::class,'update'])->name('convenios.update');
     Route::delete('/convenios/{convenio}',[ConvenioController::class,'destroy'])->name('convenios.destroy');
     Route::get('/facturas',[FacturaController::class,'index'])->name('facturas');
-    Route::get('/facturas/create',[FacturaController::class,'create'])->name('facturas.create');
+    Route::get('/facturas/create/{persona}',[FacturaController::class,'create'])->name('facturas.create');
     Route::post('/facturas/store',[FacturaController::class,'store'])->name('facturas.store');
     Route::get('/facturas/{factura}',[FacturaController::class,'show'])->name('facturas.show');
 
