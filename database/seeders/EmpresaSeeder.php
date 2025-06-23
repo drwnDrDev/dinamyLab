@@ -100,7 +100,7 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $sede2 = \App\Models\Sede::create([
-            'nombre'=>'Biotek Bosa',
+            'nombre'=>'IPS Bosa',
             'empresa_id'=>$empresa->id,
             'contacto_id'=>$contacto2->id,
         ]);
