@@ -57,12 +57,12 @@
             $lastGroup = null;
             @endphp
 
-            @foreach ( $procedimiento->resultado as $p)
+            @foreach ( $parametros as $p)
 
-            @if ($p->parametro->grupo && $p->parametro->grupo !== $lastGroup)
-            <h3 class="pt-2 pl-2 font-semibold uppercase col-span-full">{{ $p->parametro->grupo}}</h3>
+            @if ($p['grupo'] && $p['grupo'] !== $lastGroup)
+            <h3 class="pt-2 pl-2 font-semibold uppercase col-span-full">{{ $p['grupo']}}</h3>
             @php
-            $lastGroup = $p->parametro->grupo;
+            $lastGroup = $p['grupo'];
             @endphp
             @endif
             <x-parametro-print :item="$p" />
