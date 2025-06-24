@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Examen;
 use App\Models\Parametro;
+use App\Models\Opcion;
 use App\Models\ValorReferencia;
 use Illuminate\Support\Str; // Para generar slugs
 
@@ -164,7 +165,16 @@ class HemogramaCompletoSeeder extends Seeder
                     );
                 }
             }
+            
+            if (isset($paramData['resultado']['items'])) {
 
+                    foreach ($paramData['resultado']['items'] as $opcionValor) {
+                        Opcion::create([
+                            'parametro_id' => $parametro->id, // Asocia la opción con el parámetro correcto
+                            'valor' => $opcionValor // Usar 'valor' como nombre de columna para la opción
+                        ]);
+                    }
+                }
 
         };
 
