@@ -2,10 +2,10 @@
 
     @if ($item['nombre'] !== 'observaciones')
         
-    <div class="Componente_param grid [grid-template-columns:minmax(max-content,2fr)_1fr_1fr_minmax(max-content,1fr)] gap-2 pl-2 py-1 border-b-[0.2px] border-dashed border-secondary">
+    <div class="Componente_param grid [grid-template-columns:minmax(max-content,40%)_20%_20%_minmax(max-content,20%)] gap-2 pl-2 py-1 border-b-[0.2px] border-dashed border-secondary">
          
-            <div class="uppercase"><label>{{$item['nombre']}}</label>
-            <span class="block font-light text-[0.6rem] text-titles">{{$item['metodo']}}</span>                       
+            <div class="uppercase max-w-80"><label>{{$item['nombre']}}</label>
+            <span class="block font-light print:!text-[0.6rem] text-titles">{{$item['metodo']}}</span>                       
             </div>
             <div class="flex flex-row-reverse">
                 <p id="{{$item['id']}}">{{$item['resultado']}}</p>

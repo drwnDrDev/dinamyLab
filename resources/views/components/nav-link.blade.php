@@ -1,4 +1,4 @@
-@props(['active'])
+@props(['active', 'icono'])
 
 @php
 $classes = ($active ?? false)
@@ -8,10 +8,43 @@ $classes = ($active ?? false)
 
 <a {{ $attributes->merge(['class' => $classes]) }}>
     <span class="inline-flex w-6 h-6 items-center justify-center mr-2">
-    {{-- Icon --}}
-    <svg class="fill-current {{$active? 'w-8': 'w-6'}} h-auto aspect-square" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" >
-        <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
-    </svg>
+        {{-- Icon --}}
+
+        @switch ($icono)
+        @case('panel')
+        <x-iconos.panel :active='$active' />
+        @break
+        @case('personas')
+        <x-iconos.personas :active='$active' />
+        @break
+        @case('ordenes')
+        <x-iconos.ordenes :active='$active' />
+        @break
+        @case('procedimientos')
+        <x-iconos.procedimientos :active='$active' />
+        @break
+        @case('resultados')
+        <x-iconos.resultados :active='$active' />
+        @break
+        @case('caja')
+        <x-iconos.caja :active='$active' />
+        @break
+        @case('facturas')
+        <x-iconos.facturas :active='$active' />
+        @break
+        @case('reportes')
+        <x-iconos.reportes :active='$active' />
+        @break
+        @case('admin')
+        <x-iconos.admin :active='$active' />
+        @break
+
+        @default
+        <x-iconos.personas :active='$active' />
+        @break
+        @endswitch
+
+
     </span>
     {{ $slot }}
 </a>

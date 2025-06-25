@@ -47,7 +47,7 @@
 
         <section class="print_paramentros w-full">
             <h1 class="font-bold text-center my-4 uppercase">{{$procedimiento->examen->nombre}}</h1>
-            <div class="header_resultado grid [grid-template-columns:minmax(max-content,2fr)_1fr_1fr_minmax(max-content,1fr)] gap-2 pl-4 mb-2 bg-secondary text-titles">
+            <div class="header_resultado grid [grid-template-columns:minmax(max-content,40%)_20%_20%_minmax(max-content,20%)] gap-2 pl-4 mb-2 bg-secondary text-titles">
                 <h2 class="font-semibold">Parametro</h2>
                 <h2 class="font-semibold text-end">Resultado</h2>
                 <h2 class="font-semibold">U. Medida</h2>
