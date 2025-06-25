@@ -42,6 +42,7 @@
                         </header>
                     @endisset
 
+                </div>    
                 {{ $slot }}
             </main>
         </div>
