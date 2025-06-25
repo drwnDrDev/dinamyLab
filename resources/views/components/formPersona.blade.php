@@ -79,18 +79,17 @@
                     <option value="Salud Total"></option>
                 </datalist>
             </div>
-
+    @endif
         </div>
         <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2">
 
             <div class="w-full pb-2 relative">
                 <x-input-label for="ciudad">Ciudad</x-input-label>
-                <x-text-input id="municipioBusqueda" />
-                <div class="w-full absolute flex-col-reverse bottom-10 bg-background border border-borders max-h-60 overflow-y-auto
-                        z-10 hidden rounded-md shadow-lg" id="opciones"></div>
-                <select name="municipio" id="municipio" class="hidden">
-                    <option value="11007">Bosa</option>
-                </select>
+                <x-text-input name="municipioBusqueda" />
+                <div class="w-full absolute flex-col-reverse bottom-10 bg-background border
+                 border-borders max-h-60 overflow-y-auto z-10 hidden rounded-md shadow-lg" id="opciones">
+                </div>
+
             </div>
 
             <div class="w-full pb-2 md:col-span-2">
@@ -99,7 +98,7 @@
             </div>
 
         </div>
-     @endif
+
 
 
         <div class="row-inputs py-8 w-full flex justify-center gap-2">

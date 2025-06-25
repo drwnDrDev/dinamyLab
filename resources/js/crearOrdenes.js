@@ -48,6 +48,9 @@ const guardarPersona = (evento) => {
 
 
     axios.post(url, formData, {
+
+        
+
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
             'Content-Type': 'multipart/form-data',
@@ -210,65 +213,75 @@ document.getElementsByName('tipo_documento').forEach(input => {
     }   );
         })
 
+        // Autocompletado para los campos con name="municipioBusqueda" usando la lista de municipios
 
-    const typeableInput = document.getElementById('municipioBusqueda');
-    const optionsList = document.getElementById('opciones');
-    const hiddenSelect = document.getElementById('municipio');
-    let allOptions = municipios.map(option => ({
-        value: option.id,
-        text: option.municipio + ' - ' + option.departamento
-    }));
-
-
-    // Inicializar la lista de opciones
-        function filterOptions(query) {
-            const filteredOptions = allOptions.filter(option =>
-                option.text.toLowerCase().includes(query.toLowerCase())
-            );
-            displayOptions(filteredOptions);
-        }
-
-        function displayOptions(options) {
-            optionsList.innerHTML = ''; // Limpiar la lista anterior
-            if (options.length > 0) {
-                options.forEach(option => {
-                    const optionElement = document.createElement('div');
-                    optionElement.classList.add('p-2', 'cursor-pointer', 'hover:bg-gray-200', 'dark:hover:bg-gray-700','capitalize');
-                    optionElement.textContent = option.text;
-                    optionElement.addEventListener('click', () => {
-                        typeableInput.value = option.text;
-                        hiddenSelect.value = option.value;
-                        optionsList.classList.remove('block');
-                    });
-                    optionsList.appendChild(optionElement);
-                });
-                 optionsList.classList.remove('hidden');
-                optionsList.classList.add('flex');
-            } else {
-                optionsList.classList.remove('flex');
-
+        document.getElementsByName('municipioBusqueda').forEach((input, idx) => {
+            // Crear el select oculto para almacenar el valor real del municipio
+            let hiddenSelect = input.form.querySelector('select[name="municipio"]');
+            if (!hiddenSelect) {
+                hiddenSelect = document.createElement('select');
+                hiddenSelect.name = 'municipio';
+                hiddenSelect.style.display = 'none';
+                input.form.appendChild(hiddenSelect);
             }
-        }
+            // Limpiar y agregar todas las opciones al select oculto
+            hiddenSelect.innerHTML = '';
+            municipios.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option.id;
+                opt.textContent = option.municipio + ' - ' + option.departamento;
+                hiddenSelect.appendChild(opt);
+            });
 
-        typeableInput.addEventListener('input', () => {
-            const query = typeableInput.value;
-            filterOptions(query);
+            // Crear el contenedor para las opciones de autocompletado
+            let optionsList = input.form.querySelector('.municipio-autocomplete-list');
+            if (!optionsList) {
+                optionsList = document.createElement('div');
+                optionsList.className = 'municipio-autocomplete-list absolute z-10 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded w-full max-h-48 overflow-auto hidden';
+                input.parentNode.appendChild(optionsList);
+            }
+
+            // Filtrar y mostrar opciones
+            function filterOptions(query) {
+                const filtered = municipios.filter(option =>
+                    (option.municipio + ' - ' + option.departamento).toLowerCase().includes(query.toLowerCase())
+                );
+                displayOptions(filtered);
+            }
+
+            function displayOptions(options) {
+                optionsList.innerHTML = '';
+                if (options.length > 0) {
+                    options.forEach(option => {
+                        const div = document.createElement('div');
+                        div.className = 'p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 capitalize';
+                        div.textContent = option.municipio + ' - ' + option.departamento;
+                        div.addEventListener('mousedown', () => {
+                            input.value = div.textContent;
+                            hiddenSelect.value = option.id;
+                            optionsList.classList.add('hidden');
+                        });
+                        optionsList.appendChild(div);
+                    });
+                    optionsList.classList.remove('hidden');
+                } else {
+                    optionsList.classList.add('hidden');
+                }
+            }
+
+            input.setAttribute('autocomplete', 'off');
+            input.addEventListener('input', () => {
+                filterOptions(input.value);
+            });
+            input.addEventListener('focus', () => {
+                filterOptions(input.value);
+            });
+            input.addEventListener('blur', () => {
+                setTimeout(() => {
+                    optionsList.classList.add('hidden');
+                }, 150);
+            });
         });
-
-        // Ocultar la lista al perder el foco del input
-        typeableInput.addEventListener('blur', () => {
-            // Pequeño retraso para permitir que se dispare el clic de la opción
-            setTimeout(() => {
-                optionsList.classList.remove('flex');
-                optionsList.classList.add('hidden');
-            }, 200);
-        });
-
-        // Mostrar todas las opciones al enfocar el input (opcional)
-        typeableInput.addEventListener('focus', () => {
-            filterOptions(typeableInput.value); // Mostrar las opciones filtradas o todas si el input está vacío
-        });
-
 
 // Agregar opciones al datalist de los campos EPS en el formulario
 document.getElementsByName('eps').forEach(input => {
