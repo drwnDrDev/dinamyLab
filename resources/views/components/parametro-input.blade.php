@@ -2,7 +2,7 @@
 
 
     <div class="Componente_param grid grid-cols-4 gap-2 pl-4 mb-2 text-sm items-center">
-    
+
         @switch ($parametro['tipo_dato'])
             @case ('text')
 
@@ -61,7 +61,8 @@
             <div class="pt-4 uppercase font-semibold"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
             <div class="pt-4 col-span-3"><textarea name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['default'] ?? '' }}" rows="2" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md"></textarea>
-            
+            </div>
+
             @break
 
             @default
