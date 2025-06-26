@@ -18,6 +18,8 @@ class ResultadosController extends Controller
     }
     public function show(Procedimiento $procedimiento)
     {
+
+
         // Carga el procedimiento con sus relaciones necesarias
         $procedimiento->load(['orden.paciente', 'resultado']);
 
@@ -27,6 +29,7 @@ class ResultadosController extends Controller
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
     $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+
 
 
     return view('resultados.show', compact('procedimiento', 'parametros'));
