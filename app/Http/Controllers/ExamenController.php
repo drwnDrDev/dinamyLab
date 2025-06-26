@@ -37,8 +37,9 @@ class ExamenController extends Controller
      * Display the specified resource.
      */
     public function show(Examen $examen)
-    {
-        //
+    { 
+
+        return view('examenes.show', compact('examen'));
     }
 
     /**

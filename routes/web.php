@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/caja',[AdministracionController::class,'caja'])->name('caja');
     Route::get('/examenes',[ExamenController::class,'index'])->name('examenes');
+    Route::get('/examenes/{examen}',[ExamenController::class,'show'])->name('examenes.show');
 
     Route::post('search',[SearchController::class,'search'])->name('search');
     Route::get('search',[SearchController::class,'search'])->name('search');

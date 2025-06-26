@@ -147,14 +147,32 @@ class EscogerReferencia
                     ]);
                     continue; // Skip this parameter if conversion fails
                 }
-                $isNormal = $valorResultado < $referencia->max && $valorResultado > $referencia->min;
+                if (is_nan($valorResultado) || is_infinite($valorResultado)) {
+                    Log::warning('Valor del resultado no válido.', [
+                        'parametro_id' => $resultado->parametro->id,
+                        'valor' => $resultado->resultado,
+                    ]);
+                    continue; // Skip this parameter if value is not valid
+                }
+                // Check if the result is within the reference range
+                if(!is_numeric($valorResultado)) {
+                    Log::warning('Valor del resultado no numérico.', [
+                        'parametro_id' => $resultado->parametro->id,
+                        'valor' => $resultado->resultado,
+                    ]);
+                    continue; // Skip this parameter if value is not numeric
+                }
+
+                
+                $isNormal =$referencia->max? $valorResultado <= $referencia->max:true;
+                $isNormal = $isNormal && ($referencia->min ? $valorResultado >= $referencia->min : true);
             }
 
             $parametros[] = [
                 'id'        => $resultado->parametro->id,
                 'nombre'    => $resultado->parametro->nombre,
                 'grupo'     => $resultado->parametro->grupo,
-                'posicion' => $resultado->parametro->posicion,
+                'posicion' =>  $resultado->parametro->posicion,
                 'es_normal' => $isNormal,
                 'resultado' => $resultado->resultado,
                 'metodo'    => $resultado->parametro->metodo,

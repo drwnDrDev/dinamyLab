@@ -70,7 +70,7 @@
                                     <td class="px-4 py-2">{{ $examen->nombre }}</td>
                                     <td class="px-4 py-2">{{ $examen->descripcion }}</td>
                                     <td class="px-4 py-2">
-                                        <a href=""
+                                        <a href="{{ route('examenes.show', $examen->id) }}"
                                             class="text-primary hover:underline">Ver</a>
                                         |
                                         <a href=""
