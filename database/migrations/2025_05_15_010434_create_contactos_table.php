@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('contactos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('municipio_id')
-                ->constrained('municipios')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->string('telefono')->nullable();
-          
+            $table->morphs('contactable');
+            $table->string('nombre_tipo')->nullable();
+            $table->string('valor')->nullable();
+            $table->string('liga')->nullable();
+            $table->string('descripcion')->nullable();
             $table->timestamps();
+
         });
     }
 
