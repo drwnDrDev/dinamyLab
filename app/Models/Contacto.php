@@ -7,9 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Contacto extends Model
 {
     protected $fillable = [
-        'municipio_id',  
+        'municipio_id',
         'telefono',
-        'info_adicional',
     ];
 
     public function empresa()
@@ -28,6 +27,7 @@ class Contacto extends Model
     {
         return $this->belongsTo(Municipio::class);
     }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {
@@ -42,5 +42,5 @@ class Contacto extends Model
         return $info_adicional[$dato] ?? null;
     }
 
-    
+
 }
