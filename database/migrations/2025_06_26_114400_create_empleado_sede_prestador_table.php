@@ -11,20 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sedes', function (Blueprint $table) {
+        Schema::create('empleado_sede_prestador', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
-            $table->foreignId('empresa_id')
-                ->constrained('empresas')
+            $table->foreignId('empleado_id')
+                ->constrained('empleados')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('codigo_prestador', 120)->unique();
-           
-            $table->foreignId('contacto_id')
-                ->constrained('contactos')
-                ->nullOnDelete()
+            $table->foreignId('sede_id')
+                ->constrained('sedes')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->string('prestador');
+            $table->string('estado', 20)->default('activo'); // Estado del empleado
             $table->timestamps();
+
         });
     }
 
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sedes');
+        Schema::dropIfExists('empleado_sede_prestador');
     }
 };

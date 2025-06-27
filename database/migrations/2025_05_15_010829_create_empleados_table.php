@@ -15,9 +15,18 @@ return new class extends Migration
             $table->id();
             $table->string('codigo',120);
             $table->string('cargo',120)->default(\App\Cargo::PRESTADOR);
-            $table->foreignId('persona_id')->constrained('personas')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('sede_id')->constrained('sedes')->onDelete('cascade');
+            $table->string('nombre',255);
+            $table->string('tipo_documento', 2)->default('CC');
+            $table->string('numero_documento')->unique();
+            $table->date('fecha_nacimiento')->nullable();
+            $table->foreignId('empresa_id')
+                ->constrained('empresas')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }
