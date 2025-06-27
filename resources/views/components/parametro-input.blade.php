@@ -61,6 +61,7 @@
             <div class="pt-4 uppercase font-semibold"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
             <div class="pt-4 col-span-3"><textarea name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['default'] ?? '' }}" rows="2" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md"></textarea>
+            </div>
             
             @break
 
