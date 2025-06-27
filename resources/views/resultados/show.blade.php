@@ -16,8 +16,8 @@
             </div>
         </section>
 
-        <section class="print_paciente grid grid-cols-3 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
-            <div class="col-span-2 w-full grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
+        <section class="print_paciente grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
+            <div class="w-full grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
 
                 <span class="font-bold ">Paciente: </span>
                 <h3 class="text-md">{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
@@ -36,9 +36,9 @@
 
 
             </div>
-            <div class="grid  gap-x-4 gap-y-0">
+            <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
                 <span class="font-bold ">Fecha de atención: </span>
-                <h3>{{$procedimiento->orden->created_at}}</h3>
+                <h3>{{$procedimiento->orden->created_at->format('d-m-Y')}}</h3>
                <h3><span class="font-bold ">Órden Nº: </span>
                 {{$procedimiento->orden->numero}}</h3>
 
@@ -47,11 +47,11 @@
 
         <section class="print_paramentros w-full">
             <h1 class="font-bold text-center my-4 uppercase">{{$procedimiento->examen->nombre}}</h1>
-            <div class="header_resultado grid [grid-template-columns:minmax(max-content,40%)_20%_20%_minmax(max-content,20%)] gap-2 pl-4 mb-2 bg-secondary text-titles">
+            <div class="header_resultado grid [grid-template-columns:minmax(25%,40%)_20%_20%_minmax(max-content,20%)] gap-2 pl-4 mb-2 bg-secondary text-titles">
                 <h2 class="font-semibold">Parametro</h2>
                 <h2 class="font-semibold text-end">Resultado</h2>
                 <h2 class="font-semibold">U. Medida</h2>
-                <h2 class="font-semibold">Valor de Referencia</h2>
+                <h2 class="font-semibold">V. de Referencia</h2>
             </div>
             @php
             $lastGroup = null;
