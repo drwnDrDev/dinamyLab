@@ -20,7 +20,6 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('contactos')
                 ->nullOnDelete();
-
             $table->timestamps();
         });
     }
