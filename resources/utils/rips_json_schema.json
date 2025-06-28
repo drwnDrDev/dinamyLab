@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RIPS JSON",
+  "type": "object",
+  "properties": {
+    "prestador": {
+      "type": "object",
+      "properties": {
+        "codigo_habilitacion": { "type": "string" },
+        "nit": { "type": "string" },
+        "razon_social": { "type": "string" }
+      },
+      "required": ["codigo_habilitacion", "nit", "razon_social"]
+    },
+    "facturas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "numero": { "type": "string" },
+          "fecha_emision": { "type": "string", "format": "date" },
+          "valor_total": { "type": "number" },
+          "cufe": { "type": "string" }
+        },
+        "required": ["numero", "fecha_emision", "valor_total"]
+      }
+    },
+    "usuarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tipo_id": { "type": "string" },
+          "numero_id": { "type": "string" },
+          "edad": { "type": "integer" },
+          "sexo": { "type": "string" }
+        },
+        "required": ["tipo_id", "numero_id"]
+      }
+    },
+    "consultas": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "procedimientos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "numero_factura": { "type": "string" },
+          "tipo_id_usuario": { "type": "string" },
+          "id_usuario": { "type": "string" },
+          "codigo_procedimiento": { "type": "string" },
+          "fecha": { "type": "string", "format": "date" },
+          "valor": { "type": "number" }
+        },
+        "required": ["numero_factura", "tipo_id_usuario", "id_usuario", "codigo_procedimiento", "fecha", "valor"]
+      }
+    },
+    "medicamentos": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "resumen": {
+      "type": "object",
+      "properties": {
+        "cantidad_registros": { "type": "integer" },
+        "valor_total": { "type": "number" }
+      },
+      "required": ["cantidad_registros", "valor_total"]
+    }
+  },
+  "required": ["prestador", "facturas", "usuarios", "procedimientos"]
+}
