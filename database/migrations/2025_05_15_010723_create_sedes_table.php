@@ -18,8 +18,7 @@ return new class extends Migration
                 ->constrained('empresas')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('codigo_prestador', 120)->unique();
-            
+            $table->string('codigo_prestador', 120)->unique();    
             $table->string('logo')->nullable();
             $table->foreignId('contacto_id')
                 ->constrained('contactos')

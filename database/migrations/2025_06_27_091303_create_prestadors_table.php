@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prestadores', function (Blueprint $table) {
+        Schema::create('informacion_adicional', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo', 120)->unique();
-            $table->foreignId('sede_id')
-                ->constrained('sedes')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+            $table->foreignId('contacto_id')
+                ->constrained('contactos')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->string('tipo')->nullable();
+            $table->string('valor')->nullable();
+            $table->string('liga')->nullable();
+            $table->string('descripcion')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prestadors');
+        Schema::dropIfExists('informacion_adicional');
     }
 };
