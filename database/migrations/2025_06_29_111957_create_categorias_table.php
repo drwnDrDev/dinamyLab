@@ -11,18 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sedes', function (Blueprint $table) {
+        Schema::create('categorias', function (Blueprint $table) {
             $table->id();
             $table->string('nombre')->unique();
-            $table->foreignId('empresa_id')
-                ->constrained('empresas')
-                ->onDelete('cascade');
-
-            $table->string('codigo_prestador', 120)->unique();
-            $table->string('logo')->nullable();
-            $table->foreignId('contacto_id')
-                ->constrained('contactos');
-
+            $table->string('descripcion')->nullable();
+            $table->foreignId('examen_id')
+                ->constrained('examenes')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sedes');
+        Schema::dropIfExists('categorias');
     }
 };
