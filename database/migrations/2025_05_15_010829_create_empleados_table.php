@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('firma')->nullable();
             $table->string('cargo',120)->default(\App\Cargo::PRESTADOR);
-            $table->string('nombre');
             $table->string('tipo_documento', 2)->default('CC');
             $table->string('numero_documento')->unique();
             $table->date('fecha_nacimiento')->nullable();

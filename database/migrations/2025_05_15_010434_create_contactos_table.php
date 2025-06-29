@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Inicio;
 
 return new class extends Migration
 {
@@ -15,16 +14,12 @@ return new class extends Migration
         Schema::create('contactos', function (Blueprint $table) {
             $table->id();
             $table->string('telefono', 20)->nullable();
-            $table->unsignedBigInteger('municipio_id')->nullable()->default(Inicio::getMunicipioId());
-            $table->foreign('municipio_id')
-            ->references('id')
-            ->on('municipios')
-            ->onUpdate('cascade')
-            ->onDelete('set null');
+            $table->foreignId('municipio_id')
+                ->constrained('municipios')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
-
-    
     }
 
     /**

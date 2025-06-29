@@ -36,11 +36,20 @@ class Contacto extends Model
         });
 
     }
-    public function infoAdicional($dato)
+    public function infoAdicional($tipo = null)
     {
-        $info_adicional = json_decode($this->info_adicional, true);
-        return $info_adicional[$dato] ?? null;
+        return $this->hasMany(InfoAdicional::class)
+            ->when($tipo, function ($query) use ($tipo) {
+                $query->where('tipo', $tipo);
+            })
+            ->orderBy('created_at', 'desc');
     }
 
+
+    // En tu modelo Contacto:
+    public static function getDefaultMunicipioId()
+    {
+        return 11007;
+    }
 
 }

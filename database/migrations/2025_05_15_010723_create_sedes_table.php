@@ -16,14 +16,13 @@ return new class extends Migration
             $table->string('nombre')->unique();
             $table->foreignId('empresa_id')
                 ->constrained('empresas')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-            $table->string('codigo_prestador', 120)->unique();    
+                ->onDelete('cascade');
+
+            $table->string('codigo_prestador', 120)->unique();
             $table->string('logo')->nullable();
             $table->foreignId('contacto_id')
-                ->constrained('contactos')
-                ->nullOnDelete()
-                ->cascadeOnUpdate();
+                ->constrained('contactos');
+
             $table->timestamps();
         });
     }

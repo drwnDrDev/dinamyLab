@@ -27,5 +27,26 @@ class Sede extends Model
     {
         return $this->belongsTo(Contacto::class);
     }
+    // App\Models\Sede.php
 
+    protected static function booted()
+    {
+        static::deleting(function ($sede) {
+            if ($sede->contacto) {
+                $sede->contacto->delete();
+            }
+        });
+    }
+    public function resoluciones()
+    {
+        return $this->morphMany(Resolucion::class, 'uso');
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            $query->where('nombre', 'like', '%' . $search . '%')
+                ->orWhere('codigo_prestador', 'like', '%' . $search . '%');
+        });
+    }
 }
