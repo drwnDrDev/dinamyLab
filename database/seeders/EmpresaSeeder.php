@@ -6,6 +6,7 @@ use App\Models\Contacto;
 use App\Models\Municipio;
 use App\Models\Pais;
 use App\Models\Persona;
+use App\Models\InfoAdicional;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,64 +17,160 @@ class EmpresaSeeder extends Seeder
      */
     public function run(): void
     {
-         Contacto::create([
+        Contacto::create([
         'municipio_id'=>11007,
         'telefono'=>'NO REFIERE',
-
         ]);
 
         $extranjero = Contacto::create([
             'municipio_id'=>11007,
-            'telefono'=>'NO REFIERE',
-            'info_adicional'=>json_encode([
-                'redes'=>[
-                    "Google"=>'https://g.co/kgs/gkv1pHU',
-                    "Facebook"=>'https://www.facebook.com/search/top?q=mcdonalds',
-                    "Linkedin"=>'https://www.linkedin.com/company/mcdonalds',
-                    "Whatsapp"=>'https://wa.me/18002446227',
-                ],
-                'email'=>'ronaldmac@mcdonalds.com',
-                'direccion'=>'Diagonal 69 C sur # 78 C 36',
-                'pais'=>'USA',
-            ])
+            'telefono'=>'+1 800 123 4567',
+
         ]);
+
+        $ingoE=[
+        new InfoAdicional(    [
+                'tipo'=>'pais',
+                'valor'=>'USA'
+            ]),
+        new InfoAdicional(    [
+            'tipo'=>'direccion',
+            'valor'=>'Calle 80 I sur # 81 J 36'
+            ]),
+        new InfoAdicional(    [
+            'tipo'=>'email',
+            'valor'=>'ronaldmcdonalds@dinamycode.com',
+            'liga'=>'mailto:ronaldmcdonalds@dinamycode.com'
+            ]),
+ 
+        ];
 
         $contacto = Contacto::create([
             'municipio_id'=>11007,
-            'telefono'=>'3207001403',
-            'info_adicional'=>json_encode([
-            'redes'=>[
-                    "Google"=>'https://g.co/kgs/gkv1pHU',
-                    "Facebook"=>'https://www.facebook.com/search/top?q=biotek',
-                    "Linkedin"=>'https://www.linkedin.com/company/dinamycode',
-                    "Whatsapp"=>'https://wa.me/573207001403',
-                ],
-            'email'=>'cpbuitrago69@yahoo.com',
-            'direccion'=>'Diagonal 69 C sur # 78 C 36',
-            'pais'=>'COL',
-            ])
+            'telefono'=>'3207001403'
+
         ]);
 
-        $contacto2 = Contacto::create([
+        $infoA1 = [
+            new InfoAdicional(
+            [
+            'tipo'=>'Google',
+            'liga'=>'https://g.co/kgs/gkv1pHU',
+            'valor'=>'Laboratorio Clínico Biotek',
+            'descripcion'=>'Google Maps link to Biotek'
+            ]),
+          new InfoAdicional(
+            [
+                'tipo'=>'Instagram',
+                'valor'=>'@biotek_bosa',
+                'liga'=>'https://www.instagram.com/biotek_bosa/',
+                'descripcion'=>'Instagram profile of Biotek'
+            ]),
+          new InfoAdicional(    
+            [
+                'tipo'=>'Twitter',
+                'valor'=>'@biotek_bosa',
+                'liga'=>'https://twitter.com/biotek_bosa',
+                'descripcion'=>'Twitter profile of Biotek'
+            ]),
+          new InfoAdicional(
+            [
+                'tipo'=>'Facebook',
+                'liga'=>'https://www.facebook.com/search/top?q=biotek',
+                'valor'=>'Biotek',
+                'descripcion'=>'Facebook page of Biotek'
+            ])
+            ,
+        new InfoAdicional(    [
+                'tipo'=>'Linkedin',
+                'liga'=>'https://www.linkedin.com/company/dinamycode',
+                'valor'=>'Dinamycode',
+                'descripcion'=>'LinkedIn profile of Dinamycode'
+            ]),
+           new InfoAdicional( [
+                'tipo'=>'Whatsapp',
+                'liga'=>'https://wa.me/573207001403',
+                'valor'=>'3207001403',
+                'descripcion'=>'WhatsApp contact for Biotek'
+            ]),
+        new InfoAdicional(    [
+                'tipo'=>'email',
+                'liga'=>'mailto:cpbuitrago69@yahoo.com',
+                'valor'=>'cpbuitrago69@yahoo.com'
+            ]),
+        new InfoAdicional(    [
+                'tipo'=>'direccion',
+                'valor'=>'Diagonal 69 C sur # 78 C 36'
+            ]),
+        new InfoAdicional(    [
+                'tipo'=>'pais',
+                'valor'=>'COL'
+            ])
+        ];
+    $contacto2 = Contacto::create([
             'municipio_id'=>11007,
-            'telefono'=>'3207001403',
-            'info_adicional'=>json_encode([
-            'redes'=>[
-                    "Google"=>'https://g.co/kgs/gkv1pHU',
-                    "Facebook"=>'https://www.facebook.com/search/top?q=biotek',
-                    "Linkedin"=>'https://www.linkedin.com/company/dinamycode',
-                    "Whatsapp"=>'https://wa.me/573207001403',
-                ],
-            'email'=>'lab.biotek@gmail.com',
-            'direccion'=>'TV 78 L Diagonal 69 C sur 58',
-            'pais'=>'COL',
-            ])
-        ]);
+            'telefono'=>'3005705987'
+    ]);
+    $contacto3 = Contacto::create([
+            'municipio_id'=>25754,
+            'telefono'=>'3014819820'
+    ]);
 
 
+  $infoA2 =[
 
+           new InfoAdicional( [
+                'tipo'=>'direccion', 'valor'=>'Tv 78L Nº 69C 10 sur'
+            ]),
+          new InfoAdicional(  [
+                'tipo'=>'telefono',
+                'valor'=>'3005705987'
+            ]),
+         new InfoAdicional(        [
+                'tipo'=>'telefono',
+                'valor'=>'3103213025'
+            ]),
 
-        $persona = Persona::create([
+       new InfoAdicional(     [
+                'tipo'=>'Google',
+                'liga'=>'https://g.co/kgs/gkv1pHU',
+                'valor'=>'Laboratorio Clínico Biotek',
+                'descripcion'=>'Google Maps link to Biotek'
+            ]),
+        new InfoAdicional(    [
+                'tipo'=>'Instagram',
+                'valor'=>'@biotek_bosa',
+                'liga'=>'https://www.instagram.com/biotek_bosa/',
+                'descripcion'=>'Instagram profile of Biotek'
+            ]),
+        new InfoAdicional(    [
+                'tipo'=>'Twitter',
+                'valor'=>'@biotek_bosa',
+                'liga'=>'https://twitter.com/biotek_bosa',
+                'descripcion'=>'Twitter profile of Biotek'
+            ]),
+        new InfoAdicional(    [
+                'tipo'=>'Facebook',
+                'liga'=>'https://www.facebook.com/search/top?q=biotek',
+                'valor'=>'Biotek',
+                'descripcion'=>'Facebook page of Biotek'
+            ]),
+        new InfoAdicional(    [
+                'tipo'=>'Linkedin',
+                'liga'=>'https://www.linkedin.com/company/dinamycode',
+                'valor'=>'Dinamycode',
+                'descripcion'=>'LinkedIn profile of Dinamycode'
+            ]),
+        new InfoAdicional(    [
+                'tipo'=>'Whatsapp',
+                'liga'=>'https://wa.me/573005705987',
+                'valor'=>'3005705987',
+                'descripcion'=>'WhatsApp contact for Biotek'
+            ]),
+        ];
+    
+
+    $persona = Persona::create([
             'primer_nombre'=>'Claudia',
             'segundo_nombre'=>'Patricia',
             'primer_apellido'=>'Buitrago',
@@ -88,31 +185,53 @@ class EmpresaSeeder extends Seeder
 
         $empresa = \App\Models\Empresa::create([
             'nit'=>'51934571-8',
-            'razon_social'=>'Claudia Patricia Buitrago Hernandez',
+            'razon_social'=>'Laboratorio Claudia Buitrago',
             'nombre_comercial'=>'Biotek',
+
             'contacto_id'=>$contacto->id,
+        ]);
+    $contacto->informacionAdicional()->saveMany($infoA1);
+    $contacto2->informacionAdicional()->saveMany($infoA2);
+    $extranjero->informacionAdicional()->saveMany($ingoE);
+    $contacto3->informacionAdicional()->create([
+            'tipo'=>'email',
+            'valor'=>'rlcirilo@gmail.com'
         ]);
 
         $sede = \App\Models\Sede::create([
             'nombre'=>'Biotek Bosa',
+            'codigo_prestador'=>'110010822701',
+            'logo'=>'biotek_logo.png',
             'empresa_id'=>$empresa->id,
             'contacto_id'=>$contacto->id,
         ]);
 
         $sede2 = \App\Models\Sede::create([
             'nombre'=>'IPS Bosa',
+            'codigo_prestador'=>'110010822703',
+            'logo'=>'ryc.png',
             'empresa_id'=>$empresa->id,
             'contacto_id'=>$contacto2->id,
         ]);
-
-
-
         $empleado = \App\Models\Empleado::create([
-            'codigo'=>'110010822701',
             'cargo'=>'Bacteriologa',
-            'persona_id'=>$persona->id,
+            'firma'=>'firma_claudia.png',
+            'tipo_documento'=>'CC',
+            'numero_documento'=>'51934571',
+            'fecha_nacimiento'=>'1969-01-11',
             'user_id'=>2,
-            'sede_id'=>1,
+            'empresa_id'=>1,
+            'contacto_id'=>$contacto->id,
+        ]);
+        $admon= \App\Models\Empleado::create([
+            'cargo'=>'Administrador',
+            'firma'=>'ramirez.png',
+            'tipo_documento'=>'CC',
+            'numero_documento'=>'80920160',
+            'fecha_nacimiento'=>'1985-08-08',
+            'user_id'=>1,
+            'empresa_id'=>1,
+            'contacto_id'=>$contacto3->id,
         ]);
 
         $coordi =  Persona::create([
@@ -129,31 +248,36 @@ class EmpresaSeeder extends Seeder
         ]);
         $agente =  Persona::create([
             'primer_nombre'=>'Ronald',
-
             'primer_apellido'=>'McDonald',
-
             'tipo_documento'=>'CC',
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
             'sexo'=>'M',
             'nacional'=>false,
+
             'contacto_id'=>$extranjero->id,
         ]);
 
         $empleado2 = \App\Models\Empleado::create([
-            'codigo'=>'110010822701',
+      
             'cargo'=>'contador',
-            'persona_id'=>$agente->id,
+            'tipo_documento'=>'CC',
+            'numero_documento'=>'123456789',
+            'fecha_nacimiento'=>'1929-01-11',
             'user_id'=>3,
-            'sede_id'=>1,
+            'contacto_id'=>$extranjero->id,
+            'empresa_id'=>1,
         ]);
 
         $empleado3 = \App\Models\Empleado::create([
-            'codigo'=>'110010822701',
+        
             'cargo'=>'secretaria',
-            'persona_id'=>$coordi->id,
+            'tipo_documento'=>'CC',
+            'numero_documento'=>'123456',
+            'fecha_nacimiento'=>'1989-11-12',
             'user_id'=>4,
-            'sede_id'=>1,
+            'empresa_id'=>1,
+            'contacto_id'=>1,
         ]);
 
 

@@ -16,7 +16,7 @@ class InfoAdicional extends Model
 
     public function contacto()
     {
-        return $this->belongsTo(Contacto::class);
+        return $this->hasOne(Contacto::class);
     }
 
     public function scopeFilter($query, array $filters)
@@ -26,4 +26,12 @@ class InfoAdicional extends Model
                 ->orWhere('valor', 'like', '%' . $search . '%');
         });
     }
+
+    public function scopeTipo($query, $tipo)
+    {
+        return $query->where('tipo', $tipo);
+    }
+
+    protected $table = 'informacion_adicional';
+    
 }
