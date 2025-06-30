@@ -8,11 +8,17 @@ class Empleado extends Model
 
 {
     protected $fillable = [
-        'codigo',
         'cargo',
-        'persona_id',
+        'firma',
+        'tipo_documento',
+        'numero_documento',
+        'fecha_ingreso',
+        'fecha_retiro',
+        'fecha_nacimiento',
         'user_id',
-        'sede_id',
+        'empresa_id',
+        'persona_id',
+        'contacto_id',
     ];
 
     public function persona()

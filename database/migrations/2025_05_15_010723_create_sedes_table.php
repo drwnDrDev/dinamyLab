@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('empresa_id')
                 ->constrained('empresas')
                 ->onDelete('cascade');
-
             $table->string('codigo_prestador', 120)->unique();
             $table->string('logo')->nullable();
             $table->foreignId('contacto_id')

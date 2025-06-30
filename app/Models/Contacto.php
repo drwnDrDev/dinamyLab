@@ -19,23 +19,17 @@ class Contacto extends Model
     {
         return $this->belongsTo(Sede::class);
     }
-    public function pais()
-    {
-        return $this->belongsTo(Pais::class);
-    }
+
     public function municipio()
     {
         return $this->belongsTo(Municipio::class);
     }
 
-    public function scopeFilter($query, array $filters)
+    public function informacionAdicional()
     {
-        $query->when($filters['search'] ?? false, function ($query, $search) {
-            $query->where('telefono', 'like', '%' . $search . '%')
-                ->orWhere('redes', 'like', '%' . $search . '%');
-        });
-
+        return $this->hasMany(InfoAdicional::class);
     }
+
     public function infoAdicional($tipo = null)
     {
         return $this->hasMany(InfoAdicional::class)
@@ -45,11 +39,5 @@ class Contacto extends Model
             ->orderBy('created_at', 'desc');
     }
 
-
-    // En tu modelo Contacto:
-    public static function getDefaultMunicipioId()
-    {
-        return 11007;
-    }
 
 }
