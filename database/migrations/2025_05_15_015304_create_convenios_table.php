@@ -17,9 +17,6 @@ return new class extends Migration
             $table->string('numero_documento')->unique();
             $table->string('razon_social'); 
             $table->decimal('descuento', 4, 2)->default(0);
-            $table->foreignId('contacto_id')
-                ->constrained('contactos')
-                ->onDelete('cascade');
             $table->timestamps();
         });
     }

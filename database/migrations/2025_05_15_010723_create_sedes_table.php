@@ -19,8 +19,6 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('codigo_prestador', 120)->unique();
             $table->string('logo')->nullable();
-            $table->foreignId('contacto_id')
-                ->constrained('contactos');
             $table->timestamps();
         });
     }

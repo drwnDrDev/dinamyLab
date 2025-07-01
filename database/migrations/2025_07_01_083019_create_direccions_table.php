@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contactos', function (Blueprint $table) {
+        Schema::create('direccions', function (Blueprint $table) {
             $table->id();
-            $table->string('telefono', 20)->nullable();
-            $table->string('email')->nullable();
-            $table->string('direccion')->nullable();
+            $table->string('direccion');
+            $table->morphs('direccionable'); // Polymorphic relation
             $table->foreignId('municipio_id')
                 ->constrained('municipios')
                 ->cascadeOnDelete()
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contactos');
+        Schema::dropIfExists('direccions');
     }
 };
