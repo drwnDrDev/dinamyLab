@@ -191,10 +191,13 @@ class EmpresaSeeder extends Seeder
             'municipio_id'=>'11007',
             'direccion'=>'Calle 80 I sur # 81 J 36'
         ]);
-        $empleado->sede()->associate($sede);
-        $empleado->sede()->associate($sede2);
-        $empleado2->sede()->associate($sede2);
-        $empleado3->sede()->associate($sede2);
+
+        // Relacionar empleados y sedes por tabla intermedia (muchos a muchos)
+        $empleado2->sedes()->attach($sede->id);
+        $empleado->sedes()->attach($sede->id);
+        $empleado3->sedes()->attach($sede2->id);
+        $admon->sedes()->attach($sede2->id);
+        $admon->sedes()->attach($sede->id);
 
 
     }

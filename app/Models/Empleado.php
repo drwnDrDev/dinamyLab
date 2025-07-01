@@ -31,9 +31,9 @@ class Empleado extends Model
         $this->user->name;
     }
 
-    public function sede()
+    public function sedes()
     {
-        return $this->belongsTo(Sede::class);
+        return $this->belongsToMany(Sede::class, 'empleado_sede');
     }
     public function empresa()
     {

@@ -68,11 +68,13 @@ class EmpleadoController extends Controller
     {
         $usuario = auth()->user();
         $empleado= Empleado::where('user_id',$usuario->id)->first();
+
+     
         if(!$usuario->hasRole('admin') && !$usuario->hasRole('prestador') && !$usuario->hasRole('coordinador') && !$empleado) {
             return view('paciente.dashboard');
         }
         if ($usuario->hasRole('admin')) {
-       
+
             $pendientes = \App\Models\Procedimiento::where('estado', 'pendiente')->get();
 
             return view('admin.dashboard',compact('pendientes'));

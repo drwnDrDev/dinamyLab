@@ -25,7 +25,7 @@ class Sede extends Model
     }
     public function empleados()
     {
-        return $this->hasMany(Empleado::class);
+        return $this->belongsToMany(Empleado::class, 'empleado_sede');
     }
     public function resoluciones()
     {

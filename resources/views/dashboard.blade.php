@@ -51,7 +51,7 @@
 
         </div>
         <!-- otras cosas -->
-        
+
             <div class="py-4">
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
@@ -60,8 +60,8 @@
                 </div>
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
-                        <p class="p-2 bg-slate-300">{{$empleado->sede->empresa->nombre_comercial}}</p>
-                        <p class="p-2 bg-slate-300">{{$empleado->persona->nombreCompleto()}}</p>
+                        <p class="p-2 bg-slate-300">{{$empleado->empresa->nombre_comercial}}</p>
+                      
                         {{$empleado->cargo}}
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                 </p>
             </x-modal>
 
-        
+
     </section>
 
     @vite('resources/js/obtenerStaticos.js')
