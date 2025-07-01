@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pais_procedencias', function (Blueprint $table) {
+        Schema::create('paises_procedencia', function (Blueprint $table) {
             $table->id();
             $table->string('pais_codigo_iso'); // Columna para almacenar el código ISO del país
             $table->foreign('pais_codigo_iso')
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pais_procedencias');
+        Schema::dropIfExists('paises_procedencia');
     }
 };

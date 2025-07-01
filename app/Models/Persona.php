@@ -39,7 +39,7 @@ class Persona extends Model
 
     public function direccion()
     {
-        return $this->morphOne(Direccion::class, 'persona_id');
+        return $this->morphOne(Direccion::class, 'direccionable');
     }
     public function telefonos()
     {
@@ -56,6 +56,10 @@ class Persona extends Model
     public function contactoEmergencia()
     {
         return $this->hasOne(ContactoEmergencia::class, 'paciente_id');
+    }
+    public function procedencia()
+    {
+         return $this->morphMany(PaisProcedencia::class, 'procedencia');
     }
 
 
