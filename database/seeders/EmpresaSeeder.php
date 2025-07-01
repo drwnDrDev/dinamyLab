@@ -187,6 +187,15 @@ class EmpresaSeeder extends Seeder
 
         ]);
 
+        $empleado2->direccion()->create([
+            'municipio_id'=>'11007',
+            'direccion'=>'Calle 80 I sur # 81 J 36'
+        ]);
+        $empleado->sede()->associate($sede);
+        $empleado->sede()->associate($sede2);
+        $empleado2->sede()->associate($sede2);
+        $empleado3->sede()->associate($sede2);
+
 
     }
 }
