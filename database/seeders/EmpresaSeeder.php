@@ -6,7 +6,7 @@ use App\Models\Contacto;
 use App\Models\Municipio;
 use App\Models\Pais;
 use App\Models\Persona;
-use App\Models\InfoAdicional;
+use App\Models\InformacionAdicional;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -29,15 +29,15 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $ingoE=[
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'pais',
                 'valor'=>'USA'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
             'tipo'=>'direccion',
             'valor'=>'Calle 80 I sur # 81 J 36'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
             'tipo'=>'email',
             'valor'=>'ronaldmcdonalds@dinamycode.com',
             'liga'=>'mailto:ronaldmcdonalds@dinamycode.com'
@@ -52,28 +52,28 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $infoA1 = [
-            new InfoAdicional(
+            new InformacionAdicional(
             [
             'tipo'=>'Google',
             'liga'=>'https://g.co/kgs/gkv1pHU',
             'valor'=>'Laboratorio Clínico Biotek',
             'descripcion'=>'Google Maps link to Biotek'
             ]),
-          new InfoAdicional(
+          new InformacionAdicional(
             [
                 'tipo'=>'Instagram',
                 'valor'=>'@biotek_bosa',
                 'liga'=>'https://www.instagram.com/biotek_bosa/',
                 'descripcion'=>'Instagram profile of Biotek'
             ]),
-          new InfoAdicional(    
+          new InformacionAdicional(    
             [
                 'tipo'=>'Twitter',
                 'valor'=>'@biotek_bosa',
                 'liga'=>'https://twitter.com/biotek_bosa',
                 'descripcion'=>'Twitter profile of Biotek'
             ]),
-          new InfoAdicional(
+          new InformacionAdicional(
             [
                 'tipo'=>'Facebook',
                 'liga'=>'https://www.facebook.com/search/top?q=biotek',
@@ -81,28 +81,28 @@ class EmpresaSeeder extends Seeder
                 'descripcion'=>'Facebook page of Biotek'
             ])
             ,
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'Linkedin',
                 'liga'=>'https://www.linkedin.com/company/dinamycode',
                 'valor'=>'Dinamycode',
                 'descripcion'=>'LinkedIn profile of Dinamycode'
             ]),
-           new InfoAdicional( [
+           new InformacionAdicional( [
                 'tipo'=>'Whatsapp',
                 'liga'=>'https://wa.me/573207001403',
                 'valor'=>'3207001403',
                 'descripcion'=>'WhatsApp contact for Biotek'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'email',
                 'liga'=>'mailto:cpbuitrago69@yahoo.com',
                 'valor'=>'cpbuitrago69@yahoo.com'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'direccion',
                 'valor'=>'Diagonal 69 C sur # 78 C 36'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'pais',
                 'valor'=>'COL'
             ])
@@ -119,49 +119,49 @@ class EmpresaSeeder extends Seeder
 
   $infoA2 =[
 
-           new InfoAdicional( [
+           new InformacionAdicional( [
                 'tipo'=>'direccion', 'valor'=>'Tv 78L Nº 69C 10 sur'
             ]),
-          new InfoAdicional(  [
+          new InformacionAdicional(  [
                 'tipo'=>'telefono',
                 'valor'=>'3005705987'
             ]),
-         new InfoAdicional(        [
+         new InformacionAdicional(        [
                 'tipo'=>'telefono',
                 'valor'=>'3103213025'
             ]),
 
-       new InfoAdicional(     [
+       new InformacionAdicional(     [
                 'tipo'=>'Google',
                 'liga'=>'https://g.co/kgs/gkv1pHU',
                 'valor'=>'Laboratorio Clínico Biotek',
                 'descripcion'=>'Google Maps link to Biotek'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'Instagram',
                 'valor'=>'@biotek_bosa',
                 'liga'=>'https://www.instagram.com/biotek_bosa/',
                 'descripcion'=>'Instagram profile of Biotek'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'Twitter',
                 'valor'=>'@biotek_bosa',
                 'liga'=>'https://twitter.com/biotek_bosa',
                 'descripcion'=>'Twitter profile of Biotek'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'Facebook',
                 'liga'=>'https://www.facebook.com/search/top?q=biotek',
                 'valor'=>'Biotek',
                 'descripcion'=>'Facebook page of Biotek'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'Linkedin',
                 'liga'=>'https://www.linkedin.com/company/dinamycode',
                 'valor'=>'Dinamycode',
                 'descripcion'=>'LinkedIn profile of Dinamycode'
             ]),
-        new InfoAdicional(    [
+        new InformacionAdicional(    [
                 'tipo'=>'Whatsapp',
                 'liga'=>'https://wa.me/573005705987',
                 'valor'=>'3005705987',
@@ -193,6 +193,7 @@ class EmpresaSeeder extends Seeder
     $contacto->informacionAdicional()->saveMany($infoA1);
     $contacto2->informacionAdicional()->saveMany($infoA2);
     $extranjero->informacionAdicional()->saveMany($ingoE);
+   
     $contacto3->informacionAdicional()->create([
             'tipo'=>'email',
             'valor'=>'rlcirilo@gmail.com'
