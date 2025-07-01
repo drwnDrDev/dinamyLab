@@ -41,8 +41,8 @@ class Sede extends Model
     public function emails(){
         return $this->morphMany(CorreoElectronico::class, 'emailable');
     }
-    public function direcciones(){
-        return $this->morphMany(Direccion::class, 'direccionable');
+    public function direccion(){
+        return $this->morphOne(Direccion::class, 'direccionable');
     }
 
 

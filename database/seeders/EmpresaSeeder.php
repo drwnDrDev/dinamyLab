@@ -3,9 +3,6 @@
 namespace Database\Seeders;
 
 
-use App\Models\Direccion;
-use App\Models\Municipio;
-use App\Models\Pais;
 use App\Models\Persona;
 
 use Illuminate\Database\Seeder;
@@ -29,179 +26,50 @@ class EmpresaSeeder extends Seeder
             'sexo'=>'F',
             'nacional'=>true,
         ]);
-    $extranjero = Persona::create([
-            'primer_nombre'=>'Ronald',
-            'primer_apellido'=>'McDonald',
+        $extranjero = Persona::create([
+            'primer_nombre'=>'Ronaldo',
+            'primer_apellido'=>'Nazario',
             'tipo_documento'=>'CC',
-            'numero_documento'=>'123456789',
+            'numero_documento'=>'123466789',
             'fecha_nacimiento'=>'1929-01-11',
             'sexo'=>'M',
             'nacional'=>false,
         ]);
 
-        $extranjero->di()->create([
+        $extranjero->procedencia()->create([
             'pais_codigo_iso'=>'USA',
-
-        ])
-
-
-
-
-
-        $ingoE=[
-        new InformacionAdicional(    [
-                'tipo'=>'pais',
-                'valor'=>'USA'
-            ]),
-        new InformacionAdicional(    [
-            'tipo'=>'direccion',
-            'valor'=>'Calle 80 I sur # 81 J 36'
-            ]),
-        new InformacionAdicional(    [
-            'tipo'=>'email',
-            'valor'=>'ronaldmcdonalds@dinamycode.com',
-            'liga'=>'mailto:ronaldmcdonalds@dinamycode.com'
-            ]),
-
-        ];
-
-        $contacto = Contacto::create([
-            'municipio_id'=>11007,
-            'telefono'=>'3207001403'
-
         ]);
-
-        $infoA1 = [
-            new InformacionAdicional(
-            [
-            'tipo'=>'Google',
-            'liga'=>'https://g.co/kgs/gkv1pHU',
-            'valor'=>'Laboratorio Clínico Biotek',
-            'descripcion'=>'Google Maps link to Biotek'
-            ]),
-          new InformacionAdicional(
-            [
-                'tipo'=>'Instagram',
-                'valor'=>'@biotek_bosa',
-                'liga'=>'https://www.instagram.com/biotek_bosa/',
-                'descripcion'=>'Instagram profile of Biotek'
-            ]),
-          new InformacionAdicional(
-            [
-                'tipo'=>'Twitter',
-                'valor'=>'@biotek_bosa',
-                'liga'=>'https://twitter.com/biotek_bosa',
-                'descripcion'=>'Twitter profile of Biotek'
-            ]),
-          new InformacionAdicional(
-            [
-                'tipo'=>'Facebook',
-                'liga'=>'https://www.facebook.com/search/top?q=biotek',
-                'valor'=>'Biotek',
-                'descripcion'=>'Facebook page of Biotek'
-            ])
-            ,
-        new InformacionAdicional(    [
-                'tipo'=>'Linkedin',
-                'liga'=>'https://www.linkedin.com/company/dinamycode',
-                'valor'=>'Dinamycode',
-                'descripcion'=>'LinkedIn profile of Dinamycode'
-            ]),
-           new InformacionAdicional( [
-                'tipo'=>'Whatsapp',
-                'liga'=>'https://wa.me/573207001403',
-                'valor'=>'3207001403',
-                'descripcion'=>'WhatsApp contact for Biotek'
-            ]),
-        new InformacionAdicional(    [
-                'tipo'=>'email',
-                'liga'=>'mailto:cpbuitrago69@yahoo.com',
-                'valor'=>'cpbuitrago69@yahoo.com'
-            ]),
-        new InformacionAdicional(    [
-                'tipo'=>'direccion',
-                'valor'=>'Diagonal 69 C sur # 78 C 36'
-            ]),
-        new InformacionAdicional(    [
-                'tipo'=>'pais',
-                'valor'=>'COL'
-            ])
-        ];
-    $contacto2 = Contacto::create([
-            'municipio_id'=>11007,
-            'telefono'=>'3005705987'
-    ]);
-    $contacto3 = Contacto::create([
-            'municipio_id'=>25754,
-            'telefono'=>'3014819820'
-    ]);
-
-
-  $infoA2 =[
-
-           new InformacionAdicional( [
-                'tipo'=>'direccion', 'valor'=>'Tv 78L Nº 69C 10 sur'
-            ]),
-          new InformacionAdicional(  [
-                'tipo'=>'telefono',
-                'valor'=>'3005705987'
-            ]),
-         new InformacionAdicional(        [
-                'tipo'=>'telefono',
-                'valor'=>'3103213025'
-            ]),
-
-       new InformacionAdicional(     [
-                'tipo'=>'Google',
-                'liga'=>'https://g.co/kgs/gkv1pHU',
-                'valor'=>'Laboratorio Clínico Biotek',
-                'descripcion'=>'Google Maps link to Biotek'
-            ]),
-        new InformacionAdicional(    [
-                'tipo'=>'Instagram',
-                'valor'=>'@biotek_bosa',
-                'liga'=>'https://www.instagram.com/biotek_bosa/',
-                'descripcion'=>'Instagram profile of Biotek'
-            ]),
-        new InformacionAdicional(    [
-                'tipo'=>'Twitter',
-                'valor'=>'@biotek_bosa',
-                'liga'=>'https://twitter.com/biotek_bosa',
-                'descripcion'=>'Twitter profile of Biotek'
-            ]),
-        new InformacionAdicional(    [
-                'tipo'=>'Facebook',
-                'liga'=>'https://www.facebook.com/search/top?q=biotek',
-                'valor'=>'Biotek',
-                'descripcion'=>'Facebook page of Biotek'
-            ]),
-        new InformacionAdicional(    [
-                'tipo'=>'Linkedin',
-                'liga'=>'https://www.linkedin.com/company/dinamycode',
-                'valor'=>'Dinamycode',
-                'descripcion'=>'LinkedIn profile of Dinamycode'
-            ]),
-        new InformacionAdicional(    [
-                'tipo'=>'Whatsapp',
-                'liga'=>'https://wa.me/573005705987',
-                'valor'=>'3005705987',
-                'descripcion'=>'WhatsApp contact for Biotek'
-            ]),
-        ];
+        $extranjero->direccion()->create([
+            'municipio_id'=>'11007',
+            'direccion'=>'Calle 80 I sur # 81 J 36'
+        ]);
+        $persona->direccion()->create([
+            'municipio_id'=>'11007',
+            'direccion'=>'Diagonal 69 C sur # 78 C 36'
+        ]);
+        $persona->telefonos()->create([
+            'numero'=>'3207001403',
+        ]);
+        $persona->emails()->create([
+            'email'=>'ronaldmcdonalds@dinamycode.com'
+        ]);
+        $persona->redesSociales()->create([
+            'nombre'=>'Linkedin',
+            'url'=>'https://www.linkedin.com/in/claudia-buitrago-hernandez-123456789/',
+            'perfil'=>'Claudia Buitrago Hernandez',
+        ]);
 
         $empresa = \App\Models\Empresa::create([
             'nit'=>'51934571-8',
             'razon_social'=>'Laboratorio Claudia Buitrago',
             'nombre_comercial'=>'Biotek',
 
-            'contacto_id'=>$contacto->id,
         ]);
 
-
-    $contacto3->informacionAdicional()->create([
-            'tipo'=>'email',
-            'valor'=>'rlcirilo@gmail.com'
+        $empresa->telefonos()->create([
+            'numero'=>'3207001403'
         ]);
+
 
         $sede = \App\Models\Sede::create([
             'nombre'=>'Biotek Bosa',
@@ -210,14 +78,32 @@ class EmpresaSeeder extends Seeder
             'empresa_id'=>$empresa->id,
 
         ]);
+        $sede->telefonos()->create([
+            'numero'=>'3207001403'
+        ]);
+        $sede->direccion()->create([
+            'municipio_id'=>'11007',
+            'direccion'=>'Diagonal 69 C sur # 78 C 36'
+        ]);
 
         $sede2 = \App\Models\Sede::create([
             'nombre'=>'IPS Bosa',
             'codigo_prestador'=>'110010822703',
             'logo'=>'ryc.png',
             'empresa_id'=>$empresa->id,
-            'contacto_id'=>$contacto2->id,
+
         ]);
+
+        $sede2->telefonos()->create(['numero'=>'3005705987']);
+        $sede2->telefonos()->create(['numero'=>'3103213025']);
+        $sede2->telefonos()->create(['numero'=>'6018088128']);
+
+
+        $sede2->direccion()->create([
+            'municipio_id'=>'11007',
+            'direccion'=>'Tv 78L Nº 69C 10 sur'
+        ]);
+
         $empleado = \App\Models\Empleado::create([
             'cargo'=>'Bacteriologa',
             'firma'=>'firma_claudia.png',
@@ -226,8 +112,12 @@ class EmpresaSeeder extends Seeder
             'fecha_nacimiento'=>'1969-01-11',
             'user_id'=>2,
             'empresa_id'=>1,
-            'contacto_id'=>$contacto->id,
+
         ]);
+        $empleado->telefonos()->create([
+            'numero'=>'3207001403'
+        ]);
+
         $admon= \App\Models\Empleado::create([
             'cargo'=>'Administrador',
             'firma'=>'ramirez.png',
@@ -236,7 +126,11 @@ class EmpresaSeeder extends Seeder
             'fecha_nacimiento'=>'1985-08-08',
             'user_id'=>1,
             'empresa_id'=>1,
-            'contacto_id'=>$contacto3->id,
+
+        ]);
+        $admon->telefonos()->create([
+            'numero'=>'3014819820'
+
         ]);
 
         $coordi =  Persona::create([
@@ -249,7 +143,7 @@ class EmpresaSeeder extends Seeder
             'fecha_nacimiento'=>'1989-11-12',
             'sexo'=>'F',
             'nacional'=>true,
-            'contacto_id'=>1,
+
         ]);
         $agente =  Persona::create([
             'primer_nombre'=>'Ronald',
@@ -269,7 +163,7 @@ class EmpresaSeeder extends Seeder
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
             'user_id'=>3,
-            'contacto_id'=>$extranjero->id,
+
             'empresa_id'=>1,
         ]);
 
@@ -281,7 +175,16 @@ class EmpresaSeeder extends Seeder
             'fecha_nacimiento'=>'1989-11-12',
             'user_id'=>4,
             'empresa_id'=>1,
-            'contacto_id'=>1,
+
+        ]);
+
+        $empleado3->telefonos()->create([
+            'numero'=>'350060000'
+
+        ]);
+        $empleado2->telefonos()->create([
+            'numero'=>'310060000'
+
         ]);
 
 

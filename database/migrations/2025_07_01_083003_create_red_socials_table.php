@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('url')->unique();
             $table->string('perfil')->unique();
-            $table->morphs('red_socialable'); // Polymorphic relation
+            $table->morphs('redable'); // Polymorphic relation
             $table->timestamps();
         });
     }

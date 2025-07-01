@@ -8,6 +8,7 @@ class Direccion extends Model
 {
     protected $fillable = [
         'direccion',
+        'municipio_id',
         'direccionable_id',
         'direccionable_type'
     ];
