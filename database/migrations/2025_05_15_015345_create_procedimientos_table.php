@@ -23,12 +23,18 @@ return new class extends Migration
             $table->foreignId('examen_id')
                 ->constrained('examenes')
                 ->onDelete('cascade');
-
             $table->foreignId('factura_id')
                 ->nullable()
                 ->constrained('facturas')
                 ->onDelete('cascade');
             $table->date('fecha');
+            $table->foreignId('sede_id')
+                ->constrained('sedes')
+                ->onDelete('cascade');
+            $table->foreignId('contacto_emergencia_id')
+                ->nullable()
+                ->constrained('contacto_emergencias')
+                ->onDelete('cascade');
             $table->string('estado')->default('pendiente'); // Estado del procedimiento
             $table->timestamps();
         });

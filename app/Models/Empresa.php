@@ -12,16 +12,25 @@ class Empresa extends Model
         'contacto_id',
     ];
 
-    public function contacto()
+    /**
+     * Relación con el modelo Contacto.
+     */
+    public function telefonos()
     {
-        return $this->belongsTo(Contacto::class);
+        return $this->morphMany(Telefono::class, 'telefonoable');
+    }
+    public function emails()
+    {
+        return $this->morphMany(CorreoElectronico::class, 'emailable');
+    }
+    public function direccion()
+    {
+        return $this->morphOne(Direccion::class, 'direccionable');
+    }
+    public function redesSociales()
+    {
+        return $this->morphMany(RedSocial::class, 'redable');
     }
 
-    public function scopeFilter($query, array $filters)
-    {
-        $query->when($filters['search'] ?? false, function ($query, $search) {
-            $query->where('razon_social', 'like', '%' . $search . '%')
-                ->orWhere('nit', 'like', '%' . $search . '%');
-        });
-    }
+
 }

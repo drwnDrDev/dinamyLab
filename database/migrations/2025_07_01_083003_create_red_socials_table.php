@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contactos', function (Blueprint $table) {
+        Schema::create('redes_sociales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('municipio_id')
-                ->constrained('municipios')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->string('telefono')->nullable();
-            $table->json('info_adicional')->nullable();
+            $table->string('nombre');
+            $table->string('url')->unique();
+            $table->string('perfil')->unique();
+            $table->morphs('redable'); // Polymorphic relation
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contactos');
+        Schema::dropIfExists('redes_sociales');
     }
 };

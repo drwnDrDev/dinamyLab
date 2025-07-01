@@ -23,10 +23,9 @@ class DatabaseSeeder extends Seeder
         ]);
         $prestador = User::factory()->create([
             'name' => 'Claudia Patricia Buitrago',
-            'email' => 'cbbuitrago69@yahoo.com',
-            'password' => Hash::make('Danielito2006'),
+            'email' => 'cpbuitrago69@yahoo.com',
+            'password' => Hash::make('DinamycodeDC'),
         ]);
-
          $coordinador = User::factory()->create([
             'name' => 'Juan Perez',
             'email' => 'coordinador@dinamycode.com',
@@ -63,7 +62,7 @@ class DatabaseSeeder extends Seeder
         $role->givePermissionTo(Permission::all());
 
         $role = Role::findByName('prestador');
-        $role->givePermissionTo(['ver_resultado', 'crear_persona', 'editar_persona', 'ver_persona', 'ver_orden', 'eliminar_persona']);
+        $role->givePermissionTo(['ver_resultado', 'crear_persona', 'editar_persona', 'ver_persona', 'ver_orden', 'eliminar_persona', 'ver_cuentas', 'crear_cuenta', 'editar_cuenta', 'ver_examen', 'crear_examen', 'editar_examen', 'ver_empresa','ver_facturas']);
 
         $role = Role::findByName('agente');
         $role->givePermissionTo(['ver_resultado', 'crear_persona', 'editar_persona', 'ver_persona', 'ver_orden']);

@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('empresa_impuesto', function (Blueprint $table) {
+        Schema::create('afiliaciones_salud', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('impuesto_id')->constrained('impuestos')->onDelete('cascade');
-            $table->boolean('activo')->default(true);
+            $table->foreignId('persona_id')
+                ->constrained('personas')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->string('eps');
+            $table->string('tipo_afiliacion'); // Ejemplo: EPS, Prepagada, etc.
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('empresa_impuesto');
+        Schema::dropIfExists('afiliaciones_salud');
     }
 };

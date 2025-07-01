@@ -7,18 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 class Convenio extends Model
 {
    protected $fillable = [
-    'razon_social',
-    'nit',
-    'contacto_id',
+        'razon_social',
+        'nit',
+        'contacto_id',
     ];
+    /**
+     * Relación con el modelo Contacto.
+     */
 
-    public function contacto()
-    {
-        return $this->belongsTo(Contacto::class);
+    public function telefonos(){
+        return $this->morphMany(Telefono::class, 'telefonoable');
     }
-    // Relación isomórfica para la columna 'pagador' en la tabla 'factura'
-    public function facturasComoPagador()
-    {
-        return $this->morphMany(Factura::class, 'pagador');
+    public function emails(){
+        return $this->morphMany(CorreoElectronico::class, 'emailable');
     }
+    public function direccion(){
+        return $this->morphOne(Direccion::class, 'direccionable');
+    }
+    public function redeSociales(){
+        return $this->morphMany(RedSocial::class, 'redable');
+    }
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class, 'convenio_id');
+    }
+
 }

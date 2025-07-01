@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('resoluciones', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo', 120)->unique();
             $table->string('prefijo', 10)->nullable();
             $table->string('res_facturacion')->nullable();
             $table->bigInteger('incio_facturacion')->nullable();
@@ -21,10 +20,7 @@ return new class extends Migration
             $table->date('fecha_inicio')->nullable();
             $table->date('fecha_fin')->nullable();
             $table->boolean('activa')->default(true);
-            $table->foreignId('empresa_id')
-                    ->constrained('empresas')
-                    ->cascadeOnDelete()
-                    ->cascadeOnUpdate();
+            $table->morphs('uso'); // This will create `uso_type` and `uso_id` columns for polymorphic relations
             $table->timestamps();
         });
     }

@@ -13,22 +13,28 @@ return new class extends Migration
     {
         Schema::create('facturas', function (Blueprint $table) {
             $table->id();
+            $table->string('tipo');
             $table->unsignedBigInteger('numero')->unique();
             $table->string('cufe', 64)->nullable();
-            $table->date('fecha_emision');
+            $table->timestamp('fecha_emision');
             $table->date('fecha_vencimiento')->nullable();
-            $table->morphs('pagador');
             $table->decimal('subtotal', 12, 2);
             $table->decimal('total_ajustes', 12, 2)->default(0);
-            $table->foreignId('paciente_id')
-                ->constrained('personas')
-                ->onDelete('cascade');
-            $table->foreignId('impuestos_id')->nullable()
-                ->constrained('impuestos')
+            $table->foreignId('sede_id')->nullable()
+                ->constrained('sedes')
                 ->nullOnDelete();
-            $table->foreignId('empresa_id')->nullable()
-                ->constrained('empresas')
+            $table->foreignId('convenio_id')->nullable()
+                ->constrained('convenios')
                 ->nullOnDelete();
+            $table->foreignId('empleado_id')->nullable()
+                ->constrained('empleados')
+                ->nullOnDelete();
+            $table->foreignId('resolucion_id')->nullable()
+                ->constrained('resoluciones')
+                ->nullOnDelete();
+            $table->string('qr')->nullable();
+            $table->string('estado')->default('PENDIENTE');
+            $table->string('tipo_pago')->default('CONTADO');
             $table->decimal('total', 12, 2);
             $table->string('observaciones')->nullable();
             $table->timestamps();

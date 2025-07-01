@@ -13,19 +13,45 @@ class Sede extends Model
      */
     protected $fillable = [
         'nombre',
-        'res_facturacion',
-        'incio_facturacion',
-        'fin_facturacion',
+        'codigo_prestador',
+        'logo',
         'empresa_id',
         'contacto_id'
     ];
+
     public function empresa()
     {
         return $this->belongsTo(Empresa::class);
     }
-    public function contacto()
+    public function empleados()
     {
-        return $this->belongsTo(Contacto::class);
+        return $this->hasMany(Empleado::class);
+    }
+    public function resoluciones()
+    {
+        return $this->morphMany(Resolucion::class, 'uso');
+    }
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class);
+    }
+    public function telefonos(){
+        return $this->morphMany(Telefono::class, 'telefonoable');
+    }
+    public function emails(){
+        return $this->morphMany(CorreoElectronico::class, 'emailable');
+    }
+    public function direccion(){
+        return $this->morphOne(Direccion::class, 'direccionable');
     }
 
+
+    protected static function booted()
+    {
+        static::deleting(function ($sede) {
+            if ($sede->contacto) {
+                $sede->contacto->delete();
+            }
+        });
+    }
 }

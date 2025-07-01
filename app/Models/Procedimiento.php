@@ -8,14 +8,16 @@ use Illuminate\Database\Eloquent\Casts\AsCollection;
 class Procedimiento extends Model
 {
 
+
     protected $fillable = [
         'orden_id',
-        'examen_id',
         'empleado_id',
-        'resultados',
-        'observacion',
+        'examen_id',
         'factura_id',
-        'fecha'
+        'fecha',
+        'sede_id',
+        'contacto_emergencia_id',
+        'estado'
     ];
 
 
@@ -35,9 +37,27 @@ class Procedimiento extends Model
     {
         return $this->belongsTo(Examen::class);
     }
+    public function sede()
+    {
+        return $this->belongsTo(Sede::class);
+    }
+    public function contactoEmergencia()
+    {
+        return $this->belongsTo(ContactoEmergencia::class);
+    }
 
     public function resultado(){
         return $this->hasMany(Resultado::class);
     }
+    public function factura()
+    {
+        return $this->belongsTo(Factura::class);
+    }
+    public function scopePendientes($query)
+    {
+        return $query->whereNull('resultados');
+    }
+
+
 
 }

@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('impuestos', function (Blueprint $table) {
+        Schema::create('direcciones', function (Blueprint $table) {
             $table->id();
-            $table->string('impuesto');
-            $table->string('descripcion')->nullable();
-            $table->string('codigo')->unique();
-            $table->decimal('tasa', 5, 2);
+            $table->string('direccion');
+            $table->morphs('direccionable'); // Polymorphic relation
+            $table->foreignId('municipio_id')
+                ->constrained('municipios')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('impuestos');
+        Schema::dropIfExists('direcciones');
     }
 };
