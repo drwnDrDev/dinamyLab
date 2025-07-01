@@ -35,8 +35,7 @@ class Contacto extends Model
         return $this->hasMany(InfoAdicional::class)
             ->when($tipo, function ($query) use ($tipo) {
                 $query->where('tipo', $tipo);
-            })
-            ->orderBy('created_at', 'desc');
+            })->orderBy('created_at', 'desc');
     }
 
 

@@ -17,9 +17,8 @@ return new class extends Migration
                 ->constrained('contactos')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->string('tipo')->nullable();
-            $table->string('valor')->nullable();
-            $table->string('liga')->nullable();
+            $table->string('eps')->nullable();
+            $table->string('pais')->nullable();            
             $table->string('descripcion')->nullable();
             $table->timestamps();
         });

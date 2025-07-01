@@ -164,6 +164,7 @@ class OrdenController extends Controller
 
     public function resultados(Orden $orden,Examen $examen)
     {
+      
         $orden->load(['paciente', 'acompaniante', 'examenes']);
         return view('procedimientos.resultados', compact('orden', 'examen'));
     }

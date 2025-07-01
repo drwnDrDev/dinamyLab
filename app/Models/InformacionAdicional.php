@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class InfoAdicional extends Model
+class InformacionAdicional extends Model
 {
     protected $fillable = [
         'contacto_id',
