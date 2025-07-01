@@ -6,11 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ValorReferencia extends Model
 {
-            // $table->foreignId('parametro_id')->constrained()->onDelete('cascade');
-            // $table->strig('demografia');
-            // $table->string('salida');
-            // $table->decimal('min', 10, 4)->nullable();
-            // $table->decimal('max', 10, 4)->nullable();
 
     protected $fillable = [
         'parametro_id',

@@ -13,21 +13,38 @@ class Sede extends Model
      */
     protected $fillable = [
         'nombre',
-        'res_facturacion',
-        'incio_facturacion',
-        'fin_facturacion',
+        'codigo_prestador',
+        'logo',
         'empresa_id',
         'contacto_id'
     ];
+
     public function empresa()
     {
         return $this->belongsTo(Empresa::class);
     }
-    public function contacto()
+    public function empleados()
     {
-        return $this->belongsTo(Contacto::class);
+        return $this->hasMany(Empleado::class);
     }
-    // App\Models\Sede.php
+    public function resoluciones()
+    {
+        return $this->morphMany(Resolucion::class, 'uso');
+    }
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class);
+    }
+    public function telefonos(){
+        return $this->morphMany(Telefono::class, 'telefonoable');
+    }
+    public function emails(){
+        return $this->morphMany(CorreoElectronico::class, 'emailable');
+    }
+    public function direcciones(){
+        return $this->morphMany(Direccion::class, 'direccionable');
+    }
+
 
     protected static function booted()
     {
@@ -35,18 +52,6 @@ class Sede extends Model
             if ($sede->contacto) {
                 $sede->contacto->delete();
             }
-        });
-    }
-    public function resoluciones()
-    {
-        return $this->morphMany(Resolucion::class, 'uso');
-    }
-
-    public function scopeFilter($query, array $filters)
-    {
-        $query->when($filters['search'] ?? false, function ($query, $search) {
-            $query->where('nombre', 'like', '%' . $search . '%')
-                ->orWhere('codigo_prestador', 'like', '%' . $search . '%');
         });
     }
 }

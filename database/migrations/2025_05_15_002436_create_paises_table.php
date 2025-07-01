@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('paises', function (Blueprint $table) {
-            $table->string('codigo_iso')->primary();
+            $table->string('codigo_iso',3)->primary();
             $table->string('nombre')->unique();
             $table->unsignedTinyInteger('nivel')->nullable();
         });

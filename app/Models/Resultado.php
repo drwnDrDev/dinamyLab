@@ -9,11 +9,10 @@ class Resultado extends Model
 {
 
     protected $fillable = [
-        'procedimiento_id',
-        'parametro_id',
-        'es_normal',
         'resultado',
-        'valor_referencia'
+        'posicion',
+        'parametro_id',
+        'procedimiento_id'
     ];
 
     public function parametro(){

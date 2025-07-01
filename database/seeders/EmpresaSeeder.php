@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Contacto;
+
+use App\Models\Direccion;
 use App\Models\Municipio;
 use App\Models\Pais;
 use App\Models\Persona;
-use App\Models\InformacionAdicional;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
 
 class EmpresaSeeder extends Seeder
@@ -17,16 +17,36 @@ class EmpresaSeeder extends Seeder
      */
     public function run(): void
     {
-        Contacto::create([
-        'municipio_id'=>11007,
-        'telefono'=>'NO REFIERE',
+
+    $persona = Persona::create([
+            'primer_nombre'=>'Claudia',
+            'segundo_nombre'=>'Patricia',
+            'primer_apellido'=>'Buitrago',
+            'segundo_apellido'=>'Hernandez',
+            'tipo_documento'=>'CC',
+            'numero_documento'=>'51934571',
+            'fecha_nacimiento'=>'1969-01-11',
+            'sexo'=>'F',
+            'nacional'=>true,
+        ]);
+    $extranjero = Persona::create([
+            'primer_nombre'=>'Ronald',
+            'primer_apellido'=>'McDonald',
+            'tipo_documento'=>'CC',
+            'numero_documento'=>'123456789',
+            'fecha_nacimiento'=>'1929-01-11',
+            'sexo'=>'M',
+            'nacional'=>false,
         ]);
 
-        $extranjero = Contacto::create([
-            'municipio_id'=>11007,
-            'telefono'=>'+1 800 123 4567',
+        $extranjero->di()->create([
+            'pais_codigo_iso'=>'USA',
 
-        ]);
+        ])
+
+
+
+
 
         $ingoE=[
         new InformacionAdicional(    [
@@ -42,7 +62,7 @@ class EmpresaSeeder extends Seeder
             'valor'=>'ronaldmcdonalds@dinamycode.com',
             'liga'=>'mailto:ronaldmcdonalds@dinamycode.com'
             ]),
- 
+
         ];
 
         $contacto = Contacto::create([
@@ -66,7 +86,7 @@ class EmpresaSeeder extends Seeder
                 'liga'=>'https://www.instagram.com/biotek_bosa/',
                 'descripcion'=>'Instagram profile of Biotek'
             ]),
-          new InformacionAdicional(    
+          new InformacionAdicional(
             [
                 'tipo'=>'Twitter',
                 'valor'=>'@biotek_bosa',
@@ -168,20 +188,6 @@ class EmpresaSeeder extends Seeder
                 'descripcion'=>'WhatsApp contact for Biotek'
             ]),
         ];
-    
-
-    $persona = Persona::create([
-            'primer_nombre'=>'Claudia',
-            'segundo_nombre'=>'Patricia',
-            'primer_apellido'=>'Buitrago',
-            'segundo_apellido'=>'Hernandez',
-            'tipo_documento'=>'CC',
-            'numero_documento'=>'51934571',
-            'fecha_nacimiento'=>'1969-01-11',
-            'sexo'=>'F',
-            'nacional'=>true,
-            'contacto_id'=>$contacto->id,
-        ]);
 
         $empresa = \App\Models\Empresa::create([
             'nit'=>'51934571-8',
@@ -190,10 +196,8 @@ class EmpresaSeeder extends Seeder
 
             'contacto_id'=>$contacto->id,
         ]);
-    $contacto->informacionAdicional()->saveMany($infoA1);
-    $contacto2->informacionAdicional()->saveMany($infoA2);
-    $extranjero->informacionAdicional()->saveMany($ingoE);
-   
+
+
     $contacto3->informacionAdicional()->create([
             'tipo'=>'email',
             'valor'=>'rlcirilo@gmail.com'
@@ -204,7 +208,7 @@ class EmpresaSeeder extends Seeder
             'codigo_prestador'=>'110010822701',
             'logo'=>'biotek_logo.png',
             'empresa_id'=>$empresa->id,
-            'contacto_id'=>$contacto->id,
+
         ]);
 
         $sede2 = \App\Models\Sede::create([
@@ -256,11 +260,10 @@ class EmpresaSeeder extends Seeder
             'sexo'=>'M',
             'nacional'=>false,
 
-            'contacto_id'=>$extranjero->id,
         ]);
 
         $empleado2 = \App\Models\Empleado::create([
-      
+
             'cargo'=>'contador',
             'tipo_documento'=>'CC',
             'numero_documento'=>'123456789',
@@ -271,7 +274,7 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $empleado3 = \App\Models\Empleado::create([
-        
+
             'cargo'=>'secretaria',
             'tipo_documento'=>'CC',
             'numero_documento'=>'123456',

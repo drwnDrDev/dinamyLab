@@ -6,17 +6,34 @@ use Illuminate\Database\Eloquent\Model;
 
 class Impuesto extends Model
 {
-        //    $table->string('nombre')->unique();
-        //     $table->string('descripcion')->nullable();
-        //     $table->string('codigo')->unique();
-        //     $table->decimal('tasa', 5, 2);
+
     protected $fillable = [
-        'nombre',
+        'impuesto',
+        'factura_id',
+        'sede_id',
         'descripcion',
         'codigo',
-        'tasa'
+        'tasa',
+        'base',
+        'monto'
     ];
-    protected $casts = [
-        'tasa' => 'decimal:2',
-    ];
+
+    public function factura()
+    {
+        return $this->belongsTo(Factura::class);
+    }
+
+    public function sede()
+    {
+        return $this->belongsTo(Sede::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'tasa' => 'decimal:2',
+            'base' => 'decimal:2',
+            'monto' => 'decimal:2',
+        ];
+    }
 }

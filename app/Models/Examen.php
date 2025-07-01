@@ -23,7 +23,11 @@ class Examen extends Model
             ->withPivot('cantidad')
             ->withTimestamps();
     }
-
+    
+    public function procedimiento()
+    {
+        return $this->belongsTo(Procedimiento::class);
+    }
 
     public function parametros()
     {

@@ -31,14 +31,31 @@ class Persona extends Model
     {
         return $this->hasMany(Orden::class, 'paciente_id');
     }
-    public function contacto()
+
+    public function afiliacionSalud()
     {
-        return $this->belongsTo(Contacto::class);
+        return $this->hasOne(AfiliacionSalud::class, 'persona_id');
     }
 
-    public function paciente()
+    public function direccion()
     {
-        return $this->belongsTo(Orden::class, 'paciente_id');
+        return $this->morphOne(Direccion::class, 'persona_id');
+    }
+    public function telefonos()
+    {
+        return $this->morphMany(Telefono::class, 'telefonoable');
+    }
+    public function emails()
+    {
+        return $this->morphMany(CorreoElectronico::class, 'emailable');
+    }
+    public function redesSociales()
+    {
+        return $this->morphMany(RedSocial::class, 'redable');
+    }
+    public function contactoEmergencia()
+    {
+        return $this->hasOne(ContactoEmergencia::class, 'paciente_id');
     }
 
 
@@ -83,7 +100,7 @@ class Persona extends Model
         ])['apellidos'];
     }
 
-    public function edad(date $fecha = null): ?string
+    public function edad($fecha): ?string
     {
         // Si no se proporciona una fecha, se usa la fecha actual
         $fecha = $fecha ?: now();
@@ -102,12 +119,8 @@ class Persona extends Model
         }
     }
 
-
-
-
-    // Relación isomórfica para la columna 'pagador' en la tabla 'factura'
-    public function facturasComoPagador()
+    public function scopeNacional($query)
     {
-        return $this->morphMany(Factura::class, 'pagador');
+        return $query->where('nacional', true);
     }
 }

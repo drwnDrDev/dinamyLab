@@ -31,8 +31,8 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->foreignId('resolucion_id')->nullable()
                 ->constrained('resoluciones')
-                ->nullOnDelete(); 
-            $table->table('qr')->nullable();
+                ->nullOnDelete();
+            $table->string('qr')->nullable();
             $table->string('estado')->default('PENDIENTE');
             $table->string('tipo_pago')->default('CONTADO');
             $table->decimal('total', 12, 2);

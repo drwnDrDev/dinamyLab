@@ -6,21 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Resolucion extends Model
 {
-            //     $table->string('codigo', 120)->unique();
-            // $table->string('prefijo', 10)->nullable();
-            // $table->string('res_facturacion')->nullable();
-            // $table->bigInteger('incio_facturacion')->nullable();
-            // $table->bigInteger('fin_facturacion')->nullable();
-            // $table->date('fecha_inicio')->nullable();
-            // $table->date('fecha_fin')->nullable();
-            // $table->boolean('activa')->default(true);
-            // $table->foreignId('empresa_id')
-            //         ->constrained('empresas')
-            //         ->cascadeOnDelete()
-            //         ->cascadeOnUpdate();
+
+        //     Schema::create('resoluciones', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('prefijo', 10)->nullable();
+        //     $table->string('res_facturacion')->nullable();
+        //     $table->bigInteger('incio_facturacion')->nullable();
+        //     $table->bigInteger('fin_facturacion')->nullable();
+        //     $table->date('fecha_inicio')->nullable();
+        //     $table->date('fecha_fin')->nullable();
+        //     $table->boolean('activa')->default(true);
+        //     $table->morphs('uso'); // This will create `uso_type` and `uso_id` columns for polymorphic relations
+        //     $table->timestamps();
+        // });
+
 
     protected $fillable = [
-        'codigo',
         'prefijo',
         'res_facturacion',
         'incio_facturacion',
@@ -28,28 +29,25 @@ class Resolucion extends Model
         'fecha_inicio',
         'fecha_fin',
         'activa',
-        'empresa_id'
+        'uso_type',
+        'uso_id'
     ];
-    protected $casts = [
-        'incio_facturacion' => 'integer',
-        'fin_facturacion' => 'integer',
-        'fecha_inicio' => 'date',
-        'fecha_fin' => 'date',
-        'activa' => 'boolean'
-    ];
-    public function empresa()
+    protected function uso()
     {
-        return $this->belongsTo(Empresa::class);
+        return $this->morphTo();
     }
-    public function getFullCodeAttribute()
+    
+
+    protected function cast()
     {
-        return $this->prefijo ? "{$this->prefijo}-{$this->codigo}" : $this->codigo;
+        return [
+            'incio_facturacion' => 'integer',
+            'fin_facturacion' => 'integer',
+            'fecha_inicio' => 'date',
+            'fecha_fin' => 'date',
+            'activa' => 'boolean',
+        ];
     }
-    public function getFullRangeAttribute()
-    {
-        return $this->incio_facturacion && $this->fin_facturacion
-            ? "{$this->incio_facturacion} - {$this->fin_facturacion}"
-            : null;
-    }
+
     protected $table = 'resoluciones';
 }

@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('impuestos', function (Blueprint $table) {
+        Schema::create('correos_electronicos', function (Blueprint $table) {
             $table->id();
-            $table->string('impuesto');
-            $table->string('descripcion')->nullable();
-            $table->string('codigo')->unique();
-            $table->decimal('tasa', 5, 2);
             $table->timestamps();
         });
     }
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('impuestos');
+        Schema::dropIfExists('correos_electronicos');
     }
 };

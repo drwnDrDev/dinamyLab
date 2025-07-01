@@ -21,8 +21,9 @@ return new class extends Migration
                 ->constrained('sedes')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-         
-            $table->boolean('activo')->default(1); 
+            
+
+            $table->boolean('activo')->default(1);
             $table->timestamps();
 
         });

@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('pais_procedencias', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pais_id')
-                ->constrained('paises')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-            $table->morphs('pais_procedenciaable'); // Polymorphic relation
+            $table->string('pais_codigo_iso'); // Columna para almacenar el código ISO del país
+            $table->foreign('pais_codigo_iso')
+                  ->references('codigo_iso')
+                  ->on('paises')
+                  ->onUpdate('cascade');
+            $table->morphs('procedencia'); // Polymorphic relation
             $table->timestamps();
         });
     }
