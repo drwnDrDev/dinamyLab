@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('convenios', function (Blueprint $table) {
             $table->id();
             $table->string('tipo_documento',2)->default(31);
+            $table->string('numero_documento')->unique();
             $table->string('razon_social'); 
+            $table->decimal('descuento', 4, 2)->default(0);
             $table->foreignId('contacto_id')
                 ->constrained('contactos')
                 ->onDelete('cascade');

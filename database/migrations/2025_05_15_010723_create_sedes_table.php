@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->foreignId('contacto_id')
                 ->constrained('contactos');
-
             $table->timestamps();
         });
     }

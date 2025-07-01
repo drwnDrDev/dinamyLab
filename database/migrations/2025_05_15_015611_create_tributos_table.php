@@ -13,20 +13,13 @@ return new class extends Migration
     {
         Schema::create('tributos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('impuesto_id')
-                ->constrained('impuestos')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+            $table->string('impuesto');
             $table->foreignId('factura_id')
                 ->constrained('facturas')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-
             $table->decimal('base', 12, 2);
             $table->decimal('porcentaje', 5, 2);
-            $table->decimal('exento', 10, 2)->nullable();
-            $table->decimal('retencion', 10, 2)->nullable();
-
             $table->decimal('valor', 10, 2);
             $table->timestamps();
         });
