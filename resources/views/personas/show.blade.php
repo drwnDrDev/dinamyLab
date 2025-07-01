@@ -41,17 +41,16 @@
                 <p class=" font-normal leading-normal">{{ $persona->contacto->telefono }}</p>
             </div>
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pl-2">
-                <p class="text-titles  font-normal leading-normal">Email</p>
-                <p class=" font-normal leading-normal">{{ $persona->contacto->infoAdicional('correo'); }}</p>
+                <p class="text-titles  font-normal leading-normal">Muncipio</p>
+                <p class=" font-normal leading-normal">{{ $persona->contacto->municipio->departamento }}-{{ $persona->contacto->municipio->municipio }}</p>
             </div>
+            @if ($persona->contacto->infoAdicional('email')->first())
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Dirección</p>
-                <p class=" font-normal leading-normal">{{ $persona->contacto->infoAdicional('direccion'); }}</p>
+                <p class=" font-normal leading-normal">{{ $persona->contacto->infoAdicional('email')->first()->valor}}</p>
             </div>
-            <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pl-2">
-                <p class="text-titles  font-normal leading-normal">EPS</p>
-                <p class=" font-normal leading-normal">{{ $persona->contacto->infoAdicional('eps'); }}</p>
-            </div>
+            @endif
+ 
         </div>
         <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] py-4">Historia Clínica</h2>
         <div class="py-4" id="historia">

@@ -7,16 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Orden extends Model
 {
 
-
+   // ...
     protected $fillable = [
+        'sede_id',
         'numero',
-        'paciente_id',
-        'acompaniante_id',
-        'descripcion',
+        'paciente_id', // Asegúrate de incluirlo aquí
+        'observaciones',
+        'terminada',
         'abono',
-        'estado',
         'total',
     ];
+
     protected $casts = [
         'numero' => 'integer',
         'abono' => 'decimal:2',
@@ -25,10 +26,7 @@ class Orden extends Model
     {
         return $this->belongsTo(Persona::class, 'paciente_id');
     }
-    public function acompaniante()
-    {
-        return $this->belongsTo(Persona::class, 'acompaniante_id');
-    }
+
     public function facturas()
     {
         return $this->hasMany(Factura::class);
@@ -41,7 +39,7 @@ class Orden extends Model
     {
         return $this->belongsToMany(Examen::class, 'orden_examen', 'orden_medica_id', 'examen_id')
             ->withPivot('cantidad');
-        
+
     }
 
     protected $table = 'ordenes_medicas';
