@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('resoluciones', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo', 120)->unique();
             $table->string('prefijo', 10)->nullable();
             $table->string('res_facturacion')->nullable();
             $table->bigInteger('incio_facturacion')->nullable();

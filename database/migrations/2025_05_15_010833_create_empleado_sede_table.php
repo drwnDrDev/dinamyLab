@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('empleado_sede_prestador', function (Blueprint $table) {
+        Schema::create('empleado_sede', function (Blueprint $table) {
             $table->id();
             $table->foreignId('empleado_id')
                 ->constrained('empleados')
@@ -21,8 +21,8 @@ return new class extends Migration
                 ->constrained('sedes')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('prestador');
-            $table->string('estado', 20)->default('activo'); // Estado del empleado
+         
+            $table->boolean('activo')->default(1); 
             $table->timestamps();
 
         });
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('empleado_sede_prestador');
+        Schema::dropIfExists('empleado_sede');
     }
 };

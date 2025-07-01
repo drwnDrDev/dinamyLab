@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('contactos', function (Blueprint $table) {
             $table->id();
             $table->string('telefono', 20)->nullable();
+            $table->string('email')->nullable();
+            $table->string('direccion')->nullable();
             $table->foreignId('municipio_id')
                 ->constrained('municipios')
                 ->cascadeOnDelete()
