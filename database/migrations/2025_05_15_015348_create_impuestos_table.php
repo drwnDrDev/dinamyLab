@@ -11,16 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tributos', function (Blueprint $table) {
+        Schema::create('impuestos', function (Blueprint $table) {
             $table->id();
             $table->string('impuesto');
             $table->foreignId('factura_id')
                 ->constrained('facturas')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-            $table->decimal('base', 12, 2);
-            $table->decimal('porcentaje', 5, 2);
-            $table->decimal('valor', 10, 2);
+                ->onDelete('cascade');
+            $table->foreignId('sede_id')
+                ->constrained('sedes')
+                ->onDelete('cascade');
+            $table->string('descripcion')->nullable();
+            $table->string('codigo')->unique();
+            $table->decimal('tasa', 5, 2);
+            $table->decimal('base', 15, 2);
+            $table->decimal('monto', 15, 2);
             $table->timestamps();
         });
     }
@@ -30,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tributos');
+        Schema::dropIfExists('impuestos');
     }
 };

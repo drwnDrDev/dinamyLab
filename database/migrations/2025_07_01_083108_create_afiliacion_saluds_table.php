@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('afiliacion_saluds', function (Blueprint $table) {
+        Schema::create('afiliaciones_salud', function (Blueprint $table) {
             $table->id();
             $table->foreignId('persona_id')
                 ->constrained('personas')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->sstring('eps');
+            $table->string('eps');
             $table->string('tipo_afiliacion'); // Ejemplo: EPS, Prepagada, etc.
             $table->timestamps();
         });
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('afiliacion_saluds');
+        Schema::dropIfExists('afiliaciones_salud');
     }
 };

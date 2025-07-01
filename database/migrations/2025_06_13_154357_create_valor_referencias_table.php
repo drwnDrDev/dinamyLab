@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('salida');
             $table->decimal('min', 10, 4)->nullable();
             $table->decimal('max', 10, 4)->nullable();
+            $table->string('optimo')->nullable();
             $table->timestamps();
         });
     }

@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Municipio extends Model
 {
-    //
+
+
     protected $fillable = [
-        'nombre',
-        'codigo',
-        'departamento_id',
+        'departamento',
+        'codigo_departamento',
+        'municipio',
+        'codigo_municipio',
+        'nivel'
     ];
-    public function pacientes()
-    {
-        return $this->hasMany(Persona::class);
-    }
+
 }

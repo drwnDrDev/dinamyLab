@@ -28,6 +28,13 @@ return new class extends Migration
                 ->constrained('facturas')
                 ->onDelete('cascade');
             $table->date('fecha');
+            $table->foreignId('sede_id')
+                ->constrained('sedes')
+                ->onDelete('cascade');
+            $table->foreignId('contacto_emergencia_id')
+                ->nullable()
+                ->constrained('contacto_emergencias')
+                ->onDelete('cascade');
             $table->string('estado')->default('pendiente'); // Estado del procedimiento
             $table->timestamps();
         });

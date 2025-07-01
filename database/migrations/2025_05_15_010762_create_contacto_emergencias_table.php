@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('direcciones', function (Blueprint $table) {
+        Schema::create('contacto_emergencias', function (Blueprint $table) {
             $table->id();
-            $table->string('direccion');
-            $table->morphs('direccionable'); // Polymorphic relation
-            $table->foreignId('municipio_id')
-                ->constrained('municipios')
+            $table->foreignId('paciente_id')
+                ->constrained('personas')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->foreignId('acompanante_id')
+                ->constrained('personas')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->string('parentesco'); // Ejemplo: Madre, Padre, Hermano, etc.
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('direcciones');
+        Schema::dropIfExists('contacto_emergencias');
     }
 };
