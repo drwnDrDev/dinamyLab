@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('convenios', function (Blueprint $table) {
+        Schema::create('pais_procedencias', function (Blueprint $table) {
             $table->id();
-            $table->string('tipo_documento',2)->default(31);
-            $table->string('numero_documento')->unique();
-            $table->string('razon_social'); 
-            $table->decimal('descuento', 4, 2)->default(0);
+            $table->foreignId('pais_id')
+                ->constrained('paises')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->morphs('pais_procedenciaable'); // Polymorphic relation
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('convenios');
+        Schema::dropIfExists('pais_procedencias');
     }
 };

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('convenios', function (Blueprint $table) {
+        Schema::create('red_socials', function (Blueprint $table) {
             $table->id();
-            $table->string('tipo_documento',2)->default(31);
-            $table->string('numero_documento')->unique();
-            $table->string('razon_social'); 
-            $table->decimal('descuento', 4, 2)->default(0);
+            $table->string('nombre');
+            $table->string('url')->unique();
+            $table->string('perfil')->unique();
+            $table->morphs('red_socialable'); // Polymorphic relation
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('convenios');
+        Schema::dropIfExists('red_socials');
     }
 };

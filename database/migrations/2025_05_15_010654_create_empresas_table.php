@@ -16,10 +16,6 @@ return new class extends Migration
             $table->string('razon_social')->unique();
             $table->string('nombre_comercial')->nullable();
             $table->string('nit')->unique();
-            $table->foreignId('contacto_id')
-                ->nullable()
-                ->constrained('contactos')
-                ->nullOnDelete();
             $table->timestamps();
         });
     }

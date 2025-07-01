@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('convenios', function (Blueprint $table) {
+        Schema::create('telefonos', function (Blueprint $table) {
             $table->id();
-            $table->string('tipo_documento',2)->default(31);
-            $table->string('numero_documento')->unique();
-            $table->string('razon_social'); 
-            $table->decimal('descuento', 4, 2)->default(0);
+            $table->string('numero', 20);        
+            $table->morphs('telefonoable'); // Polymorphic relation
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('convenios');
+        Schema::dropIfExists('telefonos');
     }
 };
