@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('empleado_sede', function (Blueprint $table) {
-            $table->id();
+       
             $table->foreignId('empleado_id')
                 ->constrained('empleados')
                 ->cascadeOnDelete()
@@ -21,8 +21,7 @@ return new class extends Migration
                 ->constrained('sedes')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            
-
+            $table->primary(['empleado_id', 'sede_id']);   
             $table->boolean('activo')->default(1);
             $table->timestamps();
 

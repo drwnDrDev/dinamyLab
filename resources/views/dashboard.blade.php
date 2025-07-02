@@ -1,9 +1,28 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+
+    <section>
+
+        <div class="bg-white shadow-sm sm:rounded-lg">
+            <div class="p-6 text-gray-900">
+                <p class="p-2 bg-slate-300">{{$empleado->empresa->nombre_comercial}}</p>
+                {{$empleado->cargo}}
+            </div>
+            <div>
+            <p class="p-2 bg-slate-300">Bienvenido {{$empleado->user->name}} </p>
+              <form action="{{route('elegir.sede')}}" method="POST" class="p-2">
+                @csrf  
+                <label for="eleccionarsede">Seleccionar Sede</label>
+       
+                <select name="sede" id="eleccionarsede">
+                         @foreach ($empleado->sedes as $sede)   
+                         <option value="{{$sede->id}}">{{$sede->nombre}}</option>
+                         @endforeach
+                </select>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Elegir Sede</button>
+            </form> 
+        </div>
+    </section>
+
 
     <section class="canva mx-auto sm:p-2 md:p-4 lg:p-8">
         <p>Hola! </p>
@@ -66,15 +85,6 @@
                     </div>
                 </div>
             </div>
-
-            <x-modal name="car">
-                <h1>Modal</h1>
-                <p>
-                    Cual es esta ruta?
-
-                </p>
-            </x-modal>
-
 
     </section>
 

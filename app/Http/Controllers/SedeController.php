@@ -56,6 +56,24 @@ class SedeController extends Controller
     }
 
     /**
+     * Choose a Sede for the user.
+     */
+    public function elgirSede(Request $request)
+    {
+        $sedeId = $request->input('sede');
+        if ($sedeId) {
+            $sede = Sede::find($sedeId);
+            if (!$sede) {
+                return redirect()->back()->with('error', 'Sede no encontrada.');
+            }
+
+            session(['sede' => $sede]);
+            return redirect()->back()->with('success', 'Sede seleccionada correctamente.');
+        }
+        return redirect()->back()->with('error', 'Debe seleccionar una sede.');
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Sede $sede)
