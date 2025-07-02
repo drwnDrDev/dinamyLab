@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePersonaRequest;
 use Illuminate\Http\Request;
 use App\Models\Persona;
+use App\Services\GuardarPersona;
 use App\Services\NombreParser;
 
 class PersonaController extends Controller
@@ -48,35 +49,8 @@ class PersonaController extends Controller
     public function store(StorePersonaRequest $request)
     {
 
-        $request->validated();
-        $contactoDatos = $request->only('telefono', 'municipio', 'eps', 'direccion', 'pais', 'correo');
-  
-        $contacto = \App\Services\GuardarContacto::guardar($contactoDatos);
-        if (!$contacto) {
-            Log::warning('contacto sin datos', ['user' => Auth::id()]);
-            $contacto = Contactato::find(1);
-        }
 
-        // Dividir nombres y apellidos en primer y segundo nombre
-        $parsed = NombreParser::parsearPersona(
-            $request->input('nombres'),
-            $request->input('apellidos')
-        );
-        // Crear la persona
-        $persona = Persona::create( [
-            'primer_nombre' => $parsed['primer_nombre'],
-            'segundo_nombre'=> $parsed['segundo_nombre'],
-            'primer_apellido' => $parsed['primer_apellido'],
-            'segundo_apellido' => $parsed['segundo_apellido'],
-            'numero_documento' => $request->input('numero_documento'),
-            'tipo_documento' => $request->input('tipo_documento', 'CC'),
-            'fecha_nacimiento' => $request->input('fecha_nacimiento'),
-            'sexo' => $request->input('sexo'),
-            'nacional' => $request->input('nacional', true),
-            'contacto_id' => $contacto->id,
-        ]);
-
-
+        $persona = GuardarPersona::guardar($request);
         return response()->json([
             'message' => 'Persona creada con éxito',
             'data' => $persona
