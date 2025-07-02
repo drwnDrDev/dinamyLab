@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contacto;
+
 use App\Models\Persona;
 use App\Models\Pais;
 use App\Models\Municipio;
@@ -44,11 +44,7 @@ class PersonaController extends Controller
         $telefono = $request->input('telefono', null);
         $municipio_id = $request->input('municipio_id', 155);
         $info_adicional =$request->datos_adicionales;
-        $contacto = Contacto::create([
-            'municipio_id' => $municipio_id,
-            'telefono' => $telefono,
-            'info_adicional' => json_encode($info_adicional),
-        ]);
+
         // Dividir nombres y apellidos en primer y segundo nombre
         $nombres = explode(' ', trim($request->input('nombres')), 2);
         $apellidos = explode(' ', trim($request->input('apellidos')), 2);
@@ -67,7 +63,7 @@ class PersonaController extends Controller
             'fecha_nacimiento' => $request->input('fecha_nacimiento'),
             'sexo' => $request->input('sexo'),
             'nacional' => $nacional,
-            'contacto_id' => $contacto->id,
+
         ]);
 
         return redirect()->route('personas.show', $persona)->with('success', 'Persona creada correctamente');
@@ -81,7 +77,7 @@ class PersonaController extends Controller
     public function show(Persona $persona)
     {
 
-       
+
         return view('personas.show',compact('persona'));
     }
 
