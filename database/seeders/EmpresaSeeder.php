@@ -193,11 +193,10 @@ class EmpresaSeeder extends Seeder
         ]);
 
         // Relacionar empleados y sedes por tabla intermedia (muchos a muchos)
-        $empleado2->sedes()->attach($sede->id);
-        $empleado->sedes()->attach($sede->id);
+        $empleado2->sedes()->attach([$sede->id, $sede2->id]);
+        $empleado->sedes()->attach([$sede->id, $sede2->id]);
         $empleado3->sedes()->attach($sede2->id);
-        $admon->sedes()->attach($sede2->id);
-        $admon->sedes()->attach($sede->id);
+        $admon->sedes()->attach([$sede2->id, $sede->id]);
 
 
     }

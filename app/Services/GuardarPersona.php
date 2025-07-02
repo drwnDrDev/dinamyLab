@@ -26,7 +26,8 @@ class GuardarPersona
         ]);
         if ($datos->has('eps')) {
             $persona->afiliacionSalud()->create([
-                'eps_id' => $datos->input('eps'),
+                'eps' => $datos->input('eps'),
+                'tipo_afiliacion' => $datos->input('tipo_afiliacion','Subsidiado'),
             ]);
         }
         if ($datos->has('pais')) {
