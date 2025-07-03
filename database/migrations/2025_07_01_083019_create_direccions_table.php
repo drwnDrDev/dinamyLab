@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('direcciones', function (Blueprint $table) {
             $table->id();
-            $table->string('direccion');
+            $table->string('direccion')->nullable();
             $table->morphs('direccionable'); // Polymorphic relation
             $table->foreignId('municipio_id')
                 ->constrained('municipios')

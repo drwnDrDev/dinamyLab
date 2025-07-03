@@ -19,18 +19,20 @@ class OrdenController extends Controller
      */
     public function index()
     {
-        \App\Jobs\RevertirEstadoProcedimientos::dispatch();
-        $ordenes = Orden::orderBy('created_at', 'desc')->get();
-        $ordenes->load(['paciente','examenes']);
-        $ordenes->each(function ($orden) {
-            $orden->procedimientos_count = $orden->procedimientos()->count();
-            $orden->pendiente = ($orden->procedimientos()->where('estado', Estado::PENDIENTE)->count())*100/$orden->procedimientos_count;
-            $orden->proceso = ($orden->procedimientos()->where('estado', Estado::PROCESO)->count()) * 100 / $orden->procedimientos_count;
-            $orden->finalizado = ($orden->procedimientos()->where('estado', Estado::TERMINADO)->count()) * 100 / $orden->procedimientos_count;
-            $orden->entregado = ($orden->procedimientos()->where('estado', Estado::ENTREGADO)->count()) * 100 / $orden->procedimientos_count;
-            $orden->cancelado = ($orden->procedimientos()->where('estado', Estado::ANULADO)->count()) * 100 / $orden->procedimientos_count;
-            $orden->total_examenes = $orden->examenes()->sum('valor');
-        });
+        $sede = session('sede');
+        if (!$sede) {
+            return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
+        }
+        $ordenes = Orden::with(['paciente'])
+            ->where('sede_id', $sede->id)
+            ->where('terminada', null) // Solo mostrar órdenes que no están terminadas
+            ->where('created_at', '>=', now()->subDays(3)) // los ultimos 3 dias
+            ->orderBy('created_at', 'desc')
+            ->get();
+        if ($ordenes->isEmpty()) {
+            return redirect()->back()->withErrors(['ordenes' => 'No hay órdenes médicas registradas.'])->withInput();
+        }
+
         return view('ordenes.index', compact('ordenes'));
     }
 
@@ -59,6 +61,11 @@ class OrdenController extends Controller
             'numero_orden' => 'required|string|max:20|unique:ordenes_medicas,numero',
             'examenes' => 'array', // Asegura que 'examenes' es un array
         ]);
+
+        $sede = session('sede');
+        if (!$sede) {
+            return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
+        }
 
         $paciente = Persona::findOrFail($request->input('paciente_id'));
 
@@ -95,7 +102,7 @@ class OrdenController extends Controller
 
         }
 
-        DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData,$orden_examen) {
+        DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData,$orden_examen, $sede) {
 
             $total = $examenesData->sum(function ($examen) use ($examenesSolicitados) {
                 return $examen->valor * $examenesSolicitados[$examen->id];
@@ -104,6 +111,7 @@ class OrdenController extends Controller
             $abono = $request->input('pago') === "on" ? $total : $request->input('abono', 0);
 
             $orden = Orden::create([
+                'sede_id' => $sede->id, // Asumiendo que el usuario autenticado tiene una sede asociada
                 'numero' => $request->input('numero_orden'),
                 'paciente_id' => $paciente->id, // Usar el ID del paciente cargado
                 'acompaniante_id' => $request->input('acompaniante_id'),
@@ -120,6 +128,7 @@ class OrdenController extends Controller
                         'empleado_id' => Auth::user()->id, // ID del empleado/doctor autenticado
                         'examen_id' => $examenId,
                         'fecha' => now(),
+                        'sede_id' => $sede->id, // Asumiendo que el usuario autenticado tiene una sede asociada
                         'estado' => Estado::PROCESO, // Asumo que Estado::PROCESO es una constante o Enum
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -138,11 +147,10 @@ class OrdenController extends Controller
      */
     public function show(Orden $orden)
     {
-        $orden->load(['paciente', 'acompaniante','examenes']);
-        $examenes =Examen::all();
+        $orden->load(['paciente','examenes','procedimientos']);
 
-        $procedimientos = $orden->procedimientos;
-        return view('ordenes.show', compact('orden', 'procedimientos', 'examenes'));
+
+        return view('ordenes.show', compact('orden'));
     }
 
     /**
@@ -164,7 +172,7 @@ class OrdenController extends Controller
 
     public function resultados(Orden $orden,Examen $examen)
     {
-      
+
         $orden->load(['paciente', 'acompaniante', 'examenes']);
         return view('procedimientos.resultados', compact('orden', 'examen'));
     }

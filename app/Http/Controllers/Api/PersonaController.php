@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePersonaRequest;
 use Illuminate\Http\Request;
 use App\Models\Persona;
+use App\Services\GuardarPersona;
 use App\Services\NombreParser;
 
 class PersonaController extends Controller
@@ -48,35 +49,8 @@ class PersonaController extends Controller
     public function store(StorePersonaRequest $request)
     {
 
-        $request->validated();
-        $contactoDatos = $request->only('telefono', 'municipio', 'eps', 'direccion', 'pais', 'correo');
-  
-        $contacto = \App\Services\GuardarContacto::guardar($contactoDatos);
-        if (!$contacto) {
-            Log::warning('contacto sin datos', ['user' => Auth::id()]);
-            $contacto = Contactato::find(1);
-        }
 
-        // Dividir nombres y apellidos en primer y segundo nombre
-        $parsed = NombreParser::parsearPersona(
-            $request->input('nombres'),
-            $request->input('apellidos')
-        );
-        // Crear la persona
-        $persona = Persona::create( [
-            'primer_nombre' => $parsed['primer_nombre'],
-            'segundo_nombre'=> $parsed['segundo_nombre'],
-            'primer_apellido' => $parsed['primer_apellido'],
-            'segundo_apellido' => $parsed['segundo_apellido'],
-            'numero_documento' => $request->input('numero_documento'),
-            'tipo_documento' => $request->input('tipo_documento', 'CC'),
-            'fecha_nacimiento' => $request->input('fecha_nacimiento'),
-            'sexo' => $request->input('sexo'),
-            'nacional' => $request->input('nacional', true),
-            'contacto_id' => $contacto->id,
-        ]);
-
-
+        $persona = GuardarPersona::guardar($request);
         return response()->json([
             'message' => 'Persona creada con éxito',
             'data' => $persona
@@ -136,34 +110,69 @@ class PersonaController extends Controller
         if($request->has('pais')){
             if($request->input('pais')!=='COL'&& $request->input('pais')!=='' && $persona->nacional){
                 $persona->nacional = false;
-                $persona->contacto->info_adicional = json_encode(
-                    array_merge(
-                        json_decode($persona->contacto->info_adicional, true),
-                        ['pais' => $request->input('pais')]
-                    )
+                $persona->procedencia()->updateOrCreate(
+                    ['procedencia_id' => $persona->id, 'procedencia_type' => Persona::class],
+                    ['pais_codigo_iso' => $request->input('pais')]
                 );
             } elseif ($request->input('pais')==='COL' && !$persona->nacional) {
                 $persona->nacional = true;
-                $info_adicional = json_decode($persona->contacto->info_adicional, true);
-                unset($info_adicional['pais']);
-                $persona->contacto->info_adicional = json_encode($info_adicional);
+                $persona->procedencia()->delete(); // Eliminar la procedencia si es nacional
 
             }
 
         }
 
-
-            $persona->contacto->telefono = $request->input('telefono', null);
-            $persona->contacto->municipio_id = $request->input('municipio', 11007); // Valor por defecto para Bogotá
-
-            $info_adicional = array_filter(
-                $request->only('eps','direccion','pais','correo') ?? [],
-                function ($value) {
-                    return !is_null($value);
-                }
+        // Actualizar los datos de contacto
+        if ($request->has('telefono') && $request->input('telefono') !== $persona->telefonos->first()?->numero ) {
+            $persona->telefonos()->create([
+                'numero' => $request->input('telefono'),
+            ]);
+        } elseif ($request->has('telefono') && $request->input('telefono') === '') {
+            $persona->telefonos()->delete(); // Eliminar el teléfono si se envía vacío
+        }
+        // Actualizar la dirección
+            $persona->direccion()->updateOrCreate(
+                ['direccionable_id' => $persona->id, 'direccionable_type' => Persona::class],
+                [
+                    'direccion' => $request->input('direccion', ''),
+                    'municipio_id' => $request->input('municipio', 11007) // Valor por defecto para Bogotá
+                ]
             );
-            $persona->contacto->info_adicional = json_encode($info_adicional);
-            $persona->contacto->save();
+        // Actualizar el correo electrónico
+            // Verificar si el correo electrónico ya existe
+            if ($request->has('correo') && $request->input('correo') === '') {
+                // Si el correo está vacío, eliminar el correo existente
+                $persona->email()->delete();
+            } elseif ($request->has('correo') && $request->input('correo')) {
+                // Si el correo es diferente, actualizar o crear el correo
+                $persona->email()->updateOrCreate(
+                    ['emailable_id' => $persona->id, 'emailable_type' => Persona::class],
+                    ['email' => $request->input('correo')]
+                );
+            }
+        // Actualizar la afiliación a salud
+        if ($request->has('eps')) {
+            $persona->afiliacionSalud()->updateOrCreate(
+                ['persona_id' => $persona->id],
+                [
+                    'eps' => $request->input('eps','Sin EPS'),
+                    'tipo_afiliacion' => $request->input('tipo_afiliacion', 'subsidiado')
+                ]
+            );
+        }
+        // Actualizar el contacto de emergencia
+        if ($request->has('contacto_emergencia')) {
+            $contactoData = $request->input('contacto_emergencia');
+            $contacto = $persona->contactoEmergencia()->updateOrCreate(
+                ['paciente_id' => $persona->id],
+                [
+                    'nombre' => $contactoData['nombre'] ?? '',
+                    'telefono' => $contactoData['telefono'] ?? '',
+                    'parentesco' => $contactoData['parentesco'] ?? '',
+                ]
+            );
+        }
+
 
 
         // Guardar los cambios en la persona
@@ -199,13 +208,13 @@ class PersonaController extends Controller
                 "fecha_nacimiento" => $persona->fecha_nacimiento? $persona->fecha_nacimiento->format('Y-m-d') : null,
                 "sexo" => $persona->sexo,
                 "nacional" => $persona->nacional,
-                "telefono" => $persona->contacto->telefono,
-                "direccion" => $persona->contacto->infoAdicional('direccion'),
-                "correo" => $persona->contacto->infoAdicional('correo'),
-                "pais" => $persona->contacto->infoAdicional('pais'),
-                "municipio" => $persona->contacto->municipio->id,
-                "ciudad" => $persona->contacto->municipio->municipio,
-                'eps' => $persona->contacto->infoAdicional('eps'),
+                "telefono" => $persona->telefonos?->first()->numero ?? null,
+                "direccion" => $persona->direccion?->direccion ?? null,
+                "correo" => $persona->email?->email ?? null,
+                "pais" => $persona->procedencia?->pais_codigo_iso ?? 'COL',
+                "municipio" => $persona->direccion?->municipio_id ?? 11007,
+
+                'eps' => $persona->afiliacionSalud?->eps ?? null,
 
             ]
         ]);

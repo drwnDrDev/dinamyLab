@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('correos_electronicos', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->unique();
+            $table->string('email');
             $table->morphs('emailable'); // Polymorphic relation
             $table->timestamps();
         });
