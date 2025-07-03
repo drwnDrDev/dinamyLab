@@ -34,7 +34,7 @@ class Persona extends Model
 
     public function afiliacionSalud()
     {
-        return $this->hasOne(AfiliacionSalud::class, 'persona_id');
+        return $this->hasOne(AfiliacionSalud::class);
     }
 
     public function direccion()
@@ -45,9 +45,9 @@ class Persona extends Model
     {
         return $this->morphMany(Telefono::class, 'telefonoable');
     }
-    public function emails()
+    public function email()
     {
-        return $this->morphMany(CorreoElectronico::class, 'emailable');
+        return $this->morphOne(CorreoElectronico::class, 'emailable');
     }
     public function redesSociales()
     {
@@ -59,7 +59,7 @@ class Persona extends Model
     }
     public function procedencia()
     {
-         return $this->morphMany(PaisProcedencia::class, 'procedencia');
+         return $this->morphOne(PaisProcedencia::class, 'procedencia');
     }
 
 

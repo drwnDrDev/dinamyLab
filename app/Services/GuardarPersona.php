@@ -32,7 +32,7 @@ class GuardarPersona
         }
         if ($datos->has('pais')) {
             $persona->procedencia()->create([
-                'pais' => $datos->input('pais'),
+                'pais_codigo_iso' => $datos->input('pais'),
             ]);
         }
         if ($datos->has('telefono')) {
@@ -41,7 +41,7 @@ class GuardarPersona
             ]);
         }
         if($datos->input('correo')){
-        $persona->emails()->create([
+        $persona->email()->create([
             'email' => $datos->input('correo'),
         ]);
         }
