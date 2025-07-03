@@ -4,7 +4,7 @@
     </x-slot>
 <x-slot name="header">
 
-    @dump(session('sede')->nombre)
+ 
 
 
 
