@@ -50,7 +50,7 @@ class EmpresaSeeder extends Seeder
         $persona->telefonos()->create([
             'numero'=>'3207001403',
         ]);
-        $persona->emails()->create([
+        $persona->email()->create([
             'email'=>'ronaldmcdonalds@dinamycode.com'
         ]);
         $persona->redesSociales()->create([

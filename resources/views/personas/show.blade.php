@@ -44,12 +44,15 @@
                     No tiene telefonos registrados
                   @else
                     @foreach($persona->telefonos as $telefono)
-                     <span>{{ $telefono->numero}} </span> 
+                     <span>{{ $telefono->numero}} </span>
                     @endforeach
-                  @endif  
-              
+                  @endif
+
                 </p>
             </div>
+            @if ( $persona->direccion)
+
+
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Muncipio</p>
                 <p class=" font-normal leading-normal">{{ $persona->direccion->municipio->departamento }}-{{ $persona->direccion->municipio->municipio }}</p>
@@ -59,13 +62,15 @@
                 <p class="text-titles  font-normal leading-normal">Dirección</p>
                 <p class=" font-normal leading-normal">{{ $persona->direccion->direccion}}</p>
             </div>
+              @endif
+            @if($persona->afiliacionSalud)
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Eps</p>
-                <p class=" font-normal leading-normal">{{ $persona->afiliacionSalud}}</p>
+                <p class=" font-normal leading-normal">{{ $persona->afiliacionSalud->eps}}</p>
             </div>
-      
-      
- 
+            @endif
+
+
         </div>
         <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] py-4">Historia Clínica</h2>
         <div class="py-4" id="historia">
@@ -73,19 +78,23 @@
                 <table class="flex-1">
                     <thead>
                         <tr class="">
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Date</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Test</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Status</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Result</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Test')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Result')}}</th>
                         </tr>
                     </thead>
                     <tbody>
+
+                    @foreach ($procedimientos['terminado'] as $procedimiento)
+
+
                         <tr class="border-t border-t-borders">
                             <td class="px-4 py-2 w-40 text-titles text-sm">
-                                2023-07-20
+                                {{$procedimiento->fecha}}
                             </td>
                             <td class="px-4 py-2 w-40 text-titles text-sm">
-                                Cuadro Hematológico
+                               {{$procedimiento->examen->nombre}}
                             </td>
                             <td class="px-4 py-2 w-40 text-titles text-sm">
                                 <button
@@ -95,99 +104,58 @@
                             </td>
                             <td class="px-4 py-2 w-40 text-titles text-sm">Normal</td>
                         </tr>
-                        <tr class="border-t border-t-borders">
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                2023-07-20
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                Cuadro Hematológico
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                <button
-                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">Entregado</span>
-                                </button>
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">Normal</td>
-                        </tr>
-                        <tr class="border-t border-t-borders">
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                2023-07-20
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                Cuadro Hematológico
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                <button
-                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">Entregado</span>
-                                </button>
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">Normal</td>
-                        </tr>
-                        <tr class="border-t border-t-borders">
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                2023-07-20
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                Cuadro Hematológico
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                <button
-                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">Entregado</span>
-                                </button>
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">Normal</td>
-                        </tr>
+
+                    @endforeach
 
                     </tbody>
                 </table>
             </div>
         </div>
-        <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] py-4">Examenes</h2>
-        <div class="py-4" id="examenes">
+
+
+
+    <section class="otra_info  mt-6">
+        <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] py-4">Examenes pendientes por resiltado</h2>
+        <div class="py-4" id="historia">
             <div class="flex overflow-hidden rounded-xl border border-borders">
-                @if($persona->historialClinico)
-                <!-- aqui iria una tabla como la de arriba -->
-                <ul class="list-disc pl-5">
-                    @foreach($persona->historialClinico as $historia)
-                    <li>{{ $historia->descripcion }} - {{ $historia->fecha->format('d/m/Y') }}</li>
+                <table class="flex-1">
+                    <thead>
+                        <tr class="">
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Test')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Result')}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    @foreach ($procedimientos['en proceso'] as $procedimiento)
+
+
+                        <tr class="border-t border-t-borders">
+                            <td class="px-4 py-2 w-40 text-titles text-sm">
+                                {{$procedimiento->fecha}}
+                            </td>
+                            <td class="px-4 py-2 w-40 text-titles text-sm">
+                               {{$procedimiento->examen->nombre}}
+                            </td>
+                            <td class="px-4 py-2 w-40 text-titles text-sm">
+                                <button
+                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
+                                    <span class="truncate">Entregado</span>
+                                </button>
+                            </td>
+                            <td class="px-4 py-2 w-40 text-titles text-sm">Normal</td>
+                        </tr>
+
                     @endforeach
-                </ul>
-                @else
-                <p class="py-6 px-12 m-auto my-4 text-center bg-secondary rounded-xl">No hay historial clínico disponible.</p>
-                @endif
+
+                    </tbody>
+                </table>
             </div>
         </div>
 
 
-
-        <section class="otra_info hidden mt-6">
-            <div class="bg-white shadow-md rounded-lg p- ">
-                <h3 class="text-lg font-semibold mb-4">Resultados de Exámenes</h3>
-                @if($persona->resultadosExamenes)
-                <ul class="list-disc pl-5">
-                    @foreach($persona->resultadosExamenes as $resultado)
-                    <li>{{ $resultado->examen->nombre }} - Resultado: {{ $resultado->resultado }} - Fecha: {{ $resultado->fecha->format('d/m/Y') }}</li>
-                    @endforeach
-                </ul>
-                @else
-                <p>No hay resultados de exámenes disponibles.</p>
-                @endif
-            </div>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <h3 class="text-lg font-semibold mb-4">Procedimientos Pendientes</h3>
-                @if($persona->procedimientosPendientes)
-                <ul class="list-disc pl-5">
-                    @foreach($persona->procedimientosPendientes as $procedimiento)
-                    <li>{{ $procedimiento->examen->nombre }} - Fecha: {{ $procedimiento->fecha->format('d/m/Y') }}</li>
-                    @endforeach
-                </ul>
-                @else
-                <p>No hay procedimientos pendientes.</p>
-                @endif
-            </div>
         </section>
     </x-canva>
 

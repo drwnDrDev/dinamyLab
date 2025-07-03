@@ -104,7 +104,7 @@ class Persona extends Model
         ])['apellidos'];
     }
 
-    public function edad($fecha): ?string
+    public function edad($fecha=null): ?string
     {
         // Si no se proporciona una fecha, se usa la fecha actual
         $fecha = $fecha ?: now();
