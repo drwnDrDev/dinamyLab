@@ -13,6 +13,11 @@ class Direccion extends Model
         'direccionable_type'
     ];
 
+    public function municipio()
+    {
+        return $this->belongsTo(Municipio::class, 'municipio_id');
+    }
+
     /**
      * Relación polimórfica con el modelo que posee la dirección.
      */

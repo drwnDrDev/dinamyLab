@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contacto;
+
 use App\Models\Persona;
 use App\Models\Pais;
 use App\Models\Municipio;
@@ -10,6 +10,8 @@ use App\TipoDocumento;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePersonaRequest;
 use App\Models\Eps;
+use App\Models\Procedimiento;
+use App\Services\GuardarPersona;
 
 class PersonaController extends Controller
 {
@@ -40,36 +42,8 @@ class PersonaController extends Controller
      */
     public function store(StorePersonaRequest $request)
     {
-        $request->validated();
-        $telefono = $request->input('telefono', null);
-        $municipio_id = $request->input('municipio_id', 155);
-        $info_adicional =$request->datos_adicionales;
-        $contacto = Contacto::create([
-            'municipio_id' => $municipio_id,
-            'telefono' => $telefono,
-            'info_adicional' => json_encode($info_adicional),
-        ]);
-        // Dividir nombres y apellidos en primer y segundo nombre
-        $nombres = explode(' ', trim($request->input('nombres')), 2);
-        $apellidos = explode(' ', trim($request->input('apellidos')), 2);
 
-        // asignar booleano a nacional
-        $nacional = $request->datos_adicionales['pais'] ==='COL'|| $request->datos_adicionales['pais'] === null;
-
-        // Crear la persona
-        $persona = Persona::create( [
-            'primer_nombre' => $nombres[0],
-            'segundo_nombre' => $nombres[1] ?? NULL,
-            'primer_apellido' => $apellidos[0],
-            'segundo_apellido' => $apellidos[1] ?? NULL,
-            'numero_documento' => $request->input('numero_documento'),
-            'tipo_documento' => $request->input('tipo_documento', 'CC'),
-            'fecha_nacimiento' => $request->input('fecha_nacimiento'),
-            'sexo' => $request->input('sexo'),
-            'nacional' => $nacional,
-            'contacto_id' => $contacto->id,
-        ]);
-
+        $persona = GuardarPersona::guardar($request->validated());
         return redirect()->route('personas.show', $persona)->with('success', 'Persona creada correctamente');
 
 
@@ -80,9 +54,13 @@ class PersonaController extends Controller
      */
     public function show(Persona $persona)
     {
+        $persona->load(['direccion.municipio', 'telefonos', 'email', 'redesSociales', 'afiliacionSalud']);
+        $procedimientos = Procedimiento::all()->load(['orden','examen'])->when($persona->ordenes->isNotEmpty(), function ($query) use ($persona) {
+            return $query->whereIn('orden_id', $persona->ordenes->pluck('id'));
+        })->groupBy('estado');
 
-       
-        return view('personas.show',compact('persona'));
+
+        return view('personas.show',compact('persona','procedimientos'));
     }
 
     /**

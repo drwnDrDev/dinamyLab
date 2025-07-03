@@ -9,11 +9,8 @@ class AfiliacionSalud extends Model
 
     protected $fillable = [
         'tipo_afiliacion',
-        'numero_afiliacion',
-        'fecha_inicio',
-        'fecha_fin',
-        'entidad_salud_id',
-        'empleado_id'
+        'eps',
+        'persona_id'
     ];
 
     public function persona()

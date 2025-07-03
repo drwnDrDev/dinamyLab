@@ -11,6 +11,7 @@ use App\Http\Controllers\ProcedimientoController;
 use App\Http\Controllers\ResultadosController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ExamenController;
+use App\Http\Controllers\SedeController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/resultados/{procedimiento}/ver',[ResultadosController::class,'show'])->name('resultados.show');
 
     Route::get('reportes',[ProcedimientoController::class,'reportes'])->name('reportes');
+
+    Route::post('administracion/sede',[SedeController::class,'elgirSede'])->name('elegir.sede');
 
 });
 
