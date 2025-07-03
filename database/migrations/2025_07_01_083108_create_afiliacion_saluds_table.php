@@ -18,7 +18,7 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->string('eps');
-            $table->string('tipo_afiliacion'); // Ejemplo: EPS, Prepagada, etc.
+            $table->string('tipo_afiliacion')->default('subsidiado'); // Ejemplo: EPS, Prepagada, etc.
             $table->timestamps();
         });
     }

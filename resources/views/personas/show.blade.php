@@ -37,19 +37,34 @@
                 <p class=" font-normal leading-normal">{{$persona->sexo}}</p>
             </div>
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pr-2">
-                <p class="text-titles  font-normal leading-normal">Telefono</p>
-                <p class=" font-normal leading-normal">{{ $persona->contacto->telefono }}</p>
+                <p class="text-titles  font-normal leading-normal">Telefonos</p>
+
+                <p class=" font-normal leading-normal">
+                  @if($persona->telefonos->isEmpty())
+                    No tiene telefonos registrados
+                  @else
+                    @foreach($persona->telefonos as $telefono)
+                     <span>{{ $telefono->numero}} </span> 
+                    @endforeach
+                  @endif  
+              
+                </p>
             </div>
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Muncipio</p>
-                <p class=" font-normal leading-normal">{{ $persona->contacto->municipio->departamento }}-{{ $persona->contacto->municipio->municipio }}</p>
+                <p class=" font-normal leading-normal">{{ $persona->direccion->municipio->departamento }}-{{ $persona->direccion->municipio->municipio }}</p>
             </div>
-            @if ($persona->contacto->infoAdicional('email')->first())
+
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Dirección</p>
-                <p class=" font-normal leading-normal">{{ $persona->contacto->infoAdicional('email')->first()->valor}}</p>
+                <p class=" font-normal leading-normal">{{ $persona->direccion->direccion}}</p>
             </div>
-            @endif
+            <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pr-2">
+                <p class="text-titles  font-normal leading-normal">Eps</p>
+                <p class=" font-normal leading-normal">{{ $persona->afiliacionSalud}}</p>
+            </div>
+      
+      
  
         </div>
         <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] py-4">Historia Clínica</h2>
