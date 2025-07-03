@@ -14,12 +14,17 @@ class ProcedimientoController extends Controller
      */
     public function index()
     {
+
+        $sede = session('sede');
+        if (!$sede) {
+            return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
+        }
         $procedimientos = Procedimiento::with(['orden.paciente', 'examen'])
             ->where('updated_at', '>=', now()->subDays(2))
-            ->orderBy('updated_at', 'desc')
-     
-            ->get() 
-            ->groupBy('estado');
+            ->where('sede_id', $sede->id)
+            ->where('estado','en proceso')
+            ->orderBy('updated_at')
+            ->get();
 
         return view('procedimientos.index', compact('procedimientos'));
     }
@@ -108,11 +113,11 @@ class ProcedimientoController extends Controller
          $usuario =  Auth()->user()->id;
          $observacion = $request->input('observacion','SIN OBSERVACIÓN'); ;
          $estado = $request->INPUT('estado', 'pendiente de muestra');
-        
-        
+
+
         $procedimiento->estado = $estado;
         $procedimiento->save();
-       
+
          \Log::info("El usuario con ID $usuario ha actualizado la observación del procedimiento con ID {$procedimiento->id} a: $estado. Observación: $observacion");
 
         return response()->json([
@@ -122,5 +127,5 @@ class ProcedimientoController extends Controller
         ]);
     }
 
-    
+
 }

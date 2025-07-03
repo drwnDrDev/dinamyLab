@@ -85,6 +85,8 @@
                         </tr>
                     </thead>
                     <tbody>
+                    @isset($procedimientos['terminado'])
+
 
                     @foreach ($procedimientos['terminado'] as $procedimiento)
 
@@ -106,6 +108,10 @@
                         </tr>
 
                     @endforeach
+                    @else
+                    <tr><td>No hay resultados que mostrar</td> </tr>
+
+                @endisset
 
                     </tbody>
                 </table>
@@ -128,6 +134,8 @@
                         </tr>
                     </thead>
                     <tbody>
+                @isset($procedimientos['en proceso'])
+
 
                     @foreach ($procedimientos['en proceso'] as $procedimiento)
 
@@ -149,6 +157,11 @@
                         </tr>
 
                     @endforeach
+                @else
+                        <tr>
+                            No existen registros aun
+                        </tr>
+                @endisset
 
                     </tbody>
                 </table>
