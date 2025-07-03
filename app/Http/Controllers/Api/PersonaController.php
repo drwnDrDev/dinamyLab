@@ -130,7 +130,7 @@ class PersonaController extends Controller
         } elseif ($request->has('telefono') && $request->input('telefono') === '') {
             $persona->telefonos()->delete(); // Eliminar el teléfono si se envía vacío
         }
-        // Actualizar la dirección 
+        // Actualizar la dirección
             $persona->direccion()->updateOrCreate(
                 ['direccionable_id' => $persona->id, 'direccionable_type' => Persona::class],
                 [
@@ -142,10 +142,10 @@ class PersonaController extends Controller
             // Verificar si el correo electrónico ya existe
             if ($request->has('correo') && $request->input('correo') === '') {
                 // Si el correo está vacío, eliminar el correo existente
-                $persona->correos()->delete();
+                $persona->email()->delete();
             } elseif ($request->has('correo') && $request->input('correo')) {
                 // Si el correo es diferente, actualizar o crear el correo
-                $persona->correos()->updateOrCreate(
+                $persona->email()->updateOrCreate(
                     ['emailable_id' => $persona->id, 'emailable_type' => Persona::class],
                     ['email' => $request->input('correo')]
                 );
@@ -208,12 +208,12 @@ class PersonaController extends Controller
                 "fecha_nacimiento" => $persona->fecha_nacimiento? $persona->fecha_nacimiento->format('Y-m-d') : null,
                 "sexo" => $persona->sexo,
                 "nacional" => $persona->nacional,
-                "telefono" => $persona->telefonos->first()?->numero ?? null,
+                "telefono" => $persona->telefonos?->first()->numero ?? null,
                 "direccion" => $persona->direccion?->direccion ?? null,
-                "correo" => $persona->correos?->first()->email ?? null,
-                "pais" => $persona->procedencia?->pais->nombre ?? 'COL',
+                "correo" => $persona->email?->email ?? null,
+                "pais" => $persona->procedencia?->pais_codigo_iso ?? 'COL',
                 "municipio" => $persona->direccion?->municipio_id ?? 11007,
-                
+
                 'eps' => $persona->afiliacionSalud?->eps ?? null,
 
             ]

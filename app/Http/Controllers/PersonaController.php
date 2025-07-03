@@ -10,6 +10,8 @@ use App\TipoDocumento;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePersonaRequest;
 use App\Models\Eps;
+use App\Models\Procedimiento;
+use App\Services\GuardarPersona;
 
 class PersonaController extends Controller
 {
@@ -40,7 +42,7 @@ class PersonaController extends Controller
      */
     public function store(StorePersonaRequest $request)
     {
-        
+
         $persona = GuardarPersona::guardar($request->validated());
         return redirect()->route('personas.show', $persona)->with('success', 'Persona creada correctamente');
 
@@ -52,9 +54,13 @@ class PersonaController extends Controller
      */
     public function show(Persona $persona)
     {
+        $persona->load(['direccion.municipio', 'telefonos', 'email', 'redesSociales', 'afiliacionSalud']);
+        $procedimientos = Procedimiento::all()->load(['orden','examen'])->when($persona->ordenes->isNotEmpty(), function ($query) use ($persona) {
+            return $query->whereIn('orden_id', $persona->ordenes->pluck('id'));
+        })->groupBy('estado');
 
 
-        return view('personas.show',compact('persona'));
+        return view('personas.show',compact('persona','procedimientos'));
     }
 
     /**
