@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\models\Examen;
+use App\Models\Examen;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str; // Para generar slugs
 
@@ -131,7 +131,7 @@ class ExamenSeeder extends Seeder
                     );
                 }
             }
-            
+
             if (isset($paramData['resultado']['items'])) {
 
                     foreach ($paramData['resultado']['items'] as $opcionValor) {
