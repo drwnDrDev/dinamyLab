@@ -30,7 +30,7 @@ class OrdenController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         if ($ordenes->isEmpty()) {
-            return redirect()->back()->withErrors(['ordenes' => 'No hay órdenes médicas registradas.'])->withInput();
+            return view('ordenes.index',compact('ordenes'))->withErrors(['ordenes' => 'No hay órdenes médicas registradas.'])->withInput();
         }
 
         return view('ordenes.index', compact('ordenes'));
