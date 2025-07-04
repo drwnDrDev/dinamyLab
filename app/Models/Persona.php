@@ -20,7 +20,7 @@ class Persona extends Model
         'sexo',
         'nacional',
         'telefono',
-        'contacto_id'
+        
     ];
     protected $casts = [
         'fecha_nacimiento' => 'date',
