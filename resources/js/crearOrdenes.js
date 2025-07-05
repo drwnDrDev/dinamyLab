@@ -26,6 +26,53 @@ const crearPaciente = document.getElementById('crearPaciente');
 const crearAcompaniante = document.getElementById('crearacompaniante');
 const paciente = document.getElementById('paciente_id');
 const acompaniante = document.getElementById('acompaniante_id');
+const exmamenes = await axios.get('/api/examenes', {
+    headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'Accept': 'application/json'
+    }
+}).then(response => {
+    return response.data.data;
+}).catch(error => {
+    console.error('Error al obtener los exámenes:', error);
+    return [];
+});
+
+const todosLosExamenes = exmamenes.examenes || [];
+let examesVisibles = todosLosExamenes;
+const soloDiezYSeisMil = document.getElementById('16000').checked ;
+
+console.log(soloDiezYSeisMil)
+examesVisibles = examesVisibles.filter(examen => examen.valor === "16000.00");
+
+if (examesVisibles.length === 0 || !soloDiezYSeisMil) {
+    examesVisibles = todosLosExamenes;
+}
+
+
+examesVisibles.forEach(examen => {
+    const examenItem = document.createElement('div');
+    examenItem.className = 'examen-item flex items-center gap-2 p-2 border border-borders rounded-sm shadow-sm';
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.id = examen.id;
+    input.name = `examenes[${examen.id}]`;
+    input.className = 'w-16 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none';
+    input.min = '0';
+    input.value = '0';
+    input.style.cssText = 'appearance: textfield; -moz-appearance: textfield;';
+    const label = document.createElement('label');
+    label.setAttribute('for', examen.id);
+    label.className = 'text-lg font-semibold';
+    label.textContent = examen.nombre;
+    examenItem.appendChild(input);
+    examenItem.appendChild(label);
+    const examenContainer = document.getElementById('examenesContainer');
+    if (examenContainer) {
+        examenContainer.appendChild(examenItem);
+    } else {boddy.appendChild(examenItem);}
+});
+
 
 
 
@@ -37,19 +84,19 @@ const guardarPersona = (evento) => {
 
     const formData = new FormData(form);
     const isPaciente = formData.get('perfil')=== VARIABLES.PACIENTE;
-   
+
     let url = '/api/personas';
-    
+
     if(form['tipoGuardado'].value === VARIABLES.ACTUALIZAR_USUARIO){
         url = isPaciente ? `/api/personas/${paciente.value}` : `/api/personas/${acompaniante.value}`;
-       
+
         formData.append('_method', 'PUT');
     }
 
 
     axios.post(url, formData, {
 
-        
+
 
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -57,16 +104,16 @@ const guardarPersona = (evento) => {
             'Accept': 'application/json'
         }
     }).then(response => {
-        
+
         const usuario = response.data.data;
-       
+
         if(isPaciente){
             paciente.value = usuario.id;
         }else{
             acompaniante.value = usuario.id;
         }
         // Deshabilitar todos los campos del formulario después de guardar
-       
+
         Array.from(form.elements).forEach(element => {
             if (element.type !== 'hidden') {
                 element.setAttribute('disabled', 'disabled');
@@ -77,7 +124,7 @@ const guardarPersona = (evento) => {
         form.querySelector('button[type="submit"]').classList.add('bg-green-600', 'text-white', 'cursor-not-allowed');
         form.querySelector('button[type="submit"]').textContent = 'Guardado exitoso';
         form.querySelector('button[type="submit"]').disabled = true;
-       
+
     }).catch(error => {
         if (error.response?.status === 422) {
             console.warn('Errores de validación:', error.response.data.errors);
