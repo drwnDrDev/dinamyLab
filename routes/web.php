@@ -12,8 +12,7 @@ use App\Http\Controllers\ResultadosController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\SedeController;
-
-
+use App\Models\Resultado;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -43,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/procedimientos/{procedimiento}',[ProcedimientoController::class,'show'])->name('procedimientos.show');
     Route::patch('/procedimientos/{procedimiento}/estado',[ProcedimientoController::class,'observaciones'])->name('procedimientos.observaciones');
 
-    Route::get('/resultados',[ProcedimientoController::class,'resultado'])->name('resultados');
+    Route::get('/resultados',[ResultadosController::class,'index'])->name('resultados');
 
     Route::get('/caja',[AdministracionController::class,'caja'])->name('caja');
     Route::get('/examenes',[ExamenController::class,'index'])->name('examenes');

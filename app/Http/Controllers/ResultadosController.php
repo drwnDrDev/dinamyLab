@@ -14,7 +14,17 @@ class ResultadosController extends Controller
     public function index()
     {
 
-        return view('resultados.index');
+        $resultados= Procedimiento::with(['orden.paciente', 'resultado'])
+            ->whereHas('resultado')
+            ->where('estado', Estado::TERMINADO)
+            ->where('updated_at', '>=', now()->subDays(2))
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        if ($resultados->isEmpty()) {
+            return redirect()->back()->with('info', 'No hay resultados disponibles.');
+        }
+        return view('resultados.index', compact('resultados'));
     }
     public function show(Procedimiento $procedimiento)
     {
