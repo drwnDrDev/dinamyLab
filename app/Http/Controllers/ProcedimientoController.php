@@ -20,7 +20,7 @@ class ProcedimientoController extends Controller
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }
         $procedimientos = Procedimiento::with(['orden.paciente', 'examen'])
-            ->where('updated_at', '>=', now()->subDays(2))
+       
             ->where('sede_id', $sede->id)
             ->where('estado','en proceso')
             ->orderBy('updated_at')
