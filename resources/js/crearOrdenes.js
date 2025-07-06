@@ -37,20 +37,10 @@ const exmamenes = await axios.get('/api/examenes', {
     console.error('Error al obtener los exámenes:', error);
     return [];
 });
-
-const todosLosExamenes = exmamenes.examenes || [];
-let examesVisibles = todosLosExamenes;
-const soloDiezYSeisMil = document.getElementById('16000').checked ;
-
-console.log(soloDiezYSeisMil)
-examesVisibles = examesVisibles.filter(examen => examen.valor === "16000.00");
-
-if (examesVisibles.length === 0 || !soloDiezYSeisMil) {
-    examesVisibles = todosLosExamenes;
-}
-
-
-examesVisibles.forEach(examen => {
+const mostrarExamenes = (listaExamenes) => {
+    const examenContainer = document.getElementById('examenesContainer');
+    examenContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevos exámenes
+    listaExamenes.forEach(examen => {
     const examenItem = document.createElement('div');
     examenItem.className = 'examen-item flex items-center gap-2 p-2 border border-borders rounded-sm shadow-sm';
     const input = document.createElement('input');
@@ -67,11 +57,30 @@ examesVisibles.forEach(examen => {
     label.textContent = examen.nombre;
     examenItem.appendChild(input);
     examenItem.appendChild(label);
-    const examenContainer = document.getElementById('examenesContainer');
+
     if (examenContainer) {
         examenContainer.appendChild(examenItem);
     } else {boddy.appendChild(examenItem);}
 });
+}
+
+
+const todosLosExamenes = exmamenes.examenes || [];
+let examesVisibles = todosLosExamenes;
+const soloDiezYSeisMil = document.getElementById('16000');
+
+mostrarExamenes(examesVisibles);
+soloDiezYSeisMil.addEventListener('change', (e) => {
+    // Filtrar los exámenes para mostrar solo aquellos con valor "16000.00"
+    if (e.target.checked) {
+        examesVisibles = todosLosExamenes.filter(examen => examen.valor === 16000);
+    } else {
+        examesVisibles = todosLosExamenes;
+    }
+   
+    mostrarExamenes(examesVisibles);
+});
+
 
 
 
