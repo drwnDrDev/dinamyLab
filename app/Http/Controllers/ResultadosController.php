@@ -49,6 +49,23 @@ class ResultadosController extends Controller
 
         // Verifica si el procedimiento ya tiene resultados
         $parametros = EscogerReferencia::recorrerParametrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
+        if (empty($parametros)) {
+            return redirect()->route('resultados.show', $procedimiento)
+                ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
+        }
+        if ($procedimiento->estado === Estado::TERMINADO || $procedimiento->estado === Estado::ENTREGADO) {
+            return redirect()->route('resultados.show', $procedimiento)
+                ->with('info', 'Este procedimiento ya ha sido completado.');
+        }
+        if($procedimiento->estado === Estado::ANULADO) {
+            return redirect()->route('resultados.show', $procedimiento)
+                ->with('error', 'Este procedimiento ha sido anulado y no puede ser editado.');
+        }
+
+        if ($procedimiento->estado === Estado::PENDIENTE) {
+            $procedimiento->estado = Estado::EN_PROCESO; // Cambia el estado a 'en proceso'
+            $procedimiento->save();
+        }
 
        return view('resultados.create', compact('parametros','procedimiento'));
     }
@@ -58,6 +75,8 @@ class ResultadosController extends Controller
         EscogerReferencia::guardaResultado($request->except(['_token','submit']),$procedimiento);
 
         $procedimiento->estado = Estado::TERMINADO; // Cambia el estado del procedimiento a 'terminado'
+        $procedimiento->fecha = now(); // Actualiza la fecha del procedimiento
+        $procedimiento->empleado_id = auth()->user()->empleado->id; // Asigna el empleado que guarda los resultados
         $procedimiento->save();
         return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados guardados correctamente.');
     }
