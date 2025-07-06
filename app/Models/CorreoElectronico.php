@@ -20,6 +20,6 @@ class CorreoElectronico extends Model
     {
         return $this->morphTo();
     }
-    
+
     protected $table = 'correos_electronicos';
 }
