@@ -31,7 +31,7 @@ class ResultadosController extends Controller
 
 
         // Carga el procedimiento con sus relaciones necesarias
-        $procedimiento->load(['orden.paciente', 'resultado']);
+        $procedimiento->load(['orden.paciente', 'resultado','sede']);
 
         // Verifica si el procedimiento ya tiene resultados
         if ($procedimiento->resultado->isEmpty()) {

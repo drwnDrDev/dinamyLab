@@ -6,13 +6,21 @@
     <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!min-h-screen print:!text-xs print:!p-0 print:!bg-white print:!text-black">
         <section class="print_header p-4 flex w-full">
             <figure class="w-12 my-auto p-0">
-                <x-application-logo />
+
+                           @if (session('sede')->id === $procedimiento->sede->id)
+
+                                 <img class="h-10 w-auto fill-current text-gray-800" src="{{ asset('storage/logos/'.$procedimiento->sede->logo) }}" alt="{{ session('sede')->nombre }}">
+
+
+                           @else
+                            <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                           @endif()
             </figure>
             <div class="pl-4">
-                <h1 class="font-bold"></h1>
-                <h2 class="font-semibold">Hospital San Juan de Dios</h2>
-                <p class="font-light">Colombia potencia de la vida</p>
-                <p class="font-semibold">NIT: 800111456-5</p>
+
+                <h2 class="font-semibold"></h2>
+                <p class="font-light">{{$procedimiento->sede->nombre}}</p>
+                <p class="font-semibold">{{$procedimiento->sede->empresa->nombre_comercial}}</p>
             </div>
         </section>
 
@@ -70,15 +78,38 @@
             @endforeach
 
 
+
         </section>
+
+            <aside class="firma  print:!block mt-4">
+
+             <img src=" {{ asset('storage/firmas/'.$procedimiento->empleado->firma) }}" alt="{{$procedimiento->empleado->user->name}}" class="w-32 h-16">
+
+
+            </aside>
 
 
         <footer class="print_footer hidden bottom-0 left-0 w-full m-auto items-center print:!block print:!absolute">
             <div class="font-light border-t border-borders text-center p-2">
 
-                <spam class="">Teléfono: (123) 456-7890</spam>
-                <spam class="">Dirección: Carrera 01 #56-13 </spam>
-                <spam class="">Email: sanjuandedios@gobierno.gov.vo </spam>
+                <spam class="">
+                  <span class="text-sm font-semibold">☎</span>
+                  @foreach ( $procedimiento->sede->telefonos as $telefono)
+                    <span class="text-sm"> {{$telefono->numero}}</span>
+                    @if (!$loop->last)
+                    <span class="text-sm">- </span>
+                    @endif
+
+                  @endforeach
+                </spam>
+                <spam class="">Dirección: {{$procedimiento->sede->direccion->direccion}}</spam>
+                @if ($procedimiento->sede->emails && count($procedimiento->sede->emails) > 0)
+                    <spam class="">Email: {{$procedimiento->sede->emails->first()->email}} </spam>
+
+                @elseif ($procedimiento->sede->empresa->emails && count($procedimiento->sede->empresa->emails) > 0)
+                    <spam class="">Email: {{$procedimiento->sede->empresa->emails->first()->email}} </spam>
+                @endif
+
             </div>
         </footer>
     </article>
@@ -86,3 +117,4 @@
 
 
 </x-app-layout>
+

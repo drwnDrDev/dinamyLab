@@ -26,6 +26,107 @@ const crearPaciente = document.getElementById('crearPaciente');
 const crearAcompaniante = document.getElementById('crearacompaniante');
 const paciente = document.getElementById('paciente_id');
 const acompaniante = document.getElementById('acompaniante_id');
+const exmamenes = await axios.get('/api/examenes', {
+    headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'Accept': 'application/json'
+    }
+}).then(response => {
+    return response.data.data;
+}).catch(error => {
+    console.error('Error al obtener los exámenes:', error);
+    return [];
+});
+
+const calcularTotalExamenes = (examenes) => {
+    return examenes.reduce((total, examen) => {
+        return total + (examen.precio || 0);
+    }, 0);
+}
+
+const mostrarExamenes = (listaExamenes) => {
+    const examenContainer = document.getElementById('examenesContainer');
+    let total = 0;
+    examenContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevos exámenes
+    listaExamenes.forEach(examen => {
+    const examenItem = document.createElement('div');
+    examenItem.className = 'examen-item flex items-center gap-2 p-2 border border-borders rounded-sm shadow-sm';
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.id = examen.id;
+    input.name = `examenes[${examen.id}]`;
+    input.className = 'w-16 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none';
+    input.min = '0';
+    input.value = '0';
+    input.step = 'integer';
+    input.style.cssText = 'appearance: textfield; -moz-appearance: textfield;';
+    input.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value, 10);
+        if (isNaN(value) || value < 0) {
+            e.target.value = '0'; // Reset to 0 if invalid input
+        } else {
+            e.target.value = value.toString(); // Ensure the value is a valid integer
+        }
+    });
+    input.addEventListener('blur', (e) => {
+        const cantidad = parseInt(e.target.value, 10);
+        if (isNaN(cantidad) || cantidad < 0) {
+            e.target.value = '0'; // Reset to 0 if invalid input
+        }
+        examen.precio = examen.valor * cantidad;
+        const precioSpan = document.getElementById( `precio-${examen.id}`);
+
+            precioSpan.classList.add('text-gray-900', 'dark:text-gray-100');
+            precioSpan.textContent = `$ ${examen.precio.toFixed(2)}`;
+
+            const totalSpan = document.getElementById('totalExamenes');
+            total = calcularTotalExamenes(listaExamenes);
+            totalSpan.textContent = `Total: $ ${total.toFixed(2)}`;
+
+
+
+    });
+    const labelContainer = document.createElement('div');
+    labelContainer.className = 'grid ';
+
+    examenItem.appendChild(labelContainer);
+    const label = document.createElement('label');
+    label.setAttribute('for', examen.id);
+    label.className = 'text-lg font-semibold';
+    label.textContent = examen.nombre;
+    const precio = document.createElement('span');
+    precio.className = 'text-sm text-gray-500 dark:text-gray-400 precio';
+    precio.id = `precio-${examen.id}`;
+    precio.textContent = `(${examen.valor.toFixed(2)})`;
+    labelContainer.appendChild(label);
+    labelContainer.appendChild(precio);
+    examenItem.appendChild(input);
+
+
+    if (examenContainer) {
+        examenContainer.appendChild(examenItem);
+    } else {boddy.appendChild(examenItem);}
+});
+}
+
+
+const todosLosExamenes = exmamenes.examenes || [];
+let examesVisibles = todosLosExamenes;
+const soloDiezYSeisMil = document.getElementById('16000');
+
+mostrarExamenes(examesVisibles);
+soloDiezYSeisMil.addEventListener('change', (e) => {
+    // Filtrar los exámenes para mostrar solo aquellos con valor "16000.00"
+    if (e.target.checked) {
+        examesVisibles = todosLosExamenes.filter(examen => examen.valor === 16000);
+    } else {
+        examesVisibles = todosLosExamenes;
+    }
+
+    mostrarExamenes(examesVisibles);
+});
+
+
 
 
 
@@ -37,19 +138,19 @@ const guardarPersona = (evento) => {
 
     const formData = new FormData(form);
     const isPaciente = formData.get('perfil')=== VARIABLES.PACIENTE;
-   
+
     let url = '/api/personas';
-    
+
     if(form['tipoGuardado'].value === VARIABLES.ACTUALIZAR_USUARIO){
         url = isPaciente ? `/api/personas/${paciente.value}` : `/api/personas/${acompaniante.value}`;
-       
+
         formData.append('_method', 'PUT');
     }
 
 
     axios.post(url, formData, {
 
-        
+
 
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -57,16 +158,16 @@ const guardarPersona = (evento) => {
             'Accept': 'application/json'
         }
     }).then(response => {
-        
+
         const usuario = response.data.data;
-       
+
         if(isPaciente){
             paciente.value = usuario.id;
         }else{
             acompaniante.value = usuario.id;
         }
         // Deshabilitar todos los campos del formulario después de guardar
-       
+
         Array.from(form.elements).forEach(element => {
             if (element.type !== 'hidden') {
                 element.setAttribute('disabled', 'disabled');
@@ -77,7 +178,7 @@ const guardarPersona = (evento) => {
         form.querySelector('button[type="submit"]').classList.add('bg-green-600', 'text-white', 'cursor-not-allowed');
         form.querySelector('button[type="submit"]').textContent = 'Guardado exitoso';
         form.querySelector('button[type="submit"]').disabled = true;
-       
+
     }).catch(error => {
         if (error.response?.status === 422) {
             console.warn('Errores de validación:', error.response.data.errors);

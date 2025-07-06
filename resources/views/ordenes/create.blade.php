@@ -30,21 +30,17 @@
         </div>
         <section class="section_examenes p-4" >
             <h2 class="font-bold mb-4 text-xl text-text">Exámenes</h2>
+            <div>
+
+                <x-input-label for="16000">16000</x-input-label>
+                 <input type="checkbox" name="16000" id="16000">
+                </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                @foreach($examenes as $examen)
-                    <div class="examen-item flex items-center gap-2 p-2 border border-borders rounded-sm shadow-sm">
-                        <input
-                            type="number"
-                            id="{{ $examen->id }}"
-                            name="examenes[{{ $examen->id }}]"
-                            class="w-16 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none"
-                            min="0"
-                            value="0"
-                            style="appearance: textfield; -moz-appearance: textfield;"
-                        >
-                        <label for="{{ $examen->id }}" class="text-lg font-semibold">{{ $examen->nombre }}</label>
-                    </div>
-                @endforeach
+                <span class="text-lg font-semibold" id="totalExamenes">Total: $ 0.00</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4" id="examenesContainer">
+
+
             </div>
                <input type="hidden" name="paciente_id" id="paciente_id" >
                <input type="hidden" name="acompaniante_id" id="acompaniante_id" >
