@@ -37,8 +37,16 @@ const exmamenes = await axios.get('/api/examenes', {
     console.error('Error al obtener los exámenes:', error);
     return [];
 });
+
+const calcularTotalExamenes = (examenes) => {
+    return examenes.reduce((total, examen) => {
+        return total + (examen.precio || 0);
+    }, 0);
+}
+
 const mostrarExamenes = (listaExamenes) => {
     const examenContainer = document.getElementById('examenesContainer');
+    let total = 0;
     examenContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevos exámenes
     listaExamenes.forEach(examen => {
     const examenItem = document.createElement('div');
@@ -50,13 +58,50 @@ const mostrarExamenes = (listaExamenes) => {
     input.className = 'w-16 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none';
     input.min = '0';
     input.value = '0';
+    input.step = 'integer';
     input.style.cssText = 'appearance: textfield; -moz-appearance: textfield;';
+    input.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value, 10);
+        if (isNaN(value) || value < 0) {
+            e.target.value = '0'; // Reset to 0 if invalid input
+        } else {
+            e.target.value = value.toString(); // Ensure the value is a valid integer
+        }
+    });
+    input.addEventListener('blur', (e) => {
+        const cantidad = parseInt(e.target.value, 10);
+        if (isNaN(cantidad) || cantidad < 0) {
+            e.target.value = '0'; // Reset to 0 if invalid input
+        }
+        examen.precio = examen.valor * cantidad;
+        const precioSpan = document.getElementById( `precio-${examen.id}`);
+
+            precioSpan.classList.add('text-gray-900', 'dark:text-gray-100');
+            precioSpan.textContent = `$ ${examen.precio.toFixed(2)}`;
+
+            const totalSpan = document.getElementById('totalExamenes');
+            total = calcularTotalExamenes(listaExamenes);
+            totalSpan.textContent = `Total: $ ${total.toFixed(2)}`;
+
+
+
+    });
+    const labelContainer = document.createElement('div');
+    labelContainer.className = 'grid ';
+
+    examenItem.appendChild(labelContainer);
     const label = document.createElement('label');
     label.setAttribute('for', examen.id);
     label.className = 'text-lg font-semibold';
     label.textContent = examen.nombre;
+    const precio = document.createElement('span');
+    precio.className = 'text-sm text-gray-500 dark:text-gray-400 precio';
+    precio.id = `precio-${examen.id}`;
+    precio.textContent = `(${examen.valor.toFixed(2)})`;
+    labelContainer.appendChild(label);
+    labelContainer.appendChild(precio);
     examenItem.appendChild(input);
-    examenItem.appendChild(label);
+
 
     if (examenContainer) {
         examenContainer.appendChild(examenItem);
@@ -77,7 +122,7 @@ soloDiezYSeisMil.addEventListener('change', (e) => {
     } else {
         examesVisibles = todosLosExamenes;
     }
-   
+
     mostrarExamenes(examesVisibles);
 });
 
