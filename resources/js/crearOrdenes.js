@@ -97,7 +97,7 @@ const mostrarExamenes = (listaExamenes) => {
     const precio = document.createElement('span');
     precio.className = 'text-sm text-gray-500 dark:text-gray-400 precio';
     precio.id = `precio-${examen.id}`;
-    precio.textContent = `(${examen.valor.toFixed(2)})`;
+    precio.textContent = `(${eval(examen.valor).toFixed(2)})`;
     labelContainer.appendChild(label);
     labelContainer.appendChild(precio);
     examenItem.appendChild(input);
@@ -118,17 +118,13 @@ mostrarExamenes(examesVisibles);
 soloDiezYSeisMil.addEventListener('change', (e) => {
     // Filtrar los exámenes para mostrar solo aquellos con valor "16000.00"
     if (e.target.checked) {
-        examesVisibles = todosLosExamenes.filter(examen => examen.valor === 16000);
+        examesVisibles = todosLosExamenes.filter(examen => eval(examen.valor) === 16000);
     } else {
         examesVisibles = todosLosExamenes;
     }
 
     mostrarExamenes(examesVisibles);
 });
-
-
-
-
 
 const guardarPersona = (evento) => {
 
