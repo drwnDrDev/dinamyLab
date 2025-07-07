@@ -14,44 +14,68 @@ class GuardarPersona
 
     public static function guardarContacto(StorePersonaRequest $datos, Persona $persona): ?int
     {
-        if (!$datos->has('telefono') && !$datos->has('direccion') && !$datos->has('correo') && !$datos->has('red_social_nombre')) {
+        if (
+            !$datos->has('telefono') && 
+            !$datos->has('direccion') && 
+            !$datos->has('correo') && 
+            !$datos->has('red_social_nombre')
+        ) {
             Log::warning('No se proporcionaron datos de contacto');
             return null;
         }
+
         // Si no se proporciona un municipio, se asume Bogotá (11007)
-        Log::info($datos->all());
         $persona->direccion()->create([
-            'direccion' => $datos->input('direccion',null),
-            'municipio_id' => $datos->input('municipio_id', 11007), // Default to Bogotá
+            'direccion' => $datos->input('direccion', null),
+            'municipio_id' => $datos->input('municipio', 11007), // Default to Bogotá
         ]);
-        if ($datos->has('eps') && $datos->input('eps') !== '' && $datos->input('eps') !== NULL) {
+
+        if (
+            $datos->has('eps') && 
+            $datos->input('eps') !== '' && 
+            $datos->input('eps') !== null
+        ) {
             $persona->afiliacionSalud()->create([
-                'eps' => $datos->input('eps','sisben'),
-                'tipo_afiliacion' => $datos->input('tipo_afiliacion','Subsidiado'),
+                'eps' => $datos->input('eps', 'sisben'),
+                'tipo_afiliacion' => $datos->input('tipo_afiliacion', 'Subsidiado'),
             ]);
         }
-        if ($datos->has('pais') && $datos->input('pais') !== '' && $datos->input('pais') !== NULL) {
+
+        if (
+            $datos->has('pais') && 
+            $datos->input('pais') !== '' && 
+            $datos->input('pais') !== null
+        ) {
             $persona->procedencia()->create([
                 'pais_codigo_iso' => $datos->input('pais', 'COL'), // Default to Colombia
             ]);
         }
-        if ($datos->has('telefono') && $datos->input('telefono') !== '' && $datos->input('telefono') !== NULL) {
+
+        if (
+            $datos->has('telefono') && 
+            $datos->input('telefono') !== '' && 
+            $datos->input('telefono') !== null
+        ) {
             $persona->telefonos()->create([
                 'numero' => $datos->input('telefono'),
             ]);
         }
-        if($datos->has('correo') && $datos->input('correo') !== '' && $datos->input('correo') !== NULL) {
-        $persona->email()->create([
-            'email' => $datos->input('correo'),
-        ]);
+
+        if (
+            $datos->has('correo') && 
+            $datos->input('correo') !== '' && 
+            $datos->input('correo') !== null
+        ) {
+            $persona->email()->create([
+                'email' => $datos->input('correo'),
+            ]);
         }
 
-            // $persona->redesSociales()->create([
-            //     'nombre' => $datos->input('red_social_nombre'),
-            //     'url' => $datos->input('red_social_url'),
-            //     'perfil' => $datos->input('red_social_perfil'),
-            // ]);
-
+        // $persona->redesSociales()->create([
+        //     'nombre' => $datos->input('red_social_nombre'),
+        //     'url' => $datos->input('red_social_url'),
+        //     'perfil' => $datos->input('red_social_perfil'),
+        // ]);
 
         return null;
     }
