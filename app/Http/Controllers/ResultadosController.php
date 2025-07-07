@@ -47,22 +47,22 @@ class ResultadosController extends Controller
     public function create(Procedimiento $procedimiento)
     {
 
-        // Verifica si el procedimiento ya tiene resultados
+
         $parametros = EscogerReferencia::recorrerParametrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
         if (empty($parametros)) {
             return redirect()->route('resultados.show', $procedimiento)
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
-        if ($procedimiento->estado === Estado::TERMINADO || $procedimiento->estado === Estado::ENTREGADO) {
-            return redirect()->route('resultados.show', $procedimiento)
+        if ($procedimiento->estado === Estado::TERMINADO->value || $procedimiento->estado === Estado::ENTREGADO->value) {
+            return redirect()->route('resultados.show', $procedimiento->id)
                 ->with('info', 'Este procedimiento ya ha sido completado.');
         }
-        if($procedimiento->estado === Estado::ANULADO) {
+        if($procedimiento->estado === Estado::ANULADO->value) {
             return redirect()->route('resultados.show', $procedimiento)
                 ->with('error', 'Este procedimiento ha sido anulado y no puede ser editado.');
         }
 
-        if ($procedimiento->estado === Estado::PENDIENTE) {
+        if ($procedimiento->estado === Estado::PENDIENTE->value || $procedimiento->estado === Estado::MUESTRA->value) {
             $procedimiento->estado = Estado::EN_PROCESO; // Cambia el estado a 'en proceso'
             $procedimiento->save();
         }
