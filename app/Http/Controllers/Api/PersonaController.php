@@ -123,7 +123,12 @@ class PersonaController extends Controller
         }
 
         // Actualizar los datos de contacto
-        if ($request->has('telefono') && $request->input('telefono') !== $persona->telefonos->first()?->numero ) {
+        if (
+            $request->has('telefono') &&
+            $request->input('telefono') !== '' &&
+            $request->input('telefono') !== null &&
+            !$persona->telefonos()->where('numero', $request->input('telefono'))->exists()
+        ) {
             $persona->telefonos()->create([
                 'numero' => $request->input('telefono'),
             ]);
@@ -151,7 +156,7 @@ class PersonaController extends Controller
                 );
             }
         // Actualizar la afiliación a salud
-        if ($request->has('eps')) {
+        if ($request->has('eps') && $request->input('eps') !== '' && $request->input('eps') !== null) {
             $persona->afiliacionSalud()->updateOrCreate(
                 ['persona_id' => $persona->id],
                 [
