@@ -132,13 +132,15 @@ soloDiezYSeisMil.addEventListener('change', (e) => {
 
 const guardarPersona = (evento) => {
 
+
     evento.preventDefault();
 
     const form = evento.target;
 
+
     const formData = new FormData(form);
     const isPaciente = formData.get('perfil')=== VARIABLES.PACIENTE;
-
+    console.log(formData);
     let url = '/api/personas';
 
     if(form['tipoGuardado'].value === VARIABLES.ACTUALIZAR_USUARIO){
@@ -314,15 +316,15 @@ document.getElementsByName('tipo_documento').forEach(input => {
     }   );
         })
 
-        // Autocompletado para los campos con name="municipioBusqueda" usando la lista de municipios
+
 
         document.getElementsByName('municipioBusqueda').forEach((input, idx) => {
             // Crear el select oculto para almacenar el valor real del municipio
             let hiddenSelect = input.form.querySelector('select[name="municipio"]');
             if (!hiddenSelect) {
                 hiddenSelect = document.createElement('select');
-                hiddenSelect.name = 'municipio';
-                hiddenSelect.style.display = 'none';
+
+                hiddenSelect.className = 'hidden';
                 input.form.appendChild(hiddenSelect);
             }
             // Limpiar y agregar todas las opciones al select oculto
