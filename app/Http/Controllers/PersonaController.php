@@ -60,7 +60,7 @@ class PersonaController extends Controller
         }
 
         $persona->load(['direccion.municipio', 'telefonos', 'email', 'redesSociales', 'afiliacionSalud']);
-        $procedimientos = Procedimiento::where('sede_id',$sede)
+        $procedimientos = Procedimiento::where('sede_id',$sede->id)
         ->get()
         ->load(['orden','examen'])->when($persona->ordenes->isNotEmpty(), function ($query) use ($persona) {
             return $query->whereIn('orden_id', $persona->ordenes->pluck('id'));
