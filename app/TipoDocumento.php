@@ -50,17 +50,6 @@ enum TipoDocumento: string
         };
     }
 
-    public static function forLocalStorage(): array
-    {
-        $items = [];
-        foreach (self::cases() as $case) {
-            $items[] = [
-                'value' => $case->value,
-                'label' => $case->nombre()
-            ];
-        }
-        return $items;
-    }
 
     public static function soloPacientes(): array
     {
@@ -77,4 +66,24 @@ enum TipoDocumento: string
             self::COD_42, self::COD_50, self::COD_91
         ];
     }
+
+
+    public static function forLocalStorage(): array
+    {
+        $items = [];
+        foreach (self::soloPacientes() as $case) {
+            $items['pacientes'][] = [
+                'value' => $case->value,
+                'label' => $case->nombre()
+            ];
+        }
+        foreach (self::soloPagadores() as $case) {
+            $items['pagadores'][] = [
+                'value' => $case->value,
+                'label' => $case->nombre()
+            ];
+        }
+        return $items;
+    }
+
 }
