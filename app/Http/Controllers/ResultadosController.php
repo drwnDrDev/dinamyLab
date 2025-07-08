@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Estado;
-use App\Models\Examen;
+
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
 use App\Services\EscogerReferencia;
@@ -39,16 +39,30 @@ class ResultadosController extends Controller
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
     $parametros = EscogerReferencia::obtenerResultados($procedimiento);
-
-
-
     return view('resultados.show', compact('procedimiento', 'parametros'));
     }
     public function create(Procedimiento $procedimiento)
     {
 
-        // Verifica si el procedimiento ya tiene resultados
+
         $parametros = EscogerReferencia::recorrerParametrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
+        if (empty($parametros)) {
+            return redirect()->route('resultados.show', $procedimiento)
+                ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
+        }
+        if ($procedimiento->estado === Estado::TERMINADO->value || $procedimiento->estado === Estado::ENTREGADO->value) {
+            return redirect()->route('resultados.show', $procedimiento->id)
+                ->with('info', 'Este procedimiento ya ha sido completado.');
+        }
+        if($procedimiento->estado === Estado::ANULADO->value) {
+            return redirect()->route('resultados.show', $procedimiento)
+                ->with('error', 'Este procedimiento ha sido anulado y no puede ser editado.');
+        }
+
+        if ($procedimiento->estado === Estado::PENDIENTE->value || $procedimiento->estado === Estado::MUESTRA->value) {
+            $procedimiento->estado = Estado::PROCESO->value; // Cambia el estado a 'en proceso'
+            $procedimiento->save();
+        }
 
        return view('resultados.create', compact('parametros','procedimiento'));
     }
@@ -58,6 +72,8 @@ class ResultadosController extends Controller
         EscogerReferencia::guardaResultado($request->except(['_token','submit']),$procedimiento);
 
         $procedimiento->estado = Estado::TERMINADO; // Cambia el estado del procedimiento a 'terminado'
+        $procedimiento->fecha = now(); // Actualiza la fecha del procedimiento
+        $procedimiento->empleado_id = auth()->user()->empleado->id; // Asigna el empleado que guarda los resultados
         $procedimiento->save();
         return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados guardados correctamente.');
     }
