@@ -7,7 +7,7 @@ use App\Http\Requests\StorePersonaRequest;
 use Illuminate\Http\Request;
 use App\Models\Persona;
 use App\Services\GuardarPersona;
-use App\Services\NombreParser;
+
 
 class PersonaController extends Controller
 {
