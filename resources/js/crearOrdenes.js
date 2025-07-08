@@ -18,7 +18,7 @@ const dataKeys = {
 
 
 
-const documentos = JSON.parse(localStorage.getItem(dataKeys.tiposDocumento)) || [];
+const documentos = JSON.parse(localStorage.getItem(dataKeys.tiposDocumento)).pacientes || [];
 const paises = JSON.parse(localStorage.getItem(dataKeys.paises)) || [];
 const municipios = JSON.parse(localStorage.getItem(dataKeys.municipios)) || [];
 const eps = JSON.parse(localStorage.getItem(dataKeys.eps)) || [];
@@ -26,9 +26,12 @@ const crearPaciente = document.getElementById('crearPaciente');
 const crearAcompaniante = document.getElementById('crearacompaniante');
 const paciente = document.getElementById('paciente_id');
 const acompaniante = document.getElementById('acompaniante_id');
+const XCSRFTOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+
 const exmamenes = await axios.get('/api/examenes', {
     headers: {
-        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'X-CSRF-TOKEN': XCSRFTOKEN,
         'Accept': 'application/json'
     }
 }).then(response => {
@@ -37,6 +40,7 @@ const exmamenes = await axios.get('/api/examenes', {
     console.error('Error al obtener los exámenes:', error);
     return [];
 });
+
 
 const calcularTotalExamenes = (examenes) => {
     return examenes.reduce((total, examen) => {
@@ -97,7 +101,7 @@ const mostrarExamenes = (listaExamenes) => {
     const precio = document.createElement('span');
     precio.className = 'text-sm text-gray-500 dark:text-gray-400 precio';
     precio.id = `precio-${examen.id}`;
-    precio.textContent = `(${examen.valor.toFixed(2)})`;
+    precio.textContent = `(${parseFloat(examen.valor).toFixed(2)})`;
     labelContainer.appendChild(label);
     labelContainer.appendChild(precio);
     examenItem.appendChild(input);
@@ -113,28 +117,38 @@ const mostrarExamenes = (listaExamenes) => {
 const todosLosExamenes = exmamenes.examenes || [];
 let examesVisibles = todosLosExamenes;
 const soloDiezYSeisMil = document.getElementById('16000');
+const busquedaExamen = document.getElementById('busquedaExamen');
 
 mostrarExamenes(examesVisibles);
+
 soloDiezYSeisMil.addEventListener('change', (e) => {
     // Filtrar los exámenes para mostrar solo aquellos con valor "16000.00"
     if (e.target.checked) {
-        examesVisibles = todosLosExamenes.filter(examen => examen.valor === 16000);
+        examesVisibles = todosLosExamenes.filter(examen => parseFloat(examen.valor) === 16000);
     } else {
         examesVisibles = todosLosExamenes;
     }
 
     mostrarExamenes(examesVisibles);
 });
-
-
-
-
+busquedaExamen.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    if (query.length > 2) {
+        // Filtrar los exámenes que contengan la consulta en su nombre
+        examesVisibles = todosLosExamenes.filter(examen => examen.nombre.toLowerCase().includes(query));
+    } else {
+        examesVisibles = todosLosExamenes; // Si la consulta es corta, mostrar todos los exámenes
+    }
+    mostrarExamenes(examesVisibles);
+});
 
 const guardarPersona = (evento) => {
+
 
     evento.preventDefault();
 
     const form = evento.target;
+
 
     const formData = new FormData(form);
     const isPaciente = formData.get('perfil')=== VARIABLES.PACIENTE;
@@ -149,9 +163,6 @@ const guardarPersona = (evento) => {
 
 
     axios.post(url, formData, {
-
-
-
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
             'Content-Type': 'multipart/form-data',
@@ -314,15 +325,15 @@ document.getElementsByName('tipo_documento').forEach(input => {
     }   );
         })
 
-        // Autocompletado para los campos con name="municipioBusqueda" usando la lista de municipios
+
 
         document.getElementsByName('municipioBusqueda').forEach((input, idx) => {
             // Crear el select oculto para almacenar el valor real del municipio
             let hiddenSelect = input.form.querySelector('select[name="municipio"]');
             if (!hiddenSelect) {
                 hiddenSelect = document.createElement('select');
-                hiddenSelect.name = 'municipio';
-                hiddenSelect.style.display = 'none';
+
+                hiddenSelect.className = 'hidden';
                 input.form.appendChild(hiddenSelect);
             }
             // Limpiar y agregar todas las opciones al select oculto
