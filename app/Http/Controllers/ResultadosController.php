@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Estado;
-use App\Models\Examen;
+
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
 use App\Services\EscogerReferencia;
@@ -60,7 +60,7 @@ class ResultadosController extends Controller
         }
 
         if ($procedimiento->estado === Estado::PENDIENTE->value || $procedimiento->estado === Estado::MUESTRA->value) {
-            $procedimiento->estado = Estado::EN_PROCESO->value; // Cambia el estado a 'en proceso'
+            $procedimiento->estado = Estado::PROCESO->value; // Cambia el estado a 'en proceso'
             $procedimiento->save();
         }
 
