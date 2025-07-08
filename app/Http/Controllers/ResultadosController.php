@@ -39,9 +39,6 @@ class ResultadosController extends Controller
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
     $parametros = EscogerReferencia::obtenerResultados($procedimiento);
-
-
-
     return view('resultados.show', compact('procedimiento', 'parametros'));
     }
     public function create(Procedimiento $procedimiento)
@@ -63,7 +60,7 @@ class ResultadosController extends Controller
         }
 
         if ($procedimiento->estado === Estado::PENDIENTE->value || $procedimiento->estado === Estado::MUESTRA->value) {
-            $procedimiento->estado = Estado::EN_PROCESO; // Cambia el estado a 'en proceso'
+            $procedimiento->estado = Estado::EN_PROCESO->value; // Cambia el estado a 'en proceso'
             $procedimiento->save();
         }
 

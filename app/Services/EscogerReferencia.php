@@ -37,7 +37,7 @@ class EscogerReferencia
 
         if ($referencias->isEmpty()) return null;
         if ($referencias->count() === 1) return $referencias->first();
-
+//esto está mal, el match devuelve el primer elemento que coincida, no el último
         foreach (['etario', 'sexo'] as $clave) {
             $valor = $datosDemograficos[$clave] ?? null;
             if ($valor) {
@@ -102,7 +102,7 @@ class EscogerReferencia
             if (is_null($valorResultado) || $valorResultado === '') {
                 //Politica de  guardardado resultados vacíos
                 continue; // Skip empty results
-            }        
+            }
 
             Resultado::create([
                 'parametro_id'     => $parametro->id,
@@ -163,7 +163,7 @@ class EscogerReferencia
                     continue; // Skip this parameter if value is not numeric
                 }
 
-                
+
                 $isNormal =$referencia->max? $valorResultado <= $referencia->max:true;
                 $isNormal = $isNormal && ($referencia->min ? $valorResultado >= $referencia->min : true);
             }
@@ -180,7 +180,7 @@ class EscogerReferencia
                 'referencia'=> optional($referencia)->salida,
             ];
         }
- 
-        return $parametros ?? [];     
+
+        return $parametros ?? [];
     }
 }
