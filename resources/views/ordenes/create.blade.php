@@ -1,13 +1,13 @@
 <x-app-layout>
  <x-canva>
         <div class="section_paciente">
-            <x-formPersona perfil="Paciente" :tipos_documento="$tipos_documento" />
+            <x-formPersona perfil="Paciente"  />
         </div>
         <div x-data="{ open: false }">
             <label for="mostrarAcompaniante">Acompañante</label>
             <input type="checkbox" id="mostrarAcompaniante" @change="open = $event.target.checked">
             <div x-show="open" x-transition>
-                <x-formPersona perfil="acompaniante" :tipos_documento="$tipos_documento" />
+                <x-formPersona perfil="acompaniante"  />
             </div>
         </div>
 <form  method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
@@ -29,6 +29,7 @@
             </div>
         </div>
         <section class="section_examenes p-4" >
+
             <h2 class="font-bold mb-4 text-xl text-text">Exámenes</h2>
             <div>
 

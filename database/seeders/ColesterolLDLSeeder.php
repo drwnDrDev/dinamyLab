@@ -45,7 +45,9 @@ class ColesterolLDLSeeder extends Seeder
                 "unidades": "mg/dL",
                 "referencia": {
                     "adultos": {
-                        "salida": "Hasta 100"
+                        "salida": "Hasta 100",
+                        "minimo": 0,
+                        "maximo": 100
                     }
                 }
             }

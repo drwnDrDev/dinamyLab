@@ -44,13 +44,13 @@ class ColesterolHDLSeeder extends Seeder
                 },
                 "unidades": "mg/dL",
                 "referencia": {
-                    "adultos": {
+                    "hombres": {
                         "salida": "Optimo mayor a 55",
-                        "minimo": 35
+                        "minimo": 55
                     },
                     "mujeres": {
                         "salida": "Optimo mayor a 65",
-                        "minimo": 35
+                        "minimo": 65
                     }
                 }
             }

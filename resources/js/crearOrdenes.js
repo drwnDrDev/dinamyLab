@@ -26,9 +26,12 @@ const crearPaciente = document.getElementById('crearPaciente');
 const crearAcompaniante = document.getElementById('crearacompaniante');
 const paciente = document.getElementById('paciente_id');
 const acompaniante = document.getElementById('acompaniante_id');
+const XCSRFTOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+
 const exmamenes = await axios.get('/api/examenes', {
     headers: {
-        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'X-CSRF-TOKEN': XCSRFTOKEN,
         'Accept': 'application/json'
     }
 }).then(response => {
@@ -160,9 +163,6 @@ const guardarPersona = (evento) => {
 
 
     axios.post(url, formData, {
-
-
-
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
             'Content-Type': 'multipart/form-data',

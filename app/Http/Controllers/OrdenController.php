@@ -6,7 +6,7 @@ use App\Estado;
 use App\Models\Orden;
 use App\Models\Examen;
 use App\Models\Persona;
-use App\TipoDocumento;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Procedimiento;
@@ -42,12 +42,15 @@ class OrdenController extends Controller
     public function create()
     {
 
-        $tipos_documento = collect(TipoDocumento::cases())
-            ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
+        $sede = session('sede');
+        if (!$sede) {
+            return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
+        }
         $examenes = Examen::all();
-
-        $orden_numero = Orden::max('numero') + 1;
-        return view('ordenes.create', compact('tipos_documento', 'examenes', 'orden_numero'));
+        $orden_numero = Orden::where('sede_id', $sede->id)
+               ->max('numero') ?  : 1; // Si no hay órdenes, iniciar en 1
+        $orden_numero = str_pad($orden_numero + 1, 5, '0', STR_PAD_LEFT); // Formatear el número de orden con ceros a la izquierda
+        return view('ordenes.create', compact('examenes', 'orden_numero'));
     }
 
     /**
