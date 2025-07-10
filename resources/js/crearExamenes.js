@@ -31,7 +31,7 @@ import {dom,appState} from './variables.js'
         updateTotalExamenes();
     };
 
-    const updateTotalExamenes = () => {
+export const updateTotalExamenes = () => {
         const total = appState.examenesVisibles.reduce((sum, ex) => sum + (ex.currenTotal || 0), 0);
         if (dom.totalExamenesSpan) {
             dom.totalExamenesSpan.textContent = `Total: $ ${total.toFixed(2)}`;

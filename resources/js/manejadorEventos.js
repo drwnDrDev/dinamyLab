@@ -1,9 +1,11 @@
 
-import {dom} from './variables.js'
+import {dom,appState} from './variables.js'
+import { renderExamenes,updateTotalExamenes } from './crearExamenes.js';
+import {fetchPersonaPorDocumento} from './api.js'
 
 export const handleFiltroExamenes = () => {
         const query = dom.busquedaExamenInput.value.toLowerCase();
-        const solo16k = dom.filtroExamenes16k.checked;
+        const solo16k = dom.soloDiezYSeisMil.checked;
 
         appState.examenesVisibles = appState.todosLosExamenes.filter(examen => {
             const pasaFiltroPrecio = !solo16k || parseFloat(examen.valor) === 16000;
