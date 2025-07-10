@@ -1,3 +1,5 @@
+import {dom,appState} from './variables.js'
+
  const createExamenItemElement = (examen) => {
         const item = document.createElement('div');
         item.className = 'examen-item flex items-center justify-between gap-2 p-2 border border-borders rounded-sm shadow-sm';
@@ -21,16 +23,17 @@
     };
 
 
- export const renderExamenes = (listaExamenes,contenedor,totalSpan) => {
-        contenedor.innerHTML = '';
+   export const renderExamenes = (listaExamenes) => {
+        dom.examenesContainer.innerHTML = ''; // Limpiar eficientemente el contenedor.
         const fragment = document.createDocumentFragment(); // Usar un fragmento para mejor rendimiento.
         listaExamenes.forEach(examen => fragment.appendChild(createExamenItemElement(examen)));
-        contenedor.appendChild(fragment);
-        updateTotalExamenes(listaExamenes,totalSpan);
+        dom.examenesContainer.appendChild(fragment);
+        updateTotalExamenes();
     };
-const updateTotalExamenes = (exVisibles,totalSpan) => {
-        const total = exVisibles.reduce((sum, ex) => sum + (ex.currenTotal || 0), 0);
-        if (totalSpan) {
-            totalSpan.textContent = `Total: $ ${total.toFixed(2)}`;
+
+    const updateTotalExamenes = () => {
+        const total = appState.examenesVisibles.reduce((sum, ex) => sum + (ex.currenTotal || 0), 0);
+        if (dom.totalExamenesSpan) {
+            dom.totalExamenesSpan.textContent = `Total: $ ${total.toFixed(2)}`;
         }
     };
