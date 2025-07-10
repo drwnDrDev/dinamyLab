@@ -64,5 +64,5 @@
             </form>
         </section>
     </x-canva>
-    @vite('resources/js/crearOrdenes.js')
+    @vite('resources/js/main.js')
 </x-app-layout>
