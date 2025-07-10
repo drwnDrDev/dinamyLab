@@ -3,7 +3,7 @@
 
         <div class="flex flex-col p-3 justify-between">
 
-        <x-nav-link :href="route('dashboard')" icono="panel" :active="request()->routeIs('dashboard')">
+        <x-nav-link :href="route('inicio')" icono="panel" :active="request()->routeIs('inicio')">
             {{ __('Dashboard') }}
         </x-nav-link>
 
