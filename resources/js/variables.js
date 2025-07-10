@@ -17,7 +17,11 @@ export const DATA_KEYS = Object.freeze({
 
 });
 
-export const documentos = JSON.parse(localStorage.getItem(DATA_KEYS.tiposDocumento)).pacientes || [];
-export const paises = JSON.parse(localStorage.getItem(DATA_KEYS.paises)) || [];
-export const municipios = JSON.parse(localStorage.getItem(DATA_KEYS.municipios)) || [];
-export const eps = JSON.parse(localStorage.getItem(DATA_KEYS.eps)) || [];
+export const appState = {
+        todosLosExamenes: [],
+        examenesVisibles: [],
+        municipios: JSON.parse(localStorage.getItem('municipios_data')) || [],
+        paises: JSON.parse(localStorage.getItem('paises_data')) || [],
+        eps: JSON.parse(localStorage.getItem('eps_data')) || [],
+        csrfToken: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+    };

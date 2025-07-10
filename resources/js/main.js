@@ -1,10 +1,7 @@
 
-import { DATA_KEYS } from './variables.js';
-import { documentos } from './variables.js';
-import { paises } from './variables.js';
-import { municipios } from './variables.js';
-import { eps } from './variables.js';
+import { DATA_KEYS, appState } from './variables.js';
 import { fetchExamenes, fetchPersonaPorDocumento } from './api.js';
+import { renderExamenes } from './crearExamenes.js';
 
 const dom = {
  crearPaciente: document.getElementById(DATA_KEYS.CREAR_PACIENTE),
@@ -19,10 +16,12 @@ const dom = {
 
 const init =async () => {
     const examenes = await fetchExamenes();
-    const persona = await fetchPersonaPorDocumento(156323);
+    appState.todosLosExamenes = examenes;
+    appState.examenesVisibles = examenes; // Inicialmente, todos los examenes son visibles
+
+    renderExamenes(examenes, dom.examenesContainer, appState.examenesVisibles, dom.totalExamenesSpan);
 
 
 }
 
-document.addEventListener()
-init()
+document.addEventListener('DOMContentLoaded', init);
