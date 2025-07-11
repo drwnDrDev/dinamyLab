@@ -22,9 +22,9 @@ const init = async () => {
         input.addEventListener('blur', handleBuscarDocumento);
     });
 
-    document.querySelectorAll('input[name="pais"]').forEach(currenFormPais => {
-        currenFormPais.addEventListener('click',displayPaieses)
-    })
+    document.querySelectorAll('select[name="pais"]').forEach(currenFormPais => {
+        currenFormPais.addEventListener('click', displayPaieses(currenFormPais));
+    });
 
     // Event Delegation para los inputs de cantidad de exámenes. Es más eficiente.
     dom.examenesContainer?.addEventListener('input', handleUpdateExamenCantidad);

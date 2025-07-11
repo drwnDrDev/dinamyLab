@@ -43,12 +43,35 @@
         setTimeout(() => errorContainer.remove(), 5000);
     };
 
-  const crearOpcion = (label,valor)=> {
-       item = document.createElement('option');
-       item.value = valor;
-       item.textContent = label;
-  }
 
-export const displayPaieses = ()=> {
-      appState.paises.forEach(pais=>crearOpcion(pais.nombre,pais.codigo_iso))
-}
+    const crearOpcion = (label, valor) => {
+        const item = document.createElement('option');
+        item.value = valor;
+        item.textContent = label;
+        item.className = 'text-gray-700 dark:text-gray-300';
+        item.dataset.pais = valor;
+        item.dataset.label = label;
+        return item;
+    };
+
+    export const displayPaieses = (selectActual) => {
+        // Limpiar opciones existentes antes de agregar nuevas
+        selectActual.innerHTML = '';
+        // Agregar una opción por defecto
+        selectActual.appendChild(crearOpcion('Seleccione un país', ''));
+        // Agregar opciones de países
+        appState.paises.forEach(pais => {
+            selectActual.appendChild(crearOpcion(pais.nombre, pais.codigo_iso));
+        });
+    };
+
+export const displayEps = (selectActual) => {
+        // Limpiar opciones existentes antes de agregar nuevas
+        selectActual.innerHTML = '';
+        // Agregar una opción por defecto
+        selectActual.appendChild(crearOpcion('Seleccione una EPS', ''));
+        // Agregar opciones de EPS
+        appState.eps.forEach(eps => {
+            selectActual.appendChild(crearOpcion(eps.nombre, eps.codigo));
+        });
+    }

@@ -35,5 +35,6 @@ export const dom = {
  busquedaExamenInput: document.getElementById(DATA_KEYS.BUSQUEDA_EXAMEN),
  examenesContainer: document.getElementById('examenesContainer'),
  totalExamenesSpan: document.getElementById('totalExamenes'),
+ listaEps: document.getElementById('lista_eps'),
 }
 

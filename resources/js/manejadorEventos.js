@@ -90,3 +90,40 @@ export const handleFiltroExamenes = () => {
         }
     };
 
+
+export const handleTipoGuardadoChange = (e) => {
+        const form = e.target.form;
+        const tipoGuardado = e.target.value;
+
+        if (tipoGuardado === DATA_KEYS.ACTUALIZAR_USUARIO) {
+            form['tipoGuardado'].textContent = "Actualizar Usuario";
+            form['numero_documento'].disabled = true;
+            form['numero_documento'].required = false;
+        } else {
+            form['tipoGuardado'].textContent = "Registrar Usuario";
+            form['numero_documento'].disabled = false;
+            form['numero_documento'].required = true;
+        }
+    }
+export const handlePerfilChange = (e) => {
+        const form = e.target.form;
+        const perfil = e.target.value;
+
+        if (perfil === DATA_KEYS.PACIENTE) {
+            dom.pacienteIdInput.disabled = false;
+            dom.acompanianteIdInput.disabled = true;
+            dom.acompanianteIdInput.value = '';
+            dom.pacienteIdInput.required = true;
+            dom.acompanianteIdInput.required = false;
+        } else {
+            dom.pacienteIdInput.disabled = true;
+            dom.pacienteIdInput.value = '';
+            dom.acompanianteIdInput.disabled = false;
+            dom.pacienteIdInput.required = false;
+            dom.acompanianteIdInput.required = true;
+        }
+    }
+
+export const handleFillPais = (e) => {
+    const form = e.target.form;
+    }
