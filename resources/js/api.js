@@ -22,6 +22,7 @@ export const fetchPersonaPorDocumento = async (numeroDocumento) => {
         if (numeroDocumento.length <= 3) return null;
         try {
             const response = await apiClient.get(`/api/personas/buscar/${numeroDocumento}`);
+            
             return response.data.data || null;
         } catch (error) {
             // Un 404 es esperado si el usuario no existe, no es un error crítico.
