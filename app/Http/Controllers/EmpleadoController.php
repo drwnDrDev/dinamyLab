@@ -69,6 +69,7 @@ class EmpleadoController extends Controller
         $usuario = auth()->user();
         $empleado= Empleado::where('user_id',$usuario->id)->first();
 
+
      
         if(!$usuario->hasRole('admin') && !$usuario->hasRole('prestador') && !$usuario->hasRole('coordinador') && !$empleado) {
             return view('paciente.dashboard');
@@ -80,5 +81,13 @@ class EmpleadoController extends Controller
             return view('admin.dashboard',compact('pendientes'));
         }
         return view('dashboard',compact('empleado'));
+    }
+
+    public function select()
+    {
+        $usuario = auth()->user();
+        $empleado= Empleado::where('user_id',$usuario->id)->first();
+        
+        return view('sedes.select', compact('empleado'));
     }
 }

@@ -20,7 +20,8 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard',[EmpleadoController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard',[EmpleadoController::class, 'select'])->name('dashboard');
+    Route::get('/inicio',[EmpleadoController::class, 'dashboard'])->name('inicio');
     Route::get('/personas',[PersonaController::class,'index'])->name('personas');
     Route::get('/personas/create',[PersonaController::class,'create'])->name('personas.create');
     Route::get('/personas/{persona}',[PersonaController::class,'show'])->name('personas.show');
@@ -55,7 +56,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('reportes',[ProcedimientoController::class,'reportes'])->name('reportes');
 
-    Route::post('administracion/sede',[SedeController::class,'elgirSede'])->name('elegir.sede');
+    Route::get('administracion/sede/{sede}',[SedeController::class,'elegirSede'])->name('elegir.sede');
 
 });
 
