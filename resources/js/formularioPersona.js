@@ -57,8 +57,6 @@
     export const displayPaieses = (selectActual) => {
         // Limpiar opciones existentes antes de agregar nuevas
         selectActual.innerHTML = '';
-        // Agregar una opción por defecto
-        selectActual.appendChild(crearOpcion('Seleccione un país', ''));
         // Agregar opciones de países
         appState.paises.forEach(pais => {
             selectActual.appendChild(crearOpcion(pais.nombre, pais.codigo_iso));
@@ -68,10 +66,16 @@
 export const displayEps = (selectActual) => {
         // Limpiar opciones existentes antes de agregar nuevas
         selectActual.innerHTML = '';
-        // Agregar una opción por defecto
-        selectActual.appendChild(crearOpcion('Seleccione una EPS', ''));
-        // Agregar opciones de EPS
         appState.eps.forEach(eps => {
-            selectActual.appendChild(crearOpcion(eps.nombre, eps.codigo));
+            selectActual.appendChild(crearOpcion(eps.nombre, eps.nombre));
+        });
+    }
+export const dispayMunicipios = (selectActual,) => {
+        // Limpiar opciones existentes antes de agregar nuevas
+        selectActual.innerHTML = '';
+
+        // Agregar opciones de municipios
+        appState.municipios.forEach(municipio => {
+            selectActual.appendChild(crearOpcion( `${municipio.municipio} - ${municipio.departamento}` , municipio.codigo_municipio));
         });
     }
