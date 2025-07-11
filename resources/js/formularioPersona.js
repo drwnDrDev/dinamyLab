@@ -49,7 +49,7 @@
         item.value = valor;
         item.textContent = label;
         item.className = 'text-gray-700 dark:text-gray-300';
-        item.dataset.pais = valor;
+        item.dataset.valor = valor;
         item.dataset.label = label;
         return item;
     };
@@ -76,7 +76,7 @@ export const displayMunicipios = (selectActual,) => {
 
         // Agregar opciones de municipios
         appState.municipios.forEach(municipio => {
-            selectActual.appendChild(crearOpcion( `${municipio.municipio} - ${municipio.departamento}` , municipio.codigo_municipio));
+            selectActual.appendChild(crearOpcion( `${municipio.municipio} - ${municipio.departamento}` , municipio.id));
         });
     }
 
