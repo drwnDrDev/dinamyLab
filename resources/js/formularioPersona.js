@@ -70,7 +70,7 @@ export const displayEps = (selectActual) => {
             selectActual.appendChild(crearOpcion(eps.nombre, eps.nombre));
         });
     }
-export const dispayMunicipios = (selectActual,) => {
+export const displayMunicipios = (selectActual,) => {
         // Limpiar opciones existentes antes de agregar nuevas
         selectActual.innerHTML = '';
 
@@ -79,3 +79,4 @@ export const dispayMunicipios = (selectActual,) => {
             selectActual.appendChild(crearOpcion( `${municipio.municipio} - ${municipio.departamento}` , municipio.codigo_municipio));
         });
     }
+

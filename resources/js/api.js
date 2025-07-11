@@ -22,7 +22,7 @@ export const fetchPersonaPorDocumento = async (numeroDocumento) => {
         if (numeroDocumento.length <= 3) return null;
         try {
             const response = await apiClient.get(`/api/personas/buscar/${numeroDocumento}`);
-            
+
             return response.data.data || null;
         } catch (error) {
             // Un 404 es esperado si el usuario no existe, no es un error crítico.
@@ -32,3 +32,18 @@ export const fetchPersonaPorDocumento = async (numeroDocumento) => {
             return null;
         }
     };
+
+export const guardarPersona = (url, formData) =>{
+
+            try {
+               apiClient.post(url, formData);
+
+            } catch (error) {
+                if (error.response?.status === 422) { // Error de validación
+                    displayValidationErrors(form, error.response.data.errors);
+                } else {
+                    console.error('Error al guardar:', error);
+                    console.error('Paciente no guardado')
+                }
+            }
+}

@@ -1,8 +1,9 @@
 
 import {dom,appState,DATA_KEYS} from './variables.js'
 import { renderExamenes,updateTotalExamenes } from './crearExamenes.js';
-import {fetchPersonaPorDocumento} from './api.js'
+import {fetchPersonaPorDocumento, guardarPersona} from './api.js'
 import { populateFormWithPersonaData, displayValidationErrors } from './formularioPersona.js';
+
 
 export const handleFiltroExamenes = () => {
         const query = dom.busquedaExamenInput.value.toLowerCase();
@@ -22,8 +23,6 @@ export const handleFiltroExamenes = () => {
         const form = e.target.form;
         const numeroDocumento = e.target.value;
         const persona = await fetchPersonaPorDocumento(numeroDocumento);
-        console.log(persona)
-
         if (persona) {
             populateFormWithPersonaData(form, persona);
         } else {
@@ -42,24 +41,12 @@ export const handleFiltroExamenes = () => {
 
         let url = '/api/personas';
         if (esActualizacion) {
-            const id = isPaciente ? dom.pacienteIdInput.value : dom.acompanianteIdInput.value;
+            const id = isPaciente ? dom.paciente.value : dom.acompaniante.value;
             url = `/api/personas/${id}`;
             formData.append('_method', 'PUT'); // Laravel usa esto para simular un PUT
         }
+        guardarPersona(url,formData)
 
-        try {
-            const response = await apiClient.post(url, formData);
-            // Lógica de éxito: deshabilitar form, mostrar mensaje, etc.
-            console.log('Guardado con éxito:', response.data.data);
-            // ... Aquí iría la lógica para deshabilitar el formulario ...
-        } catch (error) {
-            if (error.response?.status === 422) { // Error de validación
-                displayValidationErrors(form, error.response.data.errors);
-            } else {
-                console.error('Error al guardar:', error);
-                // Aquí podrías mostrar un error genérico al usuario
-            }
-        }
     };
 
 

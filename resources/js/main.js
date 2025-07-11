@@ -3,7 +3,7 @@ import { appState, dom } from './variables.js';
 import { fetchExamenes } from './api.js';
 import { renderExamenes } from './crearExamenes.js';
 import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona } from './manejadorEventos.js';
-import { displayEps, displayPaieses } from './formularioPersona.js';
+import { displayEps, displayPaieses,displayMunicipios } from './formularioPersona.js';
 
 
 const init = async () => {
@@ -27,10 +27,12 @@ const init = async () => {
     });
     document.querySelectorAll('input[name="eps"]').forEach(currenFormEps  => {
         currenFormEps.addEventListener('click', () =>   {
-            console.log('Cargando EPS', dom.listaEps);
-            displayEps(dom.listaEps);
+             displayEps(dom.listaEps);
         });
     });
+    document.querySelectorAll('select[name="municipio"]').forEach(currentFormMunicipio => {
+        currentFormMunicipio.addEventListener('click',displayMunicipios(currentFormMunicipio))
+    })
 
     // Event Delegation para los inputs de cantidad de exámenes. Es más eficiente.
     dom.examenesContainer?.addEventListener('input', handleUpdateExamenCantidad);
