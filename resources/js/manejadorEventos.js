@@ -1,7 +1,8 @@
 
-import {dom,appState} from './variables.js'
+import {dom,appState,DATA_KEYS} from './variables.js'
 import { renderExamenes,updateTotalExamenes } from './crearExamenes.js';
 import {fetchPersonaPorDocumento} from './api.js'
+import { populateFormWithPersonaData, displayValidationErrors } from './formularioPersona.js';
 
 export const handleFiltroExamenes = () => {
         const query = dom.busquedaExamenInput.value.toLowerCase();
@@ -21,12 +22,13 @@ export const handleFiltroExamenes = () => {
         const form = e.target.form;
         const numeroDocumento = e.target.value;
         const persona = await fetchPersonaPorDocumento(numeroDocumento);
+        console.log(persona)
 
         if (persona) {
             populateFormWithPersonaData(form, persona);
         } else {
             form['tipoGuardado'].value = DATA_KEYS.NUEVO_USUARIO;
-            populateFormWithPersonaData(form, null);
+            form['tipoGuardado'].textContent="Usuario Nuevo"
 
         }
     };
