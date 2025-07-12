@@ -89,7 +89,7 @@
                 <div class="w-full absolute flex-col-reverse bottom-10 bg-background border
                  border-borders max-h-60 overflow-y-auto z-10 hidden rounded-md shadow-lg" id="opciones">
                 </div>
-                <select name="municipio" id="municipio"></select>
+                <select name="municipio" id="municipio" class="uppercase"></select>
 
             </div>
 

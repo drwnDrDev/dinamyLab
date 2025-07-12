@@ -39,7 +39,14 @@ class FrontendDataController extends Controller
 
             $tiposDocumento = TipoDocumento::forLocalStorage();
             $paises = Pais::select('nombre', 'codigo_iso')->orderBy('nivel', 'desc')->get();
-            $municipios = Municipio::select('municipio', 'departamento', 'id')->orderBy('nivel','desc')->get();
+            $municipios = Municipio::orderBy('nivel', 'desc')->get()->map(function($municipio) {
+            return [
+                'codigo' => $municipio->id,
+                'municipio' => mb_strtolower($municipio->municipio, 'UTF-8'),
+                'departamento' => mb_strtolower($municipio->departamento, 'UTF-8')
+            ];
+        });
+
             $eps = Eps::select('nombre', 'id')
             ->where('verificada', true) // Solo EPS verificadas
             ->orderBy('nombre')->get();

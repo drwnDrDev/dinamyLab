@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\Persona;
+//use App\Models\Municipio;
 use App\Http\Requests\StorePersonaRequest;
 use App\Services\NombreParser;
 
@@ -12,27 +13,46 @@ class GuardarPersona
 {
 
 
+
+
     public static function guardarContacto(StorePersonaRequest $datos, Persona $persona): ?int
     {
         if (
-            !$datos->has('telefono') && 
-            !$datos->has('direccion') && 
-            !$datos->has('correo') && 
+            !$datos->has('telefono') &&
+            !$datos->has('direccion') &&
+            !$datos->has('correo') &&
             !$datos->has('red_social_nombre')
         ) {
             Log::warning('No se proporcionaron datos de contacto');
             return null;
         }
 
-        // Si no se proporciona un municipio, se asume Bogotá (11007)
+        if (
+            !$datos->has('municipio') ||
+            $datos->input('municipio') === '' ||
+            $datos->input('municipio') === null
+        ) {
+            $sede = session('sede');
+            if ($sede && $sede->municipio_id) {
+                $datos->merge(['municipio' => $sede->municipio_id]);
+            } else {
+                Log::warning('No se proporcionó municipio, usando Bogotá por defecto');
+                $datos->merge(['municipio' => 11001]); // Bogotá
+            }
+
+        }else {
+            $municipio=Municipio::findOrFail($datos->input('municipio'));
+            $municipio->nivel = $municipio->nivel + 1;
+            $municipio->save();
+        }
         $persona->direccion()->create([
             'direccion' => $datos->input('direccion', null),
-            'municipio_id' => $datos->input('municipio', 11007), // Default to Bogotá
+            'municipio_id' => $datos->input('municipio', 11001), // Default to Bogotá
         ]);
 
         if (
-            $datos->has('eps') && 
-            $datos->input('eps') !== '' && 
+            $datos->has('eps') &&
+            $datos->input('eps') !== '' &&
             $datos->input('eps') !== null
         ) {
             $persona->afiliacionSalud()->create([
@@ -42,8 +62,8 @@ class GuardarPersona
         }
 
         if (
-            $datos->has('pais') && 
-            $datos->input('pais') !== '' && 
+            $datos->has('pais') &&
+            $datos->input('pais') !== '' &&
             $datos->input('pais') !== null
         ) {
             $persona->procedencia()->create([
@@ -52,8 +72,8 @@ class GuardarPersona
         }
 
         if (
-            $datos->has('telefono') && 
-            $datos->input('telefono') !== '' && 
+            $datos->has('telefono') &&
+            $datos->input('telefono') !== '' &&
             $datos->input('telefono') !== null
         ) {
             $persona->telefonos()->create([
@@ -62,8 +82,8 @@ class GuardarPersona
         }
 
         if (
-            $datos->has('correo') && 
-            $datos->input('correo') !== '' && 
+            $datos->has('correo') &&
+            $datos->input('correo') !== '' &&
             $datos->input('correo') !== null
         ) {
             $persona->email()->create([
@@ -71,11 +91,6 @@ class GuardarPersona
             ]);
         }
 
-        // $persona->redesSociales()->create([
-        //     'nombre' => $datos->input('red_social_nombre'),
-        //     'url' => $datos->input('red_social_url'),
-        //     'perfil' => $datos->input('red_social_perfil'),
-        // ]);
 
         return null;
     }

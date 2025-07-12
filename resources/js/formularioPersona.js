@@ -48,7 +48,7 @@
         const item = document.createElement('option');
         item.value = valor;
         item.textContent = label;
-        item.className = 'text-gray-700 dark:text-gray-300';
+        item.className = 'text-gray-700 dark:text-gray-300 capitalize';
         item.dataset.valor = valor;
         item.dataset.label = label;
         return item;

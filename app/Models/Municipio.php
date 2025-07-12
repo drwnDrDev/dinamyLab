@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Municipio extends Model
 {
-
-
     protected $fillable = [
         'departamento',
         'codigo_departamento',
