@@ -58,11 +58,27 @@
 
             <textarea id="observaciones" name="observaciones" class="form-textarea w-full h-32" placeholder="Escribe aquí las observaciones..."></textarea>
             </div>
-        </div>
+         </div>
 
             <x-primary-button id="enviarOrden" class="btn btn-primary mt-4">Crear Orden</x-primary-button>
+
+
             </form>
-        </section>
+
+        </div>
+    @if (session('success'))
+        <div class="alert alert-success mt-4">
+            {{ session('success') }}
+        </div>
+
+
+    @endif
+    @if (session('error'))
+        <div class="alert alert-error mt-4">
+            {{ session('error') }}
+        </div>
+    @endif
+    
     </x-canva>
     @vite('resources/js/main.js')
 </x-app-layout>

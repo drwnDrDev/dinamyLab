@@ -58,6 +58,7 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'acompaniante_id' => 'nullable|exists:personas,id',
@@ -66,6 +67,7 @@ class OrdenController extends Controller
         ]);
 
         $sede = session('sede');
+     
         if (!$sede) {
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }

@@ -11,7 +11,7 @@ export const handleFiltroExamenes = () => {
 
         appState.examenesVisibles = appState.todosLosExamenes.filter(examen => {
             const pasaFiltroPrecio = !solo16k || parseFloat(examen.valor) === 16000;
-            const pasaFiltroBusqueda = query.length < 3 || examen.nombre.toLowerCase().includes(query);
+            const pasaFiltroBusqueda = query.length < 1 || examen.nombre.toLowerCase().includes(query);
             return pasaFiltroPrecio && pasaFiltroBusqueda;
         });
 
@@ -36,19 +36,31 @@ export const handleFiltroExamenes = () => {
         e.preventDefault();
         const form = e.target;
         const formData = new FormData(form);
-        console.log(formData)
         const isPaciente = formData.get('perfil') === DATA_KEYS.PACIENTE;
         const esActualizacion = form['tipoGuardado'].value === DATA_KEYS.ACTUALIZAR_USUARIO;
-
         let url = '/api/personas';
         if (esActualizacion) {
             const id = isPaciente ? dom.paciente.value : dom.acompaniante.value;
             url = `/api/personas/${id}`;
             formData.append('_method', 'PUT'); // Laravel usa esto para simular un PUT
         }
-        guardarPersona(url,formData)
+        const paciente =await guardarPersona(url,formData);
 
-    };
+      if(isPaciente) {
+            dom.paciente.value = paciente.data.data.id;
+      }else{
+            dom.acompaniante.value = paciente.data.data.id;
+        }
+    form.classList.add('bg-green-100', 'dark:bg-green-800', 'border-green-400', 'dark:border-green-600', 'text-green-700', 'dark:text-green-300', 'rounded-lg', 'p-4', 'mb-4');
+
+        Array.from(form.elements).forEach(element => {
+            if (element.type !== 'hidden') {
+                element.setAttribute('disabled', 'disabled');
+                element.classList.add('bg-stone-300', 'dark:bg-gray-700', 'cursor-not-allowed');
+            }
+        });
+      }
+
 
 
     export const handleUpdateExamenCantidad = (e) => {
