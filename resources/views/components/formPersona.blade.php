@@ -3,18 +3,18 @@
 ])
 
 
-<form  id="crear{{$perfil}}">
+<form  id="crear{{$perfil}}" class="max-w-screen-md mx-auto">
 
     <div class="w-full min-w-80 p-4 my-4">
         <h2 class="font-bold mb-4 text-xl text-titles">Datos {{$perfil}}</h2>
         <input type="hidden" id="perfil" name="perfil" value="{{ $perfil }}">
-        <div class="row-inputs w-full md:grid lg:grid-cols-4 md:grid-cols-2 gap-2">
-            <div class="w-full pb-2 lg:max-w-60">
+        <div class="row-inputs w-full md:grid  md:grid-cols-3 justify-around gap-2">
+            <div>
                 <x-input-label for="numero_documento">Número de documento</x-input-label>
                 <x-text-input type="number" id="numero_documento" name="numero_documento" required />
             </div>
 
-            <div class="w-full pb-2 lg:max-w-60">
+            <div class="w-full">
             <x-input-label for="tipo_documento">Tipo de documento</x-input-label>
             <select id="tipo_documento" name="tipo_documento" class="text-sm h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md">
             <option value="CC">Cédula de Ciudadanía</option>
@@ -28,21 +28,21 @@
             <option value="PT">Permiso de Permanencia</option>
             </select>
             </div>
-            <div class="w-full pb-2 col-span-2">
+            <div class="w-full ">
                 <x-input-label for="pais">País de orígen</x-input-label>
-                <x-select-input id="pais" name="pais" class="hidden" :options="['COL'=>'Colombia']" />
+                <x-select-input id="pais" name="pais"  :options="['COL'=>'Colombia']" />
             </div>
         </div>
 
 
-        <div class="row-inputs pt-2 w-full md:flex justify-between gap-2">
-            <div class="w-full pb-2">
-                <x-input-label class="w-1/3" for="nombres">Nombres</x-input-label>
-                <x-text-input class="w-1/3" type="text" id="nombres" name="nombres" required />
+        <div class="row-inputs pt-2 w-full md:flex justify-between gap-4">
+            <div class="w-full flex items-baseline justify-around gap-1">
+                <x-input-label for="nombres">Nombres</x-input-label>
+                <x-text-input type="text" id="nombres" name="nombres" class="col-span-2" required />
             </div>
-            <div class="w-full pb-2">
+            <div class="w-full flex items-baseline justify-around gap-1">
                 <x-input-label for="apellidos">Apellidos</x-input-label>
-                <x-text-input  type="text" id="apellidos" name="apellidos" required />
+                <x-text-input  type="text" id="apellidos" name="apellidos" class="col-span-2" required />
             </div>
         </div>
 
@@ -63,7 +63,7 @@
             </div>
         </div>
      @endif
-        <hr class="my-8 border-1 border-borders">
+        <hr class="m-0 border-1 border-borders">
         <div class="row-inputs pt-2 w-full md:flex justify-between gap-2">
             <div class="w-full pb-2">
                 <x-input-label for="telefono">Teléfono</x-input-label>
