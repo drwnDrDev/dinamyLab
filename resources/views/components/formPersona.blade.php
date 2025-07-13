@@ -4,6 +4,7 @@
 
 
 <form  id="crear{{$perfil}}">
+
     <div class="w-full min-w-80 p-4 my-4">
         <h2 class="font-bold mb-4 text-xl text-titles">Datos {{$perfil}}</h2>
         <input type="hidden" id="perfil" name="perfil" value="{{ $perfil }}">
@@ -12,6 +13,7 @@
                 <x-input-label for="numero_documento">Número de documento</x-input-label>
                 <x-text-input type="number" id="numero_documento" name="numero_documento" required />
             </div>
+
             <div class="w-full pb-2 lg:max-w-60">
             <x-input-label for="tipo_documento">Tipo de documento</x-input-label>
             <select id="tipo_documento" name="tipo_documento" class="text-sm h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md">
@@ -31,6 +33,7 @@
                 <x-select-input id="pais" name="pais" class="hidden" :options="['COL'=>'Colombia']" />
             </div>
         </div>
+
 
         <div class="row-inputs pt-2 w-full md:flex justify-between gap-2">
             <div class="w-full pb-2">
@@ -79,6 +82,11 @@
                     <option value="Salud Total"></option>
                 </datalist>
             </div>
+        @else
+            <div class="w-full pb-2">
+                <x-input-label for="parentesco">Parentesco</x-input-label>
+                <x-text-input type="text" id="parentesco" name="parentesco" />
+            </div>
     @endif
         </div>
         <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2">
@@ -99,8 +107,6 @@
             </div>
 
         </div>
-
-
 
         <div class="row-inputs py-8 w-full flex justify-center gap-2">
             <x-primary-button id="tipoGuardado" name="tipoGuardado" class="w-40" >Guardar</x-primary-button>
