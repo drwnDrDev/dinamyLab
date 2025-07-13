@@ -36,6 +36,7 @@ export const handleFiltroExamenes = () => {
         e.preventDefault();
         const form = e.target;
         const formData = new FormData(form);
+        console.log(formData)
         const isPaciente = formData.get('perfil') === DATA_KEYS.PACIENTE;
         const esActualizacion = form['tipoGuardado'].value === DATA_KEYS.ACTUALIZAR_USUARIO;
 

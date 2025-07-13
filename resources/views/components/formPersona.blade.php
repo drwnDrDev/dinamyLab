@@ -95,7 +95,7 @@
 
             <div class="w-full pb-2 md:col-span-2">
                 <x-input-label for="direccion">Dirección</x-input-label>
-                <x-text-input type="text" id="direccion" name="direccion" :required="false" />
+                <x-text-input type="text" id="direccion" name="direccion" />
             </div>
 
         </div>

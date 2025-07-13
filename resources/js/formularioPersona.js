@@ -10,9 +10,10 @@
         form['fecha_nacimiento'].value = persona.fecha_nacimiento;
         form['telefono'].value = persona.telefono;
         form['correo'].value= persona.correo;
-
-        // ... Llenar otros campos ...
-        // Ejemplo para un campo complejo como el sexo:
+        form["eps"].value=persona.eps;
+        form["direccion"].value=persona.direccion;
+        form["municipio"].value=persona.municipio;
+        form["pais"].value=persona.pais;
         form.querySelectorAll('input[name="sexo"]').forEach(radio => {
             radio.checked = radio.value === persona.sexo;
         });
@@ -76,7 +77,7 @@ export const displayMunicipios = (selectActual,) => {
 
         // Agregar opciones de municipios
         appState.municipios.forEach(municipio => {
-            selectActual.appendChild(crearOpcion( `${municipio.municipio} - ${municipio.departamento}` , municipio.id));
+            selectActual.appendChild(crearOpcion( `${municipio.municipio} - ${municipio.departamento}` , municipio.codigo));
         });
     }
 
