@@ -294,7 +294,6 @@ document.getElementById('crearacompaniante').addEventListener('submit', function
 document.getElementsByName('numero_documento').forEach(input => {
 
     input.addEventListener('blur', function (e) {
-
         buscarDocuento(e);
     });
 });
