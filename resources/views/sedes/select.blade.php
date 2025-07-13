@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seleccionar Sede</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
 
 </head>
 <body>
@@ -17,16 +17,17 @@
                 <p class="p-2 bg-slate-300">{{$empleado->empresa->nombre_comercial}}</p>
                 {{$empleado->cargo}}
             </div>
-           
+
         <section>
             @foreach ($empleado->sedes as $sede)
             <a class="p-4 border-b border-borders" href="{{route('elegir.sede', $sede->id)}}">
                 <h2 class="text-xl font-semibold">{{$sede->nombre}}</h2>
-            </a>  
-            @endforeach              
-        
+            </a>
+            @endforeach
+
         </section>
-</x-canva>    
+</x-canva>
+  @vite('resources/js/obtenerStaticos.js')
 </body>
 </html>
 
