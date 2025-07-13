@@ -20,6 +20,7 @@ export const DATA_KEYS = Object.freeze({
 export const appState = {
         todosLosExamenes: [],
         examenesVisibles: [],
+       
         municipios: JSON.parse(localStorage.getItem('municipios_data')) || [],
         paises: JSON.parse(localStorage.getItem('paises_data')) || [],
         eps: JSON.parse(localStorage.getItem('eps_data')) || [],
