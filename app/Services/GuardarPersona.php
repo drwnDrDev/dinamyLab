@@ -2,8 +2,9 @@
 namespace App\Services;
 
 use App\Models\Persona;
-//use App\Models\Municipio;
+
 use App\Http\Requests\StorePersonaRequest;
+use App\Models\Municipio;
 use App\Services\NombreParser;
 
 use Carbon\Carbon;
@@ -11,10 +12,6 @@ use Illuminate\Support\Facades\Log;
 
 class GuardarPersona
 {
-
-
-
-
     public static function guardarContacto(StorePersonaRequest $datos, Persona $persona): ?int
     {
         if (
@@ -33,6 +30,7 @@ class GuardarPersona
             $datos->input('municipio') === null
         ) {
             $sede = session('sede');
+            log('Sede actual: ' . json_encode($sede));
             if ($sede && $sede->municipio_id) {
                 $datos->merge(['municipio' => $sede->municipio_id]);
             } else {
