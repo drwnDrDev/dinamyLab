@@ -44,12 +44,15 @@ export const handleFiltroExamenes = () => {
             url = `/api/personas/${id}`;
             formData.append('_method', 'PUT'); // Laravel usa esto para simular un PUT
         }
-        const paciente =await guardarPersona(url,formData);
+
+        const persona = await guardarPersona(url,formData);
+        console.log(persona);
+        if (!persona) return;   
 
       if(isPaciente) {
-            dom.paciente.value = paciente.data.data.id;
+            dom.paciente.value = persona.data.data.id;
       }else{
-            dom.acompaniante.value = paciente.data.data.id;
+            dom.acompaniante.value = persona.data.data.id;
         }
     form.classList.add('bg-green-100', 'dark:bg-green-800', 'border-green-400', 'dark:border-green-600', 'text-green-700', 'dark:text-green-300', 'rounded-lg', 'p-4', 'mb-4');
 

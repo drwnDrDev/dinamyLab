@@ -11,7 +11,7 @@
                 <span class="font-bold ">Paciente: </span>
                 <h3>{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
                 <span class="font-bold ">Identificación: </span>
-                <h3>{{$procedimiento->orden->paciente->tipo_documento}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
+                <h3>{{$procedimiento->orden->paciente->tipo_documento->cod_rips}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
                 <span class="font-bold ">Sexo: </span>
                 <h3>{{$procedimiento->orden->paciente->sexo}} </h3>
 
@@ -54,9 +54,9 @@
             @endforeach
             <div class="col-span-full text-center mt-4">
                 <x-primary-button>guardar resultado</x-primary-button>
-            </div>       
+            </div>
          </form>
-         
+
 
     </x-canva>
 </x-app-layout>
