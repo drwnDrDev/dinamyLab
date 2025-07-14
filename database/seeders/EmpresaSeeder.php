@@ -20,7 +20,7 @@ class EmpresaSeeder extends Seeder
             'segundo_nombre'=>'Patricia',
             'primer_apellido'=>'Buitrago',
             'segundo_apellido'=>'Hernandez',
-            'tipo_documento'=>'CC',
+           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'51934571',
             'fecha_nacimiento'=>'1969-01-11',
             'sexo'=>'F',
@@ -29,7 +29,7 @@ class EmpresaSeeder extends Seeder
         $extranjero = Persona::create([
             'primer_nombre'=>'Ronaldo',
             'primer_apellido'=>'Nazario',
-            'tipo_documento'=>'CC',
+           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123466789',
             'fecha_nacimiento'=>'1929-01-11',
             'sexo'=>'M',
@@ -107,7 +107,7 @@ class EmpresaSeeder extends Seeder
         $empleado = \App\Models\Empleado::create([
             'cargo'=>'Bacteriologa',
             'firma'=>'firma_claudia.png',
-            'tipo_documento'=>'CC',
+           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'51934571',
             'fecha_nacimiento'=>'1969-01-11',
             'user_id'=>2,
@@ -121,7 +121,7 @@ class EmpresaSeeder extends Seeder
         $admon= \App\Models\Empleado::create([
             'cargo'=>'Administrador',
             'firma'=>'ramirez.png',
-            'tipo_documento'=>'CC',
+           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'80920160',
             'fecha_nacimiento'=>'1985-08-08',
             'user_id'=>1,
@@ -138,7 +138,7 @@ class EmpresaSeeder extends Seeder
             'segundo_nombre'=>'Carolina',
             'primer_apellido'=>'Arboleda',
             'segundo_apellido'=>'Hernandez',
-            'tipo_documento'=>'CC',
+           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456',
             'fecha_nacimiento'=>'1989-11-12',
             'sexo'=>'F',
@@ -148,7 +148,7 @@ class EmpresaSeeder extends Seeder
         $agente =  Persona::create([
             'primer_nombre'=>'Ronald',
             'primer_apellido'=>'McDonald',
-            'tipo_documento'=>'CC',
+           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
             'sexo'=>'M',
@@ -159,7 +159,7 @@ class EmpresaSeeder extends Seeder
         $empleado2 = \App\Models\Empleado::create([
 
             'cargo'=>'contador',
-            'tipo_documento'=>'CC',
+           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
             'user_id'=>3,
@@ -170,7 +170,7 @@ class EmpresaSeeder extends Seeder
         $empleado3 = \App\Models\Empleado::create([
 
             'cargo'=>'secretaria',
-            'tipo_documento'=>'CC',
+           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456',
             'fecha_nacimiento'=>'1989-11-12',
             'user_id'=>4,

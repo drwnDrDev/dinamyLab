@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('segundo_nombre')->nullable();
             $table->string('primer_apellido');
             $table->string('segundo_apellido')->nullable();
-            $table->string('tipo_documento',2)->default('CC');
+            $table->foreignId('tipo_documento_id')
+                ->constrained('tipo_documentos')
+                ->cascadeOnUpdate();
             $table->string('numero_documento')->unique();
             $table->date('fecha_nacimiento')->nullable();
             $table->enum('sexo',['F','M'])->nullable();
