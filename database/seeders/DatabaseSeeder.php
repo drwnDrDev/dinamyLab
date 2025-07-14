@@ -77,6 +77,7 @@ class DatabaseSeeder extends Seeder
         $coordinador->assignRole('contable');
 
         $this->call([
+            TipoDocumentoSeeder::class,
             MunicipioSeeder::class,
             EmpresaSeeder::class,
             ExamenSeeder::class,

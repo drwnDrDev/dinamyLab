@@ -15,9 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('firma')->nullable();
             $table->string('cargo',120)->default(\App\Cargo::PRESTADOR);
-            $table->string('tipo_documento', 2)->default('CC');
+
             $table->string('numero_documento')->unique();
             $table->date('fecha_nacimiento')->nullable();
+            $table->foreignId('tipo_documento_id')
+                ->constrained('tipo_documentos')
+                ->cascadeOnUpdate();
+
             $table->foreignId('empresa_id')
                 ->constrained('empresas')
                 ->cascadeOnDelete()
