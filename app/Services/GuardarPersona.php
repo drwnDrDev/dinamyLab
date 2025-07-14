@@ -119,7 +119,7 @@ class GuardarPersona
             'segundo_nombre' => $parsed['segundo_nombre'],
             'primer_apellido' => $parsed['primer_apellido'],
             'segundo_apellido' => $parsed['segundo_apellido'],
-            'tipo_documento' => $request->input('tipo_documento'),
+            'tipo_documento_id' =>  \App\Models\TipoDocumento::idPorCodigoRips($request->input('tipo_documento')),
             'numero_documento' => $request->input('numero_documento'),
             'fecha_nacimiento' => Carbon::parse($request->input('fecha_nacimiento')),
             'sexo' => $request->input('sexo'),

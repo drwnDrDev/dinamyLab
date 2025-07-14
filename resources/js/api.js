@@ -1,5 +1,6 @@
-
+import {displayValidationErrors} from './formularioPersona.js';
 const TOKEN= document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 const apiClient = axios.create({
         headers: {
             'X-CSRF-TOKEN': TOKEN,
@@ -34,18 +35,28 @@ export const fetchPersonaPorDocumento = async (numeroDocumento) => {
         }
     };
 
-export const guardarPersona = (url, formData) =>{
-
-            try {
-            const response = apiClient.post(url, formData);
-               return response;
-
-            } catch (error) {
-                if (error.response?.status === 422) { // Error de validación
-                    displayValidationErrors(form, error.response.data.errors);
-                } else {
-                    console.error('Error al guardar:', error);
-                    console.error('Paciente no guardado')
+export const  guardarPersona =  (url, formData) =>{
+    try {
+        return apiClient.post(url, formData)
+            .then(response => {
+                if (response.data.status === 'error') {
+                    displayValidationErrors(document.querySelector('form'), response.data.errors);
+                    return null;
                 }
-            }
-}
+                return response;
+            })
+            .catch(error => {
+                console.error("Error al guardar persona:", error);
+                if (error.response?.data?.errors) {
+                    displayValidationErrors(document.querySelector('form'), error.response.data.errors);
+                }
+                return null;
+            });
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+        displayValidationErrors(document.querySelector('form'), { general: ['Error al procesar la solicitud.'] });
+        return null;
+    }
+    
+    };
+

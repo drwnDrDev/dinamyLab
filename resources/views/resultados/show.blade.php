@@ -30,7 +30,7 @@
                 <span class="font-bold ">Paciente: </span>
                 <h3 class="text-md">{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
                 <span class="font-bold ">Identificación: </span>
-                <h3>{{$procedimiento->orden->paciente->tipo_documento}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
+                <h3>{{$procedimiento->orden->paciente->tipo_documento->cod_rips}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
 
 
                     <div class="flex gap-2">
