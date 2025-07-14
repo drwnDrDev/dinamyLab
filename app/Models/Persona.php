@@ -14,13 +14,13 @@ class Persona extends Model
         'segundo_nombre',
         'primer_apellido',
         'segundo_apellido',
-        'tipo_documento',
+        'tipo_documento_id',
         'numero_documento',
         'fecha_nacimiento',
         'sexo',
         'nacional',
         'telefono',
-        
+
     ];
     protected $casts = [
         'fecha_nacimiento' => 'date',
@@ -121,6 +121,10 @@ class Persona extends Model
         } else {
             return $diff->d . ' día' . ($diff->d > 1 ? 's' : '');
         }
+    }
+    public function tipo_documento()
+    {
+        return $this->belongsTo(TipoDocumento::class);
     }
 
     public function scopeNacional($query)

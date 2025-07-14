@@ -15,7 +15,7 @@
                 <p class="text-titles">Paciente</p>
                 <p class="text-text">{{$orden->paciente->nombres()}} {{$orden->paciente->apellidos()}}</p>
                 <p class="text-titles">Identificacion</p>
-                <p class="text-text">{{$orden->paciente->tipo_documento}} {{$orden->paciente->numero_documento}}</p>
+                <p class="text-text">{{$orden->paciente->tipo_documento->cod_rips}} {{$orden->paciente->numero_documento}}</p>
             </div>
 
 
