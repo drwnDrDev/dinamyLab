@@ -80,7 +80,7 @@ class PersonaController extends Controller
         $request->validate([
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'tipo_documento' => 'required|string|max:2',
+           
             'fecha_nacimiento' => 'nullable|date',
             'sexo' => 'nullable|string|max:10',
             'telefono' => 'nullable|string|size:10',
@@ -208,7 +208,7 @@ class PersonaController extends Controller
                 "id" => $persona->id,
                 "nombre" => implode(' ',[$persona->primer_nombre,$persona->segundo_nombre?? '']),
                 "apellido" => implode(' ',[$persona->primer_apellido,$persona->segundo_apellido?? '']),
-                "tipo_documento" => $persona->tipo_documento,
+                "tipo_documento" => $persona->tipo_documento->cod_rips,
                 "numero_documento" => $persona->numero_documento,
                 "fecha_nacimiento" => $persona->fecha_nacimiento? $persona->fecha_nacimiento->format('Y-m-d') : null,
                 "sexo" => $persona->sexo,
@@ -218,7 +218,6 @@ class PersonaController extends Controller
                 "correo" => $persona->email?->email ?? null,
                 "pais" => $persona->procedencia?->pais_codigo_iso ?? 'COL',
                 "municipio" => $persona->direccion?->municipio_id ?? 11007,
-
                 'eps' => $persona->afiliacionSalud?->eps ?? null,
 
             ]
