@@ -31,6 +31,12 @@ class StorePersonaRequest extends FormRequest
                     if (TipoDocumento::idPorCodigoRips($value) === null) {
                         $fail('El tipo de documento no es válido.');
                     }
+                    if($this->calcularEdad($this->input('fecha_nacimiento')) < TipoDocumento::where('cod_rips', $value)->value('edad_minima')) {
+                        $fail('La persona no cumple con la edad mínima requerida para este tipo de documento.');
+                    }
+                    if($this->calcularEdad($this->input('fecha_nacimiento')) > TipoDocumento::where('cod_rips', $value)->value('edad_maxima')) {
+                        $fail('La persona no cumple con la edad máxima permitida para este tipo de documento.');
+                    }
                 },],
             'numero_documento' => ['required', 'string','min:3', 'max:16',TipoDocumento::regexPorCodigoRips($this->input('tipo_documento')),'unique:personas,numero_documento'],
             'fecha_nacimiento' => ['nullable','date',
@@ -62,5 +68,24 @@ class StorePersonaRequest extends FormRequest
             'municipio' => ['nullable', 'string', 'max:255'],
         ];
 
+    }
+    /**
+     * Calcula la edad a partir de una fecha de nacimiento.
+     *
+     * @param string|null $fechaNacimiento
+     * @return int|null
+     */
+    public function calcularEdad(?string $fechaNacimiento): ?int
+    {
+        if (!$fechaNacimiento) {
+            return null;
+        }
+        $fecha = date_create($fechaNacimiento);
+        $hoy = date_create('today');
+        if (!$fecha) {
+            return null;
+        }
+        $edad = date_diff($fecha, $hoy)->y;
+        return $edad;
     }
 }
