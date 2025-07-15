@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\TipoDocumento;
+use App\Models\TipoDocumento;
 
 class StorePersonaRequest extends FormRequest
 {
@@ -26,28 +26,26 @@ class StorePersonaRequest extends FormRequest
         return [
             'nombres' => ['required', 'string', 'max:255'],
             'apellidos' => ['required', 'string', 'max:255'],
-            'tipo_documento' => ['required', 'string','max:2',
+            'tipo_documento' => ['required', 'string','max:4',
             function ($attribute, $value, $fail) {
-                    if (TipoDocumento::tryFrom($value) === null) {
+                    if (TipoDocumento::idPorCodigoRips($value) === null) {
                         $fail('El tipo de documento no es válido.');
                     }
+                    if($this->calcularEdad($this->input('fecha_nacimiento')) < TipoDocumento::where('cod_rips', $value)->value('edad_minima')) {
+                        $fail('La persona no cumple con la edad mínima requerida para este tipo de documento.');
+                    }
+                    if($this->calcularEdad($this->input('fecha_nacimiento')) > TipoDocumento::where('cod_rips', $value)->value('edad_maxima')) {
+                        $fail('La persona no cumple con la edad máxima permitida para este tipo de documento.');
+                    }
                 },],
-            'numero_documento' => ['required', 'string','min:3', 'max:16','regex:/^[a-zA-Z0-9]+$/',
-            function ($attribute, $value, $fail) {
-                if (in_array($this->tipo_documento, ['CC', 'RC', 'TI'])) {
-                    if (!ctype_digit($value)) {
-                        $fail('El número de documento debe ser numérico para el tipo de documento seleccionado.');
-                    }
-                    if (strlen($value) > 10) {
-                        $fail('El número de documento no puede superar los 10 caracteres para el tipo de documento seleccionado.');
-                    }
-                }
-            },
-            'unique:personas,numero_documento'],
+            'numero_documento' => ['required', 'string','min:3', 'max:16',TipoDocumento::regexPorCodigoRips($this->input('tipo_documento')),'unique:personas,numero_documento'],
             'fecha_nacimiento' => ['nullable','date',
             function ($attribute, $value, $fail) {
                 if ($value && strtotime($value) > strtotime('today')) {
                     $fail('La fecha de nacimiento no puede ser una fecha futura.');
+                }
+                if ($value && strtotime($value) < strtotime('1900-01-01')) {
+                    $fail('La fecha de nacimiento no puede ser anterior al 1 de enero de 1900.');
                 }
             }],
 
@@ -70,5 +68,24 @@ class StorePersonaRequest extends FormRequest
             'municipio' => ['nullable', 'string', 'max:255'],
         ];
 
+    }
+    /**
+     * Calcula la edad a partir de una fecha de nacimiento.
+     *
+     * @param string|null $fechaNacimiento
+     * @return int|null
+     */
+    public function calcularEdad(?string $fechaNacimiento): ?int
+    {
+        if (!$fechaNacimiento) {
+            return null;
+        }
+        $fecha = date_create($fechaNacimiento);
+        $hoy = date_create('today');
+        if (!$fecha) {
+            return null;
+        }
+        $edad = date_diff($fecha, $hoy)->y;
+        return $edad;
     }
 }
