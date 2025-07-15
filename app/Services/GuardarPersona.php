@@ -5,6 +5,7 @@ use App\Models\Persona;
 
 use App\Http\Requests\StorePersonaRequest;
 use App\Models\Municipio;
+use App\Models\Pais;
 use App\Services\NombreParser;
 
 use Carbon\Carbon;
@@ -67,12 +68,15 @@ class GuardarPersona
             $persona->procedencia()->create([
                 'pais_codigo_iso' => $datos->input('pais', 'COL'), // Default to Colombia
             ]);
+         Pais::incremetarNivelPais( $datos->input('pais', 'COL'));
+
         }
 
         if (
             $datos->has('telefono') &&
             $datos->input('telefono') !== '' &&
             $datos->input('telefono') !== null
+
         ) {
             $persona->telefonos()->create([
                 'numero' => $datos->input('telefono'),
@@ -102,7 +106,10 @@ class GuardarPersona
      */
     public static function guardar(StorePersonaRequest $request): Persona
     {
-        $request->validated();
+        $validated = $request->validated();
+        if (!$validated) {
+            throw new \Illuminate\Validation\ValidationException($request);
+        }
 
         // Dividir nombres y apellidos en primer y segundo nombre
         $parsed = NombreParser::parsearPersona(
