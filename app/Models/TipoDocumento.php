@@ -26,10 +26,24 @@ class TipoDocumento extends Model
      * @return int
      */
 
-public static function idPorCodigoRips(string $codigo): int
+    public static function idPorCodigoRips(string $codigo): int
         {
             return static::where('cod_rips', $codigo)->value('id');
         }
-    
+
+    public static function regexPorCodigoRips(string $codigo): string
+        {
+            $regex = static::where('cod_rips', $codigo)->value('regex_validacion');
+            if ($regex === null) {
+                throw new \InvalidArgumentException("El código RIPS '{$codigo}' no es válido.");
+            }
+
+            $regex = 'regex:/' . $regex . '/';
+            return $regex;
+        }
+
+
+
+
 
 }
