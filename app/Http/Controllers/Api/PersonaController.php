@@ -80,7 +80,7 @@ class PersonaController extends Controller
         $request->validate([
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-           
+
             'fecha_nacimiento' => 'nullable|date',
             'sexo' => 'nullable|string|max:10',
             'telefono' => 'nullable|string|size:10',
@@ -98,8 +98,8 @@ class PersonaController extends Controller
             $persona->primer_apellido = $apellidos[0];
             $persona->segundo_apellido = $apellidos[1] ?? '';
         }
-        if($request->input('tipo_documento')!==$persona->tipo_documento){
-            $persona->tipo_documento = $request->input('tipo_documento', 'CC');
+        if($request->input('tipo_documento')!==$persona->tipo_documento->cod_rips){
+            $persona->tipo_documento_id = \App\Models\TipoDocumento::idPorCodigoRips($request->input('tipo_documento'));
         }
         if($request->input('fecha_nacimiento')!==$persona->fecha_nacimiento){
             $persona->fecha_nacimiento = $request->input('fecha_nacimiento');
