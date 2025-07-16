@@ -3,7 +3,7 @@ import { appState, dom } from './variables.js';
 import { fetchExamenes } from './api.js';
 import { renderExamenes } from './crearExamenes.js';
 import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona } from './manejadorEventos.js';
-import { displayEps, displayPaieses,displayMunicipios } from './formularioPersona.js';
+import { displayEps, displayPaieses,displayMunicipios,dispalyDocumentos } from './formularioPersona.js';
 
 
 const init = async () => {
@@ -23,15 +23,56 @@ const init = async () => {
     });
 
     document.querySelectorAll('select[name="pais"]').forEach(currenFormPais => {
-        currenFormPais.addEventListener('click', displayPaieses(currenFormPais));
+        currenFormPais.addEventListener('focus',() => displayPaieses(currenFormPais));
+
     });
     document.querySelectorAll('input[name="eps"]').forEach(currenFormEps  => {
-        currenFormEps.addEventListener('click', () =>   {
+        currenFormEps.addEventListener('focus', () =>   {
              displayEps(dom.listaEps);
         });
     });
+    document.querySelectorAll('select[name="tipo_documento"]').forEach(currentFormMunicipio => {
+        currentFormMunicipio.addEventListener('focus', () => {
+            dispalyDocumentos(currentFormMunicipio);
+        });
+        currentFormMunicipio.addEventListener('change', (e) => {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            if (selectedOption) {
+                const codRips = selectedOption.dataset.valor;
+                const tipoDoc = appState.tiposDocumento.find(tipo => tipo.cod_rips === codRips);
+                console.log('Tipo de documento seleccionado:', tipoDoc);
+                if (!tipoDoc.cod_dian || tipoDoc.requiere_acudiente) {
+                    console.log('Este tipo de documento requiere un acudiente o no tiene un código DIAN asociado.');
+                }
+            }
+        }
+        );
+    }
+    );
+    document.querySelectorAll('input[name="municipioBusqueda"]').forEach(currentBusquedaFormMunicipio => {
+
+        currentBusquedaFormMunicipio.addEventListener('input', () => {
+            console.log(currentBusquedaFormMunicipio.form)
+
+            const searchValue = currentBusquedaFormMunicipio.value.toLowerCase();
+            const filteredMunicipios = appState.municipios.filter(municipio =>
+                municipio.municipio.toLowerCase().includes(searchValue) ||
+                municipio.departamento.toLowerCase().includes(searchValue)
+            );
+
+            currentBusquedaFormMunicipio.innerHTML = ''; // Limpiar opciones
+            filteredMunicipios.forEach(municipio => {
+                currentBusquedaFormMunicipio.appendChild(crearOpcion(`${municipio.municipio} - ${municipio.departamento}`, municipio.codigo));
+            });
+        }
+        );
+
+
+    }
+    );
+
     document.querySelectorAll('select[name="municipio"]').forEach(currentFormMunicipio => {
-        currentFormMunicipio.addEventListener('click',displayMunicipios(currentFormMunicipio))
+        currentFormMunicipio.addEventListener('focus',()=>displayMunicipios(currentFormMunicipio))
     })
 
     // Event Delegation para los inputs de cantidad de exámenes. Es más eficiente.
