@@ -6,23 +6,23 @@
     </x-slot>
     <x-canva>
 
-      <section class="p-4 flex flex-wrap justify-between w-full">
+      <section class="p-x flex flex-wrap justify-between w-full print:m-0">
         <div class="flex-shrink-0">
             <div class="flex">
-                <figure class="w-24 h-24 p-2">
+                <figure class="w-20 h-20 p-1">
                     <img class="aspect-square object-cover w-full h-full"
                     src="{{ asset('storage/logos/'.$orden->sede->logo) }}" alt="{{$orden->sede->nombre }}">
                 </figure>
-                <div class="flex flex-col justify-center py-2 ml-[-1px]">
+                <div class="flex flex-col justify-center  ml-[-1px]">
                     <h2 class="font-semibold text-2xl">{{$orden->sede->empresa->nombre_comercial}}</h2>
-                    <p class="font-light">{{$orden->sede->nombre}}</p>
-                    <p class="font-semibold">NIT: {{$orden->sede->empresa->nit}}</p>
+                    <p class="font-light text-sm">{{$orden->sede->nombre}}</p>
+                    <p class="font-semibold text-xs">NIT: {{$orden->sede->empresa->nit}}</p>
                 </div>
             </div>
-            <div class="pl-4">
+            <div class="px-4">
 
-            <p class="font-medium">{{$orden->sede->direccion->direccion}}-{{$orden->sede->direccion->municipio->municipio}}</p>
-               <p class="font-light"> Telefono:
+            <p class="font-medium text-xs">{{$orden->sede->direccion->direccion}}-{{$orden->sede->direccion->municipio->municipio}}</p>
+               <p class="font-light text-sm"> Telefono:
                 @php
                     $telefonos = $orden->sede->telefonos->slice(0, 2);
                 @endphp
@@ -47,16 +47,15 @@
 
         </section>
 
-        <section class="w-full">
+        <section class="w-full border border-borders rounded-md p-3">
             <div class="w-full flex flex-wrap gap-2">
                 <div class="w-full flex gap-2">
                 <span class="font-bold ">Paciente: </span>
-                <h3 class="text-md">{{$orden->paciente->nombreCompleto()}}</h3>
+                <h3 class="text-md p-0 mb-0">{{$orden->paciente->nombreCompleto()}}</h3>
                 </div>
                 <div class="w-full flex gap-2">
-
-                <span class="font-bold ">Identificación: </span>
-                <h3>{{$orden->paciente->tipo_documento->cod_rips}}{{$orden->paciente->numero_documento}}</h3>
+                    <span class="font-bold ">Identificación: </span>
+                    <h3>{{$orden->paciente->tipo_documento->cod_rips}}{{$orden->paciente->numero_documento}}</h3>
                 </div>
             </div>
             <div class="w-full flex flex-wrap gap-2 print:hidden">
@@ -68,6 +67,7 @@
                         <span class="font-bold ">Edad: </span>
                         <h3>{{$orden->paciente->edad()}}</h3>
                     </div>
+            </div>
 
                     <div class="flex gap-2">
                         <span class="font-bold ">Teléfono: </span>
@@ -102,23 +102,7 @@
         </div>
     <div class="container" id="ticket">
         <div class="grid grid-cols-5 border border-borders rounded-md">
-
-                <p class="text-titles">Paciente</p>
-                <p class="text-text">{{$orden->paciente->nombres()}} {{$orden->paciente->apellidos()}}</p>
-                <p class="text-titles">Identificacion</p>
-                <p class="text-text">{{$orden->paciente->tipo_documento->cod_rips}} {{$orden->paciente->numero_documento}}</p>
-
-
-
-            <p class="text-titles">#{{$orden->numero}} Inicio de Procedimiento {{$orden->created_at->format('d-m-Y') }}</p>
-
-        </div>
-
-
-        <div class="grid grid-cols-5 p-2 justify-center border border-borders">
-           <p class="col-span-2">{{$orden->updated_at}} </p>
-            <div class="col-span-4 grid grid-cols-4">
-
+            <div class="col-span-2">
 
                 @foreach ($orden->examenes as $examen)
                 <p>{{$examen->nombre}}</p>
@@ -131,6 +115,9 @@
             <div class="col-span-4 grid grid-cols-3 justify-end">
                 <p class="text-titles">Total</p>
                 <p class="text-text">{{$orden->total}}</p>
+                <p class="text-text">Subtotal {{$orden->abono}}</p>
+                <p class="text-text">Descuento {{$orden->descuento}}</p>
+                <p class="text-text">Saldo {{$orden->saldo}}</p>
                 <p class="text-text">IVA {{$orden->iva}}%</p>
             </div>
 
