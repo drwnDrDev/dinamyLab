@@ -41,6 +41,10 @@ class Orden extends Model
             ->withPivot('cantidad');
 
     }
+    public function sede()
+    {
+        return $this->belongsTo(Sede::class);
+    }
 
     protected $table = 'ordenes_medicas';
 }
