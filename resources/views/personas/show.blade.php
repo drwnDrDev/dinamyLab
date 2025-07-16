@@ -34,7 +34,7 @@
             </div>
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Sexo</p>
-                <p class=" font-normal leading-normal">{{$persona->sexo}}</p>
+                <p class=" font-normal leading-normal">{{$persona->sexo==='M' ? 'Masculino':'Femenino'}}</p>
             </div>
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Telefonos</p>
@@ -50,6 +50,9 @@
 
                 </p>
             </div>
+
+            <!-- se debe procurar mostrar todos los elementos asi no existan datos -->
+
             @if ( $persona->direccion)
 
 
@@ -63,12 +66,12 @@
                 <p class=" font-normal leading-normal">{{ $persona->direccion->direccion}}</p>
             </div>
               @endif
-            @if($persona->afiliacionSalud)
+            
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pr-2">
-                <p class="text-titles  font-normal leading-normal">Eps</p>
-                <p class=" font-normal leading-normal">{{ $persona->afiliacionSalud->eps}}</p>
+                <p class="text-titles  font-normal leading-normal">EPS</p>
+                <p class=" font-normal leading-normal">{{ optional($persona->afiliacionSalud)->eps?? 'Sin Información'}}</p>
             </div>
-            @endif
+            
 
 
         </div>
@@ -101,7 +104,7 @@
                             <td class="px-4 py-2 w-40 text-titles text-sm">
                                 <button
                                     class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">Entregado</span>
+                                    <span class="truncate">{{ $procedimiento->estado }}</span>
                                 </button>
                             </td>
                             <td class="px-4 py-2 w-40 text-titles text-sm">Normal</td>
@@ -121,7 +124,7 @@
 
 
     <section class="otra_info  mt-6">
-        <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] py-4">Examenes pendientes por resiltado</h2>
+        <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] py-4">Examenes en Proceso</h2>
         <div class="py-4" id="historia">
             <div class="flex overflow-hidden rounded-xl border border-borders">
                 <table class="flex-1">
@@ -150,7 +153,7 @@
                             <td class="px-4 py-2 w-40 text-titles text-sm">
                                 <button
                                     class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">Entregado</span>
+                                    <span class="truncate">{{ $procedimiento->estado }}</span>
                                 </button>
                             </td>
                             <td class="px-4 py-2 w-40 text-titles text-sm">Normal</td>
