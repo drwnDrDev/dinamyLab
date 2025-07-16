@@ -6,33 +6,60 @@
     </x-slot>
     <x-canva>
 
-      <section class="print_header p-4 flex w-full">
-            <figure class="w-24 my-auto p-0">
-                <img class="h-full w-auto fill-current text-gray-800"
-                 src="{{ asset('storage/logos/'.$orden->sede->logo) }}" alt="{{ session('sede')->nombre }}">
-            </figure>
+      <section class="p-4 flex flex-wrap justify-between w-full">
+        <div class="flex-shrink-0">
+            <div class="flex">
+                <figure class="w-24 h-24 p-2">
+                    <img class="aspect-square object-cover w-full h-full"
+                    src="{{ asset('storage/logos/'.$orden->sede->logo) }}" alt="{{$orden->sede->nombre }}">
+                </figure>
+                <div class="flex flex-col justify-center py-2 ml-[-1px]">
+                    <h2 class="font-semibold text-2xl">{{$orden->sede->empresa->nombre_comercial}}</h2>
+                    <p class="font-light">{{$orden->sede->nombre}}</p>
+                    <p class="font-semibold">NIT: {{$orden->sede->empresa->nit}}</p>
+                </div>
+            </div>
             <div class="pl-4">
 
-                <h2 class="font-semibold text-3xl">{{$orden->sede->empresa->nombre_comercial}}</h2>
-                <p class="font-light">{{$orden->sede->nombre}}</p>
-                <p class="font-semibold">{{$orden->sede->empresa->nit}}</p>
-                <p class="font-semibold">{{$orden->sede->direccion->direccion}}-{{$orden->sede->direccion->municipio->municipio}}</p>
-                @foreach ($orden->sede->telefonos as $telefono)
-                    <p class="font-light">Telefono: {{$telefono->numero}}</p>
+            <p class="font-medium">{{$orden->sede->direccion->direccion}}-{{$orden->sede->direccion->municipio->municipio}}</p>
+               <p class="font-light"> Telefono:
+                @php
+                    $telefonos = $orden->sede->telefonos->slice(0, 2);
+                @endphp
+                @foreach ($telefonos as $index => $telefono)
+                    <span>{{ $telefono->numero }}</span>
+                    @if ($index < $telefonos->count() - 1)
+                        <span> | </span>
+                    @endif
                 @endforeach
+                </p>
+            </div>
+
+        </div>
+
+            <div class="flex flex-col  gap-x-4 gap-y-0">
+                <span class="font-semibold">Fecha de atención </span>
+                <h3 class="mb-2">{{$orden->created_at->format('d-m-Y')}}</h3>
+               <h3><strong>Órden Nº: </strong>
+                {{$orden->numero}}</h3>
 
             </div>
+
         </section>
 
-        <section class="print_paciente grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
-            <div class="w-full grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
-
+        <section class="w-full">
+            <div class="w-full flex flex-wrap gap-2">
+                <div class="w-full flex gap-2">
                 <span class="font-bold ">Paciente: </span>
                 <h3 class="text-md">{{$orden->paciente->nombreCompleto()}}</h3>
+                </div>
+                <div class="w-full flex gap-2">
+
                 <span class="font-bold ">Identificación: </span>
                 <h3>{{$orden->paciente->tipo_documento->cod_rips}}{{$orden->paciente->numero_documento}}</h3>
-
-
+                </div>
+            </div>
+            <div class="w-full flex flex-wrap gap-2 print:hidden">
                     <div class="flex gap-2">
                         <span class="font-bold ">Sexo: </span>
                         <h3>{{$orden->paciente->sexo}} </h3>
@@ -42,15 +69,21 @@
                         <h3>{{$orden->paciente->edad()}}</h3>
                     </div>
 
+                    <div class="flex gap-2">
+                        <span class="font-bold ">Teléfono: </span>
+                        <h3>
+                            @php
+                                $telefonos = $orden->paciente->telefonos->slice(0, 2);
+                            @endphp
+                            @foreach ($telefonos as $index => $telefono)
+                                <span>{{ $telefono->numero }}</span>
+                                @if ($index < $telefonos->count() - 1)
+                                    <span> | </span>
+                                @endif
+                            @endforeach
+                        </h3>
+                    </div>
 
-            </div>
-            <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
-                <span class="font-bold ">Fecha de atención: </span>
-                <h3>{{$orden->created_at->format('d-m-Y')}}</h3>
-               <h3><span class="font-bold ">Órden Nº: </span>
-                {{$orden->numero}}</h3>
-
-            </div>
         </section>
 
         <h2 class="font-bold mb-4 text-xl text-titles">Datos de la orden</h2>
