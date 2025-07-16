@@ -16,24 +16,13 @@
 
             <div class="w-full">
             <x-input-label for="tipo_documento">Tipo de documento</x-input-label>
-            <select id="tipo_documento" name="tipo_documento" class="text-sm h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md">
-            <option value="CC">Cédula de Ciudadanía</option>
-            <option value="TI">Tarjeta de Identidad</option>
-            <option value="CE">Cédula de Extranjería</option>
-            <option value="RC">Registro Civil</option>
-            <option value="PA">Pasaporte</option>
-            <option value="AS">Adulto Sin Identificación</option>
-            <option value="MS">Menores Sin Identificación</option>
-            <option value="PE">Permiso Especial</option>
-            <option value="PT">Permiso de Permanencia</option>
-            </select>
+                <x-select-input id="tipo_documento" name="tipo_documento"  :options="['CC'=>'Cédula de Ciudadanía']" />
             </div>
             <div class="w-full ">
                 <x-input-label for="pais">País de orígen</x-input-label>
                 <x-select-input id="pais" name="pais"  :options="['COL'=>'Colombia']" />
             </div>
         </div>
-
 
         <div class="row-inputs pt-2 w-full md:flex justify-between gap-4">
             <div class="w-full flex items-baseline justify-around gap-1">
@@ -92,13 +81,8 @@
         <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2">
 
             <div class="w-full pb-2 relative">
-                <x-input-label for="ciudad">Ciudad</x-input-label>
-                <x-text-input name="municipioBusqueda" />
-                <div class="w-full absolute flex-col-reverse bottom-10 bg-background border
-                 border-borders max-h-60 overflow-y-auto z-10 hidden rounded-md shadow-lg" id="opciones">
-                </div>
-                <select name="municipio" id="municipio" class="uppercase"></select>
-
+                <x-input-label for="municipio">Ciudad</x-input-label>
+                <x-select-input id="municipio" name="municipio"  :options="['11007'=>'Bosa']" />
             </div>
 
             <div class="w-full pb-2 md:col-span-2">

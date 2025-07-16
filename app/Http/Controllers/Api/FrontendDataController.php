@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\PrepareFrontendCacheDataJob;
-use App\TipoDocumento;
+use App\Models\TipoDocumento;
 use App\Models\Pais;
 use App\Models\Municipio;
 use App\Models\Eps;
@@ -37,14 +37,17 @@ class FrontendDataController extends Controller
             //     return response()->json($cachedData);
             // }
 
-            $tiposDocumento = TipoDocumento::forLocalStorage();
+            $tiposDocumento = TipoDocumento::all();
             $paises = Pais::select('nombre', 'codigo_iso')->orderBy('nivel', 'desc')->get();
-            $municipios = Municipio::orderBy('nivel', 'desc')->get()->map(function($municipio) {
-            return [
-                'codigo' => $municipio->id,
-                'municipio' => mb_strtolower($municipio->municipio, 'UTF-8'),
-                'departamento' => mb_strtolower($municipio->departamento, 'UTF-8')
-            ];
+            $municipios = Municipio::select('municipio', 'id','departamento')
+                                    ->orderBy('nivel', 'desc')
+                                    ->get()
+                                    ->map(function($municipio) {
+                        return [
+                            'codigo' => $municipio->id,
+                            'municipio' => mb_strtolower($municipio->municipio, 'UTF-8'),
+                            'departamento' => mb_strtolower($municipio->departamento, 'UTF-8')
+                        ];
         });
 
             $eps = Eps::select('nombre', 'id')
