@@ -28,6 +28,7 @@
 
             // Almacenar cada conjunto de datos en localStorage
             if (serverData.tipos_documento) {
+                
                 localStorage.setItem(dataKeys.tiposDocumento, JSON.stringify(serverData.tipos_documento));
                 console.log('Tipos de Documento guardados en localStorage.');
             }

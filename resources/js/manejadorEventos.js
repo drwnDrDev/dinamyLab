@@ -47,7 +47,7 @@ export const handleFiltroExamenes = () => {
 
         const persona = await guardarPersona(url,formData);
         console.log(persona);
-        if (!persona) return;   
+        if (!persona) return;
 
       if(isPaciente) {
             dom.paciente.value = persona.data.data.id;
@@ -127,6 +127,6 @@ export const handlePerfilChange = (e) => {
         }
     }
 
-export const handleFillPais = (e) => {
+    export const handleFillPais = (e) => {
     const form = e.target.form;
     }

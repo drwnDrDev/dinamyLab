@@ -71,7 +71,7 @@ export const displayEps = (selectActual) => {
             selectActual.appendChild(crearOpcion(eps.nombre, eps.nombre));
         });
     }
-export const displayMunicipios = (selectActual,) => {
+export const displayMunicipios = (selectActual) => {
         // Limpiar opciones existentes antes de agregar nuevas
         selectActual.innerHTML = '';
 
@@ -81,3 +81,12 @@ export const displayMunicipios = (selectActual,) => {
         });
     }
 
+export const dispalyDocumentos = (selectActual) => {
+        // Limpiar opciones existentes antes de agregar nuevas
+        selectActual.innerHTML = '';
+
+        // Agregar opciones de tipos de documento
+        appState.tiposDocumento.forEach(tipo => {
+            selectActual.appendChild(crearOpcion(tipo.nombre, tipo.cod_rips));
+        });
+    }
