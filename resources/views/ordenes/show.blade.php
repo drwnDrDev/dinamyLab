@@ -72,53 +72,44 @@
                     <div class="flex gap-2">
                         <span class="font-bold ">Teléfono: </span>
                         <h3>
-                            @php
-                                $telefonos = $orden->paciente->telefonos->slice(0, 2);
-                            @endphp
-                            @foreach ($telefonos as $index => $telefono)
-                                <span>{{ $telefono->numero }}</span>
-                                @if ($index < $telefonos->count() - 1)
-                                    <span> | </span>
-                                @endif
-                            @endforeach
+                            @if($orden->paciente->telefonos->count() > 0)
+                                {{$orden->paciente->telefonos->first()->numero}}
+                            @else
+                                No registrado
+                            @endif
                         </h3>
                     </div>
 
         </section>
 
-        <h2 class="font-bold mb-4 text-xl text-titles">Datos de la orden</h2>
-        <input type="hidden" id="orden_id" name="orden_id" value="{{ $orden->id }}">
-        <div class="row-inputs w-full grid grid-cols-3 justify-around gap-2">
-            <div>
-                <x-input-label for="numero">Número de orden</x-input-label>
-                <x-text-input type="text" id="numero" name="numero" value="{{ $orden->numero }}" readonly />
-            </div>
-
-            <div class="w-full">
-                <x-input-label for="fecha">Fecha de emisión</x-input-label>
-                <x-text-input type="date" id="fecha" name="fecha" value="{{ $orden->created_at->format('Y-m-d') }}" readonly />
-            </div>
-
-        </div>
     <div class="container" id="ticket">
-        <div class="grid grid-cols-5 border border-borders rounded-md">
-            <div class="col-span-2">
 
+        <div class="grid grid-cols-5 border border-borders rounded-md">
+            <p class="col-span-2">Examen</p>
+            <p>Cantidad</p>
+            <p>Valor</p>
+            <p>Total</p>
+        </div>
+        <div class="grid grid-cols-5 border border-borders rounded-md">
                 @foreach ($orden->examenes as $examen)
-                <p>{{$examen->nombre}}</p>
-                <p>{{$examen->pivot->cantidad}}</p>
+                <p class="col-span-2">{{$examen->nombre}}</p>
+                <p class="text-center">{{$examen->pivot->cantidad}}</p>
                 <p>{{$examen->valor}}</p>
                 <p>{{$examen->valor*$examen->pivot->cantidad}}</p>
-
                @endforeach
-            </div>
-            <div class="col-span-4 grid grid-cols-3 justify-end">
-                <p class="text-titles">Total</p>
-                <p class="text-text">{{$orden->total}}</p>
-                <p class="text-text">Subtotal {{$orden->abono}}</p>
-                <p class="text-text">Descuento {{$orden->descuento}}</p>
-                <p class="text-text">Saldo {{$orden->saldo}}</p>
-                <p class="text-text">IVA {{$orden->iva}}%</p>
+        </div>
+            <div class="grid grid-cols-5 justify-between items-center p-2 gap-2">
+                <p class="text-end col-span-4">Subtotal</p>
+                <p class="tabular-nums">{{number_format($orden->total)}}</p>
+                <p class="col-span-4 text-end">Descuento </p>
+                <p class="tabular-nums">${{$orden->descuento ?? 0}}</p>
+                 @if($orden->total != $orden->abono)
+                    <p class="col-span-4 text-end">Saldo</p>
+                    <p class="tabular-nums">{{$orden->total - $orden->abono}}</p>
+                 @endif
+                <p class="col-span-4 text-end">Total</p>
+                <p class="font-semibold tabular-nums">{{$orden->total - $orden->descuento}}</p>
+                <p class="text-black/75 col-span-5 text-end">**IVA**: $0 (Exento según Art. 476 ET)  </p>
             </div>
 
         </div>
