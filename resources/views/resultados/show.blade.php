@@ -4,7 +4,7 @@
     </x-slot>
 
     <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!min-h-screen print:!text-xs print:!p-0 print:!bg-white print:!text-black">
-        <section class="print_header pb-2 flex items-center w-full">
+        <section class="print_header hidden print:!flex pb-2  items-center w-full">
             <figure class="w-16 my-auto p-0">
 
                 @if (session('sede')->id === $procedimiento->sede->id)
