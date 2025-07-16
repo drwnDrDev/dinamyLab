@@ -23,22 +23,17 @@
         <section class="print_paciente grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
             <div class="col-span-2 flex gap-2">
                 <span class="font-normal ">Paciente: </span>
-                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
+                <h3 class="text-titles font-normal">{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
             </div>
             <div class="w-full grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
-                
+
                 <span class="font-normal ">Identificación: </span>
                 <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->tipo_documento->cod_rips}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
+                <span class="font-normal ">Sexo: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->sexo==="M" ? 'Masculino':'Femenino'}} </h3>
+                <span class="font-normal ">Edad: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->edad()}}</h3>
 
-
-                <div class="flex gap-2">
-                    <span class="font-normal ">Sexo: </span>
-                    <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->sexo==="M" ? 'Masculino':'Femenino'}} </h3>
-                </div>
-                <div class="flex gap-2">
-                    <span class="font-normal ">Edad: </span>
-                    <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->edad()}}</h3>
-                </div>
 
 
             </div>
@@ -78,11 +73,11 @@
             @endforeach
 
         </section>
-        
-                <div class="text-end text-xs font-light p-4 print:hidden">
-                    <p class="text-xs font-light">Bacteriologo: {{$procedimiento->empleado->user->name}} - {{$procedimiento->empleado->numero_documento}}</p>
 
-                </div>      
+        <div class="text-end text-xs font-light p-4 print:hidden">
+            <p class="text-xs font-light">Bacteriologo: {{$procedimiento->empleado->user->name}} - {{$procedimiento->empleado->numero_documento}}</p>
+
+        </div>
 
         <footer class="print_footer hidden bottom-0 left-0 w-full m-auto items-center print:!block print:!absolute">
             <aside class="firma flex justify-end h-full items-end p-4 gap-2">
