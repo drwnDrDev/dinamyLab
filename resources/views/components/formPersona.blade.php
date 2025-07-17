@@ -65,7 +65,7 @@
 
      @if($perfil === 'Paciente')
             <div class="w-full pb-2">
-                <x-input-label for="EPS">EPS</x-input-label>
+                <x-input-label for="eps">EPS</x-input-label>
                 <x-text-input list="lista_eps" id="eps" name="eps" />
                 <datalist id="lista_eps">
                     <option value="Salud Total"></option>

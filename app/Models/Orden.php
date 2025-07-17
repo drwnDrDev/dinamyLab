@@ -18,10 +18,14 @@ class Orden extends Model
         'total',
     ];
 
-    protected $casts = [
-        'numero' => 'integer',
-        'abono' => 'decimal:2',
-    ];
+    public function casts()
+    {
+        return [
+            'numero' => 'integer',
+            'abono' => 'decimal:2',
+            'total' => 'decimal:2',
+        ];
+    }
     public function paciente()
     {
         return $this->belongsTo(Persona::class, 'paciente_id');
@@ -40,6 +44,10 @@ class Orden extends Model
         return $this->belongsToMany(Examen::class, 'orden_examen', 'orden_medica_id', 'examen_id')
             ->withPivot('cantidad');
 
+    }
+    public function sede()
+    {
+        return $this->belongsTo(Sede::class);
     }
 
     protected $table = 'ordenes_medicas';

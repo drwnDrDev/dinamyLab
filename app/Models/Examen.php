@@ -23,7 +23,7 @@ class Examen extends Model
             ->withPivot('cantidad')
             ->withTimestamps();
     }
-    
+
     public function procedimiento()
     {
         return $this->belongsTo(Procedimiento::class);
@@ -36,5 +36,12 @@ class Examen extends Model
 
 
     protected $table = 'examenes';
+    public function casts()
+    {
+        return [
+            'valor' => 'decimal:2',
+        ];
+    }
+
 
 }

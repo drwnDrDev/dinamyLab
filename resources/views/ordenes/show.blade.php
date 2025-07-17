@@ -1,89 +1,121 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-text leading-tight">
+        <h2 class="font-semibold text-xl text-text leading-tight print:hidden">
            {{ __('Medical order') }}
         </h2>
     </x-slot>
     <x-canva>
-        <div class=" items-center mb-4">
-                <a href="{{ route('ordenes.create') }}" class="p-4 bg-secondary rounded-md hover:bg-primary">Nueva orden</a>
+
+      <section class="p-x flex flex-wrap justify-between w-full print:m-0">
+        <div class="flex-shrink-0">
+            <div class="flex">
+                <figure class="w-20 h-20 p-1">
+                    <img class="aspect-square object-cover w-full h-full"
+                    src="{{ asset('storage/logos/'.$orden->sede->logo) }}" alt="{{$orden->sede->nombre }}">
+                </figure>
+                <div class="flex flex-col justify-center  ml-[-1px]">
+                    <h2 class="font-semibold text-2xl">{{$orden->sede->empresa->nombre_comercial}}</h2>
+                    <p class="font-light text-sm">{{$orden->sede->nombre}}</p>
+                    <p class="font-semibold text-xs">NIT: {{$orden->sede->empresa->nit}}</p>
+                </div>
+            </div>
+            <div class="px-4">
+
+            <p class="font-medium text-xs">{{$orden->sede->direccion->direccion}}-{{$orden->sede->direccion->municipio->municipio}}</p>
+               <p class="font-light text-sm"> Telefono:
+                @php
+                    $telefonos = $orden->sede->telefonos->slice(0, 2);
+                @endphp
+                @foreach ($telefonos as $index => $telefono)
+                    <span>{{ $telefono->numero }}</span>
+                    @if ($index < $telefonos->count() - 1)
+                        <span> | </span>
+                    @endif
+                @endforeach
+                </p>
+            </div>
+
         </div>
+
+            <div class="flex flex-col  gap-x-4 gap-y-0">
+                <span class="font-semibold">Fecha de atención </span>
+                <h3 class="mb-2">{{$orden->created_at->format('d-m-Y')}}</h3>
+               <h3><strong>Órden Nº: </strong>
+                {{$orden->numero}}</h3>
+
+            </div>
+
+        </section>
+
+        <section class="w-full border border-borders rounded-md p-3">
+            <div class="w-full flex flex-wrap gap-2">
+                <div class="w-full flex gap-2">
+                <span class="font-bold ">Paciente: </span>
+                <h3 class="text-md p-0 mb-0">{{$orden->paciente->nombreCompleto()}}</h3>
+                </div>
+                <div class="w-full flex gap-2">
+                    <span class="font-bold ">Identificación: </span>
+                    <h3>{{$orden->paciente->tipo_documento->cod_rips}}{{$orden->paciente->numero_documento}}</h3>
+                </div>
+            </div>
+            <div class="w-full flex flex-wrap gap-2 print:hidden">
+                    <div class="flex gap-2">
+                        <span class="font-bold ">Sexo: </span>
+                        <h3>{{$orden->paciente->sexo}} </h3>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="font-bold ">Edad: </span>
+                        <h3>{{$orden->paciente->edad()}}</h3>
+                    </div>
+            </div>
+
+                    <div class="flex gap-2">
+                        <span class="font-bold ">Teléfono: </span>
+                        <h3>
+                            @if($orden->paciente->telefonos->count() > 0)
+                                {{$orden->paciente->telefonos->first()->numero}}
+                            @else
+                                No registrado
+                            @endif
+                        </h3>
+                    </div>
+
+        </section>
 
     <div class="container" id="ticket">
+
         <div class="grid grid-cols-5 border border-borders rounded-md">
-            <div class="col-span-2 p-2">
-                <p class="text-titles">Paciente</p>
-                <p class="text-text">{{$orden->paciente->nombres()}} {{$orden->paciente->apellidos()}}</p>
-                <p class="text-titles">Identificacion</p>
-                <p class="text-text">{{$orden->paciente->tipo_documento->cod_rips}} {{$orden->paciente->numero_documento}}</p>
-            </div>
-
-
-            <p class="text-titles">#{{$orden->numero}} Inicio de Procedimiento {{$orden->created_at->format('d-m-Y') }}</p>
-
+            <p class="col-span-2">Examen</p>
+            <p>Cantidad</p>
+            <p>Valor</p>
+            <p>Total</p>
         </div>
-
-
-        <div class="grid grid-cols-5 p-2 justify-center border border-borders">
-           <p class="col-span-2">{{$orden->updated_at}} </p>
-            <div class="col-span-4 grid grid-cols-4">
-
-
+        <div class="grid grid-cols-5 border border-borders rounded-md">
                 @foreach ($orden->examenes as $examen)
-                <p>{{$examen->nombre}}</p>
-                <p>{{$examen->pivot->cantidad}}</p>
+                <p class="col-span-2">{{$examen->nombre}}</p>
+                <p class="text-center">{{$examen->pivot->cantidad}}</p>
                 <p>{{$examen->valor}}</p>
                 <p>{{$examen->valor*$examen->pivot->cantidad}}</p>
-
-
-                @endforeach
+               @endforeach
+        </div>
+            <div class="grid grid-cols-5 justify-between items-center p-2 gap-2">
+                <p class="text-end col-span-4">Subtotal</p>
+                <p class="tabular-nums">{{number_format($orden->total)}}</p>
+                <p class="col-span-4 text-end">Descuento </p>
+                <p class="tabular-nums">${{$orden->descuento ?? 0}}</p>
+                 @if($orden->total != $orden->abono)
+                    <p class="col-span-4 text-end">Saldo</p>
+                    <p class="tabular-nums">{{$orden->total - $orden->abono}}</p>
+                 @endif
+                <p class="col-span-4 text-end">Total</p>
+                <p class="font-semibold tabular-nums">{{$orden->total - $orden->descuento}}</p>
+                <p class="text-black/75 col-span-5 text-end">**IVA**: $0 (Exento según Art. 476 ET)  </p>
             </div>
-            
-        </div>    
 
-    </div>
-    <div class="print:hidden my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
-            <table class="flex-1">
-                <thead>
-
-                    <tr class="bg-background">
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Fecha</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Exámen</th>
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                        @if ($orden->procedimientos->isEmpty())
-                            <tr>
-                                <td colspan="5" class="px-4 py-2 text-center text-titles text-sm font-normal leading-normal">
-                                    No hay procedimientos en proceso.
-                                </td>
-                            </tr>
-
-                        @else
-                         @foreach ($orden->procedimientos as $procedimiento)
-
-                        <tr data-url="{{ route('procedimientos.show', $procedimiento) }}" onclick="window.location.href=this.dataset.url" class="cursor-pointer border-t border-borders hover:bg-secondary">
-                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->created_at->format('Y-m-d') }}
-                            </td>                            
-                            <td class="px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->examen->nombre }}
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->estado }}
-                            </td>
-                        </tr>
-
-                            @endforeach
-                        @endif
-
-                </tbody>
-            </table>
         </div>
 
-    <x-primary-button type="button" class="mt-4" id="imprimir" >
+    </div>
+    <x-primary-button type="button" class="mt-4 print:hidden" id="imprimir" >
         {{ __('Print') }}
     </x-primary-button>
 
