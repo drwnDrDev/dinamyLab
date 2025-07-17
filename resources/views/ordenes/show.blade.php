@@ -94,21 +94,21 @@
                 @foreach ($orden->examenes as $examen)
                 <p class="col-span-2">{{$examen->nombre}}</p>
                 <p class="text-center">{{$examen->pivot->cantidad}}</p>
-                <p>{{$examen->valor}}</p>
-                <p>{{$examen->valor*$examen->pivot->cantidad}}</p>
+                <p>{{number_format($examen->valor)}}</p>
+                <p>{{number_format($examen->valor*$examen->pivot->cantidad, 2)}}</p>
                @endforeach
         </div>
             <div class="grid grid-cols-5 justify-between items-center p-2 gap-2">
                 <p class="text-end col-span-4">Subtotal</p>
-                <p class="tabular-nums">{{number_format($orden->total)}}</p>
+                <p class="tabular-nums">{{number_format($orden->total,2)}}</p>
                 <p class="col-span-4 text-end">Descuento </p>
                 <p class="tabular-nums">${{$orden->descuento ?? 0}}</p>
                  @if($orden->total != $orden->abono)
                     <p class="col-span-4 text-end">Saldo</p>
                     <p class="tabular-nums">{{$orden->total - $orden->abono}}</p>
                  @endif
-                <p class="col-span-4 text-end">Total</p>
-                <p class="font-semibold tabular-nums">{{$orden->total - $orden->descuento}}</p>
+                <p class="col-span-4 font-semibold text-end">Total</p>
+                <p class="font-semibold tabular-nums">${{ number_format(($orden->total - $orden->descuento), 2) }} COP</p>
                 <p class="text-black/75 col-span-5 text-end">**IVA**: $0 (Exento según Art. 476 ET)  </p>
             </div>
 
