@@ -12,13 +12,13 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-background md:grid md:grid-rows-[auto_1fr] md:grid-cols-[250px_1fr] h-screen">
+        <div class="min-h-screen bg-background sm:grid sm:grid-rows-[auto_1fr] md:grid-cols-[250px_1fr] h-screen">
             @include('layouts.header')
             @include('layouts.navigation')
 
             <!-- Page Content -->
             <main class="w-full m-auto p-6 md:ml-60 md:mt-16 md:w-[calc(100vw-240px)] md:h-[calc(100vh-64px)] overflow-y-auto h-full print:!p-0 print:!m-0 print:!bg-white">
-                
+
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     @if (session('success') || session('error'))
                         @if (session('success'))
@@ -42,7 +42,7 @@
                         </header>
                     @endisset
 
-                </div>    
+                </div>
                 {{ $slot }}
             </main>
         </div>
