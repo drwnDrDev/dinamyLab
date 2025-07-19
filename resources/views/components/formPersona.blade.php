@@ -91,6 +91,13 @@ method="POST">
         <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2">
 
             <div class="w-full pb-2 relative">
+                <x-input-label for="municipioBusqueda">Municipio</x-input-label>
+                <x-text-input type="text" id="municipioBusqueda" name="municipioBusqueda" placeholder="Buscar municipio..." class="form-input w-full mb-2"/>
+                <div class="municipio-busqueda absolute z-10 bg-white border border-borders w-full max-h-60 overflow-y-auto hidden">
+                    <!-- Resultados de búsqueda de municipios -->
+                </div>
+            </div>
+            <div class="w-full pb-2">
                 <x-input-label for="municipio">Ciudad</x-input-label>
                 <x-select-input id="municipio" name="municipio"  :options="['11007'=>'Bosa']" />
             </div>

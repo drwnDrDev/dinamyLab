@@ -44,18 +44,24 @@ const init = async () => {
     document.querySelectorAll('input[name="municipioBusqueda"]').forEach(currentBusquedaFormMunicipio => {
 
         currentBusquedaFormMunicipio.addEventListener('input', () => {
-            console.log(currentBusquedaFormMunicipio.form)
-
+            if (currentBusquedaFormMunicipio.value.length > 2) {
+            const municipioBusquedaDiv = currentBusquedaFormMunicipio.form.querySelector('.municipio-busqueda');
             const searchValue = currentBusquedaFormMunicipio.value.toLowerCase();
-            const filteredMunicipios = appState.municipios.filter(municipio =>
+            appState.filteredMunicipios = appState.municipios.filter(municipio =>
                 municipio.municipio.toLowerCase().includes(searchValue) ||
                 municipio.departamento.toLowerCase().includes(searchValue)
             );
 
+
+            if (appState.filteredMunicipios.length > 0) {
+                municipioBusquedaDiv.classList.remove('hidden');
+            } else {
+                municipioBusquedaDiv.classList.add('hidden');
+            }
+        }
+
             currentBusquedaFormMunicipio.innerHTML = ''; // Limpiar opciones
-            filteredMunicipios.forEach(municipio => {
-                currentBusquedaFormMunicipio.appendChild(crearOpcion(`${municipio.municipio} - ${municipio.departamento}`, municipio.codigo));
-            });
+
         }
         );
 
