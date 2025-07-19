@@ -1,9 +1,19 @@
 @props([
 'perfil' => 'Paciente', // Valores posibles: paciente, acompañante, pagador
+'accion' => null,
 ])
 
 
-<form  id="crear{{$perfil}}" class="max-w-screen-md mx-auto">
+<form id="crear{{$perfil}}"
+class="max-w-screen-md mx-auto"
+
+            action="{{ $accion }}"
+
+method="POST">
+
+@if ($accion != null)
+    @csrf
+@endif
 
     <div class="w-full min-w-80 p-4 my-4">
         <h2 class="font-bold mb-4 text-xl text-titles">Datos {{$perfil}}</h2>

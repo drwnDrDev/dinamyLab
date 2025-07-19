@@ -35,6 +35,16 @@ export const fetchPersonaPorDocumento = async (numeroDocumento) => {
         }
     };
 
+export const fetchMunicipios = async () => {
+    try {
+        const response = await apiClient.get('/api/municipios');
+        return response.data.data.municipios || [];
+    } catch (error) {
+        console.error('Error al obtener los municipios:', error);
+        return [];
+    }
+}
+
 export const  guardarPersona =  (url, formData) =>{
     try {
         return apiClient.post(url, formData)
@@ -57,6 +67,6 @@ export const  guardarPersona =  (url, formData) =>{
         displayValidationErrors(document.querySelector('form'), { general: ['Error al procesar la solicitud.'] });
         return null;
     }
-    
+
     };
 
