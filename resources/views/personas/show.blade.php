@@ -58,7 +58,7 @@
 
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Muncipio</p>
-                <p class=" font-normal leading-normal">{{ $persona->direccion->municipio->departamento }}-{{ $persona->direccion->municipio->municipio }}</p>
+                <p class=" font-normal leading-normal">{{ $persona->direccion->municipio->municipio }}-{{ $persona->direccion->municipio->departamento }}</p>
             </div>
 
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pr-2">
@@ -66,12 +66,12 @@
                 <p class=" font-normal leading-normal">{{ $persona->direccion->direccion}}</p>
             </div>
               @endif
-            
+
             <div class="flex flex-col gap-1 border-t border-solid border-t-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">EPS</p>
                 <p class=" font-normal leading-normal">{{ optional($persona->afiliacionSalud)->eps?? 'Sin Información'}}</p>
             </div>
-            
+
 
 
         </div>
@@ -94,21 +94,16 @@
                     @foreach ($procedimientos['terminado'] as $procedimiento)
 
 
-                        <tr class="border-t border-t-borders">
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                {{$procedimiento->fecha}}
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                               {{$procedimiento->examen->nombre}}
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                <button
-                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">{{ $procedimiento->estado }}</span>
-                                </button>
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">Normal</td>
-                        </tr>
+<tr class="border-t border-borders hover:bg-secondary">
+    <td colspan="5" class="p-0">
+        <a href="{{ route('resultados.show', $procedimiento) }}" class="flex w-full h-full cursor-pointer px-4 py-2 text-inherit no-underline">
+            <span class="w-40">{{ $procedimiento->fecha}}</span>
+            <span class="w-40">{{ $procedimiento->orden_id }}</span>
+            <span class="w-60">{{ $procedimiento->examen->nombre }}</span>
+            <span class="w-40">{{ $procedimiento->estado }}</span>
+        </a>
+    </td>
+</tr>
 
                     @endforeach
                     @else
@@ -125,46 +120,40 @@
 
     <section class="otra_info  mt-6">
         <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] py-4">Examenes en Proceso</h2>
+
         <div class="py-4" id="historia">
             <div class="flex overflow-hidden rounded-xl border border-borders">
                 <table class="flex-1">
+                @if(isset($procedimientos['en proceso']) && $procedimientos['en proceso']->count() > 0)
                     <thead>
                         <tr class="">
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Test')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Result')}}</th>
+                            <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
+                            <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Order')}}</th>
+                            <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Procedure')}}</th>
+                            <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
                         </tr>
                     </thead>
                     <tbody>
-                @isset($procedimientos['en proceso'])
-
 
                     @foreach ($procedimientos['en proceso'] as $procedimiento)
 
-
-                        <tr class="border-t border-t-borders">
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                {{$procedimiento->fecha}}
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                               {{$procedimiento->examen->nombre}}
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">
-                                <button
-                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">{{ $procedimiento->estado }}</span>
-                                </button>
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm">Normal</td>
-                        </tr>
+        <tr class="border-t border-borders hover:bg-secondary">
+            <td colspan="4" class="p-0">
+                <a href="{{ route('resultados.create', $procedimiento) }}" class="flex w-full h-full cursor-pointer px-4 py-2 text-inherit no-underline">
+                    <span class="w-40">{{ $procedimiento->created_at->format('Y-m-d') }}</span>
+                    <span class="w-40 text-center">{{ $procedimiento->orden_id }}</span>
+                    <span class="w-60 text-center">{{ $procedimiento->examen->nombre }}</span>
+                    <span class="w-40 text-end">{{ $procedimiento->estado }}</span>
+                </a>
+            </td>
+        </tr>
 
                     @endforeach
                 @else
                         <tr>
                             No existen registros aun
                         </tr>
-                @endisset
+                @endif
 
                     </tbody>
                 </table>
