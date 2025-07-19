@@ -1,7 +1,7 @@
 
 import { appState, dom } from './variables.js';
 
-import {  handleBuscarDocumento, handleUpdateExamenCantidad} from './manejadorEventos.js';
+import {  handleBuscarDocumento} from './manejadorEventos.js';
 import { displayEps, displayPaieses,displayMunicipios,dispalyDocumentos } from './formularioPersona.js';
 
 
