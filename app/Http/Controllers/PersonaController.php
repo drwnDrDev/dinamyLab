@@ -43,7 +43,7 @@ class PersonaController extends Controller
     public function store(StorePersonaRequest $request)
     {
 
-        $persona = GuardarPersona::guardar($request->validated());
+        $persona = GuardarPersona::guardar($request);
         return redirect()->route('personas.show', $persona)->with('success', 'Persona creada correctamente');
 
 
