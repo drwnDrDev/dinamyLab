@@ -76,7 +76,7 @@ export const displayMunicipios = (selectActual) => {
         selectActual.innerHTML = '';
 
         // Agregar opciones de municipios
-        appState.municipios.forEach(municipio => {
+        appState.filteredMunicipios.forEach(municipio => {
             selectActual.appendChild(crearOpcion( `${municipio.municipio} - ${municipio.departamento}` , municipio.codigo));
         });
     }
