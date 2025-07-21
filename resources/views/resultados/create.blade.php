@@ -5,24 +5,27 @@
     <x-slot name="header">
     </x-slot>
     <x-canva>
-        <section class="grid grid-cols-2 py-4 mb-4 border-b border-t border-borders  ">
-            <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
+        <section class="grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
+            <div class="col-span-2 flex gap-2">
+                <span class="font-normal ">Paciente: </span>
+                <h3 class="text-titles font-normal">{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
+            </div>
+            <div class="w-full grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
 
-                <span class="font-bold ">Paciente: </span>
-                <h3>{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
-                <span class="font-bold ">Identificación: </span>
-                <h3>{{$procedimiento->orden->paciente->tipo_documento->cod_rips}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
-                <span class="font-bold ">Sexo: </span>
-                <h3>{{$procedimiento->orden->paciente->sexo}} </h3>
-
+                <span class="font-normal ">Identificación: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->tipo_documento->cod_rips}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
+                <span class="font-normal ">Sexo: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->sexo==="M" ? 'Masculino':'Femenino'}} </h3>
+                <span class="font-normal ">Edad: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->edad()}}</h3>
             </div>
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
-                <span class="font-bold ">Fecha de atención: </span>
-                <h3>{{$procedimiento->orden->created_at}}</h3>
-                <span class="font-bold ">Número de órden: </span>
-                <h3>{{$procedimiento->orden->numero}}</h3>
-                <span class="font-bold ">Edad: </span>
-                <h3>{{$procedimiento->orden->paciente->edad()}} años</h3>
+                <span class="font-normal ">Fecha de atención: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->created_at->format('d-m-Y')}}</h3>
+                <span>Fecha de Nacimiento: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->fecha_nacimiento->format('d-m-Y')}}</h3>
+                <span class="font-normal ">Órden Nº: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->numero}}</h3>
 
             </div>
         </section>

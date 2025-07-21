@@ -90,3 +90,32 @@ export const dispalyDocumentos = (selectActual) => {
             selectActual.appendChild(crearOpcion(tipo.nombre, tipo.cod_rips));
         });
     }
+
+export const displayOpciones = (formularioActual, opciones) => {
+
+    const opcionesContainer = formularioActual.querySelector('.municipio-busqueda');
+    const input = formularioActual.querySelector('input[name="municipioBusqueda"]');
+    const hiddenSelect = formularioActual.querySelector('select[name="municipio"]');
+    // Limpiar opciones existentes antes de agregar nuevas
+    opcionesContainer.innerHTML = '';
+    opcionesContainer.classList.remove('hidden');
+
+    // Agregar nuevas opciones
+    opciones.forEach(option => {
+        const div = document.createElement('div');
+        div.className = 'p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 capitalize';
+        div.textContent = option.municipio + ' - ' + option.departamento;
+        div.addEventListener('mousedown', () => {
+            input.value = div.textContent;
+            hiddenSelect.value = option.codigo;
+            opcionesContainer.classList.add('hidden');
+            hiddenSelect.classList.remove('hidden');
+            input.classList.add('hidden');
+            formularioActual.querySelector('.municipio-busqueda').classList.add('hidden');
+            formularioActual.querySelector('.municipio-busqueda').innerHTML = ''; // Limpiar
+
+        });
+        opcionesContainer.appendChild(div);
+
+    });
+};

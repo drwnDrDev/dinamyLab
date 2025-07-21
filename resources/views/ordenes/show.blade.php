@@ -4,10 +4,28 @@
            {{ __('Medical order') }}
         </h2>
     </x-slot>
-    <x-canva>
 
-      <section class="p-x flex flex-wrap justify-between w-full print:m-0">
-        <div class="flex-shrink-0">
+
+    <x-canva>
+    <section class="print:hidden">
+
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-600">Nº: {{ $orden->numero }}</span>
+                <span class="text-sm text-gray-600">Fecha: {{ $orden->created_at->format('d-m-Y') }}</span>
+            </div>
+        </div>
+
+    <x-primary-button type="button" class="mt-4 print:hidden" id="printButton" >
+        {{ __('Print') }}
+    </x-primary-button>
+
+</section>
+
+    </x-canva>
+
+    <section class="hidden print:flex print:flex-wrap print:justify-between print:w-full print:mt-[-20px]">
+        <div class="flex-col justify-center items-center gap-2">
             <div class="flex">
                 <figure class="w-20 h-20 p-1">
                     <img class="aspect-square object-cover w-full h-full"
@@ -90,35 +108,32 @@
             <p>Valor</p>
             <p>Total</p>
         </div>
-        <div class="grid grid-cols-5 border border-borders rounded-md">
+        <div class="grid grid-cols-6 border border-borders rounded-md">
                 @foreach ($orden->examenes as $examen)
                 <p class="col-span-2">{{$examen->nombre}}</p>
                 <p class="text-center">{{$examen->pivot->cantidad}}</p>
-                <p>{{$examen->valor}}</p>
-                <p>{{$examen->valor*$examen->pivot->cantidad}}</p>
+                <p class="text-end">{{number_format($examen->valor)}}</p>
+                <p class="col-span-2 text-end">{{number_format($examen->valor*$examen->pivot->cantidad, 2)}}</p>
                @endforeach
         </div>
             <div class="grid grid-cols-5 justify-between items-center p-2 gap-2">
                 <p class="text-end col-span-4">Subtotal</p>
-                <p class="tabular-nums">{{number_format($orden->total)}}</p>
+                <p class="tabular-nums">{{number_format($orden->total,2)}}</p>
                 <p class="col-span-4 text-end">Descuento </p>
                 <p class="tabular-nums">${{$orden->descuento ?? 0}}</p>
                  @if($orden->total != $orden->abono)
                     <p class="col-span-4 text-end">Saldo</p>
                     <p class="tabular-nums">{{$orden->total - $orden->abono}}</p>
                  @endif
-                <p class="col-span-4 text-end">Total</p>
-                <p class="font-semibold tabular-nums">{{$orden->total - $orden->descuento}}</p>
+                <p class="col-span-4 font-semibold text-end">Total</p>
+                <p class="font-semibold tabular-nums">${{ number_format(($orden->total - $orden->descuento), 2) }} COP</p>
                 <p class="text-black/75 col-span-5 text-end">**IVA**: $0 (Exento según Art. 476 ET)  </p>
             </div>
 
         </div>
 
-    </div>
-    <x-primary-button type="button" class="mt-4 print:hidden" id="imprimir" >
-        {{ __('Print') }}
-    </x-primary-button>
 
-    </x-canva>
+    </div>
+
     @vite(['resources/js/ticket.js'])
 </x-app-layout>

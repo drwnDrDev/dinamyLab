@@ -59,12 +59,19 @@ class PersonaController extends Controller
             return redirect()->route('home')->with('error', 'No se ha seleccionado una sede');
         }
 
-        $persona->load(['direccion.municipio', 'telefonos', 'email', 'redesSociales', 'afiliacionSalud']);
-        $procedimientos = Procedimiento::where('sede_id',$sede->id)
-        ->get()
-        ->load(['orden','examen'])->when($persona->ordenes->isNotEmpty(), function ($query) use ($persona) {
-            return $query->whereIn('orden_id', $persona->ordenes->pluck('id'));
-        })->groupBy('estado');
+        $persona->load(['direccion.municipio', 'telefonos', 'email', 'redesSociales', 'afiliacionSalud','ordenes']);
+        $ordenesIds = $persona->ordenes()->pluck('id');
+
+        if ($ordenesIds->isEmpty()) {
+            $procedimientos = collect(); // Colección vacía
+        } else {
+            $procedimientos = Procedimiento::where('sede_id', $sede->id)
+                ->whereIn('orden_id', $ordenesIds)
+                ->with(['orden', 'examen'])
+                ->get()
+                ->groupBy('estado');
+        }
+
 
 
         return view('personas.show',compact('persona','procedimientos'));

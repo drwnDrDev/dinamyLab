@@ -42,33 +42,30 @@
 
                     <tr class="bg-background">
                         <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Fecha</th>
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Orden Médica</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Paciente</th>
-                        <th class="px-4 py-3 text-left text-text w-100 text-sm font-medium leading-normal">Procedimientos</th>
+                        <th class="px-4 py-3 text-left text-text w-32 text-sm font-medium leading-normal">Orden Médica</th>
+                        <th class="px-4 py-3 text-left text-text w-96 text-sm font-medium leading-normal">Paciente</th>
+                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Estado</th>
 
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($ordenes as $orden)
-                    <tr class="border-t border-borders">
+                    <tr data-url="{{ route('ordenes.show', $orden) }}" onclick="window.location.href=this.dataset.url" class="border-t border-borders cursor-pointer hover:bg-secondary">
                         <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
                             {{ $orden->created_at->format('d-m-Y') }}
                         </td>
-                        <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
+                        <td class="content-start px-4 py-2 w-32 text-titles text-sm font-normal leading-normal">
                             <a href="{{route('ordenes.show',$orden)}}" class="text-titles">{{$orden->numero}}</a>
                         </td>
-                        <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
+                        <td class="content-start px-4 py-2 w-96 text-sm font-normal leading-normal">
                             {{ $orden->paciente->nombreCompleto() }}
                         </td>
 
-                        <td class="content-start px-4 py-2 w-100 text-titles text-sm font-normal leading-normal">
-                            <div class="grid grid-cols-2 gap-2 w-full">
-                                
-                                    @foreach ($orden->procedimientos as $procedimiento)
-                                    <p>{{$procedimiento->examen->nombre}}</p>
-                                    <p class="pl-4 font-semibold">{{$procedimiento->estado}}</p>
-                                    @endforeach
-                            </div>
+                        <td class="content-start px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
+                            <button
+                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
+                                    <span class="truncate">{{ $orden->terminada==null ? 'Pendiente':'Completada' }}</span>
+                                </button>
                         </td>
 
                     </tr>
