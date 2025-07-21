@@ -110,6 +110,9 @@ export const displayOpciones = (formularioActual, opciones) => {
             hiddenSelect.value = option.codigo;
             opcionesContainer.classList.add('hidden');
             hiddenSelect.classList.remove('hidden');
+            input.classList.add('hidden');
+            formularioActual.querySelector('.municipio-busqueda').classList.add('hidden');
+            formularioActual.querySelector('.municipio-busqueda').innerHTML = ''; // Limpiar
 
         });
         opcionesContainer.appendChild(div);

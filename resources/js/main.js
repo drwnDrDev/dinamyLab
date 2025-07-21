@@ -51,8 +51,10 @@ const init = async () => {
     );
     document.querySelectorAll('input[name="municipioBusqueda"]').forEach(currentBusquedaFormMunicipio => {
       const formularioActual = currentBusquedaFormMunicipio.form;
-      const contenedorMunicipios = formularioActual.querySelector('.municipio-busqueda');
-
+      const selectMunicipio = formularioActual.querySelector('select[name="municipio"]');
+        currentBusquedaFormMunicipio.addEventListener('focus', () => {
+            displayMunicipios(selectMunicipio);
+        });
 
         currentBusquedaFormMunicipio.addEventListener('input', () => {
         const searchValue = currentBusquedaFormMunicipio.value.toLowerCase();
@@ -62,15 +64,10 @@ const init = async () => {
 
             );
         displayOpciones(formularioActual, appState.filteredMunicipios);
-        console.log('Filtered municipios:', appState.filteredMunicipios);
-
+       
         });
     }
     );
-
-    document.querySelectorAll('select[name="municipio"]').forEach(currentFormMunicipio => {
-        currentFormMunicipio.addEventListener('focus',()=>displayMunicipios(currentFormMunicipio))
-    })
 
     // Event Delegation para los inputs de cantidad de exámenes. Es más eficiente.
     dom.examenesContainer?.addEventListener('input', handleUpdateExamenCantidad);
