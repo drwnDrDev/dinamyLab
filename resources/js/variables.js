@@ -20,11 +20,13 @@ export const DATA_KEYS = Object.freeze({
 export const appState = {
         todosLosExamenes: [],
         examenesVisibles: [],
+
         tiposDocumento: JSON.parse(localStorage.getItem('tipos_documento_data')) || [],
         municipios: JSON.parse(localStorage.getItem('municipios_data')) || [],
         paises: JSON.parse(localStorage.getItem('paises_data')) || [],
         eps: JSON.parse(localStorage.getItem('eps_data')) || [],
         csrfToken: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        filteredMunicipios: [],
     };
 
 export const dom = {
