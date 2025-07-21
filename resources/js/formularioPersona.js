@@ -76,7 +76,7 @@ export const displayMunicipios = (selectActual) => {
         selectActual.innerHTML = '';
 
         // Agregar opciones de municipios
-        appState.filteredMunicipios.forEach(municipio => {
+        appState.municipios.forEach(municipio => {
             selectActual.appendChild(crearOpcion( `${municipio.municipio} - ${municipio.departamento}` , municipio.codigo));
         });
     }
@@ -90,3 +90,29 @@ export const dispalyDocumentos = (selectActual) => {
             selectActual.appendChild(crearOpcion(tipo.nombre, tipo.cod_rips));
         });
     }
+
+export const displayOpciones = (formularioActual, opciones) => {
+
+    const opcionesContainer = formularioActual.querySelector('.municipio-busqueda');
+    const input = formularioActual.querySelector('input[name="municipioBusqueda"]');
+    const hiddenSelect = formularioActual.querySelector('select[name="municipio"]');
+    // Limpiar opciones existentes antes de agregar nuevas
+    opcionesContainer.innerHTML = '';
+    opcionesContainer.classList.remove('hidden');
+
+    // Agregar nuevas opciones
+    opciones.forEach(option => {
+        const div = document.createElement('div');
+        div.className = 'p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 capitalize';
+        div.textContent = option.municipio + ' - ' + option.departamento;
+        div.addEventListener('mousedown', () => {
+            input.value = div.textContent;
+            hiddenSelect.value = option.codigo;
+            opcionesContainer.classList.add('hidden');
+            hiddenSelect.classList.remove('hidden');
+
+        });
+        opcionesContainer.appendChild(div);
+
+    });
+};
