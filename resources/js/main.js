@@ -3,7 +3,7 @@ import { appState, dom } from './variables.js';
 import { fetchExamenes } from './api.js';
 import { renderExamenes } from './crearExamenes.js';
 import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona } from './manejadorEventos.js';
-import { displayEps, displayPaieses,displayMunicipios,dispalyDocumentos } from './formularioPersona.js';
+import { displayEps, displayPaieses,displayMunicipios,dispalyDocumentos,displayOpciones } from './formularioPersona.js';
 
 
 const init = async () => {
@@ -50,24 +50,21 @@ const init = async () => {
     }
     );
     document.querySelectorAll('input[name="municipioBusqueda"]').forEach(currentBusquedaFormMunicipio => {
+      const formularioActual = currentBusquedaFormMunicipio.form;
+      const contenedorMunicipios = formularioActual.querySelector('.municipio-busqueda');
+
 
         currentBusquedaFormMunicipio.addEventListener('input', () => {
-            console.log(currentBusquedaFormMunicipio.form)
-
-            const searchValue = currentBusquedaFormMunicipio.value.toLowerCase();
-            const filteredMunicipios = appState.municipios.filter(municipio =>
+        const searchValue = currentBusquedaFormMunicipio.value.toLowerCase();
+           appState.filteredMunicipios = appState.municipios.filter(municipio =>
                 municipio.municipio.toLowerCase().includes(searchValue) ||
                 municipio.departamento.toLowerCase().includes(searchValue)
+
             );
+        displayOpciones(formularioActual, appState.filteredMunicipios);
+        console.log('Filtered municipios:', appState.filteredMunicipios);
 
-            currentBusquedaFormMunicipio.innerHTML = ''; // Limpiar opciones
-            filteredMunicipios.forEach(municipio => {
-                currentBusquedaFormMunicipio.appendChild(crearOpcion(`${municipio.municipio} - ${municipio.departamento}`, municipio.codigo));
-            });
-        }
-        );
-
-
+        });
     }
     );
 
