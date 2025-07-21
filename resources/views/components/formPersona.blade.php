@@ -96,11 +96,12 @@ method="POST">
                 <div class="municipio-busqueda absolute z-10 bg-white border border-borders w-full max-h-60 overflow-y-auto hidden">
                     <!-- Resultados de búsqueda de municipios -->
                 </div>
+                <select id="municipio" name="municipio" class="text-sm h-9 w-full p-1 border-borders focus:border-primary focus:ring-primary rounded-md uppercase hidden">
+                    <option value="11007">Bosa</option>
+                    <!-- Opciones de ciudades se llenarán dinámicamente -->
+                </select>
             </div>
-            <div class="w-full pb-2">
-                <x-input-label for="municipio">Ciudad</x-input-label>
-                <x-select-input id="municipio" name="municipio"  :options="['11007'=>'Bosa']" />
-            </div>
+  
 
             <div class="w-full pb-2 md:col-span-2">
                 <x-input-label for="direccion">Dirección</x-input-label>
