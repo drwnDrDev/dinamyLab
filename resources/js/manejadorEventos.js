@@ -33,6 +33,13 @@ export const handleFiltroExamenes = () => {
     };
 
 export const handleBuscarMunicipio = (currentBusquedaFormMunicipio) => {
+    currentBusquedaFormMunicipio.addEventListener(
+        'focus', (e) => {
+            e.target.value = ''; // Limpiar el campo al enfocar
+            appState.filteredMunicipios = appState.municipios; // Reiniciar la lista filtrada
+            displayOpciones(currentBusquedaFormMunicipio.form, appState.filteredMunicipios);
+        }
+    )
     const formularioActual = currentBusquedaFormMunicipio.form;
     const selectMunicipio = formularioActual.querySelector('select[name="municipio"]');
         currentBusquedaFormMunicipio.addEventListener('focus', () => {
@@ -155,7 +162,7 @@ export const handlePerfilChange = (e) => {
         const numeroDocumento = evento.form['numero_documento'];
         const pais = evento.form['pais'];
         paisSegunTipoDocumento(selectedOption.value, pais);
-
+        numeroDocumento.setCustomValidity('');
         numeroDocumento.classList.remove('border-red-500', 'dark:border-red-600');
 
 
@@ -163,6 +170,7 @@ export const handlePerfilChange = (e) => {
             const codRips = selectedOption.dataset.valor;
             const tipoDoc = appState.tiposDocumento.find(tipo => tipo.cod_rips === codRips);
             const patron = new RegExp(tipoDoc.regex_validacion || '^[A-Z0-9]+$');
+
             if (!patron.test(numeroDocumento.value)) {
                 numeroDocumento.classList.add('border-red-500', 'dark:border-red-600');
                 numeroDocumento.setCustomValidity('El número de documento no es válido según el tipo de documento ' + tipoDoc.nombre);
