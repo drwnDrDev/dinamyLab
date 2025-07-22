@@ -130,3 +130,28 @@ export const handlePerfilChange = (e) => {
     export const handleFillPais = (e) => {
     const form = e.target.form;
     }
+
+    export const validacionTiposDocumento = (evento) => {
+
+
+        const selectedOption = evento.options[evento.selectedIndex];
+        const numeroDocumento = evento.form['numero_documento'];
+        numeroDocumento.classList.remove('border-red-500', 'dark:border-red-600');
+
+        if (selectedOption) {
+            const codRips = selectedOption.dataset.valor;
+            const tipoDoc = appState.tiposDocumento.find(tipo => tipo.cod_rips === codRips);
+            const patron = new RegExp(tipoDoc.regex_validacion || '^[A-Z0-9]+$');
+            if (!patron.test(numeroDocumento.value)) {
+                numeroDocumento.classList.add('border-red-500', 'dark:border-red-600');
+                numeroDocumento.setCustomValidity('El número de documento no es válido según el tipo de documento.');
+              
+                displayValidationErrors(evento.form, { numero_documento: ['El número de documento no es válido.'] });
+                return;
+            }
+
+            if (!tipoDoc.cod_dian || tipoDoc.requiere_acudiente) {
+                console.log('Este tipo de documento requiere un acudiente o no tiene un código DIAN asociado.');
+            }
+        }
+    }
