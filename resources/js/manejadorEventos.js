@@ -2,7 +2,7 @@
 import {dom,appState,DATA_KEYS} from './variables.js'
 import { renderExamenes,updateTotalExamenes } from './crearExamenes.js';
 import {fetchPersonaPorDocumento, guardarPersona} from './api.js'
-import { populateFormWithPersonaData, displayValidationErrors } from './formularioPersona.js';
+import { populateFormWithPersonaData, displayValidationErrors,displayMunicipios,displayOpciones } from './formularioPersona.js';
 
 
 export const handleFiltroExamenes = () => {
@@ -31,6 +31,23 @@ export const handleFiltroExamenes = () => {
 
         }
     };
+
+export const handleBuscarMunicipio = (currentBusquedaFormMunicipio) => {
+    const formularioActual = currentBusquedaFormMunicipio.form;
+    const selectMunicipio = formularioActual.querySelector('select[name="municipio"]');
+        currentBusquedaFormMunicipio.addEventListener('focus', () => {
+            displayMunicipios(selectMunicipio);
+        });
+
+        currentBusquedaFormMunicipio.addEventListener('input', () => {
+        const searchValue = currentBusquedaFormMunicipio.value.toLowerCase();
+            appState.filteredMunicipios = appState.municipios.filter(municipio =>
+            municipio.municipio.toLowerCase().includes(searchValue) ||
+            municipio.departamento.toLowerCase().includes(searchValue)  );
+        displayOpciones(formularioActual, appState.filteredMunicipios);
+
+        });
+   };
 
   export const handleGuardarPersona = async (e) => {
         e.preventDefault();
@@ -136,7 +153,11 @@ export const handlePerfilChange = (e) => {
 
         const selectedOption = evento.options[evento.selectedIndex];
         const numeroDocumento = evento.form['numero_documento'];
+        const pais = evento.form['pais'];
+        paisSegunTipoDocumento(selectedOption.value, pais);
+
         numeroDocumento.classList.remove('border-red-500', 'dark:border-red-600');
+
 
         if (selectedOption) {
             const codRips = selectedOption.dataset.valor;
@@ -144,14 +165,27 @@ export const handlePerfilChange = (e) => {
             const patron = new RegExp(tipoDoc.regex_validacion || '^[A-Z0-9]+$');
             if (!patron.test(numeroDocumento.value)) {
                 numeroDocumento.classList.add('border-red-500', 'dark:border-red-600');
-                numeroDocumento.setCustomValidity('El número de documento no es válido según el tipo de documento.');
-              
-                displayValidationErrors(evento.form, { numero_documento: ['El número de documento no es válido.'] });
+                numeroDocumento.setCustomValidity('El número de documento no es válido según el tipo de documento ' + tipoDoc.nombre);
+
+                displayValidationErrors(evento.form, { numero_documento: ['El número de documento no es válido para ' + tipoDoc.nombre] });
                 return;
             }
 
             if (!tipoDoc.cod_dian || tipoDoc.requiere_acudiente) {
-                console.log('Este tipo de documento requiere un acudiente o no tiene un código DIAN asociado.');
+                dom.handleShowAcompaniante.checked = true;
+                dom.handleShowAcompaniante.disabled = true;
+                dom.handleShowAcompaniante.classList.add('cursor-not-allowed', 'opacity-50');
             }
         }
+    }
+
+    const paisSegunTipoDocumento = (tipoDocumento,inputPais) => {
+        const documentosNacionales = appState.tiposDocumento.filter(doc => doc.es_nacional);
+
+        const nacional = documentosNacionales.some(doc => doc.cod_rips === tipoDocumento);
+        if (nacional) {
+            inputPais.value = 'COL';
+            return;
+        }
+
     }

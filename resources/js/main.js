@@ -2,8 +2,8 @@
 import { appState, dom } from './variables.js';
 import { fetchExamenes } from './api.js';
 import { renderExamenes } from './crearExamenes.js';
-import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona,validacionTiposDocumento } from './manejadorEventos.js';
-import { displayEps, displayPaieses,displayMunicipios,dispalyDocumentos,displayOpciones } from './formularioPersona.js';
+import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona,validacionTiposDocumento,handleBuscarMunicipio } from './manejadorEventos.js';
+import { displayEps, displayPaieses,dispalyDocumentos } from './formularioPersona.js';
 
 
 const init = async () => {
@@ -31,35 +31,15 @@ const init = async () => {
              displayEps(dom.listaEps);
         });
     });
-    document.querySelectorAll('select[name="tipo_documento"]').forEach(currentFormMunicipio => {
-        currentFormMunicipio.addEventListener('focus', () => {
-            dispalyDocumentos(currentFormMunicipio);
+    document.querySelectorAll('select[name="tipo_documento"]').forEach(currentForm => {
+        currentForm.addEventListener('focus', () => {
+            dispalyDocumentos(currentForm);
         });
-        currentFormMunicipio.addEventListener('change', (e) => {
-                validacionTiposDocumento(e.target);
-        }
-        );
-    }
-    );
-    document.querySelectorAll('input[name="municipioBusqueda"]').forEach(currentBusquedaFormMunicipio => {
-      const formularioActual = currentBusquedaFormMunicipio.form;
-      const selectMunicipio = formularioActual.querySelector('select[name="municipio"]');
-        currentBusquedaFormMunicipio.addEventListener('focus', () => {
-            displayMunicipios(selectMunicipio);
+        currentForm.addEventListener('change', (e) => {
+            validacionTiposDocumento(e.target);
         });
-
-        currentBusquedaFormMunicipio.addEventListener('input', () => {
-        const searchValue = currentBusquedaFormMunicipio.value.toLowerCase();
-           appState.filteredMunicipios = appState.municipios.filter(municipio =>
-                municipio.municipio.toLowerCase().includes(searchValue) ||
-                municipio.departamento.toLowerCase().includes(searchValue)
-
-            );
-        displayOpciones(formularioActual, appState.filteredMunicipios);
-
-        });
-    }
-    );
+    });
+    document.querySelectorAll('input[name="municipioBusqueda"]').forEach( (bMunicipio) => handleBuscarMunicipio(bMunicipio));
 
     // Event Delegation para los inputs de cantidad de exámenes. Es más eficiente.
     dom.examenesContainer?.addEventListener('input', handleUpdateExamenCantidad);
