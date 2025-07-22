@@ -2,7 +2,7 @@
 import { appState, dom } from './variables.js';
 import { fetchExamenes } from './api.js';
 import { renderExamenes } from './crearExamenes.js';
-import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona } from './manejadorEventos.js';
+import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona,validacionTiposDocumento } from './manejadorEventos.js';
 import { displayEps, displayPaieses,displayMunicipios,dispalyDocumentos,displayOpciones } from './formularioPersona.js';
 
 
@@ -36,15 +36,7 @@ const init = async () => {
             dispalyDocumentos(currentFormMunicipio);
         });
         currentFormMunicipio.addEventListener('change', (e) => {
-            const selectedOption = e.target.options[e.target.selectedIndex];
-            if (selectedOption) {
-                const codRips = selectedOption.dataset.valor;
-                const tipoDoc = appState.tiposDocumento.find(tipo => tipo.cod_rips === codRips);
-                console.log('Tipo de documento seleccionado:', tipoDoc);
-                if (!tipoDoc.cod_dian || tipoDoc.requiere_acudiente) {
-                    console.log('Este tipo de documento requiere un acudiente o no tiene un código DIAN asociado.');
-                }
-            }
+                validacionTiposDocumento(e.target);
         }
         );
     }
@@ -64,7 +56,7 @@ const init = async () => {
 
             );
         displayOpciones(formularioActual, appState.filteredMunicipios);
-       
+
         });
     }
     );

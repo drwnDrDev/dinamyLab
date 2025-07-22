@@ -1,4 +1,5 @@
 import {displayValidationErrors} from './formularioPersona.js';
+import {appState} from './variables.js';
 const TOKEN= document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const apiClient = axios.create({
@@ -41,6 +42,26 @@ export const fetchMunicipios = async () => {
         return response.data.data.municipios || [];
     } catch (error) {
         console.error('Error al obtener los municipios:', error);
+        return [];
+    }
+}
+export const fetchTiposDocumento = async () => {
+    try {
+        const response = await apiClient.get('/api/tipos-documento');
+        localStorage.setItem('tipos_documento_data', JSON.stringify(response.data.data.tipos_documento || []));
+        appState.tiposDocumento = response.data.data.tipos_documento || [];
+        return response.data.data.tipos_documento || [];
+    } catch (error) {
+        console.error('Error al obtener los tipos de documento:', error);
+        return [];
+    }
+}
+export const fetchPaises = async () => {
+    try {
+        const response = await apiClient.get('/api/paises');
+        return response.data.data.paises || [];
+    } catch (error) {
+        console.error('Error al obtener los países:', error);
         return [];
     }
 }
