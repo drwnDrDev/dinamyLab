@@ -34,6 +34,7 @@ export const dom = {
  crearAcompaniante: document.getElementById(DATA_KEYS.CREAR_ACOMPANIANTE),
  paciente: document.getElementById(DATA_KEYS.PACIENTE_ID),
  acompaniante: document.getElementById(DATA_KEYS.ACOMPANIANTE_ID),
+ handleShowAcompaniante: document.getElementById('mostrarAcompaniante'),
  soloDiezYSeisMil: document.getElementById('16000'),
  busquedaExamenInput: document.getElementById(DATA_KEYS.BUSQUEDA_EXAMEN),
  examenesContainer: document.getElementById('examenesContainer'),
