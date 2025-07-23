@@ -29,12 +29,8 @@ class PersonaController extends Controller
      */
     public function create()
     {
-        $paises=Pais::all();
-        $ciudades = Municipio::all()->sortByDesc('nivel');
-        $eps =Eps::all()->sortBy('nombre');
-        $tipos_documento = collect(TipoDocumento::cases())
-            ->mapWithKeys(fn($tipo) => [$tipo->value => $tipo->nombre()]);
-        return view('personas.create', compact('tipos_documento', 'ciudades','paises', 'eps'));
+
+        return view('personas.create');
     }
 
     /**
@@ -56,7 +52,7 @@ class PersonaController extends Controller
     {
         $sede = session('sede');
         if (!$sede) {
-            return redirect()->route('home')->with('error', 'No se ha seleccionado una sede');
+            return to_route('dashboard')->with('error', 'No se ha seleccionado una sede');
         }
 
         $persona->load(['direccion.municipio', 'telefonos', 'email', 'redesSociales', 'afiliacionSalud','ordenes']);
