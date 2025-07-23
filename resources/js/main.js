@@ -40,10 +40,8 @@ const init = async () => {
         });
     });
     document.querySelectorAll('input[name="municipioBusqueda"]').forEach( (bMunicipio) => handleBuscarMunicipio(bMunicipio));
-
-    // Event Delegation para los inputs de cantidad de exámenes. Es más eficiente.
     dom.examenesContainer?.addEventListener('input', handleUpdateExamenCantidad);
-    dom.examenesContainer?.addEventListener('blur', handleUpdateExamenCantidad, true); // Usar captura para el blur
+    dom.examenesContainer?.addEventListener('blur', handleUpdateExamenCantidad, true);
 
 }
 
