@@ -67,7 +67,7 @@ class OrdenController extends Controller
         ]);
 
         $sede = session('sede');
-     
+
         if (!$sede) {
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }
@@ -107,7 +107,7 @@ class OrdenController extends Controller
 
         }
 
-        DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData,$orden_examen, $sede) {
+   $ordenCreada =  DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData,$orden_examen, $sede) {
 
             $total = $examenesData->sum(function ($examen) use ($examenesSolicitados) {
                 return $examen->valor * $examenesSolicitados[$examen->id];
@@ -142,9 +142,10 @@ class OrdenController extends Controller
             }
 
             Procedimiento::insert($procedimientosParaInsertar);
+            return $orden; // Retorna la orden creada para usarla fuera de la transacción
         }); // Fin de la transacción
 
-        return redirect()->route('procedimientos')->with('success', 'Orden médica creada correctamente');
+        return to_route('ordenes.show',$ordenCreada)->with('success', 'Orden médica creada correctamente');
     }
 
     /**

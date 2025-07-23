@@ -4,8 +4,11 @@
     </x-slot>
 <x-slot name="header">
 
- 
 
+@dump($NoExamenes)
+@dump($paises)
+@dump($municipios)
+@dump($eps)
 
 
 </x-app-layout>
