@@ -13,6 +13,8 @@
         form["eps"].value=persona.eps;
         form["direccion"].value=persona.direccion;
         form["municipio"].value=persona.municipio;
+        form["municipio"].classList.remove('hidden');
+        form["municipioBusqueda"].classList.add('hidden');
         form["municipioBusqueda"].value=appState.municipios.find(m => m.codigo === persona.municipio)?.municipio || '';
         form["pais"].value=persona.pais;
         form.querySelectorAll('input[name="sexo"]').forEach(radio => {
