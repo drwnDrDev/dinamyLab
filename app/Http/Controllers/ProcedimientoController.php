@@ -111,7 +111,6 @@ class ProcedimientoController extends Controller
             'observacion' => 'required|string|max:255',
             'estado' => 'required|in:pendiente de muestra,anulado',
         ]);
-         $usuario =  Auth()->user()->id;
          $observacion = $request->input('observacion','SIN OBSERVACIÓN'); ;
          $estado = $request->INPUT('estado', 'pendiente de muestra');
 
@@ -119,7 +118,6 @@ class ProcedimientoController extends Controller
         $procedimiento->estado = $estado;
         $procedimiento->save();
 
-         \Log::info("El usuario con ID $usuario ha actualizado la observación del procedimiento con ID {$procedimiento->id} a: $estado. Observación: $observacion");
 
         return response()->json([
             'message' => 'Observación actualizada correctamente',
