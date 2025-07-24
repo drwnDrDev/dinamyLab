@@ -9,9 +9,25 @@
     </div>
     @endif
     <x-canva>
-        <div class="py-4">
+        <div class="py-4 flex justify-between items-center border-b border-borders">
+            <div>
             <p class="text-2xl font-bold leading-tight tracking-[-0.015em]">{{ $persona->nombreCompleto() }}</p>
             <p class="text-titles">Paciente ID: {{ $persona->numero_documento }}</p>
+            </div>
+            <div class="flex">
+                <a href="{{route('facturas.create',$persona)}}">
+                    <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-200">
+
+                      Generar Factura
+                    </button>
+                </a>
+                <a href="{{ route('personas.edit', $persona) }}" class="ml-4">
+                    <button class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-200">
+
+                      Editar Persona
+                    </button>
+            </div>
+
         </div>
         <div class="py-4">
             <div class="flex border-b border-borders pl-2 gap-8" id="info">
