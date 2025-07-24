@@ -18,7 +18,7 @@ class CorreoElectronico extends Model
      */
     public function emailable()
     {
-        return $this->morphTo();
+        return $this->morphMany();
     }
 
     protected $table = 'correos_electronicos';

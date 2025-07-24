@@ -3,7 +3,7 @@ import { appState, dom } from './variables.js';
 import { fetchExamenes } from './api.js';
 import { renderExamenes } from './crearExamenes.js';
 import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona,validacionTiposDocumento,handleBuscarMunicipio } from './manejadorEventos.js';
-import { displayEps, displayPaieses,dispalyDocumentos } from './formularioPersona.js';
+import { displayEps, displayPaieses,displayDocumentos } from './formularioPersona.js';
 
 
 const init = async () => {
@@ -33,7 +33,7 @@ const init = async () => {
     });
     document.querySelectorAll('select[name="tipo_documento"]').forEach(currentForm => {
         currentForm.addEventListener('focus', () => {
-            dispalyDocumentos(currentForm);
+            displayDocumentos(currentForm);
         });
         currentForm.addEventListener('change', (e) => {
             validacionTiposDocumento(e.target);

@@ -2,14 +2,16 @@
 
  export const populateFormWithPersonaData = (form, persona) => {
         form['tipoGuardado'].value = DATA_KEYS.ACTUALIZAR_USUARIO;
-        form['tipoGuardado'].textContent = "Actualziar Usuario";
+        form['tipoGuardado'].textContent = "Actualizar Usuario";
         form['numero_documento'].value = persona.numero_documento;
+        displayDocumentos(form['tipo_documento']);
         form['tipo_documento'].value = persona.tipo_documento;
         form['nombres'].value = persona.nombre;
         form['apellidos'].value = persona.apellido;
         form['fecha_nacimiento'].value = persona.fecha_nacimiento;
         form['telefono'].value = persona.telefono;
         form['correo'].value= persona.correo;
+        displayEps(form["eps"]);
         form["eps"].value=persona.eps;
         form["direccion"].value=persona.direccion;
         displayMunicipios(form["municipio"]);
@@ -17,7 +19,8 @@
         form["municipioBusqueda"].value=appState.municipios.find(m => m.codigo === persona.municipio)?.municipio || '';
         form["municipio"].classList.remove('hidden');
         form["municipioBusqueda"].classList.add('hidden');
-        form["pais"].value=persona.pais;
+        displayPaieses(form["pais"]);
+        form["pais"].value=persona.pais || 'COL'; // Asignar país, por defecto 'COL'
         form.querySelectorAll('input[name="sexo"]').forEach(radio => {
             radio.checked = radio.value === persona.sexo;
         });
@@ -85,7 +88,7 @@ export const displayMunicipios = (selectActual) => {
         });
     }
 
-export const dispalyDocumentos = (selectActual) => {
+export const displayDocumentos = (selectActual) => {
         // Limpiar opciones existentes antes de agregar nuevas
         selectActual.innerHTML = '';
 

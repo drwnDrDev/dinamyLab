@@ -1,7 +1,7 @@
 
 import { dom } from './variables.js';
 import { handleBuscarDocumento,validacionTiposDocumento,handleBuscarMunicipio } from './manejadorEventos.js';
-import { displayEps, displayPaieses,dispalyDocumentos } from './formularioPersona.js';
+import { displayEps, displayPaieses,displayDocumentos } from './formularioPersona.js';
 
 
 const init = async () => {
@@ -15,7 +15,7 @@ const init = async () => {
              displayEps(dom.listaEps);
         });;
     document.querySelector('select[name="tipo_documento"]').addEventListener('focus', () => {
-            dispalyDocumentos(document.querySelector('select[name="tipo_documento"]'));
+            displayDocumentos(document.querySelector('select[name="tipo_documento"]'));
         });
     document.querySelector('select[name="tipo_documento"]').addEventListener('change', (e) => {
             validacionTiposDocumento(e.target);
