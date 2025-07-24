@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Convenio extends Model
 {
    protected $fillable = [
-        'razon_social',
-        'nit',
-        'contacto_id',
+    'tipo_documento_id',
+    'numero_documento',
+    'razon_social',
+    'descuento'
     ];
     /**
      * Relación con el modelo Contacto.
