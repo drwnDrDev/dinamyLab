@@ -11,6 +11,10 @@ export default defineConfig({
                 'resources/js/buscarPersona.js',
                 'resources/js/crearOrdenes.js',
                 'resources/js/obtenerStaticos.js',
+                'resources/js/obtenerStaticos.js',
+                'resources/js/main.js',
+                'resources/js/crearPersona.js',
+                'resources/js/ticket.js',
 
                 ],
             refresh: true,
