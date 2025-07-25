@@ -7,6 +7,8 @@ use App\Estado;
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
 use App\Services\EscogerReferencia;
+use App\Models\Persona;
+use App\Models\Orden;
 
 class ResultadosController extends Controller
 {
@@ -14,7 +16,7 @@ class ResultadosController extends Controller
     public function index()
     {
 
-        $resultados= Procedimiento::with(['orden.paciente', 'resultado'])
+        $resultados = Procedimiento::with(['orden.paciente', 'resultado'])
             ->whereHas('resultado')
             ->where('estado', Estado::TERMINADO)
             ->where('updated_at', '>=', now()->subDays(2))
@@ -31,15 +33,15 @@ class ResultadosController extends Controller
 
 
         // Carga el procedimiento con sus relaciones necesarias
-        $procedimiento->load(['orden.paciente', 'resultado','sede']);
+        $procedimiento->load(['orden.paciente', 'resultado', 'sede']);
 
         // Verifica si el procedimiento ya tiene resultados
         if ($procedimiento->resultado->isEmpty()) {
             return redirect()->route('resultados.create', $procedimiento)
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
-    $parametros = EscogerReferencia::obtenerResultados($procedimiento);
-    return view('resultados.show', compact('procedimiento', 'parametros'));
+        $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+        return view('resultados.show', compact('procedimiento', 'parametros'));
     }
     public function create(Procedimiento $procedimiento)
     {
@@ -54,7 +56,7 @@ class ResultadosController extends Controller
             return redirect()->route('resultados.show', $procedimiento->id)
                 ->with('info', 'Este procedimiento ya ha sido completado.');
         }
-        if($procedimiento->estado === Estado::ANULADO->value) {
+        if ($procedimiento->estado === Estado::ANULADO->value) {
             return redirect()->route('resultados.show', $procedimiento)
                 ->with('error', 'Este procedimiento ha sido anulado y no puede ser editado.');
         }
@@ -64,17 +66,43 @@ class ResultadosController extends Controller
             $procedimiento->save();
         }
 
-       return view('resultados.create', compact('parametros','procedimiento'));
+        return view('resultados.create', compact('parametros', 'procedimiento'));
     }
     public function store(Request $request, Procedimiento $procedimiento)
     {
 
-        EscogerReferencia::guardaResultado($request->except(['_token','submit']),$procedimiento);
+        EscogerReferencia::guardaResultado($request->except(['_token', 'submit']), $procedimiento);
 
         $procedimiento->estado = Estado::TERMINADO; // Cambia el estado del procedimiento a 'terminado'
         $procedimiento->fecha = now(); // Actualiza la fecha del procedimiento
         $procedimiento->empleado_id = auth()->user()->empleado->id; // Asigna el empleado que guarda los resultados
         $procedimiento->save();
         return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados guardados correctamente.');
+    }
+    public function historia(Persona $persona)
+    {
+        $ordenes = Orden::where('paciente_id', $persona->id)->get();
+        return view(
+            'resultados.historia',
+            compact('persona', 'ordenes')
+        );
+    }
+    public function historia_show(Request $request, Persona $persona)
+    {
+        $persona = Persona::find(5);
+        $procedimientos = Procedimiento::find([1, 2, 4])->map(
+            function ($procedimiento){
+            return [$procedimiento->id => EscogerReferencia::obtenerResultados($procedimiento)];
+        }
+        );
+        
+        dd($procedimientos);
+
+        $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+
+        return view(
+            'resultados.historia_show',
+            compact('persona', 'procedimientos')
+        );
     }
 }

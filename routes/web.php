@@ -38,12 +38,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/resultados/{procedimiento}',[ResultadosController::class,'create'])->name('resultados.create');
     Route::post('/resultados/{procedimiento}/store',[ResultadosController::class,'store'])->name('resultados.store');
+    Route::get('/resultados',[ResultadosController::class,'index'])->name('resultados');
+
+    Route::get('/resultados/{persona}/historia',[ResultadosController::class,'historia'])->name('resultados.historia');
+    Route::post('/resultados/{persona}/historia',[ResultadosController::class,'historia_show'])->name('resultados.historia_show');
 
     Route::get('/procedimientos',[ProcedimientoController::class,'index'])->name('procedimientos');
     Route::get('/procedimientos/{procedimiento}',[ProcedimientoController::class,'show'])->name('procedimientos.show');
     Route::patch('/procedimientos/{procedimiento}/estado',[ProcedimientoController::class,'observaciones'])->name('procedimientos.observaciones');
 
-    Route::get('/resultados',[ResultadosController::class,'index'])->name('resultados');
 
     Route::get('/caja',[AdministracionController::class,'caja'])->name('caja');
     Route::get('/examenes',[ExamenController::class,'index'])->name('examenes');
