@@ -31,4 +31,34 @@ class ElegirEmpresa
         }
         return Empresa::first();
     }
+
+    public static function elegirSede()
+    {
+        $sede = session('sede');
+        if ($sede) {
+            return $sede;
+        }
+        if (Auth::user()->empleado) {
+            return Auth::user()->empleado->sede;
+        }
+        if (session('empresa')) {
+            return session('empresa')->sedes->first();
+        }
+        if (session('empleado')) {
+            return session('empleado')->sede;
+        }
+
+        return null;
+    }
+
+    public static function defaultMu()
+    {
+        $empresa = self::elegirEmpresa();
+        if ($empresa) {
+            return $empresa->municipio->id;
+        }
+        // Usar el municipio con el nivel más alto como default
+        $municipio = \App\Models\Municipio::orderByDesc('nivel')->first();
+        return $municipio ? $municipio->id : null;
+    }
 }

@@ -58,7 +58,7 @@
                                 {{ $procedimiento->created_at->format('Y-m-d') }}
                             </td>
                             <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->orden_id }}
+                                {{ $procedimiento->numero }}
                             </td>
                             <td class="px-4 py-2 w-60 text-sm font-normal leading-normal">
                                 {{ $procedimiento->orden->paciente->nombreCompleto() }}

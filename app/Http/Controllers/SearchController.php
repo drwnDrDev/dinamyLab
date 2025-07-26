@@ -42,21 +42,21 @@ class SearchController extends Controller
             ->with('error', 'No results found for the search query');
             }
         }
-       
+
        $result =  $this->buscarPersonaPorNombre($query)
             ?? $this->buscarExamenPorNombre($query);
         if ($result) {
             return $result;
         }
-    
-      
+
+
         return view('search.busqueda_avanzada', compact('query'))
             ->with('error', __('No results found for the search query'));
     }
 
     private function buscarOrden($query)
     {
-        $orden = \App\Models\Orden::find($query);
+        $orden = \App\Models\Orden::where('numero', $query)->first();
         if ($orden) {
             return redirect()->route('ordenes.show', $orden->id);
         }
@@ -126,7 +126,7 @@ class SearchController extends Controller
         if ($examenes && $examenes->count() > 0) {
             return view('examenes.index', compact('examenes'));
         }
-        
+
         return null;
     }
 }
