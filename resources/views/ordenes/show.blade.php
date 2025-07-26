@@ -102,31 +102,34 @@
 
     <div class="container" id="ticket">
 
-        <div class="grid grid-cols-5 border border-borders rounded-md">
-            <p class="col-span-2">Examen</p>
-            <p>Cantidad</p>
-            <p>Valor</p>
-            <p>Total</p>
+        <div class="grid grid-cols-6 border border-borders rounded-md">
+            <p>Examen</p>
+            <p class="col-span-2 text-end pr-2">Cantidad</p>
+            <p class="text-end">Valor</p>
+            <p class="col-span-2 text-end pr-2">Total</p>
         </div>
         <div class="grid grid-cols-6 border border-borders rounded-md">
                 @foreach ($orden->examenes as $examen)
                 <p class="col-span-2">{{$examen->nombre}}</p>
-                <p class="text-center">{{$examen->pivot->cantidad}}</p>
+                <p class="text-end px-2">{{$examen->pivot->cantidad}}</p>
                 <p class="text-end">{{number_format($examen->valor)}}</p>
-                <p class="col-span-2 text-end">{{number_format($examen->valor*$examen->pivot->cantidad, 2)}}</p>
+                <p class="col-span-2 text-end px-2">{{number_format($examen->valor*$examen->pivot->cantidad, 2)}}</p>
                @endforeach
         </div>
             <div class="grid grid-cols-5 justify-between items-center p-2 gap-2">
-                <p class="text-end col-span-4">Subtotal</p>
-                <p class="tabular-nums">{{number_format($orden->total,2)}}</p>
-                <p class="col-span-4 text-end">Descuento </p>
-                <p class="tabular-nums">${{$orden->descuento ?? 0}}</p>
+                <p class="text-end col-span-3">Subtotal</p>
+                <p class="text-end col-span-2">{{number_format($orden->total,2)}}</p>
+                @if ($orden->descuento && $orden->descuento > 0)
+                    <p class="col-span-3 text-end">Descuento </p>
+                    <p class="text-end col-span-2">${{$orden->descuento ?? 0}}</p>
+                @endif
+
                  @if($orden->total != $orden->abono)
-                    <p class="col-span-4 text-end">Saldo</p>
-                    <p class="tabular-nums">{{$orden->total - $orden->abono}}</p>
+                    <p class="col-span-3 text-end">Saldo</p>
+                    <p class="text-end col-span-2">{{$orden->total - $orden->abono}}</p>
                  @endif
-                <p class="col-span-4 font-semibold text-end">Total</p>
-                <p class="font-semibold tabular-nums">${{ number_format(($orden->total - $orden->descuento), 2) }} COP</p>
+                <p class="col-span-3 font-semibold text-end">Total</p>
+                <p class="font-semibold text-end col-span-2">${{ number_format(($orden->total - $orden->descuento), 2) }} COP</p>
                 <p class="text-black/75 col-span-5 text-end">**IVA**: $0 (Exento según Art. 476 ET)  </p>
             </div>
 
