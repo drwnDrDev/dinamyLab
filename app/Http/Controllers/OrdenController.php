@@ -8,7 +8,7 @@ use App\Models\Examen;
 use App\Models\Persona;
 use App\Services\ElegirEmpresa;
 use App\Http\Requests\OrdenStoreRequest;
-
+use App\Models\ContactoEmergencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Procedimiento;
@@ -98,16 +98,18 @@ class OrdenController extends Controller
         if ($request->input('acompaniante_id')) {
             $acompaniante = Persona::findOrFail($request->input('acompaniante_id'));
             if ($acompaniante) {
-                $paciente->contactoEmergencia()->associate($acompaniante);
-                $paciente->save();
-            } else {
-                return redirect()->back()->withErrors(['acompaniante' => 'Acompañante no encontrado.'])->withInput();
+                $contactoEmergencia = ContactoEmergencia::updateOrCreate(
+                    ['acompanante_id'=>$acompaniante->id, 'paciente_id' => $paciente->id],
+                    [
+                        'parentesco' => $request->input('parentesco_acompaniante', 'Otro'),
+                    ]
+                );
             }
         } else {
             $acompaniante = null;
         }
 
-   $ordenCreada =  DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData,$orden_examen, $sede) {
+   $ordenCreada =  DB::transaction(function () use ($request, $paciente,$contactoEmergencia, $examenesSolicitados, $examenesData,$orden_examen, $sede) {
 
             $total = $examenesData->sum(function ($examen) use ($examenesSolicitados) {
                 return $examen->valor * $examenesSolicitados[$examen->id];
@@ -134,7 +136,7 @@ class OrdenController extends Controller
                         'examen_id' => $examenId,
                         'fecha' => now(),
                         'sede_id' => $sede->id,
-                        
+                        'contacto_emergencia_id' => $contactoEmergencia? $contactoEmergencia->id : null, // ID del contacto de emergencia si existe
                         'estado' => Estado::PROCESO, // Asumo que Estado::PROCESO es una constante o Enum
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -190,7 +192,7 @@ class OrdenController extends Controller
      */
     public function destroy(Orden $orden)
     {
-        if (Auth::user()->can('eliminar_orden_medica')) {
+        if (\Illuminate\Support\Facades\Gate::allows('eliminar_orden_medica')) {
             $orden->delete();
             return redirect()->route('ordenes')->with('success', 'Orden médica eliminada correctamente');
         }
