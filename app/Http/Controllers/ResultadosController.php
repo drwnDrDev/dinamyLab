@@ -92,9 +92,13 @@ class ResultadosController extends Controller
         $persona = Persona::find(5);
         $procedimientos = Procedimiento::find([1, 2, 4])->map(
             function ($procedimiento) {
-                return [$procedimiento->id => EscogerReferencia::obtenerResultados($procedimiento)];
+                return [[
+                    'procedimiento' => $procedimiento,
+                    'resultado' => EscogerReferencia::obtenerResultados($procedimiento)
+                ]];
             }
         );
+        dd($procedimientos);
 
         return view(
             'resultados.historia_show', compact('persona', 'procedimientos')
