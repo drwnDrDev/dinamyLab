@@ -10,25 +10,23 @@
     @endif
     <x-canva>
         <div class="py-4 flex justify-between items-center border-b border-borders">
-            <div>
+           <div>
             <p class="text-2xl font-bold leading-tight tracking-[-0.015em]">{{ $persona->nombreCompleto() }}</p>
             <p class="text-titles">Paciente ID: {{ $persona->numero_documento }}</p>
             </div>
-            <div class="flex">
-                <a href="{{route('facturas.create',$persona)}}">
-                    <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-200">
-
-                      Generar Factura
-                    </button>
+            <div class="flex gap-4">
+                <a href="{{ route('personas.edit', $persona) }}">
+                    <x-primary-button>Editar</x-primary-button>
                 </a>
-                <a href="{{ route('personas.edit', $persona) }}" class="ml-4">
-                    <button class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-secondary transition duration-200">
-
-                      Editar Persona
-                    </button>
+                <a href="{{route('facturas.create',$persona)}}">
+                    <x-secondary-button>Facturar</x-secondary-button>
+                </a>
+                <a href="{{route('resultados.historia',$persona)}}">
+                    <x-secondary-button>imprimir</x-secondary-button>
+                </a>
             </div>
 
-        </div>
+        </div> 
         <div class="py-4">
             <div class="flex border-b border-borders pl-2 gap-8" id="info">
                 <a class="flex flex-col items-center justify-center border-b-4  border-primary py-3" href="#info">
