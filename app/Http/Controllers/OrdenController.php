@@ -94,7 +94,7 @@ class OrdenController extends Controller
                 'cantidad' => $cantidad
             ];
         })->values()->toArray();
-
+        $contactoEmergencia = null;
         if ($request->input('acompaniante_id')) {
             $acompaniante = Persona::findOrFail($request->input('acompaniante_id'));
             if ($acompaniante) {
