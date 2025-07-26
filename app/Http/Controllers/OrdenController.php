@@ -6,6 +6,8 @@ use App\Estado;
 use App\Models\Orden;
 use App\Models\Examen;
 use App\Models\Persona;
+use App\Services\ElegirEmpresa;
+use App\Http\Requests\OrdenStoreRequest;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +44,7 @@ class OrdenController extends Controller
     public function create()
     {
 
-        $sede = session('sede');
+        $sede = ElegirEmpresa::elegirSede();
         if (!$sede) {
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }
@@ -56,17 +58,11 @@ class OrdenController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OrdenStoreRequest $request)
     {
+        $request->validated(); // Validar los datos del formulario
 
-        $request->validate([
-            'paciente_id' => 'required|exists:personas,id',
-            'acompaniante_id' => 'nullable|exists:personas,id',
-            'numero_orden' => 'required|string|max:20|unique:ordenes_medicas,numero',
-            'examenes' => 'array', // Asegura que 'examenes' es un array
-        ]);
-
-        $sede = session('sede');
+        $sede = ElegirEmpresa::elegirSede();
 
         if (!$sede) {
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
@@ -74,37 +70,41 @@ class OrdenController extends Controller
 
         $paciente = Persona::findOrFail($request->input('paciente_id'));
 
-        $prueba = Examen::where('cup','904508')->first('id');
+        if (!$paciente) {
+            return redirect()->back()->withErrors(['paciente' => 'Paciente no encontrado.'])->withInput();
+        }
 
-        $examenesSolicitados = array_filter(
-            $request->input('examenes', []),
-            fn ($cantidad) => !is_null($cantidad) && $cantidad != 0
-        );
+        // Consolidar los exámenes solicitados en una sola pasada
+        $examenesSolicitados = collect($request->input('examenes', []))
+            ->filter(fn($cantidad) => !is_null($cantidad) && $cantidad != 0);
 
-        // Si no se seleccionó ningún examen válido, redirige con un error.
-        if (empty($examenesSolicitados)) {
+        if ($examenesSolicitados->isEmpty()) {
             return redirect()->back()->withErrors(['examenes' => 'Debe seleccionar al menos un examen.'])->withInput();
         }
 
-        if(($paciente->edad()<10 || $paciente->sexo ==='M') &&  in_array($prueba->id, array_keys($examenesSolicitados)) ){
-             return redirect()->back()->withErrors(['examenes' => "Prueba de embarazo no viable para el paciente"])->withInput();
-        }
+        $examenesData = Examen::whereIn('id', $examenesSolicitados->keys())->get()->keyBy('id');
 
-        $examenesData = Examen::whereIn('id', array_keys($examenesSolicitados))
-            ->get()
-            ->keyBy('id');
-
-        $orden_examen = [];
-        foreach ($examenesSolicitados as $examenId => $cantidad) {
-            $examen = $examenesData->get($examenId);
-            if (!$examen) {
-                return redirect()->back()->withErrors(['examenes' => "El examen con ID {$examenId} no se pudo encontrar."])->withInput();
+        // Usar map para construir el array de orden_examen
+        $orden_examen = $examenesSolicitados->map(function ($cantidad, $examenId) use ($examenesData) {
+            if (!$examenesData->has($examenId)) {
+                throw new \Exception("El examen con ID {$examenId} no se pudo encontrar.");
             }
-            array_push($orden_examen,[
-                'examen_id'=>$examenId,
-                'cantidad'=>$cantidad
-            ]);
+            return [
+                'examen_id' => $examenId,
+                'cantidad' => $cantidad
+            ];
+        })->values()->toArray();
 
+        if ($request->input('acompaniante_id')) {
+            $acompaniante = Persona::findOrFail($request->input('acompaniante_id'));
+            if ($acompaniante) {
+                $paciente->contactoEmergencia()->associate($acompaniante);
+                $paciente->save();
+            } else {
+                return redirect()->back()->withErrors(['acompaniante' => 'Acompañante no encontrado.'])->withInput();
+            }
+        } else {
+            $acompaniante = null;
         }
 
    $ordenCreada =  DB::transaction(function () use ($request, $paciente, $examenesSolicitados, $examenesData,$orden_examen, $sede) {
@@ -119,8 +119,8 @@ class OrdenController extends Controller
                 'sede_id' => $sede->id, // Asumiendo que el usuario autenticado tiene una sede asociada
                 'numero' => $request->input('numero_orden'),
                 'paciente_id' => $paciente->id, // Usar el ID del paciente cargado
-                'acompaniante_id' => $request->input('acompaniante_id'),
-                'descripcion' => $request->input('observaciones'),
+
+                'observaciones' => $request->input('observaciones'),
                 'abono' => $abono,
                 'total' => $total,
             ]);
@@ -133,7 +133,8 @@ class OrdenController extends Controller
                         'empleado_id' => Auth::user()->id, // ID del empleado/doctor autenticado
                         'examen_id' => $examenId,
                         'fecha' => now(),
-                        'sede_id' => $sede->id, // Asumiendo que el usuario autenticado tiene una sede asociada
+                        'sede_id' => $sede->id,
+                        
                         'estado' => Estado::PROCESO, // Asumo que Estado::PROCESO es una constante o Enum
                         'created_at' => now(),
                         'updated_at' => now(),
