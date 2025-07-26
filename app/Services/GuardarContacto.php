@@ -45,7 +45,7 @@ class GuardarContacto
             }
 
         }
-        if($datos['redes']) {
+        if($datos['redes'] && is_array($datos['redes']) && count($datos['redes']) > 0) {
             foreach ($datos['redes'] as $redSocial => $url) {
                 if(empty($url)) {
                     continue;
