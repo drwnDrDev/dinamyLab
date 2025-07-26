@@ -90,6 +90,8 @@ class DatabaseSeeder extends Seeder
             ColesterolHDLSeeder::class,
             ColesterolLDLSeeder::class,
             AcidoUricoSeeder::class,
+
+            MediosDePagoSeeder::class,
         ]);
 
     }
