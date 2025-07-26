@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Convenio;
+use App\Services\GuardarContacto;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 
 class ConvenioController extends Controller
@@ -32,26 +34,28 @@ class ConvenioController extends Controller
     public function store(Request $request)
     {
 
+
         // Validar los datos del formulario
-        $request->validate([
+        $validatos =  $request->validate([
             'razon_social' => 'required|string|max:255',
-            'nit' => 'required|string|max:255|unique:convenios,nit',
+            'nit' => 'required|string|max:255|unique:convenios,numero_documento',
             'telefono' => 'nullable|string|size:10',
+            'direccion' => 'nullable|string|max:255',
+            'municipio' => 'nullable|exists:municipios,id',
+            'correo' => 'nullable|email|max:255',
+            'redes' => 'nullable|array',
+            'redes.*' => 'nullable|string|max:255',
         ]);
-        $contactoDatos = $request->only('telefono', 'municipio', 'direccion', 'pais', 'correo','whatsapp','maps','linkin','facebook','instagram','tiktok','youtube','website','otras_redes');
 
-        $contacto = \App\Services\GuardarContacto::guardar($contactoDatos);
-        if (!$contacto) {
-            Log::warning('contacto sin datos', ['user' => Auth::id()]);
-            $contacto = Contactato::find(1);
-        }
+
         // Crear el convenio con los datos del contacto
-        Convenio::create( [
+      $convenio =  Convenio::create( [
             'razon_social' => $request->razon_social,
-            'nit' => $request->nit,
-            'contacto_id' => $contacto->id,
-        ]);
+            'numero_documento' => $request->nit,
+            'tipo_documento_id' => 6,
 
+        ]);
+        $contactoDatos = GuardarContacto::guardarContacto($validatos, $convenio);
         return redirect()->route('convenios.index')->with('success', 'Convenio creado exitosamente.');
     }
 

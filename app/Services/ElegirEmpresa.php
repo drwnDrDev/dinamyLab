@@ -1,17 +1,19 @@
 <?php
+
 namespace App\Services;
-use App\Models\Parametro;
-use App\Models\Persona;
+
+use App\Models\Empleado;
+use App\Models\Empresa;
+use App\Models\Municipio;
 use App\Models\Procedimiento;
-use App\Models\Resultado;
-use App\Models\ValorReferencia;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
+use App\Models\Sede;
+use Illuminate\Support\Facades\Auth;
+
 
 class ElegirEmpresa
 {
 
-    public static function elegirEmpresa( $procedimiento)
+    public static function elegirEmpresa($procedimiento = null):?Empresa
     {
         $procedimiento = Procedimiento::findOrFail($procedimiento);
         if ($procedimiento->empleado) {
@@ -32,7 +34,7 @@ class ElegirEmpresa
         return Empresa::first();
     }
 
-    public static function elegirSede()
+    public static function elegirSede():?Sede
     {
         $sede = session('sede');
         if ($sede) {
@@ -51,14 +53,14 @@ class ElegirEmpresa
         return null;
     }
 
-    public static function defaultMu()
+    public static function defaultMunicipio():int
     {
         $empresa = self::elegirEmpresa();
         if ($empresa) {
             return $empresa->municipio->id;
         }
         // Usar el municipio con el nivel más alto como default
-        $municipio = \App\Models\Municipio::orderByDesc('nivel')->first();
+        $municipio = Municipio::orderByDesc('nivel')->first();
         return $municipio ? $municipio->id : null;
     }
 }

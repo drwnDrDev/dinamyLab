@@ -64,40 +64,40 @@
                         </div>
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="whatsapp">WhatsApp:</x-input-label>
-                            <x-text-input type="text" name="whatsapp" id="whatsapp" />
+                            <x-text-input type="text" name="redes[whatsapp]" id="whatsapp" />
                         </div>
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="maps">Google Maps:</x-input-label>
-                            <x-text-input type="text" name="maps" id="maps" />
+                            <x-text-input type="text" name="redes[maps]" id="maps" />
                         </div>
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="linkin">LinkedIn:</x-input-label>
-                            <x-text-input type="text" name="linkedin" id="linkedin" />
+                            <x-text-input type="text" name="redes[linkedin]" id="linkedin" />
                             <x-input-error :messages="$errors->get('linkedin')" class="mt-2" />
                         </div>
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="facebook">Facebook:</x-input-label>
-                            <x-text-input type="text" name="facebook" id="facebook" />
+                            <x-text-input type="text" name="redes[facebook]" id="facebook" />
                         </div>
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="instagram">Instagram:</x-input-label>
-                            <x-text-input type="text" name="instagram" id="instagram" />
+                            <x-text-input type="text" name="redes[instagram]" id="instagram" />
                         </div>
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="tiktok">TikTok:</x-input-label>
-                            <x-text-input type="text" name="tiktok" id="tiktok" />
+                            <x-text-input type="text" name="redes[tiktok]" id="tiktok" />
                         </div>
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="youtube">YouTube:</x-input-label>
-                            <x-text-input type="text" name="youtube" id="youtube" />
+                            <x-text-input type="text" name="redes[youtube]" id="youtube" />
                         </div>
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="website">Sitio Web:</x-input-label>
-                            <x-text-input type="text" name="website" id="website" />
+                            <x-text-input type="text" name="redes[website]" id="website" />
                         </div>
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="otras_redes">Otras Redes Sociales:</x-input-label>
-                            <x-text-input type="text" name="otras_redes" id="otras_redes" />
+                            <x-text-input type="text" name="redes[otras_redes]" id="otras_redes" />
                         <div class="row-inputs py-8 w-full flex justify-center gap-2">
                             <x-primary-button type="submit" class="w-40">Guardar</x-primary-button>
                         </div>

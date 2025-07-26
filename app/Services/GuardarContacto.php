@@ -23,14 +23,14 @@ class GuardarContacto
         }
         if($datos['direccion']) {
             if (!isset($datos['municipio']) || empty($datos['municipio']) || Municipio::find($datos['municipio']) === null) {
-                $datos['municipio'] = ElegirEmpresa::defaultDireccion()->municipio_id ?? 11007; // Bogotá por defecto
+                $datos['municipio'] = ElegirEmpresa::defaultMunicipio();
             }
             $modelo->direccion()->create([
                 'direccion' => $datos['direccion'],
                 'municipio_id' =>  $datos['municipio']
             ]);
         }else {
-            $datos['municipio'] = ElegirEmpresa::defaultDireccion()->municipio_id ?? 11007; // Bogotá por defecto
+            $datos['municipio'] = ElegirEmpresa::defaultMunicipio();
             $modelo->direccion()->create([
                 'direccion' => null,
                 'municipio_id' =>  $datos['municipio']
@@ -45,14 +45,18 @@ class GuardarContacto
             }
 
         }
-        if($datos['redes_sociales']) {
-            foreach ($datos['redes_sociales'] as $redSocial) {
+        if($datos['redes']) {
+            foreach ($datos['redes'] as $redSocial => $url) {
+                if(empty($url)) {
+                    continue;
+                }
                 RedSocial::create(['nombre' => $redSocial,
-                    'url' => $redSocial['url'],
-                    'perfil' => $redSocial['perfil'],
+                    'url' => $url,
+                    'perfil' => 'perfil'.$datos['razon_social'].'_'.$redSocial,
                     'redable_type' => $modeloClass,
                     'redable_id' => $modelo->id
                     ]);
+
             }
         }
 
