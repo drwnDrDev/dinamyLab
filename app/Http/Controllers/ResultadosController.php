@@ -87,10 +87,11 @@ class ResultadosController extends Controller
             compact('persona', 'ordenes')
         );
     }
+    
     public function historia_show(Request $request, Persona $persona)
     {
-        $persona = Persona::find(5);
-        $procedimientos = Procedimiento::find([1, 2, 4])->map(
+     
+        $procedimientos = Procedimiento::find(array_keys($request->all()))->map(
             function ($procedimiento) {
                 return [[
                     'procedimiento' => $procedimiento,
