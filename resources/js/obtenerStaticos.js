@@ -1,36 +1,45 @@
    // Función para cargar y almacenar los datos
     async function loadAndStoreFrontendData() {
         const dataKeys = {
-            tiposDocumento: 'tipos_documento_data',
-            paises: 'paises_data',
-            municipios: 'municipios_data',
-            eps: 'eps_data',
-            lastUpdate: 'frontend_data_last_update'
+            documentosPaciente: 'documentos_paciente',
+            documentosPagador: 'documentos_pagador',
+            paises: 'paises',
+            municipios: 'municipios',
+            eps: 'eps'
         };
 
         try {
-            console.log('Solicitando datos estáticos del servidor...');
+
             // Asegúrate que la URL coincida con la definida en routes/api.php
             const response = await fetch('/api/static-data-for-frontend');
+
 
             if (!response.ok) {
                 throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
             }
 
             const serverData = await response.json();
+            console.log('Datos recibidos del servidor:', serverData.documentosPaciente);
 
             if (serverData.error) {
                 console.error('Error recibido del servidor:', serverData.error);
                 return;
             }
 
-            console.log('Datos recibidos:', serverData);
+
+
 
             // Almacenar cada conjunto de datos en localStorage
-            if (serverData.tipos_documento) {
-                
-                localStorage.setItem(dataKeys.tiposDocumento, JSON.stringify(serverData.tipos_documento));
-                console.log('Tipos de Documento guardados en localStorage.');
+            if (serverData.documentos_paciente) {
+                console.log('Guardando documentos de Paciente en localStorage...');
+
+                localStorage.setItem(dataKeys.documentosPaciente, JSON.stringify(serverData.documentos_paciente));
+                console.log('Documentos de Paciente guardados en localStorage.');
+            }
+
+            if (serverData.documentos_pagador) {
+                localStorage.setItem(dataKeys.documentosPagador, JSON.stringify(serverData.documentos_pagador));
+                console.log('Documentos de Pagador guardados en localStorage.');
             }
 
             if (serverData.paises) {
@@ -46,10 +55,7 @@
                 localStorage.setItem(dataKeys.eps, JSON.stringify(serverData.eps));
                 console.log('EPS guardadas en localStorage.');
             }
-            if (serverData.timestamp) {
-                localStorage.setItem(dataKeys.lastUpdate, serverData.timestamp);
-                console.log('Timestamp de actualización guardado.');
-            }
+
 
             console.log('Estáticos han sido cargados y almacenados en localStorage.');
 
