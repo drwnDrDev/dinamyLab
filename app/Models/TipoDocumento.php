@@ -14,7 +14,8 @@ class TipoDocumento extends Model
         'es_nacional',
         'edad_minima',
         'edad_maxima',
-        'unidad_edad',
+        'es_paciente',
+        'es_pagador',
         'regex_validacion',
         'requiere_acudiente',
     ];

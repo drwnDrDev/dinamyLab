@@ -20,11 +20,10 @@ export const DATA_KEYS = Object.freeze({
 export const appState = {
         todosLosExamenes: [],
         examenesVisibles: [],
-
-        tiposDocumento: JSON.parse(localStorage.getItem('tipos_documento_data')) || [],
-        municipios: JSON.parse(localStorage.getItem('municipios_data')) || [],
-        paises: JSON.parse(localStorage.getItem('paises_data')) || [],
-        eps: JSON.parse(localStorage.getItem('eps_data')) || [],
+        tiposDocumento: JSON.parse(localStorage.getItem('documentos_paciente')) || [],
+        municipios: JSON.parse(localStorage.getItem('municipios')) || [],
+        paises: JSON.parse(localStorage.getItem('paises')) || [],
+        eps: JSON.parse(localStorage.getItem('eps')) || [],
         csrfToken: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
         filteredMunicipios: [],
     };

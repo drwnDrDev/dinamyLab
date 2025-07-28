@@ -21,13 +21,13 @@ class FrontendDataController extends Controller
 
         try {
 
-            $cachedData = Cache::get('frontend_static_data');
-            if ($cachedData) {
+            // $cachedData = Cache::get('frontend_static_data');
+            // if ($cachedData) {
+            //     return response()->json($cachedData);
+            // }
 
-                return response()->json($cachedData);
-            }
-
-            $tiposDocumento = TipoDocumento::all();
+            $tiposDocumentoPaciente = TipoDocumento::where('es_paciente', true)->orderBy('nivel','desc')->get();
+            $tiposDocumentoPagador = TipoDocumento::where('es_pagador', true)->orderBy('nivel','desc')->get();
             $paises = Pais::select('nombre', 'codigo_iso','nivel')->orderBy('nivel', 'desc')->get();
             $municipios = Municipio::select('municipio', 'id','departamento')
                                     ->orderBy('nivel', 'desc')
@@ -46,17 +46,16 @@ class FrontendDataController extends Controller
             ->orderBy('nombre')->get();
 
             $data = [
-                'tipos_documento' => $tiposDocumento,
+                'documentos_paciente' => $tiposDocumentoPaciente,
+                'documentos_pagador' => $tiposDocumentoPagador,
                 'paises' => $paises,
                 'municipios' => $municipios,
-                'eps' => $eps,
-                'timestamp' => now()->toIso8601String(),
+                'eps' => $eps
             ];
 
-            Cache::put('frontend_static_data', $data, now()->addHours(24)); // Cache por 24 horas
+        Cache::put('frontend_static_data', $data, now()->addHours(24)); // Cache por 24 horas
 
-
-            return response()->json($data);
+           return response()->json($data);
 
         } catch (\Exception $e) {
 
