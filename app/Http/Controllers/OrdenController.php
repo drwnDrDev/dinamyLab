@@ -50,7 +50,10 @@ class OrdenController extends Controller
         }
         $examenes = Examen::all();
         $orden_numero = Orden::where('sede_id', $sede->id)
-               ->max('numero') ?  : 1; // Si no hay órdenes, iniciar en 1
+               ->max('numero') ?  : 0; // Si no hay órdenes, iniciar en 0
+        if (Orden::where('numero', $orden_numero+1)->exists()) {
+            $orden_numero = Orden::max('numero') + 1000; // Incrementar el número de orden si ya existe
+        }
         $orden_numero = str_pad($orden_numero + 1, 5, '0', STR_PAD_LEFT); // Formatear el número de orden con ceros a la izquierda
         return view('ordenes.create', compact('examenes', 'orden_numero'));
     }
