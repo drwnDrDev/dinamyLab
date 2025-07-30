@@ -7,6 +7,8 @@ use App\Models\Orden;
 use App\Models\Examen;
 use App\Models\Persona;
 use App\Services\ElegirEmpresa;
+use App\Models\MetodoPago;
+use App\Models\TipoDocumento;
 use App\Http\Requests\OrdenStoreRequest;
 use App\Models\ContactoEmergencia;
 use Illuminate\Http\Request;
@@ -163,9 +165,11 @@ class OrdenController extends Controller
     public function show(Orden $orden)
     {
         $orden->load(['paciente','examenes','procedimientos']);
-
-
-        return view('ordenes.show', compact('orden'));
+        if (!$orden) {
+            return redirect()->route('ordenes')->with('error', 'Orden médica no encontrada');
+        }
+        $mediosPago = MetodoPago::orderBy('nivel', 'desc')->get();
+        return view('ordenes.show', compact('orden', 'mediosPago'));
     }
 
     /**

@@ -21,10 +21,10 @@ class FrontendDataController extends Controller
 
         try {
 
-            // $cachedData = Cache::get('frontend_static_data');
-            // if ($cachedData) {
-            //     return response()->json($cachedData);
-            // }
+            $cachedData = Cache::get('frontend_static_data');
+            if ($cachedData) {
+                return response()->json($cachedData);
+            }
 
             $tiposDocumentoPaciente = TipoDocumento::where('es_paciente', true)->orderBy('nivel','desc')->get();
             $tiposDocumentoPagador = TipoDocumento::where('es_pagador', true)->orderBy('nivel','desc')->get();

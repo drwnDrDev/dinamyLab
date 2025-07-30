@@ -6,23 +6,8 @@
     </x-slot>
 
 
-    <x-canva>
-    <section class="print:hidden">
 
-        <div class="flex justify-between items-center mb-4">
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-600">Nº: {{ $orden->numero }}</span>
-                <span class="text-sm text-gray-600">Fecha: {{ $orden->created_at->format('d-m-Y') }}</span>
-            </div>
-        </div>
-
-    <x-primary-button type="button" class="mt-4 print:hidden" id="printButton" >
-        {{ __('Print') }}
-    </x-primary-button>
-
-</section>
-
-    </x-canva>
+<x-canva>
 
     <section class="hidden print:flex print:flex-wrap print:justify-between print:w-full print:mt-[-20px]">
         <div class="flex-col justify-center items-center gap-2">
@@ -65,11 +50,11 @@
 
         </section>
 
-        <section class="w-full border border-borders rounded-md p-3">
-            <div class="w-full flex flex-wrap gap-2">
+    <section class="w-full border border-borders rounded-md p-3">
+            <div class="w-full flex flex-wrap">
                 <div class="w-full flex gap-2">
                 <span class="font-bold ">Paciente: </span>
-                <h3 class="text-md p-0 mb-0">{{$orden->paciente->nombreCompleto()}}</h3>
+                <h3 class="text-md p-0 mb-0 ">{{$orden->paciente->nombreCompleto()}}</h3>
                 </div>
                 <div class="w-full flex gap-2">
                     <span class="font-bold ">Identificación: </span>
@@ -85,7 +70,7 @@
                         <span class="font-bold ">Edad: </span>
                         <h3>{{$orden->paciente->edad()}}</h3>
                     </div>
-            </div>
+                </div>
 
                     <div class="flex gap-2">
                         <span class="font-bold ">Teléfono: </span>
@@ -97,10 +82,14 @@
                             @endif
                         </h3>
                     </div>
+                     <x-primary-button type="button" class="mt-4 flex print:hidden" id="printButton" >
+                              {{ __('Print ticket') }}
+                     </x-primary-button>
+
 
         </section>
 
-    <div class="container" id="ticket">
+    <section class="container mx-auto hidden print:!block" id="ticket">
 
         <div class="grid grid-cols-6 border border-borders rounded-md">
             <p>Examen</p>
@@ -116,7 +105,7 @@
                 <p class="col-span-2 text-end px-2">{{number_format($examen->valor*$examen->pivot->cantidad, 2)}}</p>
                @endforeach
         </div>
-            <div class="grid grid-cols-5 justify-between items-center p-2 gap-2">
+        <div class="grid grid-cols-5 justify-between items-center p-2 gap-2">
                 <p class="text-end col-span-3">Subtotal</p>
                 <p class="text-end col-span-2">{{number_format($orden->total,2)}}</p>
                 @if ($orden->descuento && $orden->descuento > 0)
@@ -131,12 +120,56 @@
                 <p class="col-span-3 font-semibold text-end">Total</p>
                 <p class="font-semibold text-end col-span-2">${{ number_format(($orden->total - $orden->descuento), 2) }} COP</p>
                 <p class="text-black/75 col-span-5 text-end">**IVA**: $0 (Exento según Art. 476 ET)  </p>
-            </div>
-
         </div>
 
 
-    </div>
+    </section>
+
+<section class="container print:hidden bg-slate-300 p-4 rounded-md">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-600">Nº: {{ $orden->numero }}</span>
+                <span class="text-sm text-gray-600">Fecha: {{ $orden->created_at->format('d-m-Y') }}</span>
+            </div>
+        </div>
+
+            <form action="" method="post" id="formMediosPago">
+                @csrf
+
+                <div class="max-w-lg grid mx-auto grid-cols-2 items-between mb-2">
+
+                <input type="hidden" name="orden" id="orden" value="{{$orden->id}}">
+
+                <h2 class="text-lg font-semibold">Medio de pago</h2>
+                    <input type="number" disabled name="total" id="totalOrden" value="{{$orden->abono}}" class="border-0 bg-transparent p-0 m-0 text-base text-gray-900 font-bold focus:ring-0 focus:outline-none appearance-none cursor-default" style="pointer-events: none;">
+                <p>Saldo:<span id="diferencia" class="text-sm text-gray-600"></span>COP</p>
+                </div>
+
+
+                @foreach ($mediosPago as $medio)
+                    <div class="max-w-screen-md grid mx-auto grid-cols-4 items-between mb-2">
+                        <x-input-label for="medio_pago_{{ $medio->id }}">{{ $medio->nombre }}</x-input-label>
+                        <x-text-input type="number" name="medio_pago[{{ $medio->id }}]" id="medio_pago_{{ $medio->id }}" class="ml-2" min="0" step="0.01" value="{{ old('medio_pago.'.$medio->id, 0) }}" required />
+                        <x-input-error :messages="$errors->get('medio_pago.'.$medio->id)" class="mt-2" />
+                        @if ($medio->nombre !== 'Efectivo')
+                            <x-text-input name="medio_pago_ref_{{ $medio->id }}" id="medio_pago_ref_{{ $medio->id }}" placeholder="Referencia" class="ml-2" value="{{ old('medio_pago_ref.'.$medio->id) }}" />
+                            <x-input-error :messages="$errors->get('medio_pago_ref.'.$medio->id)" class="mt-2" />
+                        @endif
+                    </div>
+                @endforeach
+                <x-input-error :messages="$errors->get('medio_pago')" class="mt-2" />
+            </form>
+
+                <x-primary-button type="submit" class="print:hidden">
+                    {{ __('Mark as completed') }}
+                </x-primary-button>
+
+
+            </form>
+
+</section>
+</x-canva>
+
 
     @vite(['resources/js/ticket.js'])
 </x-app-layout>
