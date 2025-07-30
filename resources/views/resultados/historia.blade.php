@@ -11,21 +11,27 @@
 
             <form action="{{route('resultados.historia_show', $persona)}}" method="POST">
                 @csrf
+
                 @foreach($ordenes as $orden)
                 <div class="flex gap-4 border border-borders mb-4">
                     <span>Número de Orden: {{ $orden->id }}</span>
                     <span> Fecha de creación: {{ $orden->created_at->format('d-m-Y') }}</span>
                 </div>
-                @foreach($orden->procedimientos as $procedimiento)
-                    <div class="flex gap-4">
-                        <span>{{ $procedimiento->created_at->format('d-m-Y') }}
-                        </span>
-                        <span>{{ $procedimiento->examen->nombre }}</span>
-                        <span>{{ $procedimiento->estado }}</span>
-                        <input type="checkbox" name="{{$procedimiento->id}}" id="{{$procedimiento->id}}">
-                    </div>
+                @isset($orden->procedimientos)
+                    @foreach($orden->procedimientos as $procedimiento)
+                        <div class="grid grid-cols-4 gap-4">
+                            
+                            <span><input type="checkbox" name="{{$procedimiento->id}}" id="{{$procedimiento->id}}"
+                                            class="mr-4"> 
+                                {{ $procedimiento->created_at->format('d-m-Y') }}
+                            </span>
+                            <span>{{ $procedimiento->examen->nombre }}</span>
+                            <span>{{ $procedimiento->estado }}</span>
+                            <span>{{ $procedimiento->empleado->user->name}}</span>
+                        </div>
 
-                @endforeach
+                    @endforeach
+                @endisset
                 @endforeach
 
                 <x-primary-button>Imprimir</x-primary-button>

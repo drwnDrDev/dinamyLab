@@ -81,27 +81,32 @@ class ResultadosController extends Controller
     }
     public function historia(Persona $persona)
     {
-        $ordenes = Orden::where('paciente_id', $persona->id)->get();
+        $ordenes = Orden::where('paciente_id', $persona->id)
+                       ->orderBy('updated_at', 'desc')
+                       ->get();
         return view(
             'resultados.historia',
             compact('persona', 'ordenes')
         );
     }
+    
     public function historia_show(Request $request, Persona $persona)
     {
-        $persona = Persona::find(5);
-        $procedimientos = Procedimiento::find([1, 2, 4])->map(
+     
+        $sede = session('sede'); 
+        $procedimientos = Procedimiento::find(array_keys($request->all()))->map(
             function ($procedimiento) {
-                return [[
+                return [
                     'procedimiento' => $procedimiento,
                     'resultado' => EscogerReferencia::obtenerResultados($procedimiento)
-                ]];
+                ];
             }
         );
-        dd($procedimientos);
+
+       
 
         return view(
-            'resultados.historia_show', compact('persona', 'procedimientos')
+            'resultados.historia_show', compact('persona', 'procedimientos', 'sede')
         );
     }
 }
