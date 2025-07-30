@@ -30,7 +30,7 @@ class Convenio extends Model
     }
     public function facturas()
     {
-        return $this->hasMany(Factura::class, 'convenio_id');
+        return $this->morphMany(Factura::class, 'pagador');
     }
 
 }

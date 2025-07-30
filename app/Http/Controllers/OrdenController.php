@@ -52,9 +52,12 @@ class OrdenController extends Controller
         $orden_numero = Orden::where('sede_id', $sede->id)
                ->max('numero') ?  : 0; // Si no hay órdenes, iniciar en 0
         if (Orden::where('numero', $orden_numero+1)->exists()) {
-            $orden_numero = Orden::max('numero') + 1000; // Incrementar el número de orden si ya existe
+            // Si ya existe el número de orden, comenzar en la siguiente unidad de mil
+            $maxNumero = Orden::max('numero');
+            $orden_numero =( ceil(($maxNumero + 1) / 2000) * 2000);
+        }else {
+            $orden_numero = $orden_numero + 1; // Incrementar para la nueva orden
         }
-        $orden_numero = str_pad($orden_numero + 1, 5, '0', STR_PAD_LEFT); // Formatear el número de orden con ceros a la izquierda
         return view('ordenes.create', compact('examenes', 'orden_numero'));
     }
 
@@ -63,7 +66,7 @@ class OrdenController extends Controller
      */
     public function store(OrdenStoreRequest $request)
     {
-        $request->validated(); // Validar los datos del formulario
+       $datos_validados = $request->validated(); // Validar los datos del formulario
 
         $sede = ElegirEmpresa::elegirSede();
 

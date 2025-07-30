@@ -32,6 +32,14 @@ class TipoDocumento extends Model
             return static::where('cod_rips', $codigo)->value('id');
         }
 
+    /**
+     * Obtiene el regex de validación por el código RIPS.
+     * @param string $codigo
+     * @return string
+     * @throws \InvalidArgumentException
+     * */
+    
+
     public static function regexPorCodigoRips(string $codigo): string
         {
             $regex = static::where('cod_rips', $codigo)->value('regex_validacion');

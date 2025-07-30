@@ -41,7 +41,7 @@ class FacturaController extends Controller
             }])
             ->where('paciente_id', $persona->id)
             ->get();
-   
+
         return view('facturas.create', compact('ordenes','convenios', 'persona'));
     }
 
@@ -50,8 +50,8 @@ class FacturaController extends Controller
      */
     public function store(Request $request)
     {
-   
-    $validacion = $request->validate([
+
+        $validacion = $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'pagador_type' => 'required|in:persona,convenio',
             'numero_factura' => 'required|unique:facturas,numero',
@@ -60,7 +60,7 @@ class FacturaController extends Controller
             'total' => 'required|numeric',
         ]);
 
-        $empresa = ElegirEmpresa::elegirEmpresa(array_keys($validacion['procedimientos'])[0]);
+        $empresa = ElegirEmpresa::elegirEmpresa();
         if (!$empresa) {
             return redirect()->back()->withErrors(['error' => 'No se pudo determinar la empresa para la factura.']);
         }
