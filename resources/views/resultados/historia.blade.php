@@ -9,7 +9,7 @@
         </div>
         <h3>Selecciona los procedimientos que se van a incluir:</h1>
 
-            <form action="{{route('resultados.historia_show', $persona)}}" method="POST">
+            <form action="{{route('resultados.historia_show', $persona)}}" method="POST" target="_blank">
                 @csrf
 
                 @foreach($ordenes as $orden)
