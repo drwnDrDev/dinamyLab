@@ -17,7 +17,7 @@ class ElegirEmpresa
     {
         $procedimiento = Procedimiento::findOrFail($procedimiento);
         if ($procedimiento->empleado) {
-            return $procedimiento->empleado->sede->empresa;
+            return $procedimiento->empleado->empresa;
         }
         if (session('empresa')) {
             return Empresa::find(session('empresa'));
@@ -39,9 +39,6 @@ class ElegirEmpresa
         $sede = session('sede');
         if ($sede) {
             return $sede;
-        }
-        if (Auth::user()->empleado) {
-            return Auth::user()->empleado->sede;
         }
         if (session('empresa')) {
             return session('empresa')->sedes->first();

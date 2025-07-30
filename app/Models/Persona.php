@@ -22,11 +22,14 @@ class Persona extends Model
         'telefono',
 
     ];
-    protected $casts = [
-        'fecha_nacimiento' => 'date',
-        'nacional' => 'boolean',
-        'sexo' => 'string',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'fecha_nacimiento' => 'date',
+            'nacional' => 'boolean',
+            'sexo' => 'string',
+        ];
+    }
     public function ordenes()
     {
         return $this->hasMany(Orden::class, 'paciente_id');
@@ -60,6 +63,10 @@ class Persona extends Model
     public function procedencia()
     {
          return $this->morphOne(PaisProcedencia::class, 'procedencia');
+    }
+    public function facturas()
+    {
+        return $this->morphMany(Factura::class, 'pagador');
     }
 
 
