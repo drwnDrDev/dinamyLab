@@ -7,10 +7,9 @@ use App\Models\Examen;
 use App\Models\Factura;
 use App\Models\Procedimiento;
 use App\Models\Persona;
-use App\Models\Resultados;
-use App\Services\ElegirEmpresa;
+
 use App\Estado;
-use App\TipoDocumento;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -60,22 +59,20 @@ class FacturaController extends Controller
             'total' => 'required|numeric',
         ]);
 
-        $empresa = ElegirEmpresa::elegirEmpresa();
-        if (!$empresa) {
-            return redirect()->back()->withErrors(['error' => 'No se pudo determinar la empresa para la factura.']);
-        }
 
         $facturaData = [
             'paciente_id' => $validacion['paciente_id'],
             'pagador_type' => $validacion['pagador_type'],
             'pagador_id' => $validacion['pagador_type'] === 'persona' ? $validacion['paciente_id'] : null,
             'numero' => $validacion['numero_factura'],
-            'empresa_id' => $empresa->id,
+            'empresa_id' => 1, // Asumiendo que la empresa_id es fija o se obtiene de otra manera
             'subtotal' => $validacion['subtotal'],
             'total' => $validacion['total'],
             'fecha_emision' => Carbon::now(),
             'fecha_vencimiento' => Carbon::now()->addDays(30),
         ];
+
+        dd($facturaData);
         $factura = Factura::create($facturaData);
         return redirect()->route('facturas.show', $factura);
     }
