@@ -65,7 +65,7 @@ class FacturaController extends Controller
             'pagador_type' => $validacion['pagador_type'],
             'pagador_id' => $validacion['pagador_type'] === 'persona' ? $validacion['paciente_id'] : null,
             'numero' => $validacion['numero_factura'],
-            'empresa_id' => 1, // Asumiendo que la empresa_id es fija o se obtiene de otra manera
+            'sede_id' => session('sede')->id,
             'subtotal' => $validacion['subtotal'],
             'total' => $validacion['total'],
             'fecha_emision' => Carbon::now(),
