@@ -18,16 +18,9 @@ return new class extends Migration
     $table->string('cufe', 64)->nullable();
     $table->timestamp('fecha_emision');
     $table->date('fecha_vencimiento')->nullable();
-    $table->decimal('subtotal', 12, 2)->nullable();
-    $table->decimal('total_ajustes', 12, 2)->default(0);
 
     $table->foreignId('sede_id')
         ->constrained('sedes')
-        ->restrictOnDelete()
-        ->restrictOnUpdate();
-
-    $table->foreignId('convenio_id')
-        ->constrained('convenios')
         ->restrictOnDelete()
         ->restrictOnUpdate();
 
@@ -44,7 +37,10 @@ return new class extends Migration
     $table->morphs('pagador'); // Relación polimórfica
     $table->string('qr')->nullable();
     $table->string('estado')->default('PENDIENTE');
-    $table->string('tipo_pago')->default('CONTADO');
+
+    $table->decimal('subtotal', 12, 2);
+
+    $table->decimal('total_ajustes', 12, 2)->default(0);
     $table->decimal('total', 12, 2);
     $table->string('observaciones')->nullable();
     $table->timestamps();

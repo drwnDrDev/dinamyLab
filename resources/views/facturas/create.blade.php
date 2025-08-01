@@ -55,8 +55,6 @@
 <input type="hidden" name="pagador_type" value="persona">
 <input type="hidden" name="pagador_id" value="{{ $persona->id }}">
 
-
-
 <h2>Detalles de la Factura </h2>
 <label for=""></label><section class="flex flex-wrap gap-1">
 <label for="numero_factura">Número de Factura</label><input type="text" name="numero_factura" id="numero_factura" placeholder="Número de Factura" class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
@@ -84,7 +82,7 @@
                 <p class="text-xs">{{ $procedimiento->examen->valor }}</p>
                 <p class="text-xs">{{ $procedimiento->fecha }}</p>
                 </div>
-            
+
         @endforeach
     </div>
 @endforeach
