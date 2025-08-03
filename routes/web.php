@@ -9,6 +9,7 @@ use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProcedimientoController;
 use App\Http\Controllers\ResultadosController;
+use App\Http\Controllers\ResolucionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\SedeController;
@@ -75,6 +76,13 @@ Route::middleware('auth','verified','can:ver_facturas')->group(function () {
     Route::get('/facturas/create/{persona}',[FacturaController::class,'create'])->name('facturas.create');
     Route::post('/facturas/store',[FacturaController::class,'store'])->name('facturas.store');
     Route::get('/facturas/{factura}',[FacturaController::class,'show'])->name('facturas.show');
+    Route::get('/facturas/resoluciones/create',[ResolucionController::class,'create'])->name('resoluciones.create');
+    Route::post('/facturas/resoluciones/store',[ResolucionController::class,'store'])->name('resoluciones.store');
+    Route::get('/facturas/resoluciones',[ResolucionController::class,'index'])->name('resoluciones.index');
+    Route::get('/facturas/resoluciones/{resolucion}',[ResolucionController::class,'show'])->name('resoluciones.show');
+    Route::get('/facturas/resoluciones/{resolucion}/edit',[ResolucionController::class,'edit'])->name('resoluciones.edit');
+    Route::put('/facturas/resoluciones/{resolucion}',[ResolucionController::class,'update'])->name('resoluciones.update');
+    Route::delete('/facturas/resoluciones/{resolucion}',[ResolucionController::class,'destroy'])->name('resoluciones.destroy');
 
 });
 
