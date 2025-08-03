@@ -1,10 +1,14 @@
 <x-app-layout>
   <x-slot name="title">
-    {{ __('Facturación') }}
+    Facturación
   </x-slot>
   <x-slot name="header">
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      {{ __('Facturación') }}
+            Facturación
+
+            @can('ver_facturas')
+             <x-primary-button class="bg-violet-300" href="{{route('resoluciones.create')}}">Nueva Resolucion</x-primary-button>
+            @endcan
     </h2>
   </x-slot>
   <x-canva>

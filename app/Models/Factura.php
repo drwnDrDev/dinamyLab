@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Services\ElegirEmpresa;
 
 class Factura extends Model
 {
@@ -14,27 +15,7 @@ class Factura extends Model
     protected $table = 'facturas';
 
 
-
-    protected $fillable = [
-        'numero',
-        'sede_id',
-        'convenio_id',
-        'empleado_id',
-        'resolucion_id',
-        'fecha_emision',
-        'fecha_vencimiento',
-        'total',
-        'subtotal',
-        'total_ajustes',
-        'observaciones',
-        'tipo',
-        'cufe',
-        'pagador_type',
-        'pagador_id',
-        'qr',
-        'estado',
-        'tipo_pago'
-    ];
+    protected $guarded = ['epmpleado_id', 'sede_id','numero'];
 
     public function sede()
     {
@@ -60,7 +41,28 @@ class Factura extends Model
     {
         return $this->morphTo();
     }
-    
+
+    protected static function boot()
+    {
+        parent::boot();
+
+
+        static::creating(function ($model) {
+            $sede = ElegirEmpresa::elegirSede();
+            $model->sede_id = $sede->id;
+            $model->empleado_id = auth()->user()->empleado->id;
+
+            if(!$model->resolucion_id) {
+                $model->resolucion_id = $sede->resolucion_id;
+            }
+
+
+            // Asignar el número de factura automáticamente si no se ha proporcionado
+            if (!$model->numero) {
+                $model->numero = Factura::max('numero') + 1;
+            }
+        });
+    }
 
 
     protected function casts(): array
