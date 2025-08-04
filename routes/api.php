@@ -7,7 +7,8 @@ use App\Http\Controllers\Api\MunicipioController;
 use App\Http\Controllers\Api\FrontendDataController;
 use App\Http\Controllers\Api\ExamenesController;
 use App\Http\Controllers\Api\OrdenController;
-
+use App\Http\Controllers\FacturaController;
+use App\Models\Factura;
 
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
 

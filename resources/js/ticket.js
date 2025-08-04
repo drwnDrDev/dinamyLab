@@ -8,6 +8,7 @@ const editarMediosPago = document.createElement('button');
 editarMediosPago.id = 'agregarEditarButton';
 editarMediosPago.textContent = 'Editar Medios de Pago';
 editarMediosPago.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
+editarMediosPago.type = 'button';
 
 editarMediosPago.addEventListener('click', () => {
     mediosPago.forEach(medio => {
@@ -35,7 +36,22 @@ const calcularTotalMediosPago = () => {
 };
 
 
-
+formMediosPago.addEventListener('submit', (e) => {
+    const totalMediosPago = calcularTotalMediosPago();
+    if (totalMediosPago !== totalOrden) {
+        e.preventDefault();
+        mediosPago.forEach(medio => {
+            if (medio.value === '' || parseFloat(medio.value) === 0) {
+                medio.classList.add('border-red-500');
+                medio.classList.remove('border-gray-300');
+            } else {
+                medio.classList.remove('border-red-500');
+                medio.classList.add('border-gray-300');
+            }
+        });
+        alert('La suma de los medios de pago debe ser igual al total de la orden.');
+    }
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     const printButton = document.getElementById('printButton');
@@ -62,4 +78,3 @@ mediosPago.forEach(medio => {
         diferenciaSpan.textContent = 'Diferencia: ' + diferencia;
     });
 });
-

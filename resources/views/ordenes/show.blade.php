@@ -133,7 +133,7 @@
             </div>
         </div>
 
-            <form action="" method="post" id="formMediosPago">
+            <form action="{{route('facturas.store')}}" method="post" id="formMediosPago">
                 @csrf
 
                 <div class="max-w-lg grid mx-auto grid-cols-2 items-between mb-2">
@@ -157,12 +157,15 @@
                         @endif
                     </div>
                 @endforeach
-                <x-input-error :messages="$errors->get('medio_pago')" class="mt-2" />
-            </form>
+
 
                 <x-primary-button type="submit" class="print:hidden">
                     {{ __('Mark as completed') }}
                 </x-primary-button>
+
+                <x-input-error :messages="$errors->get('medio_pago')" class="mt-2" />
+            </form>
+
 
 
             </form>
