@@ -4,9 +4,6 @@
            {{ __('Medical order') }}
         </h2>
     </x-slot>
-
-
-
 <x-canva>
 
     <section class="hidden print:flex print:flex-wrap print:justify-between print:w-full print:mt-[-20px]">
@@ -149,7 +146,7 @@
                 @foreach ($mediosPago as $medio)
                     <div class="max-w-screen-md grid mx-auto grid-cols-4 items-between mb-2">
                         <x-input-label for="medio_pago_{{ $medio->id }}">{{ $medio->nombre }}</x-input-label>
-                        <x-text-input type="number" name="medio_pago[{{ $medio->id }}]" id="medio_pago_{{ $medio->id }}" class="ml-2" min="0" step="0.01" value="{{ old('medio_pago.'.$medio->id, 0) }}" required />
+                        <x-text-input type="number" name="medio_pago[{{ $medio->id }}]" id="medio_pago_{{ $medio->id }}" class="ml-2" min="0" step="0.01" value="{{ old('medio_pago.'.$medio->id, $abono=$medio->nombre == 'Efectivo'? $orden->abono : 0) }}" required />
                         <x-input-error :messages="$errors->get('medio_pago.'.$medio->id)" class="mt-2" />
                         @if ($medio->nombre !== 'Efectivo')
                             <x-text-input name="medio_pago_ref_{{ $medio->id }}" id="medio_pago_ref_{{ $medio->id }}" placeholder="Referencia" class="ml-2" value="{{ old('medio_pago_ref.'.$medio->id) }}" />
