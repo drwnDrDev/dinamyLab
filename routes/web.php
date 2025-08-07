@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/caja',[AdministracionController::class,'caja'])->name('caja');
+    Route::get('/caja/ingresos',[AdministracionController::class,'rips'])->name('rips');
     Route::get('/examenes',[ExamenController::class,'index'])->name('examenes');
     Route::get('/examenes/{examen}',[ExamenController::class,'show'])->name('examenes.show');
 
