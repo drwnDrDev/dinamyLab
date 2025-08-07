@@ -1,0 +1,16 @@
+{
+  "NumFactura": "",
+  "CodigoUnicoValidacion": "No aplica a paquetes procesados en estado [RECHAZADO] o validaciones realizadas antes del envío al Ministerio de Salud y Protección Social",
+  "FechaRadicacion": "2025-08-06T19:40:56.100751-05:00",
+  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\prueba",
+  "ResultadosValidacion": [
+    {
+      "Clase": "RECHAZADO",
+      "Codigo": "TOT003",
+      "Descripcion": "Hubo un error en la petición, por favor comuníquese con el administrador del sistema.",
+      "Observaciones": "Tu sesión ha caducado. Iniciar sesión de nuevo para obtener un nuevo token.",
+      "PathFuente": "",
+      "Fuente": "FevRips"
+    }
+  ]
+}
