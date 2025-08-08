@@ -40,18 +40,17 @@
             .print\:table-row-group { display: table-row-group; }
             .print\:table-footer-group { display: table-footer-group; }
 
-
         }
     </style>
 </head>
 
 <body>
-    <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!min-h-screen print:!text-xs print:!p-0 print:!bg-white print:!text-black">
+    <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!min-h-screen print:!text-sm print:!p-0 print:!bg-white print:!text-black">
         <table class="w-full ">
             <thead class="print:table-header-group">
                 <tr>
                     <th colspan="4">
-                        <header class="print_header m-auto items-center">
+                        <header class="print_header m-auto mb-4 items-center">
                             <div class="print_logo flex pb-2  items-center w-full">
                                 <figure class="w-16 my-auto p-0">
                                     @if (session('sede')->id === $sede->id)
@@ -61,7 +60,7 @@
                                     @endif
 
                                 </figure>
-                                <div class="pl-4">
+                                <div class="pl-4 text-start">
                                     <h2 class="font-semibold text-xl">{{$sede->empresa->nombre_comercial}}</h2>
                                     <p class="">{{$sede->nombre}}</p>
                                     <p class="font-light">NIT. {{$sede->empresa->nit}}</p>
@@ -75,21 +74,21 @@
                                 </div>
                                 <div class="w-full grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
 
-                                    <span class="font-normal ">Identificación: </span>
-                                    <h3 class="text-titles font-light">{{$persona->tipo_documento->cod_rips}}{{$persona->numero_documento}}</h3>
-                                    <span class="font-normal ">Sexo: </span>
-                                    <h3 class="text-titles font-light">{{$persona->sexo==="M" ? 'Masculino':'Femenino'}} </h3>
-                                    <span class="font-normal ">Edad: </span>
-                                    <h3 class="text-titles font-light">{{$persona->edad()}}</h3>
+                                    <span class="font-normal text-start">Identificación: </span>
+                                    <h3 class="text-titles font-light text-start">{{$persona->tipo_documento->cod_rips}}{{$persona->numero_documento}}</h3>
+                                    <span class="font-normal text-start">Sexo: </span>
+                                    <h3 class="text-titles font-light text-start">{{$persona->sexo==="M" ? 'Masculino':'Femenino'}} </h3>
+                                    <span class="font-normal text-start">Edad: </span>
+                                    <h3 class="text-titles font-light text-start">{{$persona->edad()}}</h3>
 
                                 </div>
                                 <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
-                                    <span class="font-normal ">Fecha de creación: </span>
-                                    <h3 class="text-titles font-light">{{ now()->format('d-m-Y') }}</h3>
-                                    <span class="font-normal">Fecha de Nacimiento: </span>
-                                    <h3 class="text-titles font-light">{{$persona->fecha_nacimiento->format('d-m-Y')}}</h3>
-                                    <span class="font-normal ">Total de Exámenes</span>
-                                    <h3 class="text-titles font-light">{{$procedimientos->count()}}</h3>
+                                    <span class="font-normal text-start">Fecha de creación: </span>
+                                    <h3 class="text-titles font-light text-start">{{ now()->format('d-m-Y') }}</h3>
+                                    <span class="font-normal text-start">Fecha de Nacimiento: </span>
+                                    <h3 class="text-titles font-light text-start">{{$persona->fecha_nacimiento->format('d-m-Y')}}</h3>
+                                    <span class="font-normal text-start">Total de Exámenes</span>
+                                    <h3 class="text-titles font-light text-start">{{$procedimientos->count()}}</h3>
 
                                 </div>
                             </div>
@@ -106,42 +105,44 @@
             <tbody class="print:table-row-group">
                 <tr>
                     <td colspan="4">
-                        <main class="print_paramentros w-full py-4">
+                        <main class="print_paramentros w-full mb-9">
                             @foreach ($procedimientos as $procedimiento)
+                            <div class="no-break">
+                                <section>
+                                    <h1 class="font-semibold text-center uppercase">{{$procedimiento['procedimiento']->examen->nombre}}</h1>
+                                    <p class="font-light text-center mb-4">Fecha de Validación: {{ $procedimiento['procedimiento']->updated_at->format('d-m-Y h:m') }}</p>
+                                
+                                    @php
+                                    $lastGroup = null;
+                                    @endphp
 
-                            <section class="no-break">
-                                <h1 class="font-semibold text-center uppercase">{{$procedimiento['procedimiento']->examen->nombre}}</h1>
-                                <p class="font-light text-center mb-4">Fecha de Validación: {{ $procedimiento['procedimiento']->updated_at->format('d-m-Y h:m') }}</p>
-                             
-                                @php
-                                $lastGroup = null;
-                                @endphp
+                                    @foreach ( $procedimiento['resultado'] as $p)
 
-                                @foreach ( $procedimiento['resultado'] as $p)
+                                    @if ($p['grupo'] && $p['grupo'] !== $lastGroup)
+                                    <h3 class="pt-2 pl-2 font-semibold uppercase col-span-full">{{ $p['grupo']}}</h3>
+                                    @php
+                                    $lastGroup = $p['grupo'];
+                                    @endphp
+                                    @endif
+                                    <x-parametro-print :item="$p" />
 
-                                @if ($p['grupo'] && $p['grupo'] !== $lastGroup)
-                                <h3 class="pt-2 pl-2 font-semibold uppercase col-span-full">{{ $p['grupo']}}</h3>
-                                @php
-                                $lastGroup = $p['grupo'];
-                                @endphp
-                                @endif
-                                <x-parametro-print :item="$p" />
-
-                                @endforeach
-                            </section>
-                            <div class="text-end text-xs font-light p-4 print:hidden">
-                                <p class="text-xs font-light">Bacteriologo: {{$procedimiento['procedimiento']->empleado->user->name}} - {{$procedimiento['procedimiento']->empleado->numero_documento}}</p>
-
-                            </div>
-                            <aside class="firma hidden print:!flex justify-end h-full items-end p-4 gap-2">
-
-                                <div class="flex flex-col">
-                                    <img src=" {{ asset('storage/firmas/'.$procedimiento['procedimiento']->empleado->firma) }}" alt="{{$procedimiento['procedimiento']->empleado->user->name}}" class="w-32 object-contain">
-                                    <span class="text-xs font-light">Bacteriologo: {{$procedimiento['procedimiento']->empleado->user->name}} - {{$procedimiento['procedimiento']->empleado->numero_documento}}</span>
+                                    @endforeach
+                                </section>
+                                <div class="text-end text-xs font-light p-4 print:hidden">
+                                    <p class="text-xs font-light">Bacteriologo: {{$procedimiento['procedimiento']->empleado->user->name}} - {{$procedimiento['procedimiento']->empleado->numero_documento}}</p>
 
                                 </div>
-                            </aside>
+                                <aside class="firma hidden print:!flex justify-end h-full items-end p-4 gap-2">
+
+                                    <div class="flex flex-col">
+                                        <img src=" {{ asset('storage/firmas/'.$procedimiento['procedimiento']->empleado->firma) }}" alt="{{$procedimiento['procedimiento']->empleado->user->name}}" class="w-32 object-contain">
+                                        <span class="text-xs font-light">Bacteriologo: {{$procedimiento['procedimiento']->empleado->user->name}} - {{$procedimiento['procedimiento']->empleado->numero_documento}}</span>
+
+                                    </div>
+                                </aside>
+                            </div>
                             @endforeach
+
                         </main>
                     </td>
                 </tr>
@@ -149,7 +150,7 @@
             <tfoot class="print:table-footer-group">
                 <tr>
                     <td colspan="4">
-                        <footer class="print_footer hidden w-full m-auto items-center print:!block">
+                        <footer class="print_footer hidden w-full m-auto items-center print:!block print:!fixed bottom-0 left-0 right-0">
 
                             <div class="font-light border-t border-borders text-center p-2">
 
