@@ -95,7 +95,7 @@
                             <div class="header_resultado mt-4 mb-0 grid [grid-template-columns:minmax(25%,40%)_20%_20%_minmax(max-content,20%)] gap-2 pl-4 text-titles border-b border-t border-text">
                                     <h2 class="font-semibold">Parametro</h2>
                                     <h2 class="font-semibold text-end">Resultado</h2>
-                                    <h2 class="font-semibold">U. Medida</h2>
+                                    <h2 class="font-semibold text-start">U. Medida</h2>
                                     <h2 class="font-semibold">V. de Referencia</h2>
                             </div>
                         </header>
@@ -150,9 +150,9 @@
             <tfoot class="print:table-footer-group">
                 <tr>
                     <td colspan="4">
-                        <footer class="print_footer hidden w-full m-auto items-center print:!block print:!fixed bottom-0 left-0 right-0 print:!bg-white">
+                        <footer class="print_footer hidden fixed w-full m-auto items-center print:!block bottom-0 left-0 right-0 z-10 print:!bg-white">
 
-                            <div class="font-light border-t border-borders text-center p-2">
+                            <div class="font-light border-t border-borders text-center pt-1">
 
                                 <spam class="">
                                     <span class="text-xs">Tels: </span>

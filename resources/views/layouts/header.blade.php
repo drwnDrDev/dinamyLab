@@ -20,13 +20,13 @@
                     </a>
                 </div>
                 <div>
-                    <span class="text-2xl font-bold text-text">BioLab</span>
+                    <span class="text-2xl font-bold text-text">{{ session('sede')->nombre }}</span>
                 </div>
             </div>
 
             <!-- Mnesajes de session -->
-            <div class="w-1/2 flex items-center justify-end">
-                <form class="py-3" action="{{ route('search') }}" method="post">
+            <div class="w-1/3 flex items-center justify-end">
+                <form class="py-3 w-full" action="{{ route('search') }}" method="post">
                     @csrf
                     <label class="flex flex-col min-w-40 h-12 w-full">
                         <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
