@@ -150,7 +150,7 @@
             <tfoot class="print:table-footer-group">
                 <tr>
                     <td colspan="4">
-                        <footer class="print_footer hidden w-full m-auto items-center print:!block print:!fixed bottom-0 left-0 right-0">
+                        <footer class="print_footer hidden w-full m-auto items-center print:!block print:!fixed bottom-0 left-0 right-0 print:!bg-white">
 
                             <div class="font-light border-t border-borders text-center p-2">
 
