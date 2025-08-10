@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>LissApp</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -19,92 +19,73 @@
             </style>
         @endif
     </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
-        <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6 not-has-[nav]:hidden">
-            @if (Route::has('login'))
-                <nav class="flex items-center justify-end gap-4">
-                    @auth
-                        <a
-                            href="{{ url('/dashboard') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
-                        >
-                            {{__('Dashboard')}}
-                        </a>
-                    @else
-                        <a
-                            href="{{ route('login') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
-                        >
-                           {{__('Log in')}}
-                        </a>
-
-                        @if (Route::has('register'))
-                            <a
-                                href="{{ route('register') }}"
-                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
-                               {{ __('Register')}}
-                            </a>
-                        @endif
-                    @endauth
-                </nav>
-            @endif
-        </header>
-        <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow starting:opacity-0">
-            <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
-                <div class="text-[13px] leading-[20px] flex-1 p-6 pb-12 lg:p-20 bg-white dark:bg-[#161615] dark:text-[#EDEDEC] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] rounded-bl-lg rounded-br-lg lg:rounded-tl-lg lg:rounded-br-none">
-                    <h1 class="mb-1 font-medium text-2xl">{{__("Let's get started")}}</h1>
-                        <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}" >
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label class="dark:text-cyan-200" for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label class="text-blue-900 dark:text-cyan-200" for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center dark:text-cyan-100">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm dark:text-cyan-200 text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3 dark:bg-blue-400">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-    </div>
-    <div class="bg-[#fff2f2] dark:bg-[#1D0002] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-[335/376] lg:aspect-auto w-full lg:w-[438px] shrink-0 overflow-hidden">
-                <div class="absolute inset-0 bg-[#FDFDFC] dark:bg-[#0a0a0a] flex items-center justify-center">
-                      <h2 class="text-3xl relative top-3 z-10">Labapp</h2>
-                    <x-application-logo class="w-[335px] lg:w-[438px]" />
+    <body class="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-background via-blue-50 to-cyan-100 p-4 dark:from-slate-900 dark:via-slate-900 dark:to-black">
+       
+        <div class="w-full max-w-md">
+                <div class="mb-8 flex flex-col items-center text-center">
+                    <div class="mb-4 flex items-center justify-center gap-3">
+                        <x-application-logo class="w-10 h-10" />
+                        <h1 class="font-headline text-5xl font-bold tracking-tighter text-primary">LissApp</h1>
+                    </div>
+                    <p class="max-w-xs text-lg text-slate-500 font-semibold">{{__('Your trusted partner in clinical laboratory management')}}</p>
                 </div>
-    </div>
-            </main>
+                <div class="rounded-lg border bg-white text-card-foreground shadow-2xl">
+                    <div class="flex flex-col space-y-1.5 p-6 text-center">
+                        <h1 class="font-medium text-2xl">{{__("Let's get started")}}</h1>
+                        <p class="text-sm text-slate-500 font-semibold">{{__('Enter your credentials to access your account')}}</p>
+                    </div>
+                        <x-auth-session-status :status="session('status')" />
+                        <div class="p-6 pt-0">
+                            <div class="w-full">
+                                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                                    @csrf
+
+                                    <!-- Email Address -->
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="email">{{__('Email')}}</label>
+                                        <input id="email" class="flex h-10 w-full rounded-md border border-borders bg-[#e5f5fb] px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
+                                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                                    </div>
+
+                                    <!-- Password -->
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="password">{{__('Password')}}</label>
+
+                                        <input id="password" class="flex h-10 w-full rounded-md border border-borders bg-[#e5f5fb] px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                                                        type="password"
+                                                        name="password"
+                                                        required autocomplete="current-password" />
+
+                                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                                    </div>
+
+                                    <!-- Remember Me -->
+                                    <div class="block mt-4">
+                                        <label for="remember_me" class="inline-flex items-center dark:text-cyan-100">
+                                            <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                                            <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="flex items-center justify-end mt-4">
+                                        @if (Route::has('password.request'))
+                                            <a class="underline text-sm dark:text-cyan-200 text-slate-500 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                                                {{ __('Forgot your password?') }}
+                                            </a>
+                                        @endif
+
+                                        <x-primary-button class="ms-3 dark:bg-blue-400">
+                                            {{ __('Log in') }}
+                                        </x-primary-button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                </div>
+                <p class="mt-6 px-8 text-center text-sm text-slate-500">By logging in, you agree to our<!-- --> <a href="#" class="underline underline-offset-4 transition-colors hover:text-primary">Terms of Service</a>.</p>
+                
+    
         </div>
 
         @if (Route::has('login'))

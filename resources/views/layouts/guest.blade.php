@@ -15,15 +15,17 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <h1>LISAPP</h1>
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
+
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-br from-background via-blue-50 to-cyan-100 p-4 dark:from-slate-900 dark:via-slate-900 dark:to-black">
+            <div class="mb-8 flex flex-col items-center text-center">
+                    <div class="mb-4 flex items-center justify-center gap-3">
+                        <x-application-logo class="w-10 h-10" />
+                        <h1 class="font-headline text-5xl font-bold tracking-tighter text-primary">LissApp</h1>
+                    </div>
+                    <p class="max-w-xs text-lg text-slate-500 font-semibold">{{__('Your trusted partner in clinical laboratory management')}}</p>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-2xl overflow-hidden sm:rounded-lg">
                 {{ $slot }}
             </div>
         </div>
