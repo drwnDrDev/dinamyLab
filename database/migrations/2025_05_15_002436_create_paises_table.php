@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('paises', function (Blueprint $table) {
             $table->string('codigo_iso',3)->primary();
+            $table->string('codigo_iso_2', 2)->unique();
             $table->string('nombre')->unique();
             $table->unsignedTinyInteger('nivel')->nullable();
         });

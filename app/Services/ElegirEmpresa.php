@@ -13,12 +13,9 @@ use Illuminate\Support\Facades\Auth;
 class ElegirEmpresa
 {
 
-    public static function elegirEmpresa($procedimiento = null):?Empresa
+    public static function elegirEmpresa():?Empresa
     {
-        $procedimiento = Procedimiento::findOrFail($procedimiento);
-        if ($procedimiento->empleado) {
-            return $procedimiento->empleado->sede->empresa;
-        }
+
         if (session('empresa')) {
             return Empresa::find(session('empresa'));
         }
@@ -39,9 +36,6 @@ class ElegirEmpresa
         $sede = session('sede');
         if ($sede) {
             return $sede;
-        }
-        if (Auth::user()->empleado) {
-            return Auth::user()->empleado->sede;
         }
         if (session('empresa')) {
             return session('empresa')->sedes->first();
