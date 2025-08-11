@@ -14,7 +14,8 @@ class TipoDocumento extends Model
         'es_nacional',
         'edad_minima',
         'edad_maxima',
-        'unidad_edad',
+        'es_paciente',
+        'es_pagador',
         'regex_validacion',
         'requiere_acudiente',
     ];
@@ -30,6 +31,14 @@ class TipoDocumento extends Model
         {
             return static::where('cod_rips', $codigo)->value('id');
         }
+
+    /**
+     * Obtiene el regex de validación por el código RIPS.
+     * @param string $codigo
+     * @return string
+     * @throws \InvalidArgumentException
+     * */
+    
 
     public static function regexPorCodigoRips(string $codigo): string
         {

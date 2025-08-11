@@ -724,7 +724,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 1, NULL, NULL],
 [47798, 'MAGDALENA', '47', 'TENERIFE', '798', NULL, NULL, NULL],
 [47960, 'MAGDALENA', '47', 'ZAPAYÁN', '960', NULL, NULL, NULL],
 [47980, 'MAGDALENA', '47', 'ZONA BANANERA', '980', NULL, NULL, NULL],
-[50001, 'META', '50', 'VILLAVICENCIO', '1', 5, NULL, NULL],
+[50001, 'META', '50', 'VILLAVICENCIO', '1', 1, NULL, NULL],
 [50006, 'META', '50', 'ACACÍAS', '6', NULL, NULL, NULL],
 [50110, 'META', '50', 'BARRANCA DE UPÍA', '110', NULL, NULL, NULL],
 [50124, 'META', '50', 'CABUYARO', '124', NULL, NULL, NULL],
@@ -753,7 +753,7 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 1, NULL, NULL],
 [50686, 'META', '50', 'SAN JUANITO', '686', NULL, NULL, NULL],
 [50689, 'META', '50', 'SAN MARTÍN', '689', NULL, NULL, NULL],
 [50711, 'META', '50', 'VISTAHERMOSA', '711', NULL, NULL, NULL],
-[52001, 'NARIÑO', '52', 'PASTO', '1', 5, NULL, NULL],
+[52001, 'NARIÑO', '52', 'PASTO', '1', 1, NULL, NULL],
 [52019, 'NARIÑO', '52', 'ALBÁN', '19', NULL, NULL, NULL],
 [52022, 'NARIÑO', '52', 'ALDANA', '22', NULL, NULL, NULL],
 [52036, 'NARIÑO', '52', 'ANCUYA', '36', NULL, NULL, NULL],
@@ -1179,271 +1179,269 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 1, NULL, NULL],
             );
 
 
+            $paisesCSV = "Afganistán;AFG;AF
+            Albania;ALB;AL
+            Alemania;DEU;DE
+            Andorra;AND;AD
+            Angola;AGO;AO
+            Anguila;AIA;AI
+            Antártida;ATA;AQ
+            Antigua y Barbuda;ATG;AG
+            Arabia Saudita;SAU;SA
+            Argelia;DZA;DZ
+            Argentina;ARG;AR
+            Armenia;ARM;AM
+            Aruba;ABW;AW
+            Australia;AUS;AU
+            Austria;AUT;AT
+            Azerbaiyán;AZE;AZ
+            Bahamas;BHS;BS
+            Bahrein;BHR;BH
+            Bangladesh;BGD;BD
+            Barbados;BRB;BB
+            Belarús;BLR;BY
+            Bélgica;BEL;BE
+            Belice;BLZ;BZ
+            Benin;BEN;BJ
+            Bermuda;BMU;BM
+            Bhután;BTN;BT
+            Bolivia (Estado Plurinacional de);BOL;BO
+            Bonaire, San Eustaquio y Saba;BES;BQ
+            Bosnia y Herzegovina;BIH;BA
+            Botswana;BWA;BW
+            Brasil;BRA;BR
+            Brunei Darussalam;BRN;BN
+            Bulgaria;BGR;BG
+            Burkina Faso;BFA;BF
+            Burundi;BDI;BI
+            Cabo Verde;CPV;CV
+            Camboya;KHM;KH
+            Camerún;CMR;CM
+            Canadá;CAN;CA
+            Chad;TCD;TD
+            Chequia;CZE;CZ
+            Chile;CHL;CL
+            China;CHN;CN
+            China, región administrativa especial de Hong Kong;HKG;HK
+            China, región administrativa especial de Macao;MAC;MO
+            Chipre;CYP;CY
+            Colombia;COL;CO
+            Comoras;COM;KM
+            Congo;COG;CG
+            Costa Rica;CRI;CR
+            Côte d’Ivoire;CIV;CI
+            Croacia;HRV;HR
+            Cuba;CUB;CU
+            Curazao;CUW;CW
+            Dinamarca;DNK;DK
+            Djibouti;DJI;DJ
+            Dominica;DMA;DM
+            Ecuador;ECU;EC
+            Egipto;EGY;EG
+            El Salvador;SLV;SV
+            Emiratos Árabes Unidos;ARE;AE
+            Eritrea;ERI;ER
+            Eslovaquia;SVK;SK
+            Eslovenia;SVN;SI
+            España;ESP;ES
+            Estado de Palestina;PSE;PS
+            Estados Unidos de América;USA;US
+            Estonia;EST;EE
+            Eswatini;SWZ;SZ
+            Etiopía;ETH;ET
+            Federación de Rusia;RUS;RU
+            Fiji;FJI;FJ
+            Filipinas;PHL;PH
+            Finlandia;FIN;FI
+            Francia;FRA;FR
+            Gabón;GAB;GA
+            Gambia;GMB;GM
+            Georgia;GEO;GE
+            Georgia del Sur y las Islas Sandwich del Sur;SGS;GS
+            Ghana;GHA;GH
+            Gibraltar;GIB;GI
+            Granada;GRD;GD
+            Grecia;GRC;GR
+            Groenlandia;GRL;GL
+            Guadalupe;GLP;GP
+            Guam;GUM;GU
+            Guatemala;GTM;GT
+            Guayana Francesa;GUF;GF
+            Guernsey;GGY;GG
+            Guinea;GIN;GN
+            Guinea Ecuatorial;GNQ;GQ
+            Guinea-Bissau;GNB;GW
+            Guyana;GUY;GY
+            Haití;HTI;HT
+            Honduras;HND;HN
+            Hungría;HUN;HU
+            India;IND;IN
+            Indonesia;IDN;ID
+            Irán (República Islámica del);IRN;IR
+            Iraq;IRQ;IQ
+            Irlanda;IRL;IE
+            Isla Bouvet;BVT;BV
+            Isla Christmas;CXR;CX
+            Isla de Man;IMN;IM
+            Isla Norfolk;NFK;NF
+            Islandia;ISL;IS
+            Islas Åland;ALA;AX
+            Islas Caimán;CYM;KY
+            Islas Cocos ;CCK;CC
+            Islas Cook;COK;CK
+            Islas Feroe;FRO;FO
+            Islas Heard y McDonald;HMD;HM
+            Islas Malvinas;FLK;FK
+            Islas Marianas Septentrionales;MNP;MP
+            Islas Marshall;MHL;MH
+            Islas menores alejadas de Estados Unidos;UMI;UM
+            Islas Salomón;SLB;SB
+            Islas Svalbard y Jan Mayen;SJM;SJ
+            Islas Turcas y Caicos;TCA;TC
+            Islas Vírgenes Británicas;VGB;VG
+            Islas Vírgenes de los Estados Unidos;VIR;VI
+            Islas Wallis y Futuna;WLF;WF
+            Israel;ISR;IL
+            Italia;ITA;IT
+            Jamaica;JAM;JM
+            Japón;JPN;JP
+            Jersey;JEY;JE
+            Jordania;JOR;JO
+            Kazajstán;KAZ;KZ
+            Kenya;KEN;KE
+            Kirguistán;KGZ;KG
+            Kiribati;KIR;KI
+            Kuwait;KWT;KW
+            Lesotho;LSO;LS
+            Letonia;LVA;LV
+            Líbano;LBN;LB
+            Liberia;LBR;LR
+            Libia;LBY;LY
+            Liechtenstein;LIE;LI
+            Lituania;LTU;LT
+            Luxemburgo;LUX;LU
+            Macedonia del Norte;MKD;MK
+            Madagascar;MDG;MG
+            Malasia;MYS;MY
+            Malawi;MWI;MW
+            Maldivas;MDV;MV
+            Malí;MLI;ML
+            Malta;MLT;MT
+            Marruecos;MAR;MA
+            Martinica;MTQ;MQ
+            Mauricio;MUS;MU
+            Mauritania;MRT;MR
+            Mayotte;MYT;YT
+            México;MEX;MX
+            Micronesia (Estados Federados de);FSM;FM
+            Mónaco;MCO;MC
+            Mongolia;MNG;MN
+            Montenegro;MNE;ME
+            Montserrat;MSR;MS
+            Mozambique;MOZ;MZ
+            Myanmar;MMR;MM
+            Namibia;NAM;NA
+            Nauru;NRU;NR
+            Nepal;NPL;NP
+            Nicaragua;NIC;NI
+            Níger;NER;NE
+            Nigeria;NGA;NG
+            Niue;NIU;NU
+            Noruega;NOR;NO
+            Nueva Caledonia;NCL;NC
+            Nueva Zelandia;NZL;NZ
+            Omán;OMN;OM
+            Países Bajos;NLD;NL
+            Pakistán;PAK;PK
+            Palau;PLW;PW
+            Panamá;PAN;PA
+            Papua Nueva Guinea;PNG;PG
+            Paraguay;PRY;PY
+            Perú;PER;PE
+            Pitcairn;PCN;PN
+            Polinesia Francesa;PYF;PF
+            Polonia;POL;PL
+            Portugal;PRT;PT
+            Puerto Rico;PRI;PR
+            Qatar;QAT;QA
+            Reino Unido de Gran Bretaña e Irlanda del Norte;GBR;GB
+            República Árabe Siria;SYR;SY
+            República Centroafricana;CAF;CF
+            República de Corea;KOR;KR
+            República de Moldova;MDA;MD
+            República Democrática del Congo;COD;CD
+            República Democrática Popular Lao;LAO;LA
+            República Dominicana;DOM;DO
+            República Popular Democrática de Corea;PRK;KP
+            República Unida de Tanzanía;TZA;TZ
+            Reunión;REU;RE
+            Rumania;ROU;RO
+            Rwanda;RWA;RW
+            Sáhara Occidental;ESH;EH
+            Saint Kitts y Nevis;KNA;KN
+            Samoa;WSM;WS
+            Samoa Americana;ASM;AS
+            San Barthélemy;BLM;BL
+            San Marino;SMR;SM
+            San Martín (parte francesa);MAF;MF
+            San Martín (parte Holandesa);SXM;SX
+            San Pedro y Miquelón;SPM;PM
+            San Vicente y las Granadinas;VCT;VC
+            Santa Elena;SHN;SH
+            Santa Lucía;LCA;LC
+            Santa Sede;VAT;VA
+            Santo Tomé y Príncipe;STP;ST
+            Senegal;SEN;SN
+            Serbia;SRB;RS
+            Seychelles;SYC;SC
+            Sierra Leona;SLE;SL
+            Singapur;SGP;SG
+            Somalia;SOM;SO
+            Sri Lanka;LKA;LK
+            Sudáfrica;ZAF;ZA
+            Sudán;SDN;SD
+            Sudán del Sur;SSD;SS
+            Suecia;SWE;SE
+            Suiza;CHE;CH
+            Suriname;SUR;SR
+            Tailandia;THA;TH
+            Tayikistán;TJK;TJ
+            Territorio Británico del Océano Índico;IOT;IO
+            Territorio de las Tierras Australes Francesas;ATF;TF
+            Timor-Leste;TLS;TL
+            Togo;TGO;TG
+            Tokelau;TKL;TK
+            Tonga;TON;TO
+            Trinidad y Tabago;TTO;TT
+            Túnez;TUN;TN
+            Türkiye;TUR;TR
+            Turkmenistán;TKM;TM
+            Tuvalu;TUV;TV
+            Ucrania;UKR;UA
+            Uganda;UGA;UG
+            Uruguay;URY;UY
+            Uzbekistán;UZB;UZ
+            Vanuatu;VUT;VU
+            Venezuela;VEN;VE
+            Viet Nam;VNM;VN
+            Yemen;YEM;YE
+            Zambia;ZMB;ZM
+            Zimbabwe;ZWE;ZW";
+            $paises = explode("\n", $paisesCSV);
+            $paises = array_map(function ($pais) {
+                return explode(";", $pais);
+            }, $paises);
+            $paises = array_map(function ($pais) {
+                return [
+                    'nombre' => $pais[0],
+                    'codigo_iso' => $pais[1],
+                    'codigo_iso_2' => $pais[2],
+                ];
+            }, $paises);
 
-$paisesCSV = "Afganistán;AFG
-Albania;ALB
-Alemania;DEU
-Andorra;AND
-Angola;AGO
-Anguila;AIA
-Antártida;ATA
-Antigua y Barbuda;ATG
-Arabia Saudita;SAU
-Argelia;DZA
-Argentina;ARG
-Armenia;ARM
-Aruba;ABW
-Australia;AUS
-Austria;AUT
-Azerbaiyán;AZE
-Bahamas;BHS
-Bahrein;BHR
-Bangladesh;BGD
-Barbados;BRB
-Belarús;BLR
-Bélgica;BEL
-Belice;BLZ
-Benin;BEN
-Bermuda;BMU
-Bhután;BTN
-Bolivia (Estado Plurinacional de);BOL
-Bonaire, San Eustaquio y Saba;BES
-Bosnia y Herzegovina;BIH
-Botswana;BWA
-Brasil;BRA
-Brunei Darussalam;BRN
-Bulgaria;BGR
-Burkina Faso;BFA
-Burundi;BDI
-Cabo Verde;CPV
-Camboya;KHM
-Camerún;CMR
-Canadá;CAN
-Chad;TCD
-Chequia;CZE
-Chile;CHL
-China;CHN
-China, región administrativa especial de Hong Kong;HKG
-China, región administrativa especial de Macao;MAC
-Chipre;CYP
-Colombia;COL
-Comoras;COM
-Congo;COG
-Costa Rica;CRI
-Côte d’Ivoire;CIV
-Croacia;HRV
-Cuba;CUB
-Curazao;CUW
-Dinamarca;DNK
-Djibouti;DJI
-Dominica;DMA
-Ecuador;ECU
-Egipto;EGY
-El Salvador;SLV
-Emiratos Árabes Unidos;ARE
-Eritrea;ERI
-Eslovaquia;SVK
-Eslovenia;SVN
-España;ESP
-Estado de Palestina;PSE
-Estados Unidos de América;USA
-Estonia;EST
-Eswatini;SWZ
-Etiopía;ETH
-Federación de Rusia;RUS
-Fiji;FJI
-Filipinas;PHL
-Finlandia;FIN
-Francia;FRA
-Gabón;GAB
-Gambia;GMB
-Georgia;GEO
-Georgia del Sur y las Islas Sandwich del Sur;SGS
-Ghana;GHA
-Gibraltar;GIB
-Granada;GRD
-Grecia;GRC
-Groenlandia;GRL
-Guadalupe;GLP
-Guam;GUM
-Guatemala;GTM
-Guayana Francesa;GUF
-Guernsey;GGY
-Guinea;GIN
-Guinea Ecuatorial;GNQ
-Guinea-Bissau;GNB
-Guyana;GUY
-Haití;HTI
-Honduras;HND
-Hungría;HUN
-India;IND
-Indonesia;IDN
-Irán (República Islámica del);IRN
-Iraq;IRQ
-Irlanda;IRL
-Isla Bouvet;BVT
-Isla Christmas;CXR
-Isla de Man;IMN
-Isla Norfolk;NFK
-Islandia;ISL
-Islas Åland;ALA
-Islas Caimán;CYM
-Islas Cocos ;CCK
-Islas Cook;COK
-Islas Feroe;FRO
-Islas Heard y McDonald;HMD
-Islas Malvinas;FLK
-Islas Marianas Septentrionales;MNP
-Islas Marshall;MHL
-Islas menores alejadas de Estados Unidos;UMI
-Islas Salomón;SLB
-Islas Svalbard y Jan Mayen;SJM
-Islas Turcas y Caicos;TCA
-Islas Vírgenes Británicas;VGB
-Islas Vírgenes de los Estados Unidos;VIR
-Islas Wallis y Futuna;WLF
-Israel;ISR
-Italia;ITA
-Jamaica;JAM
-Japón;JPN
-Jersey;JEY
-Jordania;JOR
-Kazajstán;KAZ
-Kenya;KEN
-Kirguistán;KGZ
-Kiribati;KIR
-Kuwait;KWT
-Lesotho;LSO
-Letonia;LVA
-Líbano;LBN
-Liberia;LBR
-Libia;LBY
-Liechtenstein;LIE
-Lituania;LTU
-Luxemburgo;LUX
-Macedonia del Norte;MKD
-Madagascar;MDG
-Malasia;MYS
-Malawi;MWI
-Maldivas;MDV
-Malí;MLI
-Malta;MLT
-Marruecos;MAR
-Martinica;MTQ
-Mauricio;MUS
-Mauritania;MRT
-Mayotte;MYT
-México;MEX
-Micronesia (Estados Federados de);FSM
-Mónaco;MCO
-Mongolia;MNG
-Montenegro;MNE
-Montserrat;MSR
-Mozambique;MOZ
-Myanmar;MMR
-Namibia;NAM
-Nauru;NRU
-Nepal;NPL
-Nicaragua;NIC
-Níger;NER
-Nigeria;NGA
-Niue;NIU
-Noruega;NOR
-Nueva Caledonia;NCL
-Nueva Zelandia;NZL
-Omán;OMN
-Países Bajos;NLD
-Pakistán;PAK
-Palau;PLW
-Panamá;PAN
-Papua Nueva Guinea;PNG
-Paraguay;PRY
-Perú;PER
-Pitcairn;PCN
-Polinesia Francesa;PYF
-Polonia;POL
-Portugal;PRT
-Puerto Rico;PRI
-Qatar;QAT
-Reino Unido de Gran Bretaña e Irlanda del Norte;GBR
-República Árabe Siria;SYR
-República Centroafricana;CAF
-República de Corea;KOR
-República de Moldova;MDA
-República Democrática del Congo;COD
-República Democrática Popular Lao;LAO
-República Dominicana;DOM
-República Popular Democrática de Corea;PRK
-República Unida de Tanzanía;TZA
-Reunión;REU
-Rumania;ROU
-Rwanda;RWA
-Sáhara Occidental;ESH
-Saint Kitts y Nevis;KNA
-Samoa;WSM
-Samoa Americana;ASM
-San Barthélemy;BLM
-San Marino;SMR
-San Martín (parte francesa);MAF
-San Martín (parte Holandesa);SXM
-San Pedro y Miquelón;SPM
-San Vicente y las Granadinas;VCT
-Santa Elena;SHN
-Santa Lucía;LCA
-Santa Sede;VAT
-Santo Tomé y Príncipe;STP
-Senegal;SEN
-Serbia;SRB
-Seychelles;SYC
-Sierra Leona;SLE
-Singapur;SGP
-Somalia;SOM
-Sri Lanka;LKA
-Sudáfrica;ZAF
-Sudán;SDN
-Sudán del Sur;SSD
-Suecia;SWE
-Suiza;CHE
-Suriname;SUR
-Tailandia;THA
-Tayikistán;TJK
-Territorio Británico del Océano Índico;IOT
-Territorio de las Tierras Australes Francesas;ATF
-Timor-Leste;TLS
-Togo;TGO
-Tokelau;TKL
-Tonga;TON
-Trinidad y Tabago;TTO
-Túnez;TUN
-Türkiye;TUR
-Turkmenistán;TKM
-Tuvalu;TUV
-Ucrania;UKR
-Uganda;UGA
-Uruguay;URY
-Uzbekistán;UZB
-Vanuatu;VUT
-Venezuela;VEN
-Viet Nam;VNM
-Yemen;YEM
-Zambia;ZMB
-Zimbabwe;ZWE";
-        $paises = explode("\n", $paisesCSV);
-        $paises = array_map(function ($pais) {
-            return explode(";", $pais);
-        }, $paises);
-        $paises = array_map(function ($pais) {
-            return [
-                'nombre' => $pais[0],
-                'codigo_iso' => $pais[1],
-            ];
-        }, $paises);
-
-        // Insert the paises into the database
-        DB::table('paises')->insert($paises);
-
-    }
+            // Insert the paises into the database
+            DB::table('paises')->insert($paises);
 }
 
 
-
+}

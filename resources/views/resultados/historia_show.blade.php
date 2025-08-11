@@ -111,7 +111,7 @@
                                 <section>
                                     <h1 class="font-semibold text-center uppercase">{{$procedimiento['procedimiento']->examen->nombre}}</h1>
                                     <p class="font-light text-center mb-4">Fecha de Validación: {{ $procedimiento['procedimiento']->updated_at->format('d-m-Y h:m') }}</p>
-                                
+
                                     @php
                                     $lastGroup = null;
                                     @endphp

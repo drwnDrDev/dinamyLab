@@ -6,25 +6,23 @@ export const DATA_KEYS = Object.freeze({
     PACIENTE_ID: 'paciente_id',
     ACOMPANIANTE_ID: 'acompaniante_id',
     TIPO_DOCUMENTO: 'tipo_documento',
-    tiposDocumento: 'tipos_documento_data',
-    paises: 'paises_data',
-    municipios: 'municipios_data',
-    eps: 'eps_data',
-    lastUpdate: 'frontend_data_last_update',
-    CREAR_PACIENTE:'crearPaciente',
-    CREAR_ACOMPANIANTE:'crearacompaniante',
-    BUSQUEDA_EXAMEN:'busquedaExamen'
+    DOCUMENTOS_PACIENTE: 'documentos_paciente',
+    PAISES: 'paises',
+    MUNICIPIOS: 'municipios',
+    EPS: 'eps',
+    CREAR_PACIENTE: 'crearPaciente',
+    CREAR_ACOMPANIANTE: 'crearacompaniante',
+    BUSQUEDA_EXAMEN: 'busquedaExamen'
 
 });
 
 export const appState = {
         todosLosExamenes: [],
         examenesVisibles: [],
-
-        tiposDocumento: JSON.parse(localStorage.getItem('tipos_documento_data')) || [],
-        municipios: JSON.parse(localStorage.getItem('municipios_data')) || [],
-        paises: JSON.parse(localStorage.getItem('paises_data')) || [],
-        eps: JSON.parse(localStorage.getItem('eps_data')) || [],
+        tiposDocumento: JSON.parse(localStorage.getItem(DATA_KEYS.DOCUMENTOS_PACIENTE)) || [],
+        municipios: JSON.parse(localStorage.getItem(DATA_KEYS.MUNICIPIOS)) || [],
+        paises: JSON.parse(localStorage.getItem(DATA_KEYS.PAISES)) || [],
+        eps: JSON.parse(localStorage.getItem(DATA_KEYS.EPS)) || [],
         csrfToken: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
         filteredMunicipios: [],
     };

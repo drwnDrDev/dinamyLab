@@ -7,10 +7,9 @@ use App\Models\Examen;
 use App\Models\Factura;
 use App\Models\Procedimiento;
 use App\Models\Persona;
-use App\Models\Resultados;
-use App\Services\ElegirEmpresa;
+
 use App\Estado;
-use App\TipoDocumento;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -41,7 +40,7 @@ class FacturaController extends Controller
             }])
             ->where('paciente_id', $persona->id)
             ->get();
-   
+
         return view('facturas.create', compact('ordenes','convenios', 'persona'));
     }
 
@@ -50,8 +49,8 @@ class FacturaController extends Controller
      */
     public function store(Request $request)
     {
-   
-    $validacion = $request->validate([
+
+        $validacion = $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'pagador_type' => 'required|in:persona,convenio',
             'numero_factura' => 'required|unique:facturas,numero',
@@ -60,22 +59,20 @@ class FacturaController extends Controller
             'total' => 'required|numeric',
         ]);
 
-        $empresa = ElegirEmpresa::elegirEmpresa(array_keys($validacion['procedimientos'])[0]);
-        if (!$empresa) {
-            return redirect()->back()->withErrors(['error' => 'No se pudo determinar la empresa para la factura.']);
-        }
 
         $facturaData = [
             'paciente_id' => $validacion['paciente_id'],
             'pagador_type' => $validacion['pagador_type'],
             'pagador_id' => $validacion['pagador_type'] === 'persona' ? $validacion['paciente_id'] : null,
             'numero' => $validacion['numero_factura'],
-            'empresa_id' => $empresa->id,
+            'sede_id' => session('sede')->id,
             'subtotal' => $validacion['subtotal'],
             'total' => $validacion['total'],
             'fecha_emision' => Carbon::now(),
             'fecha_vencimiento' => Carbon::now()->addDays(30),
         ];
+
+        dd($facturaData);
         $factura = Factura::create($facturaData);
         return redirect()->route('facturas.show', $factura);
     }
