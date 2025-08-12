@@ -126,5 +126,163 @@ class ProcedimientoController extends Controller
         ]);
     }
 
+public function json_rips(Request $request)
+{
+    $procedimientos = Procedimiento::with(['persona', 'examen'])
+        ->whereBetween('fecha_procedimiento', ['2025-07-01', '2025-07-31'])
+        ->where('prestador_id', 1)
+        ->get();
+
+    $procedimientosPorPersona = $procedimientos->groupBy('persona_id');
+
+    $usuarios = $procedimientosPorPersona->map(function($usuario) {
+        return array(
+            "tipoDocumentoIdentificacion" => $usuario->tID,
+            "numDocumentoIdentificacion" => $usuario->numero_doc,
+            "tipoUsuario" => "04",
+            "fechaNacimiento" => $usuario->fecha_nacimiento,
+            "codSexo" => $usuario->sexo,
+            "codPaisResidencia" => "170",
+            "codMunicipioResidencia" => "11001",
+            "codZonaTerritorialResidencia" => "01",
+            "incapacidad" => "NO",
+            "codPaisOrigen" => "170",
+            "consecutivo" => 1,
+            "servicios" => array(
+                "procedimientos" => array_map(function($procedimiento) {
+                    return array(
+                        "codPrestador" => "110010822701",
+                        "fechaInicioAtencion" => $procedimiento['fecha_procedimiento'] . " 00:00",
+                        "idMIPRES" => "",
+                        "numAutorizacion" => $procedimiento['factura'],
+                        "codProcedimiento" => $procedimiento['CUP'],
+                        "viaIngresoServicioSalud" => "03",
+                        "modalidadGrupoServicioTecSal" => "01",
+                        "grupoServicios" => "03",
+                        "codServicio" => 328,
+                        "finalidadTecnologiaSalud" => "15",
+                        "tipoDocumentoIdentificacion" => "CC",
+                        "numDocumentoIdentificacion" => "51934571",
+                        "codDiagnosticoPrincipal" => "Z017",
+                        "codDiagnosticoRelacionado" => null,
+                        "codComplicacion" => null,
+                        "vrServicio" => 0,
+                        "conceptoRecaudo" => "05",
+                        "valorPagoModerador" => 0,
+                        "numFEVPagoModerador" => "",
+                        "consecutivo" => 1
+                    );
+                }, $usuario->procedimientos->toArray())
+            )
+        );
+
+    });
+
+    return response()->json([
+        'procedimientos' => $procedimientos,
+        'procedimientosPorPersona' => $procedimientosPorPersona,
+        'usuarios' => $usuarios
+    ]);
+}
+
+public function usuarios()
+{
+   <?php
+$personas = Persona::with(['procedimientos.examen'])
+    ->whereHas('procedimientos', function ($query) {
+        $query->whereBetween('fecha_procedimiento', ['2025-07-01', '2025-07-31'])
+              ->where('prestador_id', 1);
+    })
+    ->get();
+
+$usuarios = $personas->map(function($persona) {
+    return [
+        "tipoDocumentoIdentificacion" => $persona->tID,
+        "numDocumentoIdentificacion" => $persona->numero_doc,
+        "tipoUsuario" => "04",
+        "fechaNacimiento" => $persona->fecha_nacimiento,
+        "codSexo" => $persona->sexo,
+        "codPaisResidencia" => "170",
+        "codMunicipioResidencia" => "11007",
+        "codZonaTerritorialResidencia" => "01",
+        "incapacidad" => "NO",
+        "codPaisOrigen" => "170",
+        "consecutivo" => 1,
+        "servicios" => [
+            "procedimientos" => $persona->procedimientos->map(function($procedimiento) {
+                return [
+                    "codPrestador" => "110010822701",
+                    "fechaInicioAtencion" => $procedimiento->fecha_procedimiento . " 00:00",
+                    "idMIPRES" => "",
+                    "numAutorizacion" => $procedimiento->factura,
+                    "codProcedimiento" => $procedimiento->examen->CUP,
+                    "viaIngresoServicioSalud" => "03",
+                    "modalidadGrupoServicioTecSal" => "01",
+                    "grupoServicios" => "03",
+                    "codServicio" => 328,
+                    "finalidadTecnologiaSalud" => "15",
+                    "tipoDocumentoIdentificacion" => $persona->tID,
+                    "numDocumentoIdentificacion" => $persona->numero_doc,
+                    "codDiagnosticoPrincipal" => "Z017",
+                    "codDiagnosticoRelacionado" => null,
+                    "codComplicacion" => null,
+                    "vrServicio" => 0,
+                    "conceptoRecaudo" => "05",
+                    "valorPagoModerador" => 0,
+                    "numFEVPagoModerador" => "",
+                    "consecutivo" => 1
+                ];
+            })
+        ]
+    ];
+});
+
+return response()->json([
+    'usuarios' => $usuarios
+]);
 
 }
+
+
+
+$usuarios = array_map(function($procedimiento) {
+    return array(
+        "tipoDocumentoIdentificacion" => $procedimiento['tID'],
+        "numDocumentoIdentificacion" => $procedimiento['numero_doc'],
+        "tipoUsuario" => "04",
+        "fechaNacimiento" => $procedimiento['fecha_nacimiento'],
+        "codSexo" => $procedimiento['sexo'],
+        "codPaisResidencia" => "170",
+        "codMunicipioResidencia" => "11001",
+        "codZonaTerritorialResidencia" => "01",
+        "incapacidad" => "NO",
+        "codPaisOrigen" => "170",
+        "consecutivo" => 1,
+        "servicios" => array(
+            "procedimientos" => array(
+                array(
+                    "codPrestador" => "110010822701",
+                    "fechaInicioAtencion" => $procedimiento['fecha_procedimiento'] . " 00:00",
+                    "idMIPRES" => "",
+                    "numAutorizacion" => $procedimiento['factura'],
+                    "codProcedimiento" => $procedimiento['CUP'],
+                    "viaIngresoServicioSalud" => "03",
+                    "modalidadGrupoServicioTecSal" => "01",
+                    "grupoServicios" => "03",
+                    "codServicio" => 328,
+                    "finalidadTecnologiaSalud" => "15",
+                    "tipoDocumentoIdentificacion" => "CC",
+                    "numDocumentoIdentificacion" => "51934571",
+                    "codDiagnosticoPrincipal" => "Z017",
+                    "codDiagnosticoRelacionado" => null,
+                    "codComplicacion" => null,
+                    "vrServicio" => 0,
+                    "conceptoRecaudo" => "05",
+                    "valorPagoModerador" => 0,
+                    "numFEVPagoModerador" => "",
+                    "consecutivo" => 1
+                )
+            )
+        )
+    );
+}, $procedimientos);
