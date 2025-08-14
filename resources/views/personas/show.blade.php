@@ -1,15 +1,13 @@
 <x-app-layout>
 
-    <x-slot name="header" titulo="Persona">
-
-    </x-slot>
+    
     @if(session('success'))
     <div class="bg-green-100 text-green-800 p-4 rounded-md mb-4">
         {{ session('success') }}
     </div>
     @endif
     <x-canva>
-        <div class="py-4 flex justify-between items-center border-b border-borders">
+        <div class="py-4 flex justify-between items-center">
             <div>
                 <p class="text-2xl font-bold leading-tight tracking-[-0.015em]">{{ $persona->nombreCompleto() }}</p>
                 <p class="text-titles">Paciente ID: {{ $persona->numero_documento }}</p>
