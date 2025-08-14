@@ -12,7 +12,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-background">
-        <div class="min-h-screen bg-background sm:grid sm:grid-rows-[auto_1fr] md:grid-cols-[auto_1fr] h-screen">
+        <div class="min-h-screen bg-background sm:grid sm:grid-rows-[auto_1fr] lg:grid-cols-[auto_1fr] h-screen">
             @include('layouts.header')
             @include('layouts.navigation')
  
