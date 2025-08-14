@@ -2,12 +2,12 @@
 
 @php
 $classes = ($active ?? false)
-? 'rounded-2xl inline-flex items-center mb-2 p-2 text-md bg-secondary font-medium leading-5 text-primary focus:outline-none focus:bg-secondary transition duration-150 ease-in-out'
-: 'rounded-2xl inline-flex items-center mb-2 p-2 text-md font-medium leading-5 text-text hover:bg-secondary focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out';
+? 'rounded-2xl inline-flex items-center p-2 text-md bg-secondary font-medium leading-5 text-primary focus:outline-none focus:bg-secondary transition duration-150 ease-in-out text-nowrap'
+: 'rounded-2xl inline-flex items-center p-2 text-md font-medium leading-5 text-text hover:bg-secondary focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out text-nowrap';
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes]) }}>
-    <span class="inline-flex w-6 h-6 items-center justify-center mr-2">
+    <span class="inline-flex w-6 h-6 items-center justify-center mr-4">
         {{-- Icon --}}
 
         @switch ($icono)
