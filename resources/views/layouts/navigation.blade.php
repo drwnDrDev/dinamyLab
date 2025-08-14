@@ -1,5 +1,5 @@
 <nav x-data="{ open: false }" 
-    :class="{'block fixed top-16 left-0 w-60 row-span-1 h-full bg-background border-r border-t border-borders transition-[width] duration-300 ease-in-out z-10 shadow-xl print:hidden': open, 'block fixed top-16 left-0 w-14 row-span-1 h-full bg-background border-r border-t border-borders transition-[width] duration-300 ease-in-out z-10 print:hidden': ! open }">
+    :class="{'block fixed top-16 left-0 w-60 row-span-1 h-full bg-background border-r border-t border-borders transition-[width] duration-300 ease-in-out z-10 shadow-2xl print:hidden': open, 'block fixed top-16 left-0 w-14 row-span-1 h-full bg-background border-r border-t border-borders transition-[width] duration-300 ease-in-out z-10 print:hidden': ! open }">
     <!-- Hamburger -->
     <div class="p-2 mb-4 gap-24 flex items-center justify-end">
         <h3 class="font-bold text-primary text-xl">LissApp</h3>
