@@ -1530,6 +1530,8 @@ CC	1121927377	GASCA	SUAREZ	GUSTAVO	ADOLFO	1994-11-18	M	2025-07-31	08:21			903841
 CC	1121927377	GASCA	SUAREZ	GUSTAVO	ADOLFO	1994-11-18	M	2025-07-31	08:21			903818	4500
 CC	1121927377	GASCA	SUAREZ	GUSTAVO	ADOLFO	1994-11-18	M	2025-07-31	08:21			903868	6000
 CC	52188927	MORA	PINILLA	HEIDY	YOLANDA	1975-08-29	F	2025-07-31	11:45			903841	7000";
+
+
 $listaProcedimientos = array_map(function($line) {
     $data = explode("\t", $line);
     return array(
@@ -1579,11 +1581,11 @@ foreach ($listaProcedimientos as $procedimiento) {
         "idMIPRES" => "",
         "numAutorizacion" => $procedimiento['factura'],
         "codProcedimiento" => $procedimiento['CUP'],
-        "viaIngresoServicioSalud" => "03",
+        "viaIngresoServicioSalud" => "01",
         "modalidadGrupoServicioTecSal" => "01",
         "grupoServicios" => "03",
         "codServicio" => 328,
-        "finalidadTecnologiaSalud" => "15",
+        "finalidadTecnologiaSalud" => "12",
         "tipoDocumentoIdentificacion" => "CC",
         "numDocumentoIdentificacion" => "51934571",
         "codDiagnosticoPrincipal" => "Z017",
@@ -1663,4 +1665,63 @@ if (!empty($usuarios)) {
 }
 
     }
+
+
+public function json_rips(Request $request)
+{
+    $procedimientos = Procedimiento::with(['persona', 'examen'])
+        ->whereBetween('fecha_procedimiento', ['2025-07-01', '2025-07-31'])
+        ->where('prestador_id', 2)
+        ->get();
+
+    $procedimientosPorPersona = $procedimientos->groupBy('persona_id');
+
+    $usuarios = [];
+    foreach ($procedimientosPorPersona as $usuario) {
+        $usuarios[] = [
+            "tipoDocumentoIdentificacion" =>  $usuario->first()->persona->tID,
+            "numDocumentoIdentificacion" =>  $usuario->first()->persona->numero_doc,
+            "tipoUsuario" => "04",
+            "fechaNacimiento" => $usuario->first()->persona->fecha_nacimiento,
+            "codSexo" => $usuario->first()->persona->sexo,
+            "codPaisResidencia" => "170",
+            "codMunicipioResidencia" => "11001",
+            "codZonaTerritorialResidencia" => "01",
+            "incapacidad" => "NO",
+            "codPaisOrigen" => "170",
+            "consecutivo" => 1,
+            "servicios" => [
+                "procedimientos" => $usuario->map(function($procedimiento) {
+                    return [
+                        "codPrestador" => "110010822703",
+                        "fechaInicioAtencion" => $procedimiento->fecha_procedimiento . " 00:00",
+                        "idMIPRES" => "",
+                        "numAutorizacion" => $procedimiento->factura,
+                        "codProcedimiento" => $procedimiento->examen->CUP,
+                        "viaIngresoServicioSalud" => "01",
+                        "modalidadGrupoServicioTecSal" => "01",
+                        "grupoServicios" => "03",
+                        "codServicio" => 328,
+                        "finalidadTecnologiaSalud" => "15",
+                        "tipoDocumentoIdentificacion" => "CC",
+                        "numDocumentoIdentificacion" => "51934571",
+                        "codDiagnosticoPrincipal" => "Z017",
+                        "codDiagnosticoRelacionado" => null,
+                        "codComplicacion" => null,
+                        "vrServicio" => 0,
+                        "conceptoRecaudo" => "05",
+                        "valorPagoModerador" => 0,
+                        "numFEVPagoModerador" => "",
+                        "consecutivo" => 1
+                    ];
+                })->values()->toArray()
+            ]
+        ];
+    }
+
+    return response()->json([
+        'usuarios' => $usuarios
+    ]);
+}
+
 }
