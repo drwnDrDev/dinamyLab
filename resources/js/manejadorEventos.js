@@ -178,6 +178,9 @@ export const handlePerfilChange = (e) => {
                 displayValidationErrors(evento.form, { numero_documento: ['El número de documento no es válido para ' + tipoDoc.nombre] });
                 return;
             }
+            if(codRips==="MS"|| codRips==="AS") {
+                alert('Población Especial del Régimen Subsidiado que no están identificados por la Registraduría Nacional del Estado Civil (RNEC) y que se encuentren en el correspondiente listado censal');
+            }
 
             if (!tipoDoc.cod_dian || tipoDoc.requiere_acudiente) {
                 dom.handleShowAcompaniante.checked = true;
