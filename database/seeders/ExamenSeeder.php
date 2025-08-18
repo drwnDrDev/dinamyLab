@@ -18,21 +18,7 @@ class ExamenSeeder extends Seeder
      */
     public function run(): void
     {
-        // $epsCSV = "EPS
-        $epsCSV = "Dusakawi,Salud Bolívar,Savia Salud,Mutual Ser,Salud Total,Coomeva,Compensar,Sanitas,Aliansalud,SOS(Servicio Occidental de Salud)";
 
-        $epsArray = explode(',', $epsCSV);
-        $epsArray = array_map(
-            function ($prestador) {
-                return [
-                    'nombre' => $prestador,
-                    'verificada' => true,
-                ];
-            },
-            $epsArray
-        );
-
-        DB::table('eps')->insert($epsArray);
         $examenesData = array( // Renombrado para evitar confusión con la instancia del modelo
             array(
                 'nombre' => 'Hemoclasificación',

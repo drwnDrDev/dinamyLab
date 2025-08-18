@@ -19,6 +19,11 @@ return new class extends Migration
                 ->constrained('municipios')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->foreignId('pais_id')
+                ->nullable()
+                ->constrained('paises', 'codigo_iso')
+                ->nullOnDelete()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }

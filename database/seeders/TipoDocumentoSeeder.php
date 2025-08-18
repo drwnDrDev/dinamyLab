@@ -14,6 +14,22 @@ $now = Carbon::now();
 
 
 $documentos = [
+
+    [
+        'nombre'            => 'Certificado de Nacido Vivo',
+        'cod_rips'          => 'CN',
+        'cod_dian'          => '00',
+        'es_nacional'       => true,
+        'es_paciente'       => true,
+        'es_pagador'        => false,
+        'requiere_acudiente'=> true,
+        'edad_minima'       => 0,
+        'edad_maxima'       => 3,
+        'regex_validacion'  => '^[A-Z0-9]{9,20}$',
+        'nivel'             => 3,
+        'created_at'        => $now,
+        'updated_at'        => $now,
+    ],
     [
         'nombre'            => 'Registro Civil',
         'cod_rips'          => 'RC',
@@ -23,8 +39,8 @@ $documentos = [
         'es_pagador'        => false,
         'requiere_acudiente'=> true,
         'edad_minima'       => 0,
-        'edad_maxima'       => 6,
-        'regex_validacion'  => '^[0-9]{6,11}$',
+        'edad_maxima'       => 7,
+        'regex_validacion'  => '^[A-Z0-9]{4,11}$',
         'nivel'             => 3,
         'created_at'        => $now,
         'updated_at'        => $now,
@@ -38,7 +54,7 @@ $documentos = [
         'es_pagador'        => false,
         'requiere_acudiente'=> true,
         'edad_minima'       => 7,
-        'edad_maxima'       => 17,
+        'edad_maxima'       => 18,
         'regex_validacion'  => '^[0-9]{10,11}$',
         'nivel'             => 5,
         'created_at'        => $now,
@@ -54,7 +70,7 @@ $documentos = [
         'requiere_acudiente'=> false,
         'edad_minima'       => 18,
         'edad_maxima'       => 130,
-        'regex_validacion'  => '^[0-9]{5,11}$',
+        'regex_validacion'  => '^[0-9]{4,10}$',
         'nivel'             => 11,
         'created_at'        => $now,
         'updated_at'        => $now,
@@ -76,7 +92,7 @@ $documentos = [
     ],
     [
         'nombre'            => 'Tarjeta de Extranjería',
-        'cod_rips'          => 'TE',
+        'cod_rips'          => 'DE',
         'cod_dian'          => '21',
         'es_nacional'       => false,
         'es_paciente'       => true,
@@ -84,7 +100,7 @@ $documentos = [
         'requiere_acudiente'=> false,
         'edad_minima'       => 0,
         'edad_maxima'       => 17,
-        'regex_validacion'  => '^[A-Z0-9]{6,15}$',
+        'regex_validacion'  => '^[A-Z0-9]{6,20}$',
         'nivel'             => 0,
         'created_at'        => $now,
         'updated_at'        => $now,
@@ -99,7 +115,7 @@ $documentos = [
         'requiere_acudiente'=> false,
         'edad_minima'       => 18,
         'edad_maxima'       => 130,
-        'regex_validacion'  => '^[A-Z0-9]{6,15}$',
+        'regex_validacion'  => '^[A-Z0-9]{3,6}$',
         'nivel'             => 1,
         'created_at'        => $now,
         'updated_at'        => $now,
@@ -114,7 +130,7 @@ $documentos = [
         'requiere_acudiente'=> false,
         'edad_minima'       => 0,
         'edad_maxima'       => 130,
-        'regex_validacion'  => '^[A-Z0-9]{3,20}$',
+        'regex_validacion'  => '^[A-Z0-9]{3,16}$',
         'nivel'             => 1,
         'created_at'        => $now,
         'updated_at'        => $now,
@@ -135,6 +151,21 @@ $documentos = [
         'updated_at'        => $now,
     ],
     [
+        'nombre'            => 'Salvoconducto',
+        'cod_rips'          => 'SC',
+        'cod_dian'          => '42',
+        'es_nacional'       => false,
+        'es_paciente'       => true,
+        'es_pagador'        => true,
+        'requiere_acudiente'=> false,
+        'edad_minima'       => 0,
+        'edad_maxima'       => 130,
+        'regex_validacion'  => '^[A-Z0-9]{3,16}$',
+        'nivel'             => 0,
+        'created_at'        => $now,
+        'updated_at'        => $now,
+    ],
+    [
         'nombre'            => 'Permiso Especial de Permanencia (PEP)',
         'cod_rips'          => 'PE',
         'cod_dian'          => '43',
@@ -144,14 +175,14 @@ $documentos = [
         'requiere_acudiente'=> false,
         'edad_minima'       => 0,
         'edad_maxima'       => 130,
-        'regex_validacion'  => '^[A-Z0-9]{3,25}$',
-        'nivel'             => 1,
+        'regex_validacion'  => '^[A-Z0-9]{3,15}$',
+        'nivel'             => 4,
         'created_at'        => $now,
         'updated_at'        => $now,
     ],
     [
         'nombre'            => 'PEP-RAMV',
-        'cod_rips'          => 'PR',
+        'cod_rips'          => 'PT',
         'cod_dian'          => '44',
         'es_nacional'       => false,
         'es_paciente'       => true,
@@ -175,7 +206,7 @@ $documentos = [
         'edad_minima'       => 0,
         'edad_maxima'       => 130,
         'regex_validacion'  => '^[A-Z0-9]{3,25}$',
-        'nivel'             => 1,
+        'nivel'             => 8,
         'created_at'        => $now,
         'updated_at'        => $now,
     ],
@@ -191,6 +222,21 @@ $documentos = [
         'edad_maxima'       => 0,
         'regex_validacion'  => '^[0-9]{3,13}$',
         'nivel'             => 8,
+        'created_at'        => $now,
+        'updated_at'        => $now,
+    ],
+    [
+        'nombre'            => 'Carné Diplomatico',
+        'cod_rips'          => 'CD',
+        'cod_dian'          => '46',
+        'es_nacional'       => false,
+        'es_paciente'       => true,
+        'es_pagador'        => true,
+        'requiere_acudiente'=> false,
+        'edad_minima'       => 0,
+        'edad_maxima'       => 130,
+        'regex_validacion'  => '^[A-Z0-9]{3,16}$',
+        'nivel'             => 0,
         'created_at'        => $now,
         'updated_at'        => $now,
     ],
@@ -220,7 +266,7 @@ $documentos = [
         'edad_minima'       => 0,
         'edad_maxima'       => 17,
         'regex_validacion'  => '^\d{2}\d{3}[SIDAP]\d{4,}$',
-        'nivel'             => 1,
+        'nivel'             => 0,
         'created_at'        => $now,
         'updated_at'        => $now,
     ],
@@ -235,20 +281,15 @@ $documentos = [
         'edad_minima'       => 0,
         'edad_maxima'       => 17,
         'regex_validacion'  => '^\d{2}\d{3}[SIDAP]\d{4,}$',
-        'nivel'             => 1,
+        'nivel'             => 0,
         'created_at'        => $now,
         'updated_at'        => $now,
     ]
 
 ];
 
-        DB::table('tipo_documentos')->upsert(
-            $documentos,
-            ['cod_rips'],
-            [
-            'nombre', 'cod_dian', 'es_nacional', 'es_paciente', 'es_pagador',
-            'requiere_acudiente', 'edad_minima', 'edad_maxima', 'regex_validacion', 'nivel', 'updated_at', 'created_at'
-            ]
+        DB::table('tipo_documentos')->insert(
+            $documentos
         );
 }
 }

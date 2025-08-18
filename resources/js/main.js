@@ -21,11 +21,16 @@ const init = async () => {
     document.querySelectorAll('input[name="numero_documento"]').forEach(input => {
         input.addEventListener('blur', handleBuscarDocumento);
     });
-
-    document.querySelectorAll('select[name="pais"]').forEach(currenFormPais => {
+    document.querySelectorAll('select[name="paisResidencia"]').forEach(currenFormPais => {
         currenFormPais.addEventListener('focus',() => displayPaieses(currenFormPais));
 
     });
+        document.querySelectorAll('select[name="pais"]').forEach(currenFormPais => {
+        currenFormPais.addEventListener('focus',() => displayPaieses(currenFormPais));
+
+    });
+
+
     document.querySelectorAll('input[name="eps"]').forEach(currenFormEps  => {
         currenFormEps.addEventListener('focus', () =>   {
              displayEps(dom.listaEps);

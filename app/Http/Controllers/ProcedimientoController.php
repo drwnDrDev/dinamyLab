@@ -187,7 +187,6 @@ public function json_rips(Request $request)
 
 public function usuarios()
 {
-   <?php
 $personas = Persona::with(['procedimientos.examen'])
     ->whereHas('procedimientos', function ($query) {
         $query->whereBetween('fecha_procedimiento', ['2025-07-01', '2025-07-31'])
@@ -199,7 +198,7 @@ $usuarios = $personas->map(function($persona) {
     return [
         "tipoDocumentoIdentificacion" => $persona->tID,
         "numDocumentoIdentificacion" => $persona->numero_doc,
-        "tipoUsuario" => "04",
+        "tipoUsuario" => "12",
         "fechaNacimiento" => $persona->fecha_nacimiento,
         "codSexo" => $persona->sexo,
         "codPaisResidencia" => "170",
@@ -242,47 +241,4 @@ return response()->json([
 ]);
 
 }
-
-
-
-$usuarios = array_map(function($procedimiento) {
-    return array(
-        "tipoDocumentoIdentificacion" => $procedimiento['tID'],
-        "numDocumentoIdentificacion" => $procedimiento['numero_doc'],
-        "tipoUsuario" => "04",
-        "fechaNacimiento" => $procedimiento['fecha_nacimiento'],
-        "codSexo" => $procedimiento['sexo'],
-        "codPaisResidencia" => "170",
-        "codMunicipioResidencia" => "11001",
-        "codZonaTerritorialResidencia" => "01",
-        "incapacidad" => "NO",
-        "codPaisOrigen" => "170",
-        "consecutivo" => 1,
-        "servicios" => array(
-            "procedimientos" => array(
-                array(
-                    "codPrestador" => "110010822701",
-                    "fechaInicioAtencion" => $procedimiento['fecha_procedimiento'] . " 00:00",
-                    "idMIPRES" => "",
-                    "numAutorizacion" => $procedimiento['factura'],
-                    "codProcedimiento" => $procedimiento['CUP'],
-                    "viaIngresoServicioSalud" => "03",
-                    "modalidadGrupoServicioTecSal" => "01",
-                    "grupoServicios" => "03",
-                    "codServicio" => 328,
-                    "finalidadTecnologiaSalud" => "15",
-                    "tipoDocumentoIdentificacion" => "CC",
-                    "numDocumentoIdentificacion" => "51934571",
-                    "codDiagnosticoPrincipal" => "Z017",
-                    "codDiagnosticoRelacionado" => null,
-                    "codComplicacion" => null,
-                    "vrServicio" => 0,
-                    "conceptoRecaudo" => "05",
-                    "valorPagoModerador" => 0,
-                    "numFEVPagoModerador" => "",
-                    "consecutivo" => 1
-                )
-            )
-        )
-    );
-}, $procedimientos);
+}
