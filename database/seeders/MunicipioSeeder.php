@@ -165,26 +165,26 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 1, NULL, NULL],
 [8770, 'ATLÁNTICO', '8', 'SUAN', '770', NULL, NULL, NULL],
 [8832, 'ATLÁNTICO', '8', 'TUBARÁ', '832', NULL, NULL, NULL],
 [8849, 'ATLÁNTICO', '8', 'USIACURÍ', '849', NULL, NULL, NULL],
-[11001, 'BOGOTÁ', '11', 'Usaquén', '1', 2, NULL, NULL],
-[11002, 'BOGOTÁ', '11', 'Chapinero', '2', 2, NULL, '2024-10-03 20:28:23'],
-[11003, 'BOGOTÁ', '11', 'Santa Fe', '3', 2, NULL, NULL],
-[11004, 'BOGOTÁ', '11', 'San Cristóbal', '4', 2, NULL, NULL],
-[11005, 'BOGOTÁ', '11', 'Usme', '5', 2, NULL, '2025-05-12 12:39:35'],
-[11006, 'BOGOTÁ', '11', 'Tunjuelito', '6', 2, NULL, NULL],
-[11007, 'BOGOTÁ', '11', 'Bosa', '7', 2, NULL, '2025-05-17 03:22:00'],
-[11008, 'BOGOTÁ', '11', 'Kennedy', '8', 2, NULL, '2025-03-10 14:59:35'],
-[11009, 'BOGOTÁ', '11', 'Fontibón', '9', 2, NULL, '2024-06-18 02:20:17'],
-[11010, 'BOGOTÁ', '11', 'Engativá', '10', 2, NULL, '2025-04-29 13:32:29'],
-[11011, 'BOGOTÁ', '11', 'Suba', '11', 2, NULL, '2025-05-01 19:26:55'],
-[11012, 'BOGOTÁ', '11', 'Barrios Unidos', '12', 2, NULL, NULL],
-[11013, 'BOGOTÁ', '11', 'Teusaquillo', '13', 2, NULL, '2025-04-29 13:47:03'],
-[11014, 'BOGOTÁ', '11', 'Los Mártires', '14', 2, NULL, NULL],
-[11015, 'BOGOTÁ', '11', 'Antonio Nariño', '15', 2, NULL, '2025-03-01 15:34:48'],
-[11016, 'BOGOTÁ', '11', 'Puente Aranda', '16', 2, NULL, '2025-03-26 17:06:50'],
-[11017, 'BOGOTÁ', '11', 'La Candelaria', '17', 2, NULL, '2024-04-03 04:32:47'],
-[11018, 'BOGOTÁ', '11', 'Rafael Uribe Uribe', '18', 2, NULL, '2025-02-11 20:02:27'],
-[11019, 'BOGOTÁ', '11', 'Ciudad Bolívar', '19', 2, NULL, '2025-05-12 13:27:11'],
-[11020, 'BOGOTÁ', '11', 'Sumapaz', '20', 2, NULL, NULL],
+[11001, 'BOGOTÁ', '11', 'Bogotá DC', '1', 3, NULL, NULL],
+// [11002, 'BOGOTÁ', '11', 'Chapinero', '2', 2, NULL, '2024-10-03 20:28:23'],
+// [11003, 'BOGOTÁ', '11', 'Santa Fe', '3', 2, NULL, NULL],
+// [11004, 'BOGOTÁ', '11', 'San Cristóbal', '4', 2, NULL, NULL],
+// [11005, 'BOGOTÁ', '11', 'Usme', '5', 2, NULL, '2025-05-12 12:39:35'],
+// [11006, 'BOGOTÁ', '11', 'Tunjuelito', '6', 2, NULL, NULL],
+// [11007, 'BOGOTÁ', '11', 'Bosa', '7', 2, NULL, '2025-05-17 03:22:00'],
+// [11008, 'BOGOTÁ', '11', 'Kennedy', '8', 2, NULL, '2025-03-10 14:59:35'],
+// [11009, 'BOGOTÁ', '11', 'Fontibón', '9', 2, NULL, '2024-06-18 02:20:17'],
+// [11010, 'BOGOTÁ', '11', 'Engativá', '10', 2, NULL, '2025-04-29 13:32:29'],
+// [11011, 'BOGOTÁ', '11', 'Suba', '11', 2, NULL, '2025-05-01 19:26:55'],
+// [11012, 'BOGOTÁ', '11', 'Barrios Unidos', '12', 2, NULL, NULL],
+// [11013, 'BOGOTÁ', '11', 'Teusaquillo', '13', 2, NULL, '2025-04-29 13:47:03'],
+// [11014, 'BOGOTÁ', '11', 'Los Mártires', '14', 2, NULL, NULL],
+// [11015, 'BOGOTÁ', '11', 'Antonio Nariño', '15', 2, NULL, '2025-03-01 15:34:48'],
+// [11016, 'BOGOTÁ', '11', 'Puente Aranda', '16', 2, NULL, '2025-03-26 17:06:50'],
+// [11017, 'BOGOTÁ', '11', 'La Candelaria', '17', 2, NULL, '2024-04-03 04:32:47'],
+// [11018, 'BOGOTÁ', '11', 'Rafael Uribe Uribe', '18', 2, NULL, '2025-02-11 20:02:27'],
+// [11019, 'BOGOTÁ', '11', 'Ciudad Bolívar', '19', 2, NULL, '2025-05-12 13:27:11'],
+// [11020, 'BOGOTÁ', '11', 'Sumapaz', '20', 2, NULL, NULL],
 [13001, 'BOLÍVAR', '13', 'CARTAGENA DE INDIAS', '1', 1, NULL, NULL],
 [13006, 'BOLÍVAR', '13', 'ACHÍ', '6', NULL, NULL, NULL],
 [13030, 'BOLÍVAR', '13', 'ALTOS DEL ROSARIO', '30', NULL, NULL, NULL],
@@ -1179,263 +1179,265 @@ $municipios =[[5001, 'ANTIOQUIA', '5', 'MEDELLÍN', '1', 1, NULL, NULL],
             );
 
 
-            $paisesCSV = "Afganistán;AFG;AF
-            Albania;ALB;AL
-            Alemania;DEU;DE
-            Andorra;AND;AD
-            Angola;AGO;AO
-            Anguila;AIA;AI
-            Antártida;ATA;AQ
-            Antigua y Barbuda;ATG;AG
-            Arabia Saudita;SAU;SA
-            Argelia;DZA;DZ
-            Argentina;ARG;AR
-            Armenia;ARM;AM
-            Aruba;ABW;AW
-            Australia;AUS;AU
-            Austria;AUT;AT
-            Azerbaiyán;AZE;AZ
-            Bahamas;BHS;BS
-            Bahrein;BHR;BH
-            Bangladesh;BGD;BD
-            Barbados;BRB;BB
-            Belarús;BLR;BY
-            Bélgica;BEL;BE
-            Belice;BLZ;BZ
-            Benin;BEN;BJ
-            Bermuda;BMU;BM
-            Bhután;BTN;BT
-            Bolivia (Estado Plurinacional de);BOL;BO
-            Bonaire, San Eustaquio y Saba;BES;BQ
-            Bosnia y Herzegovina;BIH;BA
-            Botswana;BWA;BW
-            Brasil;BRA;BR
-            Brunei Darussalam;BRN;BN
-            Bulgaria;BGR;BG
-            Burkina Faso;BFA;BF
-            Burundi;BDI;BI
-            Cabo Verde;CPV;CV
-            Camboya;KHM;KH
-            Camerún;CMR;CM
-            Canadá;CAN;CA
-            Chad;TCD;TD
-            Chequia;CZE;CZ
-            Chile;CHL;CL
-            China;CHN;CN
-            China, región administrativa especial de Hong Kong;HKG;HK
-            China, región administrativa especial de Macao;MAC;MO
-            Chipre;CYP;CY
-            Colombia;COL;CO
-            Comoras;COM;KM
-            Congo;COG;CG
-            Costa Rica;CRI;CR
-            Côte d’Ivoire;CIV;CI
-            Croacia;HRV;HR
-            Cuba;CUB;CU
-            Curazao;CUW;CW
-            Dinamarca;DNK;DK
-            Djibouti;DJI;DJ
-            Dominica;DMA;DM
-            Ecuador;ECU;EC
-            Egipto;EGY;EG
-            El Salvador;SLV;SV
-            Emiratos Árabes Unidos;ARE;AE
-            Eritrea;ERI;ER
-            Eslovaquia;SVK;SK
-            Eslovenia;SVN;SI
-            España;ESP;ES
-            Estado de Palestina;PSE;PS
-            Estados Unidos de América;USA;US
-            Estonia;EST;EE
-            Eswatini;SWZ;SZ
-            Etiopía;ETH;ET
-            Federación de Rusia;RUS;RU
-            Fiji;FJI;FJ
-            Filipinas;PHL;PH
-            Finlandia;FIN;FI
-            Francia;FRA;FR
-            Gabón;GAB;GA
-            Gambia;GMB;GM
-            Georgia;GEO;GE
-            Georgia del Sur y las Islas Sandwich del Sur;SGS;GS
-            Ghana;GHA;GH
-            Gibraltar;GIB;GI
-            Granada;GRD;GD
-            Grecia;GRC;GR
-            Groenlandia;GRL;GL
-            Guadalupe;GLP;GP
-            Guam;GUM;GU
-            Guatemala;GTM;GT
-            Guayana Francesa;GUF;GF
-            Guernsey;GGY;GG
-            Guinea;GIN;GN
-            Guinea Ecuatorial;GNQ;GQ
-            Guinea-Bissau;GNB;GW
-            Guyana;GUY;GY
-            Haití;HTI;HT
-            Honduras;HND;HN
-            Hungría;HUN;HU
-            India;IND;IN
-            Indonesia;IDN;ID
-            Irán (República Islámica del);IRN;IR
-            Iraq;IRQ;IQ
-            Irlanda;IRL;IE
-            Isla Bouvet;BVT;BV
-            Isla Christmas;CXR;CX
-            Isla de Man;IMN;IM
-            Isla Norfolk;NFK;NF
-            Islandia;ISL;IS
-            Islas Åland;ALA;AX
-            Islas Caimán;CYM;KY
-            Islas Cocos ;CCK;CC
-            Islas Cook;COK;CK
-            Islas Feroe;FRO;FO
-            Islas Heard y McDonald;HMD;HM
-            Islas Malvinas;FLK;FK
-            Islas Marianas Septentrionales;MNP;MP
-            Islas Marshall;MHL;MH
-            Islas menores alejadas de Estados Unidos;UMI;UM
-            Islas Salomón;SLB;SB
-            Islas Svalbard y Jan Mayen;SJM;SJ
-            Islas Turcas y Caicos;TCA;TC
-            Islas Vírgenes Británicas;VGB;VG
-            Islas Vírgenes de los Estados Unidos;VIR;VI
-            Islas Wallis y Futuna;WLF;WF
-            Israel;ISR;IL
-            Italia;ITA;IT
-            Jamaica;JAM;JM
-            Japón;JPN;JP
-            Jersey;JEY;JE
-            Jordania;JOR;JO
-            Kazajstán;KAZ;KZ
-            Kenya;KEN;KE
-            Kirguistán;KGZ;KG
-            Kiribati;KIR;KI
-            Kuwait;KWT;KW
-            Lesotho;LSO;LS
-            Letonia;LVA;LV
-            Líbano;LBN;LB
-            Liberia;LBR;LR
-            Libia;LBY;LY
-            Liechtenstein;LIE;LI
-            Lituania;LTU;LT
-            Luxemburgo;LUX;LU
-            Macedonia del Norte;MKD;MK
-            Madagascar;MDG;MG
-            Malasia;MYS;MY
-            Malawi;MWI;MW
-            Maldivas;MDV;MV
-            Malí;MLI;ML
-            Malta;MLT;MT
-            Marruecos;MAR;MA
-            Martinica;MTQ;MQ
-            Mauricio;MUS;MU
-            Mauritania;MRT;MR
-            Mayotte;MYT;YT
-            México;MEX;MX
-            Micronesia (Estados Federados de);FSM;FM
-            Mónaco;MCO;MC
-            Mongolia;MNG;MN
-            Montenegro;MNE;ME
-            Montserrat;MSR;MS
-            Mozambique;MOZ;MZ
-            Myanmar;MMR;MM
-            Namibia;NAM;NA
-            Nauru;NRU;NR
-            Nepal;NPL;NP
-            Nicaragua;NIC;NI
-            Níger;NER;NE
-            Nigeria;NGA;NG
-            Niue;NIU;NU
-            Noruega;NOR;NO
-            Nueva Caledonia;NCL;NC
-            Nueva Zelandia;NZL;NZ
-            Omán;OMN;OM
-            Países Bajos;NLD;NL
-            Pakistán;PAK;PK
-            Palau;PLW;PW
-            Panamá;PAN;PA
-            Papua Nueva Guinea;PNG;PG
-            Paraguay;PRY;PY
-            Perú;PER;PE
-            Pitcairn;PCN;PN
-            Polinesia Francesa;PYF;PF
-            Polonia;POL;PL
-            Portugal;PRT;PT
-            Puerto Rico;PRI;PR
-            Qatar;QAT;QA
-            Reino Unido de Gran Bretaña e Irlanda del Norte;GBR;GB
-            República Árabe Siria;SYR;SY
-            República Centroafricana;CAF;CF
-            República de Corea;KOR;KR
-            República de Moldova;MDA;MD
-            República Democrática del Congo;COD;CD
-            República Democrática Popular Lao;LAO;LA
-            República Dominicana;DOM;DO
-            República Popular Democrática de Corea;PRK;KP
-            República Unida de Tanzanía;TZA;TZ
-            Reunión;REU;RE
-            Rumania;ROU;RO
-            Rwanda;RWA;RW
-            Sáhara Occidental;ESH;EH
-            Saint Kitts y Nevis;KNA;KN
-            Samoa;WSM;WS
-            Samoa Americana;ASM;AS
-            San Barthélemy;BLM;BL
-            San Marino;SMR;SM
-            San Martín (parte francesa);MAF;MF
-            San Martín (parte Holandesa);SXM;SX
-            San Pedro y Miquelón;SPM;PM
-            San Vicente y las Granadinas;VCT;VC
-            Santa Elena;SHN;SH
-            Santa Lucía;LCA;LC
-            Santa Sede;VAT;VA
-            Santo Tomé y Príncipe;STP;ST
-            Senegal;SEN;SN
-            Serbia;SRB;RS
-            Seychelles;SYC;SC
-            Sierra Leona;SLE;SL
-            Singapur;SGP;SG
-            Somalia;SOM;SO
-            Sri Lanka;LKA;LK
-            Sudáfrica;ZAF;ZA
-            Sudán;SDN;SD
-            Sudán del Sur;SSD;SS
-            Suecia;SWE;SE
-            Suiza;CHE;CH
-            Suriname;SUR;SR
-            Tailandia;THA;TH
-            Tayikistán;TJK;TJ
-            Territorio Británico del Océano Índico;IOT;IO
-            Territorio de las Tierras Australes Francesas;ATF;TF
-            Timor-Leste;TLS;TL
-            Togo;TGO;TG
-            Tokelau;TKL;TK
-            Tonga;TON;TO
-            Trinidad y Tabago;TTO;TT
-            Túnez;TUN;TN
-            Türkiye;TUR;TR
-            Turkmenistán;TKM;TM
-            Tuvalu;TUV;TV
-            Ucrania;UKR;UA
-            Uganda;UGA;UG
-            Uruguay;URY;UY
-            Uzbekistán;UZB;UZ
-            Vanuatu;VUT;VU
-            Venezuela;VEN;VE
-            Viet Nam;VNM;VN
-            Yemen;YEM;YE
-            Zambia;ZMB;ZM
-            Zimbabwe;ZWE;ZW";
+$paisesCSV = "004	AFGANISTÁN		AF	AFG
+008	ALBANIA		AL	ALB
+010	ANTÁRTIDA		AQ	ATA
+012	ARGELIA		DZ	DZA
+016	SAMOA AMERICANA		AS	ASM
+020	ANDORRA		AD	AND
+024	ANGOLA		AO	AGO
+028	ANTIGUA Y BARBUDA		AG	ATG
+031	AZERBAIYÁN		AZ	AZE
+032	ARGENTINA		AR	ARG
+036	AUSTRALIA		AU	AUS
+040	AUSTRIA		AT	AUT
+044	BAHAMAS		BS	BHS
+048	BARÉIN		BH	BHR
+050	BANGLADÉS		BD	BGD
+051	ARMENIA		AM	ARM
+052	BARBADOS		BB	BRB
+056	BÉLGICA		BE	BEL
+060	BERMUDA		BM	BMU
+064	BUTÁN		BT	BTN
+068	BOLIVIA		BO	BOL
+070	BOSNIA-HERZEGOVINA		BA	BIH
+072	BOTSUANA		BW	BWA
+074	ISLA BOUVET		BV	BVT
+076	BRAZIL		BR	BRA
+084	BELICE		BZ	BLZ
+086	TERRITORIO BRITÁNICO DEL OCÉANO ÍNDICO		IO	IOT
+090	ISLAS SOLOMON		SB	SLB
+092	ISLAS VÍRGENES BRITÁNICAS		VG	VGB
+096	BRUNÉI		BN	BRN
+100	BULGARIA		BG	BGR
+104	MYANMAR (FORMER BURMA)		MM	MMR
+108	BURUNDI		BI	BDI
+112	BIELORRUSIA		BY	BLR
+116	CAMBOYA		KH	KHM
+120	CAMERÚN		CM	CMR
+124	CANADÁ		CA	CAN
+132	CABO VERDE		CV	CPV
+136	ISLAS CAIMÁN		KY	CYM
+140	REPÚBLICA CENTROAFRICANA		CF	CAF
+144	SRI LANKA		LK	LKA
+148	CHAD		TD	TCD
+152	CHILE		CL	CHL
+156	CHINA		CN	CHN
+158	TAIWAN		TW	TWN
+162	ISLA DE NAVIDAD		CX	CXR
+166	ISLAS COCOS		CC	CCK
+170	COLOMBIA		CO	COL
+174	COMORAS		KM	COM
+175	MAYOTTE		YT	MYT
+178	CONGO		CG	COG
+180	REPÚBLICA DEMOCRÁTICA DEL CONGO		CD	COD
+184	ISLAS COOK		CK	COK
+188	COSTA RICA		CR	CRI
+191	CROACIA		HR	HRV
+192	CUBA		CU	CUB
+196	CHIPRE		CY	CYP
+203	REPÚBLICA CHECA		CZ	CZE
+204	BENIN		BJ	BEN
+208	DINAMARCA		DK	DNK
+212	DOMINICA		DM	DMA
+214	REPÚBLICA DOMINICANA		DO	DOM
+218	ECUADOR		EC	ECU
+222	EL SALVADOR		SV	SLV
+226	GUINEA ECUATORIAL		GQ	GNQ
+231	ETIOPIA		ET	ETH
+232	ERITREA		ER	ERI
+233	ESTONIA		EE	EST
+234	ISLAS FEROE		FO	FRO
+238	ISLAS MALVINAS		FK	FLK
+239	ISLAS GEORGIAS DEL SUR Y SANDWICH DEL SUR		GS	SGS
+242	FIYI		FJ	FJI
+246	FINLANDIA		FI	FIN
+248	ALAND		AX	ALA
+250	FRANCIA		FR	FRA
+254	GUAYANA FRANCESA		GF	GUF
+258	POLINESIA FRANCESA		PF	PYF
+260	TIERRAS AUSTRALES Y ANTÁRTICAS FRANCESAS		TF	ATF
+262	YIBUTI		DJ	DJI
+266	GABON		GA	GAB
+268	GEORGIA		GE	GEO
+270	GAMBIA		GM	GMB
+275	PALESTINA		PS	PSE
+276	ALEMANIA		DE	DEU
+288	GHANA		GH	GHA
+292	GIBRALTAR		GI	GIB
+296	KIRIBATI		KI	KIR
+300	GRECIA		GR	GRC
+304	GROENLANDIA		GL	GRL
+308	GRANADA		GD	GRD
+312	GUADALUOE		GP	GLP
+316	GUAM		GU	GUM
+320	GUATEMALA		GT	GTM
+324	GUINEA		GN	GIN
+328	GUYANA		GY	GUY
+332	HAITI		HT	HTI
+334	ISLA HEARD Y MCDONALD		HM	HMD
+336	SANTA SEDE		VA	VAT
+340	HONDURAS		HN	HND
+344	HONG KONG		HK	HKG
+348	HUNGRÍA		HU	HUN
+352	ISLANDIA		IS	ISL
+356	INDIA		IN	IND
+360	INDONESIA		ID	IDN
+364	IRÁN		IR	IRN
+368	IRAQ		IQ	IRQ
+372	IRLANDA		IE	IRL
+376	ISRAEL		IL	ISR
+380	ITALIA		IT	ITA
+384	COSTA DE MARFIL		CI	CIV
+388	JAMAICA		JM	JAM
+392	JAPÓN		JP	JPN
+398	KAZAJISTÁN		KZ	KAZ
+400	JORDANIA		JO	JOR
+404	KENYA		KE	KEN
+408	COREA DEL NORTE		KP	PRK
+410	COREA DEL SUR		KR	KOR
+414	KUWAIT		KW	KWT
+417	KIRGUISTÁN		KG	KGZ
+418	LAOS		LA	LAO
+422	LÍBANO		LB	LBN
+426	LESOTO		LS	LSO
+428	LETONIA		LV	LVA
+430	LIBERIA		LR	LBR
+434	LIBIA		LY	LBY
+438	LIECHTENSTEIN		LI	LIE
+440	LITUANIA		LT	LTU
+442	LUXEMBURGO		LU	LUX
+446	MACAO		MO	MAC
+450	MADAGASCAR		MG	MDG
+454	MALAUI		MW	MWI
+458	MALASIA		MY	MYS
+462	MALDIVAS		MV	MDV
+466	MALI		ML	MLI
+470	MALTA		MT	MLT
+474	MARTINICA		MQ	MTQ
+478	MAURITANIA		MR	MRT
+480	MAURICIO		MU	MUS
+484	MÉXICO		MX	MEX
+492	MÓNACO		MC	MCO
+496	MONGOLIA		MN	MNG
+498	MOLDAVIA		MD	MDA
+499	MONTENEGRO		ME	MNE
+500	MONTSERRAT		MS	MSR
+504	MARRUECOS		MA	MAR
+508	MOZAMBIQUE		MZ	MOZ
+512	OMÁN		OM	OMN
+516	NAMIBIA		NA	NAM
+520	NAURU		NR	NRU
+524	NEPAL		NP	NPL
+528	PAÍSES BAJOS		NL	NLD
+531	CURAZAO		CW	CUW
+533	ARUBA		AW	ABW
+534	SAN MARTÍN (parte holandesa)		SX	SXM
+535	BONAIRE, SAN EUSTAQUIO Y SABA		BQ	BES
+540	NUEVA CALEDONIA		NC	NCL
+548	VANUATU		VU	VUT
+554	NUEVA ZELANDA		NZ	NZL
+558	NICARAGUA		NI	NIC
+562	NIGER		NE	NER
+566	NIGERIA		NG	NGA
+570	NIUE		NU	NIU
+574	ISLA NORFOLK		NF	NFK
+578	NORUEGA		NO	NOR
+580	ISLAS MARIANAS DEL NORTE		MP	MNP
+581	ISLAS ULTRAMARINAS MENORES DE ESTADOS UNIDOS		UM	UMI
+583	MICRONESIA		FM	FSM
+584	ISLAS MARSHALL		MH	MHL
+585	PALAOS		PW	PLW
+586	PAQUISTAN		PK	PAK
+591	PANAMÁ		PA	PAN
+598	PAPUA NUEVA GUINEA		PG	PNG
+600	PARAGUAY		PY	PRY
+604	PERÚ		PE	PER
+608	FILIPINAS		PH	PHL
+612	PITCAIRN		PN	PCN
+616	POLONIA		PL	POL
+620	PORTUGAL		PT	PRT
+624	GUINEA-BISÁU		GW	GNB
+626	TIMOR ORIENTAL		TL	TLS
+630	PUERTO RICO		PR	PRI
+634	CATAR		QA	QAT
+638	REUNION		RE	REU
+642	RUMANIA		RO	ROU
+643	RUSIA		RU	RUS
+646	RUANDA		RW	RWA
+652	SAN BARTOLOMÉ		BL	BLM
+654	SANTA HELENA, ASCENSIÓN Y TRISTÁN DE ACUÑA		SH	SHN
+659	SAN CRISTÓBAL Y NIEVES		KN	KNA
+660	ANGUILA		AI	AIA
+662	SANTA LUCIA		LC	LCA
+663	SAN MARTÍN (parte francesa)		MF	MAF
+666	SAN PEDRO Y MIQUELON		PM	SPM
+670	SAN VICENTE Y LAS GRANADINAS		VC	VCT
+674	SAN MARINO		SM	SMR
+678	SANTO TOME Y PRINCIPE		ST	STP
+682	ARABIA SAUDITA		SA	SAU
+686	SENEGAL		SN	SEN
+688	SERBIA		RS	SRB
+690	SEYCHELLES		SC	SYC
+694	SIERRA LEONA		SL	SLE
+702	SINGAPUR		SG	SGP
+703	ESLOVAQUIA		SK	SVK
+704	VIETNAM		VN	VNM
+705	ESLOVENIA		SI	SVN
+706	SOMALIA		SO	SOM
+710	SUDÁFRICA		ZA	ZAF
+716	ZIMBABUE		ZW	ZWE
+724	ESPAÑA		ES	ESP
+728	SUDÁN DEL SUR		SS	SSD
+729	SUDÁN		SD	SDN
+732	SAHARA OCCIDENTAL		EH	ESH
+740	SURINAM		SR	SUR
+744	SVALBARD Y JAN MAYEN		SJ	SJM
+748	SUAZILANDIA		SZ	SWZ
+752	SUECIA		SE	SWE
+756	SUIZA		CH	CHE
+760	SIRIA		SY	SYR
+762	TAYIKISTÁN		TJ	TJK
+764	TAILANDIA		TH	THA
+768	TOGO		TG	TGO
+772	TOKELAU		TK	TKL
+776	TONGA		TO	TON
+780	TRINIDAD Y TOBAGO		TT	TTO
+784	EMIRATOS ÁRABES UNIDOS		AE	ARE
+788	TÚNEZ		TN	TUN
+792	TURQUÍA		TR	TUR
+795	TURKMENISTAN		TM	TKM
+796	ISLAS TURCAS Y CAICOS		TC	TCA
+798	TUVALU		TV	TUV
+800	UGANDA		UG	UGA
+804	UCRANIA		UA	UKR
+807	MACEDONIA		MK	MKD
+818	EGIPTO		EG	EGY
+826	REINO UNIDO		GB	GBR
+831	GUERNSEY		GG	GGY
+832	JERSEY		JE	JEY
+833	ISLA DE MAN		IM	IMN
+834	TANZANIA		TZ	TZA
+840	ESTADOS UNIDOS		US	USA
+850	ISLAS VÍRGENES DE LOS ESTADOS UNIDOS		VI	VIR
+854	BURKINA FASO		BF	BFA
+858	URUGUAY		UY	URY
+860	UZBEKISTAN		UZ	UZB
+862	VENEZUELA		VE	VEN
+876	WALLIS Y FUTUNA		WF	WLF
+882	SAMOA		WS	WSM
+887	YEMEN		YE	YEM
+894	ZAMBIA		ZM	ZMB";
             $paises = explode("\n", $paisesCSV);
             $paises = array_map(function ($pais) {
-                return explode(";", $pais);
+                return explode("\t", $pais);
             }, $paises);
             $paises = array_map(function ($pais) {
                 return [
-                    'nombre' => $pais[0],
-                    'codigo_iso' => $pais[1],
-                    'codigo_iso_2' => $pais[2],
+                    'nombre' => $pais[1],
+                    'codigo_iso' => $pais[0],
+                    'codigo_iso_3' => $pais[4],
+                    'codigo_iso_2' => $pais[3],
                 ];
             }, $paises);
 

@@ -1685,7 +1685,7 @@ public function json_rips(Request $request)
             "fechaNacimiento" => $usuario->first()->persona->fecha_nacimiento,
             "codSexo" => $usuario->first()->persona->sexo,
             "codPaisResidencia" => "170",
-            "codMunicipioResidencia" => "11001",
+            "codMunicipioResidencia" => str_pad($usuario->first()->persona->direccion->municipio_id, 5, '0', STR_PAD_LEFT),
             "codZonaTerritorialResidencia" => "01",
             "incapacidad" => "NO",
             "codPaisOrigen" => "170",
@@ -1694,7 +1694,7 @@ public function json_rips(Request $request)
                 "procedimientos" => $usuario->map(function($procedimiento) {
                     return [
                         "codPrestador" => "110010822703",
-                        "fechaInicioAtencion" => $procedimiento->fecha_procedimiento . " 00:00",
+                        "fechaInicioAtencion" => $procedimiento->fecha_procedimiento->format('Y-m-d H:i'),
                         "idMIPRES" => "",
                         "numAutorizacion" => $procedimiento->factura,
                         "codProcedimiento" => $procedimiento->examen->CUP,
