@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tipo_documentos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100)->unique();
-            $table->string('cod_rips', 10)->unique();
+            $table->string('cod_rips', 10);
             $table->string('cod_dian', 10)->nullable();
             $table->boolean('es_nacional')->default(true);
             $table->boolean('es_paciente')->default(true); // Se puede usar para filtrar tipos de documento solo para pacientes

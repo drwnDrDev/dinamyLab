@@ -16,7 +16,19 @@ method="POST">
 @endif
 
     <div class="w-full min-w-80 p-4 my-4">
-        <h2 class="font-bold mb-4 text-xl text-titles">Datos {{$perfil}}</h2>
+      <div class="flex gap-4">
+    <h2 class="font-bold mb-4 text-xl text-titles">Datos {{$perfil}} </h2>
+    <div class="flex justify-end" x-data="{ openEspecial: false }" >
+    <div class="flex justify-around" x-show="!openEspecial">
+      <x-input-label for="numero_orden">Poblacion Especial</x-input-label>
+      <input type="checkbox" id="poblacionEspecial" name="poblacionEspecial" @change="openEspecial = $event.target.checked">
+    </div>
+    <div class="w-full mb-4" x-show="openEspecial">
+        <x-input-label for="tipo_poblacion">Tipo de Población Especial</x-input-label>
+        <x-select-input id="tipo_poblacion" name="tipo_poblacion" :options="['Ninguno' => 'Ninguno', 'Discapacidad' => 'Discapacidad', 'Adulto Mayor' => 'Adulto Mayor']" />
+    </div>
+    </div>
+    </div>
         <input type="hidden" id="perfil" name="perfil" value="{{ $perfil }}">
         <div class="row-inputs w-full md:grid  md:grid-cols-3 justify-around gap-2">
             <div>
@@ -28,9 +40,9 @@ method="POST">
             <x-input-label for="tipo_documento">Tipo de documento</x-input-label>
                 <x-select-input id="tipo_documento" name="tipo_documento"  :options="['CC'=>'Cédula de Ciudadanía']" />
             </div>
-            <div class="w-full ">
+            <div class="w-full h-12 procedencia">
                 <x-input-label for="pais">País de orígen</x-input-label>
-                <x-select-input id="pais" name="pais"  :options="['COL'=>'Colombia']" />
+                <x-select-input id="pais" name="pais"  :options="['170'=>'Colombia']" />
             </div>
         </div>
 
@@ -88,9 +100,18 @@ method="POST">
             </div>
     @endif
         </div>
-        <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2">
+        <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2" x-data="{ openCiudad: true }">
+            <div class="w-full md:col-span-3 pb-2 flex items-center">
+                <div class="w-full pb-2 flex gap-2 items-center">
+                    <span>¿Reside en Colombia?</span>
+                    <x-input-label for="reside_colombia_actualmente" class="font-bold text-2xl">SÍ</x-input-label>
+                    <input type="radio" id="reside_colombia_actualmente" name="reside_colombia" @change="openCiudad = $event.target.checked" checked>
+                    <x-input-label for="visitante_extranjero" class="font-bold text-2xl">NO</x-input-label>
+                    <input type="radio" id="visitante_extranjero" name="reside_colombia" @change="openCiudad = !$event.target.checked">
+                </div>
+            </div>
 
-            <div class="w-full pb-2 relative">
+            <div class="w-full h-12 pb-2 relative " x-show="openCiudad">
                 <x-input-label for="municipioBusqueda">Municipio</x-input-label>
                 <x-text-input type="text" id="municipioBusqueda" name="municipioBusqueda" placeholder="Buscar municipio..." class="form-input w-full mb-2"/>
                 <div class="municipio-busqueda absolute z-10 bg-white border border-borders w-full max-h-60 overflow-y-auto hidden">
@@ -101,12 +122,18 @@ method="POST">
                     <!-- Opciones de ciudades se llenarán dinámicamente -->
                 </select>
             </div>
-  
 
-            <div class="w-full pb-2 md:col-span-2">
+
+            <div class="w-full h-12 pb-2 md:col-span-2" x-show="openCiudad">
                 <x-input-label for="direccion">Dirección</x-input-label>
                 <x-text-input type="text" id="direccion" name="direccion" />
             </div>
+            <div class="w-full h-12" x-show="!openCiudad">
+                <x-input-label for="paisResidencia">País de residencia </x-input-label>
+                <x-select-input id="paisResidencia" name="paisResidencia"  :options="['218'=>'Ecuador']" />
+            </div>
+
+
 
         </div>
 
