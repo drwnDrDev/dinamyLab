@@ -7,9 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Pais extends Model
 {
 
-    protected $fillable = [
-        'nombre',
-        'codigo_iso',
+    protected $guarded = [
         'nivel',
     ];
 

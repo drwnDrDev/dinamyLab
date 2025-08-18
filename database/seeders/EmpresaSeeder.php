@@ -37,14 +37,14 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $extranjero->procedencia()->create([
-            'pais_codigo_iso'=>'USA',
+            'pais_codigo_iso'=>'840',
         ]);
         $extranjero->direccion()->create([
-            'municipio_id'=>'11007',
+            'municipio_id'=>'11001',
             'direccion'=>'Calle 80 I sur # 81 J 36'
         ]);
         $persona->direccion()->create([
-            'municipio_id'=>'11007',
+            'municipio_id'=>'11001',
             'direccion'=>'Diagonal 69 C sur # 78 C 36'
         ]);
         $persona->telefonos()->create([
@@ -82,7 +82,7 @@ class EmpresaSeeder extends Seeder
             'numero'=>'3207001403'
         ]);
         $sede->direccion()->create([
-            'municipio_id'=>'11007',
+            'municipio_id'=>'11001',
             'direccion'=>'Diagonal 69 C sur # 78 C 36'
         ]);
 
@@ -100,7 +100,7 @@ class EmpresaSeeder extends Seeder
 
 
         $sede2->direccion()->create([
-            'municipio_id'=>'11007',
+            'municipio_id'=>'11001',
             'direccion'=>'Tv 78L Nº 69C 10 sur'
         ]);
 
@@ -188,7 +188,7 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $empleado2->direccion()->create([
-            'municipio_id'=>'11007',
+            'municipio_id'=>'11001',
             'direccion'=>'Calle 80 I sur # 81 J 36'
         ]);
 
