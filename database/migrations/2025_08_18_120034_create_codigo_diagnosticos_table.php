@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('codigo_diagnosticos', function (Blueprint $table) {
             $table->id();
             $table->string('codigo', 10);
-            $table->string('nombre', 100);
+            $table->string('nombre', 255);
             $table->string('descripcion');
-            $table->string('grupo', 100)->nullable();
+            $table->string('grupo', 255)->nullable();
             $table->unsignedTinyInteger('sub_grupo')->nullable();
             $table->boolean('activo')->default(true);
             $table->unsignedTinyInteger('edad_minima')->nullable();
