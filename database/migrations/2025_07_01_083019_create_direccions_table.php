@@ -19,7 +19,7 @@ return new class extends Migration
                 ->constrained('municipios')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->foreignId('pais_id')
+            $table->string('pais_id', 3)
                 ->nullable()
                 ->constrained('paises', 'codigo_iso')
                 ->nullOnDelete()
