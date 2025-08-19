@@ -18,8 +18,8 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->string('eps');
-            $table->foreignId('tipo_afiliacion')
-                ->default(12)
+            $table->string('tipo_afiliacion')
+                ->default('12') // Asegúrate de que '12' sea un valor válido en tipos_afiliaciones
                 ->constrained('tipos_afiliaciones', 'codigo')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();

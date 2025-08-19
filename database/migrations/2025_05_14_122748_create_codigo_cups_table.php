@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('codigo_cups', function (Blueprint $table) {
             $table->string('codigo', 10);
-            $table->string('nombre', 100);
-            $table->string('grupo', 100);
+            $table->string('nombre', 255);
+            $table->string('grupo', 255)->nullable();
             $table->boolean('activo')->default(false);
             $table->unsignedTinyInteger('nivel')->default(1);
             $table->string('cod_sin_formato')->nullable();
