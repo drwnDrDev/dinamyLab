@@ -88,10 +88,10 @@ class CUPSeeder extends Seeder
         }
 
         $this->command->info('Starting CIE10 seeding...');
-
         // Use SplFileObject for memory efficiency with large files
         $file = new SplFileObject($filePath, 'r');
         $file->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
+        $file->setCsvControl(';'); // Set semicolon as separator
 
         $now = now();
         $recordsToInsert = [];
@@ -110,11 +110,11 @@ class CUPSeeder extends Seeder
                         'nombre' => $row[1] ?? null,
                         'descripcion' => $row[2] ?? null,
                         'edad_minima' => $row[4] ?? null,
-                        'edad_maxima' => $row[5] ?? null,
+                        'edad_maxima' => $row[5] >250 ? 250 : $row[5] ?? null, // Cap max age to 250
                         'sexo_aplicable' => $row[10] ?? null,
                         'grupo' => $row[7] ?? null,
                         'sub_grupo' => $row[9] ?? null,
-                        'grupo_mortalidad' => $row[6] ?? null,
+                        'grupo_mortalidad' => $row[6]=='' ? null :$row[6],
                         'capitulo' => $row[8] ?? null,
                         'activo' => false, // Default value
                         'nivel' => 1,      // Default value
