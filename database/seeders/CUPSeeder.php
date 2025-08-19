@@ -79,75 +79,75 @@ class CUPSeeder extends Seeder
             $this->command->error("Rolling back changes.");
         }
 
-    //     $filePath = base_path('resources/utils/tablas_de_referencia/cie10.csv');
-    //     $chunkSize = 2000; // Define your chunk size
-    //     if (!file_exists($filePath)) {
-    //         Log::error("CSV file not found at: {$filePath}");
-    //         $this->command->error("CSV file not found. Please check the path: {$filePath}");
-    //         return;
-    //     }
+        $filePath = base_path('resources/utils/tablas_de_referencia/cie10.csv');
+        $chunkSize = 2000; // Define your chunk size
+        if (!file_exists($filePath)) {
+            Log::error("CSV file not found at: {$filePath}");
+            $this->command->error("CSV file not found. Please check the path: {$filePath}");
+            return;
+        }
 
-    //     $this->command->info('Starting CIE10 seeding...');
+        $this->command->info('Starting CIE10 seeding...');
 
-    //     // Use SplFileObject for memory efficiency with large files
-    //     $file = new SplFileObject($filePath, 'r');
-    //     $file->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
+        // Use SplFileObject for memory efficiency with large files
+        $file = new SplFileObject($filePath, 'r');
+        $file->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
 
-    //     $now = now();
-    //     $recordsToInsert = [];
-    //     $totalRecords = 0;
+        $now = now();
+        $recordsToInsert = [];
+        $totalRecords = 0;
 
-    //     DB::beginTransaction(); // Start a database transaction
+        DB::beginTransaction(); // Start a database transaction
 
-    //     try {
-    //         while (!$file->eof()) {
-    //             $row = $file->current();
+        try {
+            while (!$file->eof()) {
+                $row = $file->current();
 
-    //             // Ensure the row is not empty and has enough columns
-    //             if (is_array($row) && count($row) >= 2) { // Assuming at least 'codigo' and 'nombre' are always present
-    //                 $recordsToInsert[] = [
-    //                     'codigo' => $row[0] ?? null,
-    //                     'nombre' => $row[1] ?? null,
-    //                     'descripcion' => $row[2] ?? null,
-    //                     'edad_minima' => $row[4] ?? null,
-    //                     'edad_maxima' => $row[5] ?? null,
-    //                     'sexo_aplicable' => $row[10] ?? null,
-    //                     'grupo' => $row[7] ?? null,
-    //                     'sub_grupo' => $row[9] ?? null,
-    //                     'grupo_mortalidad' => $row[6] ?? null,
-    //                     'capitulo' => $row[8] ?? null,
-    //                     'activo' => false, // Default value
-    //                     'nivel' => 1,      // Default value
-    //                     'created_at' => $now,
-    //                     'updated_at' => $now,
-    //                 ];
-    //                 $totalRecords++;
-    //             }
+                // Ensure the row is not empty and has enough columns
+                if (is_array($row) && count($row) >= 2) { // Assuming at least 'codigo' and 'nombre' are always present
+                    $recordsToInsert[] = [
+                        'codigo' => $row[0] ?? null,
+                        'nombre' => $row[1] ?? null,
+                        'descripcion' => $row[2] ?? null,
+                        'edad_minima' => $row[4] ?? null,
+                        'edad_maxima' => $row[5] ?? null,
+                        'sexo_aplicable' => $row[10] ?? null,
+                        'grupo' => $row[7] ?? null,
+                        'sub_grupo' => $row[9] ?? null,
+                        'grupo_mortalidad' => $row[6] ?? null,
+                        'capitulo' => $row[8] ?? null,
+                        'activo' => false, // Default value
+                        'nivel' => 1,      // Default value
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                    $totalRecords++;
+                }
 
-    //             if (count($recordsToInsert) >= $chunkSize) {
-    //                 DB::table('codigo_diagnosticos')->insert($recordsToInsert);
-    //                 $recordsToInsert = []; // Clear the array for the next chunk
-    //                 $this->command->info("Inserted {$chunkSize} records. Total: {$totalRecords}");
-    //             }
+                if (count($recordsToInsert) >= $chunkSize) {
+                    DB::table('codigo_diagnosticos')->insert($recordsToInsert);
+                    $recordsToInsert = []; // Clear the array for the next chunk
+                    $this->command->info("Inserted {$chunkSize} records. Total: {$totalRecords}");
+                }
 
-    //             $file->next();
-    //         }
+                $file->next();
+            }
 
-    //         // Insert any remaining records
-    //         if (!empty($recordsToInsert)) {
-    //             DB::table('codigo_diagnosticos')->insert($recordsToInsert);
-    //             $this->command->info("Inserted remaining " . count($recordsToInsert) . " records. Total: {$totalRecords}");
-    //         }
+            // Insert any remaining records
+            if (!empty($recordsToInsert)) {
+                DB::table('codigo_diagnosticos')->insert($recordsToInsert);
+                $this->command->info("Inserted remaining " . count($recordsToInsert) . " records. Total: {$totalRecords}");
+            }
 
-    //         DB::commit(); // Commit the transaction if all insertions are successful
-    //         $this->command->info("CIE10 seeding completed successfully! Total records processed: {$totalRecords}");
+            DB::commit(); // Commit the transaction if all insertions are successful
+            $this->command->info("CIE10 seeding completed successfully! Total records processed: {$totalRecords}");
 
-    //     } catch (\Exception $e) {
-    //         DB::rollBack(); // Rollback on error
-    //         Log::error("CIE10 Seeder failed: " . $e->getMessage());
-    //         $this->command->error("CIE10 Seeder failed: " . $e->getMessage());
-    //         $this->command->error("Rolling back changes.");
-    //     }
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback on error
+            Log::error("CIE10 Seeder failed: " . $e->getMessage());
+            $this->command->error("CIE10 Seeder failed: " . $e->getMessage());
+            $this->command->error("Rolling back changes.");
+        }
 
     // }
 }
