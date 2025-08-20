@@ -1,21 +1,4 @@
-<?php
-
-namespace Database\Seeders;
-
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use App\Models\EPS;
-use App\Models\TipoAfiliacion;
-
-class EPSsedeer extends Seeder
-{
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
-    {
-        $epsCSV = "CCF002;COMFAMA;890900841;SI
+CCF002;COMFAMA;890900841;SI
 CCF007;COMFAMILIAR CARTAGENA;890480110;SI
 CCF009;COMFABOY;891800213;NO
 CCF015;COMFACOR;891080005;SI
@@ -69,51 +52,4 @@ ESS076;AMBUQ;818000140;SI
 ESS091;ECOOPSOS;901093846;SI
 ESS118;EMSSANAR;901021565;SI
 ESS133;COMPARTA;804002105;SI
-ESS207;MUTUAL SER;806008394;SI";
-
-        $epsArray = explode("\n", $epsCSV);
-        $epsArrayT = array_map(function ($prestador) {
-                $parts = explode(";", $prestador);
-                return [
-                    'codigo' => trim($parts[0]),
-                    'nombre' => trim($parts[1]),
-                    'nit' => trim($parts[2]),
-                    'habilitada' => trim($parts[3]) === 'SI'
-                ];
-            },
-            $epsArray
-        );
-
-        DB::table('eps')->insert($epsArrayT);
-
-$tipoAfiliacion = "01, Contributivo cotizante,10
-02,Contributivo beneficiario, 9
-03,Contributivo adicional,2
-04,Subsidiado,10
-05,No afiliado, 7
-06,Especial o Excepcion cotizante,6
-07,Especial o Excepcion beneficiario, 5
-08,Personas privadas de la libertad Fondo Nacional de Salud,1
-09,Tomador - Amparado ARL,4
-10,Tomador - Amparado SOAT,3
-11,Tomador - Amparado Planes voluntarios de salud,2
-12,Particular,12
-13,Especial o Exepcion no cotizante Ley 352 de 1997,1";
-$tipoAfiliacionArray = explode("\n", $tipoAfiliacion);
-
-        $tipoAfiliacionArray = array_map(function ($tipo) {
-                $parts = explode(",", $tipo);
-                return [
-                    'codigo' => trim($parts[0]),
-                    'descripcion' => trim($parts[1]),
-                    'nivel' => intval(trim($parts[2]),10)??0,
-                ];
-            },
-            $tipoAfiliacionArray
-        );
-
-        DB::table('tipos_afiliaciones')->insert($tipoAfiliacionArray);
-
-
-    }
-}
+ESS207;MUTUAL SER;806008394;SI
