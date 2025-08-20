@@ -43,7 +43,8 @@ class FrontendDataController extends Controller
 
             $eps = Eps::select('nombre', 'id')
             ->where('habilitada', true) // Solo EPS verificadas
-            ->orderBy('nombre')->get();
+            ->orderBy('nivel','desc
+            ')->get();
 
             $data = [
                 'documentos_paciente' => $tiposDocumentoPaciente,
