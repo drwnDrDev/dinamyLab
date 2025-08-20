@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Jobs\TestJob;
+use App\Models\Procedimiento;
 use Illuminate\Support\Facades\Cache;
 
 class AdministracionController extends Controller

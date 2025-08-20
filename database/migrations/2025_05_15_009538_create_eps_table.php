@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('eps', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique();
-            $table->json('descripcion')->nullable();
-            $table->unsignedSmallInteger('nivel')->nullable();
-            $table->boolean('verificada')->default(false);
+            $table->string('nombre');
+            $table->string('codigo')->nullable();
+            $table->string('nit',20)->nullable();
+            $table->unsignedSmallInteger('nivel')->default(0);
+            $table->boolean('habilitada')->default(true);
             $table->timestamps();
         });
     }
