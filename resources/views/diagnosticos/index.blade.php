@@ -2,19 +2,19 @@
     <x-slot name="header">
         <div class="flex flex-wrap justify-evenly items-center mb-4">
             <h1 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
-                {{ __('Medical order') }}
+                {{ __('CIE-10 Codes') }}
             </h1>
-            <x-primary-button href="{{ route('ordenes.create') }}" class="w-full sm:w-40">
-                {{ __('Create new order') }}
-            </x-primary-button>
+
         </div>
     </x-slot>
     <x-canva>
 
         <section class="flex flex-wrap items-center justify-between mb-4">
-            <h2 class="font-semibold text-xl text-text leading-tight">Órdenes recientes</h2>
+            <h2 class="font-semibold text-xl text-text leading-tight">Codigos CIE-10</h2>
 
-            <div class="py-3 w-1/2 mx-auto">
+
+            <form method="POST" action="{{ route('cie10.search') }}" class="py-3 w-1/2 mx-auto">
+                @csrf
                 <label class="flex flex-col min-w-40 h-12 w-full">
                     <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
                         <div
@@ -30,10 +30,10 @@
                         <input
                             placeholder="Search by patient name or report ID"
                             class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                            value="" />
+                            name="search" />
                     </div>
                 </label>
-            </div>
+        </form>
 
         </section>
         <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
@@ -41,31 +41,30 @@
                 <thead>
 
                     <tr class="bg-background">
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Fecha</th>
-                        <th class="px-4 py-3 text-left text-text w-32 text-sm font-medium leading-normal">Orden Médica</th>
-                        <th class="px-4 py-3 text-left text-text w-96 text-sm font-medium leading-normal">Paciente</th>
+                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Descripción</th>
+                        <th class="px-4 py-3 text-left text-text w-32 text-sm font-medium leading-normal">Código</th>
+                        <th class="px-4 py-3 text-left text-text w-96 text-sm font-medium leading-normal">Grupo</th>
                         <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Estado</th>
-
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($ordenes as $orden)
-                    <tr data-url="{{ route('ordenes.show', $orden) }}" onclick="window.location.href=this.dataset.url" class="border-t border-borders cursor-pointer hover:bg-secondary">
+                    @foreach ($codigoDiagnostico as $cie)
+                    <tr data-url="{{ route('cie10.show', $cie) }}" onclick="window.location.href=this.dataset.url" class="border-t border-borders cursor-pointer hover:bg-secondary">
                         <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                            {{ $orden->created_at->format('d-m-Y') }}
+                            {{ $cie->descripcion }}
                         </td>
                         <td class="content-start px-4 py-2 w-32 text-titles text-sm font-normal leading-normal">
-                            <a href="{{route('ordenes.show',$orden)}}" class="text-titles">{{$orden->numero}}</a>
-                        </td>
+                           {{$cie->codigo}}
                         <td class="content-start px-4 py-2 w-96 text-sm font-normal leading-normal">
-                            {{ $orden->paciente->nombreCompleto() }}
+                            {{ $cie->grupo }}
                         </td>
 
                         <td class="content-start px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-                            <button
-                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">{{ $orden->terminada==null ? 'Pendiente':'Completada' }}</span>
-                                </button>
+                            @if ($cie->estado)
+                                <span class="text-green-500">Activo</span>
+                            @else
+                                <span class="text-red-500">Inactivo</span>
+                            @endif
                         </td>
 
                     </tr>
@@ -75,5 +74,6 @@
             </table>
 
         </div>
+        {{ $codigoDiagnostico->links() }}
     </x-canva>
 </x-app-layout>
