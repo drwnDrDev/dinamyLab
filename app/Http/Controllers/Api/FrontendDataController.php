@@ -42,7 +42,7 @@ class FrontendDataController extends Controller
              });
 
             $eps = Eps::select('nombre', 'id')
-            ->where('verificada', true) // Solo EPS verificadas
+            ->where('habilitada', true) // Solo EPS verificadas
             ->orderBy('nombre')->get();
 
             $data = [
