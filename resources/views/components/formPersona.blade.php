@@ -90,9 +90,32 @@ method="POST">
                 <x-input-label for="eps">EPS</x-input-label>
                 <x-text-input list="lista_eps" id="eps" name="eps" />
                 <datalist id="lista_eps">
-                    <option value="Salud Total"></option>
+
                 </datalist>
             </div>
+            <div>
+                <x-input-label for="tipo_afiliacion">Tipo de afiliación</x-input-label>
+
+
+                <x-select-input id="parentesco" name="parentesco" :options="[
+                    '12' => 'Particular',
+                    '01' => 'Contributivo cotizante',
+                    '02' => 'Contributivo beneficiario',
+                    '03' => 'Contributivo adicional',
+                    '04' => 'Subsidiado',
+                    '05' => 'No afiliado',
+                    '06' => 'Especial o Excepción cotizante',
+                    '07' => 'Especial o Excepción beneficiario',
+                    '08' => 'Personas privadas de la libertad Fondo Nacional de Salud',
+                    '09' => 'Tomador - Amparado ARL',
+                    '10' => 'Tomador - Amparado SOAT',
+                    '11' => 'Tomador - Amparado Planes voluntarios de salud',
+                    '13' => 'Especial o Excepción no cotizante Ley 352 de 1997'
+                ]" />
+
+
+            </div>
+
         @else
             <div class="w-full pb-2">
                 <x-input-label for="parentesco">Parentesco</x-input-label>
