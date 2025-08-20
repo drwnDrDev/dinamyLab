@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AdministracionController;
 use App\Http\Controllers\ConvenioController;
+use App\Http\Controllers\CodigoCupController;
+use App\Http\Controllers\CodigoDiagnosticoController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\OrdenController;
@@ -89,6 +91,12 @@ Route::middleware('auth','verified','can:ver_facturas')->group(function () {
 
 Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () {
 
+    Route::get('/cups',[CodigoCupController::class,'index'])->name('cups.index');
+    Route::post('/cups/buscar',[CodigoCupController::class,'search'])->name('cups.search');
+    Route::get('/cups/{codigoCup}',[CodigoCupController::class,'show'])->name('cups.show');
+    Route::get('/cie10',[CodigoDiagnosticoController::class,'index'])->name('cie10.index');
+    Route::post('/cie10/buscar',[CodigoDiagnosticoController::class,'search'])->name('cie10.search');
+    Route::get('/cie10/{codigoDiagnostico}',[CodigoDiagnosticoController::class,'show'])->name('cie10.show');
     Route::delete('/personas/{persona}',[PersonaController::class,'destroy'])->name('personas.destroy');
     Route::get('/personas/{persona}/edit',[PersonaController::class,'edit'])->name('personas.edit');
     Route::put('/personas/{persona}',[PersonaController::class,'update'])->name('personas.update');
