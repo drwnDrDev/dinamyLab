@@ -24,6 +24,9 @@ class CodigoDiagnosticoController extends Controller
         $codigoDiagnostico = CodigoDiagnostico::where('nombre', 'like', "%$query%")
         ->orWhere('descripcion', 'like', "%$query%")
         ->orWhere('grupo', 'like', "%$query%")
+        ->orWhere('sub_grupo', 'like', "%$query%")
+        ->orWhere('codigo', 'like', "%$query%")
+        ->orderBy('nivel', 'DESC')
         ->paginate(10);
         return view('diagnosticos.index', ['codigoDiagnostico' => $codigoDiagnostico]);
     }
