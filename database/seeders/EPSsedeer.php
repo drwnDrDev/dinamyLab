@@ -15,42 +15,98 @@ class EPSsedeer extends Seeder
      */
     public function run(): void
     {
-                // $epsCSV = "EPS
-        $epsCSV = "Dusakawi,Salud Bolívar,Savia Salud,Mutual Ser,Salud Total,Coomeva,Compensar,Sanitas,Aliansalud,SOS(Servicio Occidental de Salud)";
+        $epsCSV = "CCF002;COMFAMA;890900841;SI
+CCF007;COMFAMILIAR CARTAGENA;890480110;SI
+CCF009;COMFABOY;891800213;NO
+CCF015;COMFACOR;891080005;SI
+CCF023;COMFAMILIAR DE LA GUAJIRA;892115006;SI
+CCF024;COMFAMILIAR HUILA;891180008;SI
+CCF027;COMFAMILIAR DE NARINO;891280008;SI
+CCF033;FAMILIAR DE COLOMBIA S.A.S;901543761;SI
+CCF049;COMFAORIENTE;890500675;NO
+CCF050;COMFAORIENTE_CCF050;890500675;SI
+CCF053;COMFACUNDI;860045904;SI
+CCF055;CAJACOPI ATLANTICO;901543211;SI
+CCF102;COMFACHOCO;891600091;SI
+EPS022;CONVIDA;899999107;SI
+EPS025;CAPRESOCA;891856000;SI
+EPSI01;DUSAKAWI;824001398;SI
+EPSI02;MANEXKA;812002376;NO
+EPSI03;A.I.C.;817001773;SI
+EPSI04;ANAS WAYUU;839000495;SI
+EPSI05;MALLAMAS;837000084;SI
+EPSI06;PIJAOSALUD;809008362;SI
+EPSM03;CAFESALUD EPS;800140949;NO
+EPSM33;SALUDVIDA S.A .E.P.S;830074184;SI
+EPSS01;ALIANSALUD E.P.S. S.A.;830113831;SI
+EPSS02;SALUD TOTAL;800130907;SI
+EPSS03;CAFESALUD;800140949;NO
+EPSS05;SANITAS E.P.S. S.A.;800251440;SI
+EPSS08;COMPENSAR E.P.S.;860066942;SI
+EPSS10;EPS Y MEDICINA PREPAGADA SURAMERICANA S.A;800088702;SI
+EPSS12;COMFENALCO VALLE  E.P.S.;890303093;SI
+EPSS13;E.P.S.  Saludcoop;800250119;NO
+EPSS16;COOMEVA E.P.S.  S.A.;805000427;SI
+EPSS17;E.P.S. FAMISANAR  LTDA.;830003564;SI
+EPSS18;EPS Servicio Occidental de Salud  S.A. - EPS S.O.S. S.A.;805001157;SI
+EPSS23;CRUZ BLANCA  EPS S.A.;830009783;SI
+EPSS33;SALUDVIDA;830074184;SI
+EPSS34;CAPITAL SALUD;900298372;SI
+EPSS37;LA NUEVA EPS S.A.;900156264;SI
+EPSS40;SAVIA SALUD;900604350;SI
+EPSS41;NUEVA EMPRESA PROMOTORA DE SALUD S.A. NUEVA EPS S.A.;900156264;SI
+EPSS42;COOSALUD EPS S.A.;900226715;SI
+EPSS44;MEDIMAS MOV;901097473;SI
+EPSS45;MEDIMAS;901097473;SI
+EPSS46;SALUD MIA;900914254;SI
+EPSS47;FAMILIAR BOLIVAR;901438242;SI
+EPSS48;MUTUAL SER MOV;806008394;SI
+EPSS49;SALUD MIA RS;900914254;SI
+ESS002;EMDISALUD;811004055;SI
+ESS024;COOSALUD EPS S.A.;900226715;SI
+ESS062;ASMET SALUD;900935126;SI
+ESS076;AMBUQ;818000140;SI
+ESS091;ECOOPSOS;901093846;SI
+ESS118;EMSSANAR;901021565;SI
+ESS133;COMPARTA;804002105;SI
+ESS207;MUTUAL SER;806008394;SI";
 
-        $epsArray = explode(',', $epsCSV);
-        $epsArray = array_map(
-            function ($prestador) {
+        $epsArray = explode("\n", $epsCSV);
+        $epsArrayT = array_map(function ($prestador) {
+                $parts = explode(";", $prestador);
                 return [
-                    'nombre' => $prestador,
-                    'verificada' => true,
+                    'codigo' => trim($parts[0]),
+                    'nombre' => trim($parts[1]),
+                    'nit' => trim($parts[2]),
+                    'habilitada' => trim($parts[3]) === 'SI'
                 ];
             },
             $epsArray
         );
 
-        DB::table('eps')->insert($epsArray);
+        DB::table('eps')->insert($epsArrayT);
 
-$tipoAfiliacion = "01	Contributivo cotizante
-02	Contributivo beneficiario
-03	Contributivo adicional
-04	Subsidiado
-05	No afiliado
-06	Especial o Excepcion cotizante
-07	Especial o Excepcion beneficiario
-08	Personas privadas de la libertad Fondo Nacional de Salud
-09	Tomador - Amparado ARL
-10	Tomador - Amparado SOAT
-11	Tomador - Amparado Planes  voluntarios de salud
-12	Particular
-13	Especial o Exepcion no cotizante Ley 352 de 1997";
-        $tipoAfiliacionArray = explode("\n", $tipoAfiliacion);
-        $tipoAfiliacionArray = array_map(
-            function ($tipo) {
-                $parts = explode("\t", $tipo);
+$tipoAfiliacion = "01, Contributivo cotizante,10
+02,Contributivo beneficiario, 9
+03,Contributivo adicional,2
+04,Subsidiado,10
+05,No afiliado, 7
+06,Especial o Excepcion cotizante,6
+07,Especial o Excepcion beneficiario, 5
+08,Personas privadas de la libertad Fondo Nacional de Salud,1
+09,Tomador - Amparado ARL,4
+10,Tomador - Amparado SOAT,3
+11,Tomador - Amparado Planes voluntarios de salud,2
+12,Particular,12
+13,Especial o Exepcion no cotizante Ley 352 de 1997,1";
+$tipoAfiliacionArray = explode("\n", $tipoAfiliacion);
+
+        $tipoAfiliacionArray = array_map(function ($tipo) {
+                $parts = explode(",", $tipo);
                 return [
                     'codigo' => trim($parts[0]),
                     'descripcion' => trim($parts[1]),
+                    'nivel' => intval(trim($parts[2]),10)??0,
                 ];
             },
             $tipoAfiliacionArray
