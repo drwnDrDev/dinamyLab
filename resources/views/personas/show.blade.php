@@ -31,13 +31,34 @@
         </div>
         
         <div class="py-4 grid grid-cols-2" id="info">
+            <!-- Fecha de Nacimiento -->
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
-                <p class="text-titles  font-normal leading-normal">Fecha de Nacimiento</p>
-                <p class=" font-normal leading-normal">{{ $persona->fecha_nacimiento->format('d/m/Y') }}</p>
+                <p class="text-titles font-normal leading-normal">Fecha de Nacimiento</p>
+                <div class="flex justify-between items-center">
+                    <p class="font-normal leading-normal" id="fecha_text">{{ $persona->fecha_nacimiento->format('d/m/Y') }}</p>
+                    <input type="date" id="fecha_input" class="hidden w-2/3 rounded-md border-gray-300" 
+                        value="{{ $persona->fecha_nacimiento->format('Y-m-d') }}">
+                    <button data-field="fecha" data-persona="{{ $persona->id }}" 
+                        class="edit-btn px-2 py-1 text-sm bg-primary text-white rounded hover:bg-primary-dark">
+                        Editar
+                    </button>
+                </div>
             </div>
+
+            <!-- Sexo -->
             <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
-                <p class="text-titles  font-normal leading-normal">Sexo</p>
-                <p class=" font-normal leading-normal">{{$persona->sexo==='M' ? 'Masculino':'Femenino'}}</p>
+                <p class="text-titles font-normal leading-normal">Sexo</p>
+                <div class="flex justify-between items-center">
+                    <p class="font-normal leading-normal" id="sexo_text">{{$persona->sexo==='M' ? 'Masculino':'Femenino'}}</p>
+                    <select id="sexo_input" class="hidden w-2/3 rounded-md border-gray-300">
+                        <option value="M" {{$persona->sexo==='M' ? 'selected' : ''}}>Masculino</option>
+                        <option value="F" {{$persona->sexo==='F' ? 'selected' : ''}}>Femenino</option>
+                    </select>
+                    <button data-field="sexo" data-persona="{{ $persona->id }}" 
+                        class="edit-btn px-2 py-1 text-sm bg-primary text-white rounded hover:bg-primary-dark">
+                        Editar
+                    </button>
+                </div>
             </div>
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Telefonos</p>
@@ -155,3 +176,168 @@
         </section>
     </x-canva>
 </x-app-layout>
+
+@push('scripts')
+<script>
+    // Objeto para mantener el estado de edición
+    const editState = {};
+
+    // Función para inicializar los eventos
+    function initializeEditors() {
+        console.log('Inicializando editores...'); // Debug
+        const editButtons = document.querySelectorAll('.edit-btn');
+        console.log('Botones encontrados:', editButtons.length); // Debug
+        
+        editButtons.forEach(button => {
+            button.addEventListener('click', handleEdit);
+        });
+    }
+
+    // Función manejadora del evento click
+    function handleEdit(event) {
+        event.preventDefault();
+        const field = this.getAttribute('data-field');
+        const personaId = this.getAttribute('data-persona');
+        console.log('Click en botón:', field, personaId); // Debug
+        toggleEdit(field, personaId, event);
+    }
+
+    function toggleEdit(field, personaId, event) {
+        console.log('Toggle edit:', field, personaId); // Debug
+        const textElement = document.getElementById(`${field}_text`);
+        const inputElement = document.getElementById(`${field}_input`);
+        const button = event.currentTarget;
+
+        if (!editState[field]) {
+            // Modo edición
+            editState[field] = true;
+            textElement.classList.add('hidden');
+            inputElement.classList.remove('hidden');
+            button.textContent = 'Guardar';
+
+            // Crear botón cancelar
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = 'Cancelar';
+            cancelButton.className = 'ml-2 px-2 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600';
+            cancelButton.addEventListener('click', (e) => cancelEdit(field, personaId, e));
+            button.parentNode.insertBefore(cancelButton, button.nextSibling);
+
+            // Actualizar el evento del botón editar
+            button.removeEventListener('click', handleEdit);
+            button.addEventListener('click', (e) => saveField(field, personaId, e));
+        }
+    }
+
+    function cancelEdit(field, personaId, event) {
+        event.preventDefault();
+        const textElement = document.getElementById(`${field}_text`);
+        const inputElement = document.getElementById(`${field}_input`);
+        const button = event.currentTarget;
+        const editButton = button.previousSibling;
+
+        // Restaurar valor original
+        inputElement.value = inputElement.defaultValue;
+        
+        // Volver a modo visualización
+        textElement.classList.remove('hidden');
+        inputElement.classList.add('hidden');
+        editButton.textContent = 'Editar';
+        editButton.onclick = (e) => toggleEdit(field, personaId, e);
+        
+        // Eliminar botón cancelar
+        button.remove();
+        editState[field] = false;
+    }
+
+    function saveField(field, personaId, event) {
+        event.preventDefault();
+        const inputElement = document.getElementById(`${field}_input`);
+        const textElement = document.getElementById(`${field}_text`);
+        const button = event.currentTarget;
+        
+        // Validar valor antes de enviar
+        if (!inputElement.value.trim()) {
+            showMessage('El campo no puede estar vacío', 'error');
+            return;
+        }
+
+        // Deshabilitar botón mientras se procesa
+        button.disabled = true;
+        button.textContent = 'Guardando...';
+        
+        const formData = new FormData();
+        formData.append(field, inputElement.value);
+        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('_method', 'PATCH');
+
+        fetch(`/personas/${personaId}/update-field`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                textElement.textContent = data.formatted_value;
+                textElement.classList.remove('hidden');
+                inputElement.classList.add('hidden');
+                
+                // Actualizar valor por defecto
+                inputElement.defaultValue = inputElement.value;
+                
+                // Restaurar botón
+                button.textContent = 'Editar';
+                button.disabled = false;
+                button.onclick = (e) => toggleEdit(field, personaId, e);
+                
+                // Eliminar botón cancelar si existe
+                const cancelButton = button.nextSibling;
+                if (cancelButton) cancelButton.remove();
+                
+                editState[field] = false;
+                showMessage('Campo actualizado correctamente', 'success');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            button.disabled = false;
+            button.textContent = 'Guardar';
+            showMessage('Error al actualizar el campo', 'error');
+        });
+    }
+
+    function showMessage(message, type) {
+        // Eliminar mensajes anteriores
+        const existingMessages = document.querySelectorAll('.alert-message');
+        existingMessages.forEach(msg => msg.remove());
+
+        const div = document.createElement('div');
+        div.textContent = message;
+        div.className = `alert-message fixed top-4 right-4 p-4 rounded-md z-50 ${
+            type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`;
+        document.body.appendChild(div);
+        
+        // Animación de fade out
+        setTimeout(() => {
+            div.style.transition = 'opacity 0.5s ease-out';
+            div.style.opacity = '0';
+            setTimeout(() => div.remove(), 500);
+        }, 2500);
+    }
+
+    // Inicializar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeEditors);
+    } else {
+        initializeEditors();
+    }
+</script>
+@endpush

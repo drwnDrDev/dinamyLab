@@ -101,6 +101,8 @@ Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () 
     Route::get('/personas/{persona}/edit',[PersonaController::class,'edit'])->name('personas.edit');
     Route::put('/personas/{persona}',[PersonaController::class,'update'])->name('personas.update');
     Route::delete('/ordenes-medicas/{orden}',[OrdenController::class,'destroy'])->name('ordenes.destroy');
+    Route::post('/personas/{persona}/update-field', [PersonaController::class, 'updateField'])
+    ->name('personas.update-field');
 
 });
 

@@ -96,4 +96,26 @@ class PersonaController extends Controller
     {
         //
     }
+
+    public function updateField(Request $request, Persona $persona)
+    {
+        $field = array_keys($request->except(['_token', '_method']))[0];
+        $value = $request->input($field);
+
+        $persona->$field = $value;
+        $persona->save();
+
+        // Devolver valor formateado según el campo
+        $formatted_value = $value;
+        if ($field === 'fecha_nacimiento') {
+            $formatted_value = \Carbon\Carbon::parse($value)->format('d/m/Y');
+        } else if ($field === 'sexo') {
+            $formatted_value = $value === 'M' ? 'Masculino' : 'Femenino';
+        }
+
+        return response()->json([
+            'success' => true,
+            'formatted_value' => $formatted_value
+        ]);
+    }
 }
