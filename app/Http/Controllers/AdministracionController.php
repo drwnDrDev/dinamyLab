@@ -99,7 +99,8 @@ $listaProcedimientos = array_map(function($line) {
         "horaProcedimiento" => $data[5],
         "factura" =>null,
         "CUP" => $data[6],
-        "CIE10" => $data[7]
+        "CIE10" => $data[7],
+        "CupProcedimiento" => $data[8]
     );
 }, $recordsToInsert);
 
@@ -124,7 +125,8 @@ foreach ($listaProcedimientos as $procedimiento) {
             "codPaisOrigen" => "170",
             "consecutivo" => 1,
             "servicios" => array(
-                "consultas" => array()
+                "consultas" => array(),
+                "procedimientos" => array()
             ),
         );
     }
@@ -157,13 +159,13 @@ foreach ($listaProcedimientos as $procedimiento) {
     $usuariosMap[$key]['servicios']['consultas'][] = array(
         "codPrestador" => "110010822701",
         "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'] . " " . $procedimiento['horaProcedimiento'],
-        "numAutorizacion" => null,
+        "numAutorizacion" => "",
         "codConsulta" => $procedimiento['CUP'],
         "viaIngresoServicioSalud" => "01",// Demanda espontánea
         "modalidadGrupoServicioTecSal" => "01",// Intramural
         "grupoServicios" => "01",//
-        "codServicio" => 334,
-        "finalidadTecnologiaSalud" => "12",
+        "codServicio" => 334,//odontologia general
+        "finalidadTecnologiaSalud" => "15",//16 tratamiento 15 diagnostico
         "tipoDocumentoIdentificacion" => "CC",
         "numDocumentoIdentificacion" => "51934571",
         "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
