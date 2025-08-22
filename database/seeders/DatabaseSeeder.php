@@ -78,6 +78,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             EPSsedeer::class,
+            FinalidadSeeder::class,
+            ServicioHabilitadoSeeder::class,
             TipoDocumentoSeeder::class,
             MunicipioSeeder::class,
             EmpresaSeeder::class,

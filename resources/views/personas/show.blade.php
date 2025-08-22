@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    
+
     @if(session('success'))
     <div class="bg-green-100 text-green-800 p-4 rounded-md mb-4">
         {{ session('success') }}
@@ -25,11 +25,11 @@
             </div>
 
         </div>
-       
+
         <div class="flex border-b border-borders">
             <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] p-4 border-b-4 border-primary">Información del Paciente</h2>
         </div>
-        
+
         <div class="py-4 grid grid-cols-2" id="info">
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Fecha de Nacimiento</p>
@@ -56,7 +56,7 @@
 
             <!-- se debe procurar mostrar todos los elementos asi no existan datos -->
 
-            @if ( $persona->direccion)
+
 
             <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Muncipio</p>
@@ -67,7 +67,7 @@
                 <p class="text-titles  font-normal leading-normal">Dirección</p>
                 <p class=" font-normal leading-normal">{{ $persona->direccion->direccion}}</p>
             </div>
-            @endif
+
 
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">EPS</p>
@@ -107,16 +107,16 @@
                     </tbody>
                 </table>
                 @else
-                        
+
                 <p class="self-center p-4">No existen registros aun</p>
-                        
+
                 @endisset
             </div>
         </div>
-        
+
         <section class="otra_info  mt-6">
 
-        <div class="flex border-b border-borders">    
+        <div class="flex border-b border-borders">
         <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] p-4 border-b-4 border-primary">Examenes en Proceso</h2>
         </div>
             <div class="py-4" id="historia">
