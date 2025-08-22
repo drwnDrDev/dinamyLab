@@ -157,6 +157,27 @@ foreach ($listaProcedimientos as $procedimiento) {
 
 
     $usuariosMap[$key]['servicios']['consultas'][] = array(
+
+				// "fechaInicioAtencion": "2023-06-22 00:00",
+				// "numAutorizacion": "",
+				// "codConsulta": "890702",
+				// "modalidadGrupoServicioTecSal": "01",
+				// "grupoServicios": "01",
+				// "codServicio": 328,
+				// "finalidadTecnologiaSalud": "44",
+				// "causaMotivoAtencion": "38",
+				// "codDiagnosticoPrincipal": "S934",
+				// "codDiagnosticoRelacionado1": "S903",
+				// "codDiagnosticoRelacionado2": null,
+				// "codDiagnosticoRelacionado3": null,
+				// "tipoDiagnosticoPrincipal": "02",
+				// "tipoDocumentoIdentificacion": "CC",
+				// "numDocumentoIdentificacion": "79315652",
+				// "vrServicio": 0,
+				// "conceptoRecaudo":"05",
+				// "valorPagoModerador": 0,
+				// "numFEVPagoModerador": "",
+				// "consecutivo": 1
         "codPrestador" => "110010822701",
         "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'] . " " . $procedimiento['horaProcedimiento'],
         "numAutorizacion" => "",
