@@ -131,63 +131,18 @@ foreach ($listaProcedimientos as $procedimiento) {
         );
     }
 
-    		    // {
-				// "codPrestador": "505050505002",
-				// "fechaInicioAtencion": "2023-06-22 00:00",
-				// "numAutorizacion": "",
-				// "codConsulta": "890702",
-				// "modalidadGrupoServicioTecSal": "01",
-				// "grupoServicios": "01",
-				// "codServicio": 328,
-				// "finalidadTecnologiaSalud": "44",
-				// "causaMotivoAtencion": "38",
-				// "codDiagnosticoPrincipal": "S934",
-				// "codDiagnosticoRelacionado1": "S903",
-				// "codDiagnosticoRelacionado2": null,
-				// "codDiagnosticoRelacionado3": null,
-				// "tipoDiagnosticoPrincipal": "02",
-				// "tipoDocumentoIdentificacion": "CC",
-				// "numDocumentoIdentificacion": "79315652",
-				// "vrServicio": 0,
-				// "conceptoRecaudo":"05",
-				// "valorPagoModerador": 0,
-				// "numFEVPagoModerador": "",
-				// "consecutivo": 1
-				// }
-
 
     $usuariosMap[$key]['servicios']['consultas'][] = array(
-
-				// "fechaInicioAtencion": "2023-06-22 00:00",
-				// "numAutorizacion": "",
-				// "codConsulta": "890702",
-				// "modalidadGrupoServicioTecSal": "01",
-				// "grupoServicios": "01",
-				// "codServicio": 328,
-				// "finalidadTecnologiaSalud": "44",
-				// "causaMotivoAtencion": "38",
-				// "codDiagnosticoPrincipal": "S934",
-				// "codDiagnosticoRelacionado1": "S903",
-				// "codDiagnosticoRelacionado2": null,
-				// "codDiagnosticoRelacionado3": null,
-				// "tipoDiagnosticoPrincipal": "02",
-				// "tipoDocumentoIdentificacion": "CC",
-				// "numDocumentoIdentificacion": "79315652",
-				// "vrServicio": 0,
-				// "conceptoRecaudo":"05",
-				// "valorPagoModerador": 0,
-				// "numFEVPagoModerador": "",
-				// "consecutivo": 1
         "codPrestador" => "110010822701",
         "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'] . " " . $procedimiento['horaProcedimiento'],
         "numAutorizacion" => "",
         "codConsulta" => $procedimiento['CUP'],
         "viaIngresoServicioSalud" => "01",// Demanda espontánea
         "modalidadGrupoServicioTecSal" => "01",// Intramural
-        "grupoServicios" => "01",//
+        "grupoServicios" => "01",//consulta externa
         "codServicio" => 334,//odontologia general
         "finalidadTecnologiaSalud" => "15",//16 tratamiento 15 diagnostico
-        "causaMotivoAtencion" => "38",//38 consulta odontologica
+        "causaMotivoAtencion" => "38",//38 enfermedad general
         "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
         "codDiagnosticoRelacionado" => $procedimiento['CIE10'],
         "codDiagnosticoRelacionado1" => null,
@@ -200,35 +155,30 @@ foreach ($listaProcedimientos as $procedimiento) {
         "conceptoRecaudo" => "05",
         "valorPagoModerador" => 0,
         "numFEVPagoModerador" => "",
-        "consecutivo" => 1
+        "consecutivo" => count($usuariosMap[$key]['servicios']['consultas']) + 1
     );
 
     $usuariosMap[$key]['servicios']['procedimientos'][] = array(
-        "codPrestador" => "110010822701",
-        "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'],
-        "idMIPRES" => null,
-        "numAutorizacion" => $procedimiento['factura'],
-        "codProcedimiento" => $procedimiento['CupProcedimiento'],
-        "viaIngresoServicioSalud" => "01",//demanda expontanea
-        "modalidadGrupoServicioTecSal" => "01", //Intramural
-        "grupoServicios" => "03",
-        "codServicio" => 328,
-        "finalidadTecnologiaSalud" => "15",
-        "tipoDocumentoIdentificacion" => "CC",
-        "numDocumentoIdentificacion" => "51934571",
-        "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
-        "codDiagnosticoRelacionado" => null,
-        "codDiagnosticoRelacionado1" => null,
-        "codDiagnosticoRelacionado2" => null,
-        "codDiagnosticoRelacionado3" => null,
-        "tipoDiagnosticoPrincipal" => "02",//02 diagnostico
-        "tipoDocumentoIdentificacion" => "CC",
-        "numDocumentoIdentificacion" => "51934571",
-        "vrServicio" => 0,
-        "conceptoRecaudo" => "05",
-        "valorPagoModerador" => 0,
-        "numFEVPagoModerador" => "",
-        "consecutivo" => 1
+                    "codPrestador" => "110010822701",
+                    "fechaInicioAtencion" => $procedimiento['fecha_procedimiento']. " " . $procedimiento['horaProcedimiento'],
+                    "idMIPRES" => "",
+                    "numAutorizacion" => $procedimiento['factura'],
+                    "codProcedimiento" => $procedimiento['CupProcedimiento'],
+                    "viaIngresoServicioSalud" => "01",//demanda expontanea
+                    "modalidadGrupoServicioTecSal" => "01", //Intramural
+                    "grupoServicios" => "03",
+                    "codServicio" => 328,
+                    "finalidadTecnologiaSalud" => "15",
+                    "tipoDocumentoIdentificacion" => "CC",
+                    "numDocumentoIdentificacion" => "51934571",
+                    "codDiagnosticoPrincipal" => "Z017",
+                    "codDiagnosticoRelacionado" => null,
+                    "codComplicacion" => null,
+                    "vrServicio" => 0,
+                    "conceptoRecaudo" => "05",
+                    "valorPagoModerador" => 0,
+                    "numFEVPagoModerador" => "",
+                    "consecutivo" => count($usuariosMap[$key]['servicios']['procedimientos']) + 1
     );
 
     $usuarios = array_values($usuariosMap);
