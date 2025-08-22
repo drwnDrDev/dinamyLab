@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CodigoCupController;
 use App\Http\Controllers\Api\CodigoDiagnosticoController;
+use App\Http\Controllers\api\CupsController;
 use App\Http\Controllers\Api\PersonaController;
 use App\Http\Controllers\Api\MunicipioController;
 use App\Http\Controllers\Api\FrontendDataController;
@@ -14,15 +15,15 @@ use App\Models\Factura;
 
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
 
-Route::get('cups', [CupController::class, 'index']);
-Route::get('cups/{id}', [CupController::class, 'show']);
-Route::get('cups/buscar/{codigo}', [CupController::class, 'buscarPorCodigo']);
-Route::get('cups/buscar', [CupController::class, 'buscarPorNombre']);
+Route::get('cups', [CupsController::class, 'index']);
+Route::get('cups/{id}', [CupsController::class, 'show']);
+Route::get('cups/buscar/{codigo}', [CupsController::class, 'buscarPorCodigo']);
+Route::get('cups/buscar', [CupsController::class, 'buscarPorNombre']);
 
-Route::post('cups', [CupController::class, 'store']);
-Route::put('cups/{id}', [CupController::class, 'update']);
-Route::put('cups/{id}/activar', [CupController::class, 'activar']);
-Route::delete('cups/{id}', [CupController::class, 'destroy']);
+Route::post('cups', [CupsController::class, 'store']);
+Route::put('cups/{id}', [CupsController::class, 'update']);
+Route::put('cups/{id}/activar', [CupsController::class, 'activar']);
+Route::delete('cups/{id}', [CupsController::class, 'destroy']);
 
 Route::get('cie10', [CodigoDiagnosticoController::class, 'index']);
 Route::get('cie10/{id}', [CodigoDiagnosticoController::class, 'show']);
