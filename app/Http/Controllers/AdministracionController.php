@@ -57,7 +57,7 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-$filePath = base_path('resources/utils/tablas_de_referencia/abril/bitacora.csv');
+$filePath = base_path('resources/utils/tablas_de_referencia/julio/bitacora.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
@@ -93,8 +93,8 @@ $listaProcedimientos = array_map(function($line) {
     return array(
         "tipoDocumentoIdentificacion" => $data[0],
         "numDocumentoIdentificacion" => $data[1],
-        "fechaNacimiento" => $data[3],
-        "sexo" => $data[2],
+        "fechaNacimiento" => $data[2],
+        "sexo" => $data[3],
         "fechaProcedimiento" => $data[4],
         "horaProcedimiento" => $data[5],
         "factura" =>null,
@@ -123,7 +123,7 @@ foreach ($listaProcedimientos as $procedimiento) {
             "codZonaTerritorialResidencia" => "01",
             "incapacidad" => "NO",
             "codPaisOrigen" => "170",
-            "consecutivo" => 1,
+            "consecutivo" => count($usuariosMap) + 1,
             "servicios" => array(
                 "consultas" => array(),
                 "procedimientos" => array()
@@ -131,79 +131,80 @@ foreach ($listaProcedimientos as $procedimiento) {
         );
     }
 
-    		    // {
-				// "codPrestador": "505050505002",
-				// "fechaInicioAtencion": "2023-06-22 00:00",
-				// "numAutorizacion": "",
-				// "codConsulta": "890702",
-				// "modalidadGrupoServicioTecSal": "01",
-				// "grupoServicios": "01",
-				// "codServicio": 328,
-				// "finalidadTecnologiaSalud": "44",
-				// "causaMotivoAtencion": "38",
-				// "codDiagnosticoPrincipal": "S934",
-				// "codDiagnosticoRelacionado1": "S903",
-				// "codDiagnosticoRelacionado2": null,
-				// "codDiagnosticoRelacionado3": null,
-				// "tipoDiagnosticoPrincipal": "02",
-				// "tipoDocumentoIdentificacion": "CC",
-				// "numDocumentoIdentificacion": "79315652",
-				// "vrServicio": 0,
-				// "conceptoRecaudo":"05",
-				// "valorPagoModerador": 0,
-				// "numFEVPagoModerador": "",
-				// "consecutivo": 1
-				// }
-
 
     $usuariosMap[$key]['servicios']['consultas'][] = array(
-
-				// "fechaInicioAtencion": "2023-06-22 00:00",
-				// "numAutorizacion": "",
-				// "codConsulta": "890702",
-				// "modalidadGrupoServicioTecSal": "01",
-				// "grupoServicios": "01",
-				// "codServicio": 328,
-				// "finalidadTecnologiaSalud": "44",
-				// "causaMotivoAtencion": "38",
-				// "codDiagnosticoPrincipal": "S934",
-				// "codDiagnosticoRelacionado1": "S903",
-				// "codDiagnosticoRelacionado2": null,
-				// "codDiagnosticoRelacionado3": null,
-				// "tipoDiagnosticoPrincipal": "02",
-				// "tipoDocumentoIdentificacion": "CC",
-				// "numDocumentoIdentificacion": "79315652",
-				// "vrServicio": 0,
-				// "conceptoRecaudo":"05",
-				// "valorPagoModerador": 0,
-				// "numFEVPagoModerador": "",
-				// "consecutivo": 1
-        "codPrestador" => "110010822701",
+        "codPrestador" => "110010219801",
         "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'] . " " . $procedimiento['horaProcedimiento'],
         "numAutorizacion" => "",
         "codConsulta" => $procedimiento['CUP'],
         "viaIngresoServicioSalud" => "01",// Demanda espontánea
         "modalidadGrupoServicioTecSal" => "01",// Intramural
-        "grupoServicios" => "01",//
+        "grupoServicios" => "01",//consulta externa
         "codServicio" => 334,//odontologia general
         "finalidadTecnologiaSalud" => "15",//16 tratamiento 15 diagnostico
-        "tipoDocumentoIdentificacion" => "CC",
-        "numDocumentoIdentificacion" => "51934571",
+        "causaMotivoAtencion" => "38",//38 enfermedad general
         "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
-        "codDiagnosticoRelacionado" => null,
-        "codComplicacion" => null,
+        "codDiagnosticoRelacionado" => $procedimiento['CIE10'],
+        "codDiagnosticoRelacionado1" => null,
+        "codDiagnosticoRelacionado2" => null,
+        "codDiagnosticoRelacionado3" => null,
+        "tipoDiagnosticoPrincipal" => "02",//02 diagnostico
+        "tipoDocumentoIdentificacion" => "CC",
+        "numDocumentoIdentificacion" => "63362234",
         "vrServicio" => 0,
         "conceptoRecaudo" => "05",
         "valorPagoModerador" => 0,
         "numFEVPagoModerador" => "",
-        "consecutivo" => 1
+        "consecutivo" => count($usuariosMap[$key]['servicios']['consultas']) + 1
     );
+
+    $usuariosMap[$key]['servicios']['procedimientos'][] = array(
+                    "codPrestador" => "110010219801",
+                    "fechaInicioAtencion" => $procedimiento['fechaProcedimiento']. " " . $procedimiento['horaProcedimiento'],
+                    "idMIPRES" => "",
+                    "numAutorizacion" => $procedimiento['factura'],
+                    "codProcedimiento" => $procedimiento['CupProcedimiento'],
+                    "viaIngresoServicioSalud" => "01",//demanda expontanea
+                    "modalidadGrupoServicioTecSal" => "01", //Intramural
+                    "grupoServicios" => "03",
+                    "codServicio" => 328,
+                    "finalidadTecnologiaSalud" => "15",
+                    "tipoDocumentoIdentificacion" => "CC",
+                    "numDocumentoIdentificacion" => "63362234",
+                    "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
+                    "codDiagnosticoRelacionado" => null,
+                    "codComplicacion" => null,
+                    "vrServicio" => 0,
+                    "conceptoRecaudo" => "05",
+                    "valorPagoModerador" => 0,
+                    "numFEVPagoModerador" => "",
+                    "consecutivo" => count($usuariosMap[$key]['servicios']['procedimientos']) + 1
+    );
+
     $usuarios = array_values($usuariosMap);
+
 
 
 }
 
-return $usuarios;
+//descargar el archivo JSON
+if (!empty($usuarios)) {
+    $json = json_encode(array(
+           "numDocumentoIdObligado"=> "63362234",
+            "numFactura"=> null,
+            "tipoNota"=> "RS",
+            "numNota"=> "042025",
+        "usuarios" => $usuarios
+    ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    $fileName = 'usuarios.json';
+
+    return response($json, 200)
+        ->header('Content-Type', 'application/json')
+        ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+} else {
+    return response()->json(['error' => 'No se encontraron usuarios.'], 404);
+}
+
 
 $usuarios = array_map(function($procedimiento) {
     return array(
@@ -222,7 +223,7 @@ $usuarios = array_map(function($procedimiento) {
             "procedimientos" => array(
                 array(
                     "codPrestador" => "110010822701",
-                    "fechaInicioAtencion" => $procedimiento['fecha_procedimiento'] . " 00:00",
+                    "fechaInicioAtencion" => $procedimiento['fecha_procedimiento'],
                     "idMIPRES" => null,
                     "numAutorizacion" => $procedimiento['factura'],
                     "codProcedimiento" => $procedimiento['CUP'],
