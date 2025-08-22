@@ -57,7 +57,7 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-$filePath = base_path('resources/utils/tablas_de_referencia/abril/bitacora.csv');
+$filePath = base_path('resources/utils/tablas_de_referencia/julio/bitacora.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
@@ -93,8 +93,8 @@ $listaProcedimientos = array_map(function($line) {
     return array(
         "tipoDocumentoIdentificacion" => $data[0],
         "numDocumentoIdentificacion" => $data[1],
-        "fechaNacimiento" => $data[3],
-        "sexo" => $data[2],
+        "fechaNacimiento" => $data[2],
+        "sexo" => $data[3],
         "fechaProcedimiento" => $data[4],
         "horaProcedimiento" => $data[5],
         "factura" =>null,
@@ -123,7 +123,7 @@ foreach ($listaProcedimientos as $procedimiento) {
             "codZonaTerritorialResidencia" => "01",
             "incapacidad" => "NO",
             "codPaisOrigen" => "170",
-            "consecutivo" => 1,
+            "consecutivo" => count($usuariosMap) + 1,
             "servicios" => array(
                 "consultas" => array(),
                 "procedimientos" => array()
@@ -133,7 +133,7 @@ foreach ($listaProcedimientos as $procedimiento) {
 
 
     $usuariosMap[$key]['servicios']['consultas'][] = array(
-        "codPrestador" => "110010822701",
+        "codPrestador" => "110010219801",
         "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'] . " " . $procedimiento['horaProcedimiento'],
         "numAutorizacion" => "",
         "codConsulta" => $procedimiento['CUP'],
@@ -150,7 +150,7 @@ foreach ($listaProcedimientos as $procedimiento) {
         "codDiagnosticoRelacionado3" => null,
         "tipoDiagnosticoPrincipal" => "02",//02 diagnostico
         "tipoDocumentoIdentificacion" => "CC",
-        "numDocumentoIdentificacion" => "51934571",
+        "numDocumentoIdentificacion" => "63362234",
         "vrServicio" => 0,
         "conceptoRecaudo" => "05",
         "valorPagoModerador" => 0,
@@ -159,8 +159,8 @@ foreach ($listaProcedimientos as $procedimiento) {
     );
 
     $usuariosMap[$key]['servicios']['procedimientos'][] = array(
-                    "codPrestador" => "110010822701",
-                    "fechaInicioAtencion" => $procedimiento['fecha_procedimiento']. " " . $procedimiento['horaProcedimiento'],
+                    "codPrestador" => "110010219801",
+                    "fechaInicioAtencion" => $procedimiento['fechaProcedimiento']. " " . $procedimiento['horaProcedimiento'],
                     "idMIPRES" => "",
                     "numAutorizacion" => $procedimiento['factura'],
                     "codProcedimiento" => $procedimiento['CupProcedimiento'],
@@ -170,8 +170,8 @@ foreach ($listaProcedimientos as $procedimiento) {
                     "codServicio" => 328,
                     "finalidadTecnologiaSalud" => "15",
                     "tipoDocumentoIdentificacion" => "CC",
-                    "numDocumentoIdentificacion" => "51934571",
-                    "codDiagnosticoPrincipal" => "Z017",
+                    "numDocumentoIdentificacion" => "63362234",
+                    "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
                     "codDiagnosticoRelacionado" => null,
                     "codComplicacion" => null,
                     "vrServicio" => 0,
@@ -184,9 +184,27 @@ foreach ($listaProcedimientos as $procedimiento) {
     $usuarios = array_values($usuariosMap);
 
 
+
 }
 
-return $usuarios;
+//descargar el archivo JSON
+if (!empty($usuarios)) {
+    $json = json_encode(array(
+           "numDocumentoIdObligado"=> "63362234",
+            "numFactura"=> null,
+            "tipoNota"=> "RS",
+            "numNota"=> "042025",
+        "usuarios" => $usuarios
+    ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    $fileName = 'usuarios.json';
+
+    return response($json, 200)
+        ->header('Content-Type', 'application/json')
+        ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+} else {
+    return response()->json(['error' => 'No se encontraron usuarios.'], 404);
+}
+
 
 $usuarios = array_map(function($procedimiento) {
     return array(
