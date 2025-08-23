@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('grupo');
             $table->string('codigo_grupo');
+            $table->boolean('activo')->default(true);
+            $table->unsignedTinyInteger('nivel')->default(1);
             $table->timestamps();
         });
     }
