@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('finalidades', function (Blueprint $table) {
             $table->string('codigo')->primary();
             $table->string('nombre');
+            $table->boolean('activo')->default(true);
+            $table->unsignedTinyInteger('nivel')->default(1);
         });
     }
 

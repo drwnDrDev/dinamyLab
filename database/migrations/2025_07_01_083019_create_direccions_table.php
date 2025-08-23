@@ -24,6 +24,8 @@ return new class extends Migration
                 ->constrained('paises', 'codigo_iso')
                 ->nullOnDelete()
                 ->cascadeOnUpdate();
+            $table->string('codigo_postal', 10)->nullable();
+            $table->boolean('rural')->default(false);
             $table->timestamps();
         });
     }
