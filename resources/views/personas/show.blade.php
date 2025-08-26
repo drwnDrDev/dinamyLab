@@ -40,7 +40,9 @@
             </div>
             <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Sexo</p>
-                <p class=" font-normal leading-normal" id="sexo">{{$persona->sexo==='M' ? 'Masculino':'Femenino'}}</p>
+                <p class=" font-normal leading-normal" id="sexo">
+                    {{$persona->sexo==='M' ? 'Masculino':'Femenino'}}
+                </p>
             </div>
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Telefonos</p>
@@ -89,7 +91,11 @@
     @endisset
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">EPS</p>
-                <p class=" font-normal leading-normal">{{ optional($persona->afiliacionSalud)->eps?? 'Sin Información'}}</p>
+                <p class=" font-normal leading-normal" id="eps">{{ optional($persona->afiliacionSalud)->eps?? 'Sin Información'}}</p>
+            </div>
+            <div>
+                <p class="text-titles  font-normal leading-normal">Tipo de Afiliación</p>
+                <p class=" font-normal leading-normal" id="tipo-afiliacion">{{ optional($persona->afiliacionSalud)->tipoAfiliacion()->nombre?? 'Sin Información'}}</p>
             </div>
         </div>
 
