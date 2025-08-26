@@ -80,7 +80,6 @@ class PersonaController extends Controller
         $request->validate([
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-
             'fecha_nacimiento' => 'nullable|date',
             'sexo' => 'nullable|string|max:10',
             'telefono' => 'nullable|string|size:10',
@@ -108,13 +107,13 @@ class PersonaController extends Controller
             $persona->sexo = $request->input('sexo');
         }
         if($request->has('pais')){
-            if($request->input('pais')!=='COL'&& $request->input('pais')!=='' && $persona->nacional){
+            if($request->input('pais')!==170&& $request->input('pais')!=='' && $persona->nacional){
                 $persona->nacional = false;
                 $persona->procedencia()->updateOrCreate(
                     ['procedencia_id' => $persona->id, 'procedencia_type' => Persona::class],
                     ['pais_codigo_iso' => $request->input('pais')]
                 );
-            } elseif ($request->input('pais')==='COL' && !$persona->nacional) {
+            } elseif ($request->input('pais')===170 && !$persona->nacional) {
                 $persona->nacional = true;
                 $persona->procedencia()->delete(); // Eliminar la procedencia si es nacional
 
