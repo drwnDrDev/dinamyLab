@@ -283,7 +283,7 @@ public function json_rips(Request $request)
         $usuarios[] = [
             "tipoDocumentoIdentificacion" =>  $usuario->first()->persona->tID,
             "numDocumentoIdentificacion" =>  $usuario->first()->persona->numero_doc,
-            "tipoUsuario" => "04",
+            "tipoUsuario" => "12",
             "fechaNacimiento" => $usuario->first()->persona->fecha_nacimiento,
             "codSexo" => $usuario->first()->persona->sexo,
             "codPaisResidencia" => "170",

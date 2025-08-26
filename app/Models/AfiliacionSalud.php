@@ -17,6 +17,10 @@ class AfiliacionSalud extends Model
     {
         return $this->belongsTo(Persona::class);
     }
+    public function tipoAfiliacion()
+    {
+        return $this->belongsTo(TipoAfiliacion::class);
+    }
 
     protected $table = 'afiliaciones_salud';
 
