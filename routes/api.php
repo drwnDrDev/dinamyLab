@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\CodigoCupController;
+
 use App\Http\Controllers\Api\CodigoDiagnosticoController;
 use App\Http\Controllers\Api\CupsController;
 use App\Http\Controllers\Api\PersonaController;
