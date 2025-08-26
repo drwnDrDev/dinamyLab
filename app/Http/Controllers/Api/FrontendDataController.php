@@ -20,7 +20,6 @@ class FrontendDataController extends Controller
 
 
         try {
-
             $cachedData = Cache::get('frontend_static_data');
             if ($cachedData) {
                 return response()->json($cachedData);
@@ -43,8 +42,7 @@ class FrontendDataController extends Controller
 
             $eps = Eps::select('nombre', 'id')
             ->where('habilitada', true) // Solo EPS verificadas
-            ->orderBy('nivel','desc
-            ')->get();
+            ->orderBy('nivel','desc')->get();
 
             $data = [
                 'documentos_paciente' => $tiposDocumentoPaciente,
@@ -55,11 +53,8 @@ class FrontendDataController extends Controller
             ];
 
         Cache::put('frontend_static_data', $data, now()->addHours(24)); // Cache por 24 horas
-
            return response()->json($data);
-
         } catch (\Exception $e) {
-
             return response()->json([
                 'error' => 'Error al procesar la solicitud de datos.',
                 'message' => $e->getMessage() // Solo en desarrollo, no exponer errores detallados en producción
