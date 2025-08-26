@@ -10,12 +10,15 @@
         <div class="py-4 flex justify-between items-center">
             <div>
                 <p class="text-2xl font-bold leading-tight tracking-[-0.015em]">{{ $persona->nombreCompleto() }}</p>
-                <p class="text-titles">Paciente ID: {{ $persona->numero_documento }}</p>
+                <p class="text-titles">
+                 <span id="tipo-documento">{{ $persona->tipo_documento->nombre }}</span>
+                 <span id="numero-documento">{{ $persona->numero_documento }}</span>
+                </p>
             </div>
             <div class="flex gap-2">
-                <a href="{{ route('personas.edit', $persona) }}">
-                    <x-primary-button>Editar</x-primary-button>
-                </a>
+
+                    <x-primary-button id="editar-button">Editar</x-primary-button>
+
                 <a href="{{route('facturas.create',$persona)}}">
                     <x-secondary-button>Facturar</x-secondary-button>
                 </a>
@@ -33,21 +36,21 @@
         <div class="py-4 grid grid-cols-2" id="info">
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Fecha de Nacimiento</p>
-                <p class=" font-normal leading-normal">{{ $persona->fecha_nacimiento->format('d/m/Y') }}</p>
+                <p class=" font-normal leading-normal" id="fecha-nacimiento">{{ $persona->fecha_nacimiento->format('d/m/Y') }}</p>
             </div>
             <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Sexo</p>
-                <p class=" font-normal leading-normal">{{$persona->sexo==='M' ? 'Masculino':'Femenino'}}</p>
+                <p class=" font-normal leading-normal" id="sexo">{{$persona->sexo==='M' ? 'Masculino':'Femenino'}}</p>
             </div>
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Telefonos</p>
 
-                <p class=" font-normal leading-normal">
+                <p class="font-normal leading-normal" id="telefonos">
                     @if($persona->telefonos->isEmpty())
                     No tiene telefonos registrados
                     @else
                     @foreach($persona->telefonos as $telefono)
-                    <span>{{ $telefono->numero}} </span>
+                    <span>{{ $telefono->numero}}</span>
                     @endforeach
                     @endif
 
@@ -56,19 +59,34 @@
 
             <!-- se debe procurar mostrar todos los elementos asi no existan datos -->
 
+    @isset($persona->direccion)
+        <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
+            <p class="text-titles  font-normal leading-normal">Muncipio</p>
+            <p class=" font-normal leading-normal">{{ $persona->direccion->municipio->municipio }}-{{ $persona->direccion->municipio->departamento }}</p>
+        </div>
 
+        <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
+            <p class="text-titles  font-normal leading-normal">Dirección</p>
+            <p class=" font-normal leading-normal">{{ $persona->direccion->direccion}}</p>
+        </div>
+    @else
+    <form method="POST" id="direccion-form" class="max-w-md">
+        @csrf
+        <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
+            <p class="text-titles  font-normal leading-normal">Muncipio</p>
+            <input type="text" name="municipio"
+                    class="border-b border-borders py-2"
+                    placeholder="Ingrese el municipio">
+        </div>
 
-            <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
-                <p class="text-titles  font-normal leading-normal">Muncipio</p>
-                <p class=" font-normal leading-normal">{{ $persona->direccion->municipio->municipio }}-{{ $persona->direccion->municipio->departamento }}</p>
-            </div>
-
-            <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
-                <p class="text-titles  font-normal leading-normal">Dirección</p>
-                <p class=" font-normal leading-normal">{{ $persona->direccion->direccion}}</p>
-            </div>
-
-
+        <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
+            <p class="text-titles  font-normal leading-normal">Dirección</p>
+            <input  type="text" name="direccion"
+                    class="border-b border-borders py-2"
+                    placeholder="Ingrese la dirección">
+        </div>
+    </form>
+    @endisset
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">EPS</p>
                 <p class=" font-normal leading-normal">{{ optional($persona->afiliacionSalud)->eps?? 'Sin Información'}}</p>
@@ -154,4 +172,5 @@
             </div>
         </section>
     </x-canva>
+   @vite('resources/js/showPersona.js')
 </x-app-layout>

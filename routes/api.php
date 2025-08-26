@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\FrontendDataController;
 use App\Http\Controllers\Api\ExamenesController;
 use App\Http\Controllers\Api\OrdenController;
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\Api\AfiliacionSaludController;
 use App\Models\Factura;
 
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
@@ -48,6 +49,12 @@ Route::get('municipios', [MunicipioController::class, 'index']);
 Route::get('municipios/buscar', [MunicipioController::class, 'buscarMunicipioPorNombre']);
 Route::get('municipios/{id}', [MunicipioController::class, 'show']);
 Route::get('departamento/{departamento_id}', [MunicipioController::class, 'departamento']);
+
+Route::get('afiliaciones-salud', [AfiliacionSaludController::class, 'index']);
+Route::post('afiliaciones-salud', [AfiliacionSaludController::class, 'store']);
+Route::get('afiliaciones-salud/{id}', [AfiliacionSaludController::class, 'show']);
+Route::put('afiliaciones-salud/{id}', [AfiliacionSaludController::class, 'update']);
+Route::delete('afiliaciones-salud/{id}', [AfiliacionSaludController::class, 'destroy']);
 
 Route::get('paises', [\App\Http\Controllers\Api\PaisController::class, 'index']);
 
