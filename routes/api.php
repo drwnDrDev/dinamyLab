@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CodigoCupController;
 use App\Http\Controllers\Api\CodigoDiagnosticoController;
-use App\Http\Controllers\api\CupsController;
+use App\Http\Controllers\Api\CupsController;
 use App\Http\Controllers\Api\PersonaController;
 use App\Http\Controllers\Api\MunicipioController;
 use App\Http\Controllers\Api\FrontendDataController;
@@ -17,7 +17,7 @@ use App\Models\Factura;
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
 
 Route::get('cups', [CupsController::class, 'index']);
-Route::get('cups/{id}', [CupsController::class, 'show']);
+Route::get('cups/{codigo}', [CupsController::class, 'show']);
 Route::get('cups/buscar/{codigo}', [CupsController::class, 'buscarPorCodigo']);
 Route::get('cups/buscar', [CupsController::class, 'buscarPorNombre']);
 
