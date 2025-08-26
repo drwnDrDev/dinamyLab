@@ -20,9 +20,10 @@ class CupsController extends Controller
         );
     }
 
-    public function show($id)
+    public function show($codigo)
     {
-        return CodigoCup::find($id);
+        $cup = CodigoCup::where('codigo', $codigo)->first();
+        return $cup ? response()->json($cup) : response()->json(['message' => 'Código CUP'. $codigo.' no encontrado.'], 404);
     }
 
     public function store(Request $request)
