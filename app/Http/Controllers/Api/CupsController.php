@@ -10,7 +10,14 @@ class CupsController extends Controller
 {
     public function index()
     {
-        return CodigoCup::all();
+        $cups = CodigoCup::all();
+        if ($cups->isEmpty()) {
+            return response()->json(['message' => 'No hay códigos CUP disponibles.'], 404);
+        }
+
+        return response()->json(
+            ['data' => $cups], 200
+        );
     }
 
     public function show($id)
