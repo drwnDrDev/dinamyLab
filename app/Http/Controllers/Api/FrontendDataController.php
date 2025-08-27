@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
+use App\Models\CodigoCup;
 use App\Models\TipoDocumento;
 use App\Models\Pais;
 use App\Models\Municipio;
@@ -9,6 +10,7 @@ use App\Models\Eps;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache; // Si usas caché con el Job
 
+use function Pest\Laravel\get;
 
 class FrontendDataController extends Controller
 {
@@ -44,12 +46,17 @@ class FrontendDataController extends Controller
             ->where('habilitada', true) // Solo EPS verificadas
             ->orderBy('nivel','desc')->get();
 
+            $cupsActivos = CodigoCup::where('activo', true)->get();
+            $diacgonosticosActivos = \App\Models\CodigoDiagnostico::where('activo', true)->get();
+
             $data = [
                 'documentos_paciente' => $tiposDocumentoPaciente,
                 'documentos_pagador' => $tiposDocumentoPagador,
                 'paises' => $paises,
                 'municipios' => $municipios,
-                'eps' => $eps
+                'eps' => $eps,
+                'cups' => $cupsActivos,
+                'cie10' => $diacgonosticosActivos,
             ];
 
         Cache::put('frontend_static_data', $data, now()->addHours(24)); // Cache por 24 horas
