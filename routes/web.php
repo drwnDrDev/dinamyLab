@@ -15,6 +15,8 @@ use App\Http\Controllers\ResolucionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\SedeController;
+use App\Http\Controllers\DiagnosticosController;
+use App\Models\CodigoDiagnostico;
 use App\Models\Resultado;
 use Illuminate\Support\Facades\Route;
 
@@ -101,7 +103,13 @@ Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () 
     Route::get('/personas/{persona}/edit',[PersonaController::class,'edit'])->name('personas.edit');
     Route::put('/personas/{persona}',[PersonaController::class,'update'])->name('personas.update');
     Route::delete('/ordenes-medicas/{orden}',[OrdenController::class,'destroy'])->name('ordenes.destroy');
+    Route::get('/diagnosticos', [CodigoDiagnosticoController::class, 'index'])
+    ->name('diagnosticos.index');
 
 });
+
+Route::post('/api/cie10/{cie10}/toggle-status', [CodigoDiagnosticoController::class, 'toggleStatus'])
+    ->name('cie10.toggle-status')
+    ->middleware(['auth', 'verified']);
 
 require __DIR__.'/auth.php';

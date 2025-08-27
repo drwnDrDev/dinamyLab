@@ -43,6 +43,27 @@ class CodigoDiagnosticoController extends Controller
         ]);
     }
 
+    public function toggleStatus($id)
+    {
+        
+        try {
+            $codigoDiagnostico = CodigoDiagnostico::find($id);
+            $codigoDiagnostico->activo = !$codigoDiagnostico->activo;
+            $codigoDiagnostico->save();
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado actualizado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estado'
+            ], 500);
+        }
+    }
+
     public function destroy($id)
     {
         return CodigoDiagnostico::destroy($id);
