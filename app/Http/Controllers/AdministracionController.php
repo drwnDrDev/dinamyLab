@@ -296,7 +296,7 @@ public function json_rips(Request $request)
                     return [
                         "codPrestador" => "110010822703",
                         "fechaInicioAtencion" => $procedimiento->fecha_procedimiento->format('Y-m-d H:i'),
-                        "idMIPRES" => "",
+                        "idMIPRES" => null,
                         "numAutorizacion" => $procedimiento->factura,
                         "codProcedimiento" => $procedimiento->examen->CUP,
                         "viaIngresoServicioSalud" => "01",

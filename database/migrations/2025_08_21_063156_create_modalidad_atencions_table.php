@@ -11,8 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
+
+
         Schema::create('modalidad_atencions', function (Blueprint $table) {
             $table->id();
+            $table->string('codigo')->unique();
+            $table->string('nombre');
+            $table->string('descripcion')->nullable();
+            $table->boolean('activo')->default(true);
+            $table->unsignedTinyInteger('nivel')->default(1);
             $table->timestamps();
         });
     }
