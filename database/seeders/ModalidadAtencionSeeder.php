@@ -12,6 +12,17 @@ class ModalidadAtencionSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        // Crear modalidades de atención
+        $modalidades = [
+            ['nombre' => 'Consulta Externa'],
+            ['nombre' => 'Urgencias'],
+            ['nombre' => 'Hospitalización'],
+            ['nombre' => 'Cirugía'],
+            ['nombre' => 'Terapia Física'],
+        ];
+
+        foreach ($modalidades as $modalidad) {
+            \App\Models\ModalidadAtencion::create($modalidad);
+        }
     }
 }
