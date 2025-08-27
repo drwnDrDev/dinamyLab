@@ -161,22 +161,22 @@ foreach ($listaProcedimientos as $procedimiento) {
                     "codPrestador" => "110010219801",
                     "fechaInicioAtencion" => $procedimiento['fechaProcedimiento']. " " . $procedimiento['horaProcedimiento'],
                     "idMIPRES" => "",
-                    "numAutorizacion" => null,
+                    "numAutorizacion" => $procedimiento['factura'],
                     "codProcedimiento" => $procedimiento['CupProcedimiento'],
                     "viaIngresoServicioSalud" => "01",//demanda expontanea
                     "modalidadGrupoServicioTecSal" => "01", //Intramural
-                    "grupoServicios" => "03", //este es el grupo del codServicio
-                    "codServicio" => 328,//este es el servicio del grupo
-                    "finalidadTecnologiaSalud" => "15",//15 diagnostico 16 tratamiento
+                    "grupoServicios" => "03",
+                    "codServicio" => 328,
+                    "finalidadTecnologiaSalud" => "15",
                     "tipoDocumentoIdentificacion" => "CC",
                     "numDocumentoIdentificacion" => "63362234",
                     "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
                     "codDiagnosticoRelacionado" => null,
-                    "codComplicacion" => null,//CIE10 presuntivo o confirmado
+                    "codComplicacion" => null,
                     "vrServicio" => 0,
                     "conceptoRecaudo" => "05",
                     "valorPagoModerador" => 0,
-                    "numFEVPagoModerador" => null,
+                    "numFEVPagoModerador" => "",
                     "consecutivo" => count($usuariosMap[$key]['servicios']['procedimientos']) + 1
     );
 
