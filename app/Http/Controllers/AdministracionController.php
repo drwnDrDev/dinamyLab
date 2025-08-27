@@ -144,11 +144,10 @@ foreach ($listaProcedimientos as $procedimiento) {
         "finalidadTecnologiaSalud" => "15",//16 tratamiento 15 diagnostico
         "causaMotivoAtencion" => "38",//38 enfermedad general
         "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
-        "codDiagnosticoRelacionado" => $procedimiento['CIE10'],
         "codDiagnosticoRelacionado1" => null,
         "codDiagnosticoRelacionado2" => null,
         "codDiagnosticoRelacionado3" => null,
-        "tipoDiagnosticoPrincipal" => "02",//02 diagnostico
+        "tipoDiagnosticoPrincipal" => "01",//01 impresion diagnostica   02 confirmado nuevo  03 confirmado repetido
         "tipoDocumentoIdentificacion" => "CC",
         "numDocumentoIdentificacion" => "63362234",
         "vrServicio" => 0,
@@ -210,7 +209,7 @@ $usuarios = array_map(function($procedimiento) {
     return array(
         "tipoDocumentoIdentificacion" => $procedimiento['tID'],
         "numDocumentoIdentificacion" => $procedimiento['numero_doc'],
-        "tipoUsuario" => "04",
+        "tipoUsuario" => "12",
         "fechaNacimiento" => $procedimiento['fecha_nacimiento'],
         "codSexo" => $procedimiento['sexo'],
         "codPaisResidencia" => "170",
