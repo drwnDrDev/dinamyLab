@@ -88,7 +88,7 @@ export default function Index({ diagnosticos }) {
                 <button
                     key={i}
                     onClick={() => handlePageChange(i)}
-                    className={`px-3 py-1 rounded-md ${
+                    className={`px-2 py-1 rounded-md ${
                         currentPage === i 
                             ? 'bg-primary text-white' 
                             : 'bg-secondary hover:bg-primary/10'
@@ -100,12 +100,8 @@ export default function Index({ diagnosticos }) {
         }
 
         return (
-            <div className="flex items-center justify-between p-4 bg-background">
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-titles">
-                        Mostrando {((currentPage - 1) * itemsPerPage) + 1} a {Math.min(currentPage * itemsPerPage, filteredDiagnosticos.length)} de {filteredDiagnosticos.length} resultados
-                    </span>
-                </div>
+            <div className="flex flex-col gap-2 items-center justify-between p-4 bg-background">
+                
                 <div className="flex items-center gap-1">
                     <button
                         onClick={() => handlePageChange(currentPage - 1)}
@@ -114,7 +110,7 @@ export default function Index({ diagnosticos }) {
                     >
                         Anterior
                     </button>
-                    <div className="flex gap-1 mx-2">
+                    <div className="flex gap-1 mx-2 max-w-xs overflow-x-auto">
                         {pages}
                     </div>
                     <button
@@ -124,6 +120,11 @@ export default function Index({ diagnosticos }) {
                     >
                         Siguiente
                     </button>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="text-sm text-titles">
+                        Mostrando {((currentPage - 1) * itemsPerPage) + 1} a {Math.min(currentPage * itemsPerPage, filteredDiagnosticos.length)} de {filteredDiagnosticos.length} resultados
+                    </span>
                 </div>
             </div>
         );
@@ -173,6 +174,7 @@ export default function Index({ diagnosticos }) {
                                             <th className="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Descripción</th>
                                             <th className="px-4 py-3 text-left text-text w-32 text-sm font-medium leading-normal">Código</th>
                                             <th className="px-4 py-3 text-left text-text w-96 text-sm font-medium leading-normal">Grupo</th>
+                                            <th className="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Nombre</th>
                                             <th className="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Estado</th>
                                         </tr>
                                     </thead>
@@ -184,7 +186,7 @@ export default function Index({ diagnosticos }) {
                                                 onDoubleClick={() => handleToggleStatus(cie)}
                                             >
                                                 <td className="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                                    {cie.id} {cie.descripcion}
+                                                    {cie.descripcion}
                                                 </td>
                                                 <td className="content-start px-4 py-2 w-32 text-titles text-sm font-normal leading-normal">
                                                     {cie.codigo}
