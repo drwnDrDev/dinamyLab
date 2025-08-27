@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('via_ingresos', function (Blueprint $table) {
             $table->id();
+            $table->string('codigo')->nullable();
+            $table->string('nombre')->nullable();
+            $table->string('descripcion')->nullable();
+            $table->unsignedTinyInteger('nivel')->default(1);
+            $table->boolean('activo')->default(1);
             $table->timestamps();
         });
     }
