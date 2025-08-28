@@ -18,16 +18,6 @@ method="POST">
     <div class="w-full min-w-80 p-4 my-4">
       <div class="flex gap-4">
     <h2 class="font-bold mb-4 text-xl text-titles">Datos {{$perfil}} </h2>
-    <div class="flex justify-end" x-data="{ openEspecial: false }" >
-    <div class="flex justify-around" x-show="!openEspecial">
-      <x-input-label for="numero_orden">Poblacion Especial</x-input-label>
-      <input type="checkbox" id="poblacionEspecial" name="poblacionEspecial" @change="openEspecial = $event.target.checked">
-    </div>
-    <div class="w-full mb-4" x-show="openEspecial">
-        <x-input-label for="tipo_poblacion">Tipo de Población Especial</x-input-label>
-        <x-select-input id="tipo_poblacion" name="tipo_poblacion" :options="['Ninguno' => 'Ninguno', 'Discapacidad' => 'Discapacidad', 'Adulto Mayor' => 'Adulto Mayor']" />
-    </div>
-    </div>
     </div>
         <input type="hidden" id="perfil" name="perfil" value="{{ $perfil }}">
         <div class="row-inputs w-full md:grid  md:grid-cols-3 justify-around gap-2">
@@ -140,20 +130,16 @@ method="POST">
                 <div class="municipio-busqueda absolute z-10 bg-white border border-borders w-full max-h-60 overflow-y-auto hidden">
                     <!-- Resultados de búsqueda de municipios -->
                 </div>
-                <select id="municipio" name="municipio" class="text-sm h-9 w-full p-1 border-borders focus:border-primary focus:ring-primary rounded-md uppercase hidden">
-                    <option value="11007">Bosa</option>
-                    <!-- Opciones de ciudades se llenarán dinámicamente -->
-                </select>
+                <x-select-input id="municipio" name="municipio" :options="['11001'=>'Bogotá']" >
+
             </div>
-
-
             <div class="w-full h-12 pb-2 md:col-span-2" x-show="openCiudad">
                 <x-input-label for="direccion">Dirección</x-input-label>
                 <x-text-input type="text" id="direccion" name="direccion" />
             </div>
             <div class="w-full h-12" x-show="!openCiudad">
                 <x-input-label for="paisResidencia">País de residencia </x-input-label>
-                <x-select-input id="paisResidencia" name="paisResidencia"  :options="['218'=>'Ecuador']" />
+                <x-select-input id="paisResidencia" name="paisResidencia"  :options="[null=>'Ninguno']" />
             </div>
 
 
