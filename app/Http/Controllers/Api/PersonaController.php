@@ -7,13 +7,18 @@ use App\Http\Requests\StorePersonaRequest;
 use Illuminate\Http\Request;
 use App\Models\Persona;
 use App\Services\GuardarPersona;
-
+use Illuminate\Support\Facades\Auth;
 
 class PersonaController extends Controller
 {
     public function index()
     {
+
+
         $personas = Persona::all();
+        if($personas->isEmpty()) {
+            return response()->json([], 204 );
+        }
 
         if($personas->isEmpty()) {
             return response()->json([
@@ -48,9 +53,9 @@ class PersonaController extends Controller
 
     public function store(StorePersonaRequest $request)
     {
-
-
-        $persona = GuardarPersona::guardar($request);
+        $validated = $request->validated();
+        dd($validated);
+        $persona = GuardarPersona::guardar( $validated );
         return response()->json([
             'message' => 'Persona creada con éxito',
             'data' => $persona
