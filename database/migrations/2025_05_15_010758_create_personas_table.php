@@ -23,7 +23,11 @@ return new class extends Migration
             $table->string('numero_documento')->unique();
             $table->date('fecha_nacimiento')->nullable();
             $table->enum('sexo',['F','M'])->nullable();
-            $table->boolean('nacional')->default(true);
+            $table->string('pais_origen', 3)
+                ->nullable()
+                ->constrained('paises', 'codigo_iso')
+                ->nullOnDelete()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }

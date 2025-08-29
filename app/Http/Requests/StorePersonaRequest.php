@@ -48,7 +48,8 @@ class StorePersonaRequest extends FormRequest
                     $fail('La fecha de nacimiento no puede ser anterior al 1 de enero de 1900.');
                 }
             }],
-
+            'sexo' => ['nullable', 'in:F,M'],
+            'pais' => ['nullable', 'in:paises,codigo_iso'],
             'perfil' => ['required',
                 function ($attribute, $value, $fail) {
                     if ($value === 'Paciente'){

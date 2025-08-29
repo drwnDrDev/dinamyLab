@@ -17,10 +17,8 @@ class PersonaController extends Controller
     {
 
 
-        $personas = Persona::all();
-        if($personas->isEmpty()) {
-            return response()->json([], 204 );
-        }
+        $personas = Persona::with(['tipo_documento', 'telefonos', 'direccion.municipio', 'email', 'afiliacionSalud', 'contactoEmergencia', 'procedencia'])->get();
+
 
         if($personas->isEmpty()) {
             return response()->json([
@@ -28,9 +26,28 @@ class PersonaController extends Controller
                 'data' => []
             ], 404);
         }
+
        return response()->json([
             'message' => 'Lista de personas',
-            'data' =>  $personas
+            'data' => array_map(function ($persona) {
+                return [
+                    "id" => $persona['id'],
+                    "nombre" => implode(' ',[$persona['primer_nombre'],$persona['segundo_nombre']?? '']),
+                    "apellido" => implode(' ',[$persona['primer_apellido'],$persona['segundo_apellido']?? '']),
+                    "tipo_documento" => $persona['tipo_documento']['cod_rips'],
+                    "numero_documento" => $persona['numero_documento'],
+                    "fecha_nacimiento" => $persona['fecha_nacimiento']? Carbon::parse($persona['fecha_nacimiento'])->format('Y-m-d') : null,
+                    "sexo" => $persona['sexo'],
+                    "nacional" => $persona['nacional'],
+                    "telefono" => $persona['telefonos']?->first()->numero ?? null,
+                    "direccion" => $persona['direccion']?->direccion ?? null,
+                    "correo" => $persona['email']?->email ?? null,
+                    "pais" => $persona['procedencia']?->pais_codigo_iso ?? 'COL',
+                    "municipio" => $persona['direccion']?->municipio_id ?? 11001,
+                    'eps' => $persona['afiliacionSalud']?->eps ?? null,
+                    
+                ];
+            }, $personas->toArray())
 
         ]);
     }
