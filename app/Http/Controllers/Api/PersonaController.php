@@ -17,7 +17,7 @@ class PersonaController extends Controller
     {
 
 
-        $personas = Persona::with(['tipo_documento', 'telefonos', 'direccion.municipio', 'email', 'afiliacionSalud', 'contactoEmergencia', 'procedencia'])->get();
+        $personas = Persona::with(['tipo_documento', 'telefonos', 'direccion.municipio','direccion.pais_residencia', 'email', 'afiliacionSalud', 'contactoEmergencia', 'procedencia'])->get();
 
 
         if($personas->isEmpty()) {
@@ -38,14 +38,14 @@ class PersonaController extends Controller
                     "numero_documento" => $persona['numero_documento'],
                     "fecha_nacimiento" => $persona['fecha_nacimiento']? Carbon::parse($persona['fecha_nacimiento'])->format('Y-m-d') : null,
                     "sexo" => $persona['sexo'],
-                    "nacional" => $persona['nacional'],
-                    "telefono" => $persona['telefonos']?->first()->numero ?? null,
+                    "procedencia" => $persona['procedencia']?->pais->nombre ?? 'Colombia',
+                    "telefono" => $persona['telefonos']? $persona['telefonos'][0]['numero'] : null,
                     "direccion" => $persona['direccion']?->direccion ?? null,
-                    "correo" => $persona['email']?->email ?? null,
-                    "pais" => $persona['procedencia']?->pais_codigo_iso ?? 'COL',
                     "municipio" => $persona['direccion']?->municipio_id ?? 11001,
+                    "pais_residencia" => $persona['procedencia']?->pais_residencia ?? 'Colombia',
+                    "correo" => $persona['email']?->email ?? null,
                     'eps' => $persona['afiliacionSalud']?->eps ?? null,
-                    
+
                 ];
             }, $personas->toArray())
 
@@ -73,31 +73,8 @@ class PersonaController extends Controller
     public function store(StorePersonaRequest $request)
     {
 
-
-
         $validated = $request->validated();
-        // Dividir nombres y apellidos en primer y segundo nombre
-        $parsed = NombreParser::parsearPersona(
-            $validated['nombres'],
-            $validated['apellidos']
-        );
-
-        // Asignar booleano a nacional
-        $nacional = $request['pais'] === 170 || $request['pais'] === null;
-
-        // Crear la persona
-       $persona =  Persona::create([
-            'primer_nombre' => $parsed['primer_nombre'],
-            'segundo_nombre' => $parsed['segundo_nombre'],
-            'primer_apellido' => $parsed['primer_apellido'],
-            'segundo_apellido' => $parsed['segundo_apellido'],
-            'tipo_documento_id' =>  \App\Models\TipoDocumento::idPorCodigoRips($validated['tipo_documento']),
-            'numero_documento' => $validated['numero_documento'],
-            'fecha_nacimiento' => Carbon::parse($validated['fecha_nacimiento']),
-            'sexo' => $request['sexo'],
-            'nacional' => $nacional,
-        ]);
-
+        $persona = GuardarPersona::guardar($request->all());
         if (!$persona) {
             return response()->json([
                 'message' => 'Error al crear la persona',

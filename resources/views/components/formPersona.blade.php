@@ -57,13 +57,7 @@
                 <x-input-label for="sexo_masculino" class="font-bold text-2xl">M</x-input-label>
                 <input type="radio" id="sexo_masculino" name="sexo" value="M">
             </div>
-            <div class="w-full pb-2 flex gap-2 items-center">
-                <span>Incapacidad</span>
-                <x-input-label for="incapacidad_si" class="font-bold text-2xl">SÍ</x-input-label>
-                <input type="radio" id="incapacidad_si" name="incapacidad" value="SÍ">
-                <x-input-label for="incapacidad_no" class="font-bold text-2xl">NO</x-input-label>
-                <input type="radio" id="incapacidad_no" name="incapacidad" value="NO">
-            </div>
+
         </div>
      @endif
         <hr class="m-0 border-1 border-borders">
@@ -157,8 +151,8 @@
                 </div>
             </div>
             <div class="w-full h-12" x-show="!openCiudad">
-                <x-input-label for="paisResidencia">País de residencia </x-input-label>
-                <x-select-input id="paisResidencia" name="paisResidencia"  :options="['null'=>'Elija un país']" />
+                <x-input-label for="pais_residencia">País de residencia </x-input-label>
+                <x-select-input id="pais_residencia" name="pais_residencia"  :options="['null'=>'Elija un país']" />
             </div>
 
 

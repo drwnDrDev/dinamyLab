@@ -10,7 +10,7 @@ class GuardarContacto
 {
     public static function guardarContacto(array $datos, Model $modelo): bool
     {
-        dd($datos);
+
 
         $modeloClass = get_class($modelo);
 
@@ -19,46 +19,35 @@ class GuardarContacto
             ('No se proporcionaron datos de contacto');
             return false;
         }
-        if($datos['telefono']) {
-            $modelo->telefonos()->create(['numero' => $datos['telefono']]);
+        if($datos['telefono'] ) {
+            $modelo->telefonos()->firstOrCreate(['numero' => $datos['telefono']]);
         }
-        if($datos['direccion']) {
-            if (!isset($datos['municipio']) || empty($datos['municipio']) || Municipio::find($datos['municipio']) === null) {
-                $datos['municipio'] = ElegirEmpresa::defaultMunicipio();
-            }
-            $modelo->direccion()->create([
+        if($datos['municipio'] || $datos['direccion']) {
+            $modelo->direccion()->firstOrCreate([
                 'direccion' => $datos['direccion'],
                 'municipio_id' =>  $datos['municipio']
+            ],
+            [
+                'direccion' => $datos['direccion'] ?? null,
+                'municipio_id' =>  $datos['municipio']?? '11001',
+                'pais_id' => 170,
+                'codigo_postal' => $datos['codigo_postal'] ?? null,
+                'rural' => $datos['zona']  ? $datos['zona'] === '02' : false,
             ]);
-        }else {
-            $datos['municipio'] = ElegirEmpresa::defaultMunicipio();
-            $modelo->direccion()->create([
-                'direccion' => null,
-                'municipio_id' =>  $datos['municipio']
+        }
+        if(isset($datos['pais_residencia'])) {
+            $modelo->direccion()->updateOrCreate([
+                'pais_id' => $datos['pais_residencia']
             ]);
         }
 
         if($datos['correo']) {
             if($modeloClass === 'App\Models\Persona') {
-                $modelo->email()->create(['correo' => $datos['correo']]);
+                $modelo->email()->updateOrCreate(['email' => $datos['correo']]);
             } else {
-                $modelo->emails()->create(['correo' => $datos['correo']]);
+                $modelo->emails()->firstOrCreate(['email' => $datos['correo']]);
             }
 
-        }
-        if($datos['redes'] && is_array($datos['redes']) && count($datos['redes']) > 0) {
-            foreach ($datos['redes'] as $redSocial => $url) {
-                if(empty($url)) {
-                    continue;
-                }
-                RedSocial::create(['nombre' => $redSocial,
-                    'url' => $url,
-                    'perfil' => 'perfil'.$datos['razon_social'].'_'.$redSocial,
-                    'redable_type' => $modeloClass,
-                    'redable_id' => $modelo->id
-                    ]);
-
-            }
         }
 
         return true;

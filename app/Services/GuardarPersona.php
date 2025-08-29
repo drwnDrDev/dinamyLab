@@ -24,9 +24,6 @@ class GuardarPersona
             $datos['apellidos']
         );
 
-        // Asignar booleano a nacional
-        $nacional = $datos['pais'] === 'COL' || $datos['pais'] === null;
-
         // Crear la persona
        $persona =  Persona::create([
             'primer_nombre' => $parsed['primer_nombre'],
@@ -37,11 +34,12 @@ class GuardarPersona
             'numero_documento' => $datos['numero_documento'],
             'fecha_nacimiento' => Carbon::parse($datos['fecha_nacimiento']),
             'sexo' => $datos['sexo'],
-            'nacional' => $nacional,
+            'pais_origen' => $datos['pais'] ?? 170,
         ]);
 
+
         // Guardar contacto si se proporcionó
-       // GuardarContacto::guardarContacto($datos, $persona);
+        GuardarContacto::guardarContacto($datos, $persona);
 
         return $persona;
     }
