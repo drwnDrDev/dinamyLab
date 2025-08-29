@@ -9,7 +9,7 @@
         <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/react/index.jsx'])
     </head>
     <body class="font-sans antialiased bg-background">
         @include('layouts.header')
@@ -19,6 +19,10 @@
  
             <!-- Page Content -->
             <main class="m-auto mt-16 ml-14 p-6 w-[calc(100vw-56px)] md:h-[calc(100vh-64px)] overflow-y-auto h-full print:!p-0 print:!m-0 print:!bg-white">
+
+            <div id="react-test"></div>
+            @vite(['resources/js/react/test.jsx'])
+
 
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     @if (session('success') || session('error'))

@@ -1,19 +1,14 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-wrap justify-evenly items-center mb-4">
-            <h1 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
-                {{ __('CIE-10 Codes') }}
-            </h1>
-
-        </div>
-    </x-slot>
+    
+       
+    
     <x-canva>
 
         <section class="flex flex-wrap items-center justify-between mb-4">
             <h2 class="font-semibold text-xl text-text leading-tight">Codigos CIE-10</h2>
 
 
-            <form method="POST" action="{{ route('cie10.search') }}" class="py-3 w-1/2 mx-auto">
+            <form method="POST" action="{{ route('diagnosticos.search') }}" class="py-3 w-1/2 mx-auto">
                 @csrf
                 <label class="flex flex-col min-w-40 h-12 w-full">
                     <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
@@ -49,7 +44,7 @@
                 </thead>
                 <tbody>
                     @foreach ($codigoDiagnostico as $cie)
-                    <tr data-url="{{ route('cie10.show', $cie) }}" onclick="window.location.href=this.dataset.url" class="border-t border-borders cursor-pointer hover:bg-secondary">
+                    <tr data-url="{{ route('diagnosticos.show', $cie) }}" onclick="window.location.href=this.dataset.url" class="border-t border-borders cursor-pointer hover:bg-secondary">
                         <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
                             {{ $cie->descripcion }}
                         </td>

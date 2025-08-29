@@ -88,15 +88,15 @@ Route::middleware('auth','verified','can:ver_facturas')->group(function () {
     Route::delete('/facturas/resoluciones/{resolucion}',[ResolucionController::class,'destroy'])->name('resoluciones.destroy');
 
 });
-
+ 
 Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () {
 
     Route::get('/cups',[CodigoCupController::class,'index'])->name('cups.index');
     Route::post('/cups/buscar',[CodigoCupController::class,'search'])->name('cups.search');
     Route::get('/cups/{codigoCup}',[CodigoCupController::class,'show'])->name('cups.show');
-    Route::get('/cie10',[CodigoDiagnosticoController::class,'index'])->name('cie10.index');
-    Route::post('/cie10/buscar',[CodigoDiagnosticoController::class,'search'])->name('cie10.search');
-    Route::get('/cie10/{codigoDiagnostico}',[CodigoDiagnosticoController::class,'show'])->name('cie10.show');
+    Route::get('/diagnosticos',[CodigoDiagnosticoController::class,'index'])->name('diagnosticos.index');
+    Route::post('/diagnosticos/buscar',[CodigoDiagnosticoController::class,'search'])->name('diagnosticos.search');
+    Route::get('/diagnosticos/{codigoDiagnostico}',[CodigoDiagnosticoController::class,'show'])->name('diagnosticos.show');
     Route::delete('/personas/{persona}',[PersonaController::class,'destroy'])->name('personas.destroy');
     Route::get('/personas/{persona}/edit',[PersonaController::class,'edit'])->name('personas.edit');
     Route::put('/personas/{persona}',[PersonaController::class,'update'])->name('personas.update');

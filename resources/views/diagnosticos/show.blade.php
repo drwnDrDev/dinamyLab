@@ -25,7 +25,7 @@
         <p><strong>Edad mínima:</strong> {{$codigoDiagnostico->edad_minima}}</p>
         <p><strong>Edad máxima:</strong> {{$codigoDiagnostico->edad_maxima}}</p>
         <p><strong>Grupo de mortalidad:</strong> {{$codigoDiagnostico->grupo_mortalidad}}</p>
-        <form action="{{ route('cie10.activar', $codigoDiagnostico->id) }}" method="POST">
+        <form action="{{ route('diagnosticos.activar', $codigoDiagnostico->id) }}" method="POST">
             @csrf
             @method('patch')
             <button type="submit" class="mt-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary">

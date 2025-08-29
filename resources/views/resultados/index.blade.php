@@ -4,6 +4,7 @@
     </x-slot>
 <x-slot name="header">
     <x-canva>
+        
 
         <div class="py-3">
             <label class="flex flex-col min-w-40 h-12 w-full">

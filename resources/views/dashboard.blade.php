@@ -1,4 +1,7 @@
 <x-app-layout>
+    <div id="react-test"></div>
+    @vite(['resources/js/react/test.jsx'])
+
 
    <section class="canva mx-auto sm:p-2 md:p-4 lg:p-8">
 
