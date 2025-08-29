@@ -24,7 +24,7 @@ return new class extends Migration
             $table->date('fecha_nacimiento')->nullable();
             $table->enum('sexo',['F','M'])->nullable();
             $table->string('pais_origen', 3)
-                ->nullable()
+                ->default('170')
                 ->constrained('paises', 'codigo_iso')
                 ->nullOnDelete()
                 ->cascadeOnUpdate();
