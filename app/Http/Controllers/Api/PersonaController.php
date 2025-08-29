@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Persona;
 use App\Services\GuardarPersona;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NombreParser;
+use Carbon\Carbon;
 
 class PersonaController extends Controller
 {
@@ -53,9 +55,38 @@ class PersonaController extends Controller
 
     public function store(StorePersonaRequest $request)
     {
+
+
+
         $validated = $request->validated();
-        dd($validated);
-        $persona = GuardarPersona::guardar( $validated );
+        // Dividir nombres y apellidos en primer y segundo nombre
+        $parsed = NombreParser::parsearPersona(
+            $validated['nombres'],
+            $validated['apellidos']
+        );
+
+        // Asignar booleano a nacional
+        $nacional = $request['pais'] === 170 || $request['pais'] === null;
+
+        // Crear la persona
+       $persona =  Persona::create([
+            'primer_nombre' => $parsed['primer_nombre'],
+            'segundo_nombre' => $parsed['segundo_nombre'],
+            'primer_apellido' => $parsed['primer_apellido'],
+            'segundo_apellido' => $parsed['segundo_apellido'],
+            'tipo_documento_id' =>  \App\Models\TipoDocumento::idPorCodigoRips($validated['tipo_documento']),
+            'numero_documento' => $validated['numero_documento'],
+            'fecha_nacimiento' => Carbon::parse($validated['fecha_nacimiento']),
+            'sexo' => $request['sexo'],
+            'nacional' => $nacional,
+        ]);
+
+        if (!$persona) {
+            return response()->json([
+                'message' => 'Error al crear la persona',
+                'data' => null
+            ], 500);
+        }
         return response()->json([
             'message' => 'Persona creada con éxito',
             'data' => $persona

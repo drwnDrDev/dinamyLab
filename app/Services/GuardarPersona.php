@@ -41,7 +41,7 @@ class GuardarPersona
         ]);
 
         // Guardar contacto si se proporcionó
-        GuardarContacto::guardarContacto($datos, $persona);
+       // GuardarContacto::guardarContacto($datos, $persona);
 
         return $persona;
     }
