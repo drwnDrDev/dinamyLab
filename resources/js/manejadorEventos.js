@@ -195,11 +195,25 @@ export const handlePerfilChange = (e) => {
 
     const paisSegunTipoDocumento = (tipoDocumento,inputPais) => {
         const documentosNacionales = appState.tiposDocumento.filter(doc => doc.es_nacional);
-
         const nacional = documentosNacionales.some(doc => doc.cod_rips === tipoDocumento);
         if (nacional) {
-            inputPais.value = 'COL';
+            inputPais.value = '170';
             return;
         }
+
+    }
+
+    const actualizarPaisResidencia = (form) => {
+        const resideColombia = form['reside_colombia'].value;
+        const pais = form['pais_residencia'];
+        if (resideColombia == 'si') {
+            pais.value = '170';
+        }
+            pais.addEventListener('focus', () => displayPaieses(pais));
+
+    }
+    const paisResidencia= (form) => {
+        const resideColombia = form['reside_colombia'];
+        resideColombia.addEventListener('change', () => actualizarPaisResidencia(form));
 
     }

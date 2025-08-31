@@ -10,8 +10,7 @@ const init = async () => {
     appState.todosLosExamenes = await fetchExamenes();
     appState.examenesVisibles = [...appState.todosLosExamenes]; // Clonar para la vista inicial
     renderExamenes(appState.examenesVisibles);
-
-    dom.soloDiezYSeisMil?.addEventListener('change', handleFiltroExamenes);
+    // Asignar manejadores de eventos
     dom.busquedaExamenInput?.addEventListener('input', handleFiltroExamenes);
 
     dom.crearPaciente?.addEventListener('submit', handleGuardarPersona);
@@ -21,7 +20,7 @@ const init = async () => {
     document.querySelectorAll('input[name="numero_documento"]').forEach(input => {
         input.addEventListener('blur', handleBuscarDocumento);
     });
-    document.querySelectorAll('select[name="paisResidencia"]').forEach(currenFormPais => {
+    document.querySelectorAll('select[name="pais_residencia"]').forEach(currenFormPais => {
         currenFormPais.addEventListener('focus',() => displayPaieses(currenFormPais));
 
     });
@@ -29,7 +28,6 @@ const init = async () => {
         currenFormPais.addEventListener('focus',() => displayPaieses(currenFormPais));
 
     });
-
 
     document.querySelectorAll('input[name="eps"]').forEach(currenFormEps  => {
         currenFormEps.addEventListener('focus', () =>   {

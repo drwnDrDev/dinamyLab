@@ -109,22 +109,16 @@
             </div>
         @endif
         </div>
-        <div class="row-inputs pt-2 w-full md:grid md:grid-cols-4 gap-2" x-data="{ openCiudad: true }">
-            <div class="w-full md:col-span-4 pb-2 flex items-center">
-                <div class="w-full pb-2 flex flex-wrap gap-2 items-center">
-                    <p>¿Reside en Colombia?</p>
-                    <x-input-label for="reside_colombia_actualmente" class="font-bold text-2xl">SÍ</x-input-label>
-                    <input type="radio" id="reside_colombia_actualmente" name="reside_colombia" @change="openCiudad = $event.target.checked" checked>
-                    <x-input-label for="visitante_extranjero" class="font-bold text-2xl">NO</x-input-label>
-                    <input type="radio" id="visitante_extranjero" name="reside_colombia" @change="openCiudad = !$event.target.checked">
-                </div>
+        <div class="row-inputs pt-2 w-full md:grid md:grid-cols-4 gap-2">
+            <div class="w-full h-12" >
+                <x-input-label for="pais_residencia">País de residencia </x-input-label>
+                <x-select-input id="pais_residencia" name="pais_residencia"  :options="['170'=>'Colombia']" />
             </div>
 
-            <div class="w-full h-12 pb-2 relative " x-show="openCiudad">
+            <div class="w-full h-12 pb-2 relative ">
                 <x-input-label for="municipioBusqueda">Municipio</x-input-label>
                 <x-text-input type="text" id="municipioBusqueda" name="municipioBusqueda" placeholder="Buscar municipio..." class="form-input w-full mb-2"/>
                 <div class="municipio-busqueda absolute z-10 bg-white border border-borders w-full max-h-60 overflow-y-auto hidden">
-
                 </div>
                 <select id="municipio" name="municipio" class="text-sm h-9 w-full p-1 border-borders focus:border-primary focus:ring-primary rounded-md uppercase hidden">
                     <option value="11001">Bogotá</option>
@@ -132,12 +126,11 @@
 
             </div>
 
-
-            <div class="w-full h-12 pb-2 md:col-span-2" x-show="openCiudad">
+            <div class="w-full h-12 pb-2 md:col-span-2">
                 <x-input-label for="direccion">Dirección</x-input-label>
                 <x-text-input type="text" id="direccion" name="direccion" class="form-input max-w-80 mb-2" />
             </div>
-            <div class="w-full h-12 pb-2 pl-1" x-show="openCiudad">
+            <div class="w-full h-12 pb-2 pl-1">
                 <x-input-label for="zona" class="w-full text-center ml-1 font-bold text-2xl">Zona</x-input-label>
                 <div class="flex items-center justify-around gap-2 pt-2">
                     <div class="flex items-center gap-1">
@@ -150,12 +143,6 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full h-12" x-show="!openCiudad">
-                <x-input-label for="pais_residencia">País de residencia </x-input-label>
-                <x-select-input id="pais_residencia" name="pais_residencia"  :options="['null'=>'Elija un país']" />
-            </div>
-
-
 
         </div>
 

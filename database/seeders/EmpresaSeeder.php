@@ -36,12 +36,9 @@ class EmpresaSeeder extends Seeder
              'pais_origen'=>'840'
         ]);
 
-        $extranjero->procedencia()->create([
-            'pais_codigo_iso'=>'840',
-        ]);
+
         $extranjero->direccion()->create([
-            'municipio_id'=>'11001',
-            'direccion'=>'Calle 80 I sur # 81 J 36'
+            "pais_id" => "840"
         ]);
         $persona->direccion()->create([
             'municipio_id'=>'11001',

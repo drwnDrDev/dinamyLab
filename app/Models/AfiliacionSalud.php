@@ -23,5 +23,6 @@ class AfiliacionSalud extends Model
     }
 
     protected $table = 'afiliaciones_salud';
+    public $timestamps = false;
 
 }

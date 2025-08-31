@@ -33,10 +33,10 @@ export const dom = {
  paciente: document.getElementById(DATA_KEYS.PACIENTE_ID),
  acompaniante: document.getElementById(DATA_KEYS.ACOMPANIANTE_ID),
  handleShowAcompaniante: document.getElementById('mostrarAcompaniante'),
- soloDiezYSeisMil: document.getElementById('16000'),
  busquedaExamenInput: document.getElementById(DATA_KEYS.BUSQUEDA_EXAMEN),
  examenesContainer: document.getElementById('examenesContainer'),
  totalExamenesSpan: document.getElementById('totalExamenes'),
  listaEps: document.getElementById('lista_eps'),
+ residenteColombiano: document.getElementById('residenteColombiano')
 }
 
