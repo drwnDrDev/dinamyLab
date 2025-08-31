@@ -241,13 +241,16 @@ class PersonaController extends Controller
                 "numero_documento" => $persona->numero_documento,
                 "fecha_nacimiento" => $persona->fecha_nacimiento? $persona->fecha_nacimiento->format('Y-m-d') : null,
                 "sexo" => $persona->sexo,
-                "nacional" => $persona->nacional,
+                "pais_origen" => $persona->pais_origen ?? 170,
                 "telefono" => $persona->telefonos?->first()->numero ?? null,
                 "direccion" => $persona->direccion?->direccion ?? null,
+                "codigo_postal" => $persona->direccion?->codigo_postal ?? null,
+                "pais_residencia" => $persona->direccion?->pais_id ?? '170',
                 "correo" => $persona->email?->email ?? null,
-                "pais" => $persona->procedencia?->pais_codigo_iso ?? 'COL',
-                "municipio" => $persona->direccion?->municipio_id ?? 11007,
+                "pais_origen" => $persona->pais_origen ?? null,
+                "municipio" => $persona->direccion?->municipio_id ?? 11001,
                 'eps' => $persona->afiliacionSalud?->eps ?? null,
+                'tipo_afiliacion' => $persona->afiliacionSalud?->tipo_afiliacion ?? null,
 
             ]
         ]);

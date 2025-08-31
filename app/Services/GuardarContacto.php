@@ -29,8 +29,8 @@ class GuardarContacto
             ],
             [
                 'direccion' => $datos['direccion'] ?? null,
-                'municipio_id' =>  $datos['municipio']?? '11001',
-                'pais_id' => 170,
+                'municipio_id' => $datos['municipio']?? '11001',
+                'pais_id' => $datos['pais_residencia'] ?? 170,
                 'codigo_postal' => $datos['codigo_postal'] ?? null,
                 'rural' => $datos['zona']  ? $datos['zona'] === '02' : false,
             ]);
@@ -48,6 +48,12 @@ class GuardarContacto
                 $modelo->emails()->firstOrCreate(['email' => $datos['correo']]);
             }
 
+
+        }
+        if(isset($datos['eps'])|| $datos['tipo_afiliacion']) {
+            $modelo->afiliacionSalud()->updateOrCreate(['eps' => $datos['eps']], [
+                'tipo_afiliacion' => $datos['tipo_afiliacion'] ?? 12
+            ]);
         }
 
         return true;
