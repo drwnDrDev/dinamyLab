@@ -74,8 +74,7 @@ export const  guardarPersona =  (url, formData) =>{
                     displayValidationErrors(document.querySelector('form'), response.data.errors);
                     return null;
                 }
-
-                return response;
+                return response.data.data;
             })
             .catch(error => {
                 console.error("Error al guardar persona:", error);

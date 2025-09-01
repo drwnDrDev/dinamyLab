@@ -37,6 +37,7 @@ export const dom = {
  examenesContainer: document.getElementById('examenesContainer'),
  totalExamenesSpan: document.getElementById('totalExamenes'),
  listaEps: document.getElementById('lista_eps'),
- residenteColombiano: document.getElementById('residenteColombiano')
+ residenteColombiano: document.getElementById('residenteColombiano'),
+ guardarOtro: document.getElementById('guardarOtro')
 }
 

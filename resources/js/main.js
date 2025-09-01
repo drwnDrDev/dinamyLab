@@ -2,7 +2,7 @@
 import { appState, dom } from './variables.js';
 import { fetchExamenes } from './api.js';
 import { renderExamenes } from './crearExamenes.js';
-import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona,validacionTiposDocumento,handleBuscarMunicipio } from './manejadorEventos.js';
+import { handleFiltroExamenes, handleBuscarDocumento, handleUpdateExamenCantidad, handleGuardarPersona,notificarGuardado, validacionTiposDocumento,handleBuscarMunicipio } from './manejadorEventos.js';
 import { displayEps, displayPaieses,displayDocumentos } from './formularioPersona.js';
 
 
@@ -13,8 +13,22 @@ const init = async () => {
     // Asignar manejadores de eventos
     dom.busquedaExamenInput?.addEventListener('input', handleFiltroExamenes);
 
-    dom.crearPaciente?.addEventListener('submit', handleGuardarPersona);
-    dom.crearAcompaniante?.addEventListener('submit', handleGuardarPersona);
+    dom.crearPaciente?.addEventListener('submit',async (e)=> {
+      e.preventDefault();
+      const persona = await handleGuardarPersona(e);
+      console.log("Paciente guardado:");
+      console.log({persona});
+      console.log(persona);
+      notificarGuardado(persona,true,e.target);
+    });
+    dom.crearAcompaniante?.addEventListener('submit',async(e)=> {
+      e.preventDefault();
+      const persona = await handleGuardarPersona(e);
+      console.log("Acompañante guardado:");
+      console.log({persona});
+      console.log(persona);
+      notificarGuardado(persona,false,e.target);
+    });
 
     // Usar querySelectorAll para asignar el mismo evento a múltiples elementos
     document.querySelectorAll('input[name="numero_documento"]').forEach(input => {
