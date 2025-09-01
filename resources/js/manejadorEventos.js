@@ -57,12 +57,9 @@ export const handleBuscarMunicipio = (currentBusquedaFormMunicipio) => {
    };
 
   export const handleGuardarPersona = async (e) => {
-        e.preventDefault();
+
         const form = e.target;
-
         const formData = new FormData(form);
-
-        console.log(...formData);
         const isPaciente = formData.get('perfil') === DATA_KEYS.PACIENTE;
         const esActualizacion = form['tipoGuardado'].value === DATA_KEYS.ACTUALIZAR_USUARIO;
         let url = '/api/personas';
@@ -73,13 +70,17 @@ export const handleBuscarMunicipio = (currentBusquedaFormMunicipio) => {
         }
 
         const persona = await guardarPersona(url,formData);
-        console.log(persona);
-        if (!persona) return;
+        
+        return persona;
+    };
 
+
+export const notificarGuardado = (persona,isPaciente=true,form) => {
+      if (!persona) return;
       if(isPaciente) {
-            dom.paciente.value = persona.data.data.id;
+            dom.paciente.value = persona.id;
       }else{
-            dom.acompaniante.value = persona.data.data.id;
+            dom.acompaniante.value = persona.id;
         }
     form.classList.add('bg-green-100', 'dark:bg-green-800', 'border-green-400', 'dark:border-green-600', 'text-green-700', 'dark:text-green-300', 'rounded-lg', 'p-4', 'mb-4');
 
@@ -90,8 +91,6 @@ export const handleBuscarMunicipio = (currentBusquedaFormMunicipio) => {
             }
         });
       }
-
-
 
     export const handleUpdateExamenCantidad = (e) => {
         if (e.target.matches('input[type="number"]')) {

@@ -50,7 +50,7 @@ class GuardarContacto
 
 
         }
-        if(isset($datos['eps'])|| $datos['tipo_afiliacion']) {
+        if(isset($datos['eps'])) {
             $modelo->afiliacionSalud()->updateOrCreate(['eps' => $datos['eps']], [
                 'tipo_afiliacion' => $datos['tipo_afiliacion'] ?? 12
             ]);
