@@ -1,4 +1,4 @@
-Tipo doc;num Documento Identificacion;fecha Nacimiento;Sexo;fechaI         nicio    Atencion;hora     de atencion;Cod cups Consulta;cod         Diagnostico Principal              cie 10;Cod                  cups procedimiento;Valor    Servicio;;
+Tipo doc;num Documento Identificacion;fecha Nacimiento;Sexo;fechaInicioAtencion;hora de atencion;Cod cups Consulta;cod         Diagnostico Principal              cie 10;Cod                  cups procedimiento;Valor    Servicio;;
 CC;20341980;1943-12-31;F;2025-05-02;11:00;890203;K028;230102;70000;;
 CC;5607343;1968-02-25;M;2025-05-02;01:00;890203;K022;232102;70000;;
 CC;24435665;1970-07-21;F;2025-05-03;02:00;890203;K022;232102;70000;;

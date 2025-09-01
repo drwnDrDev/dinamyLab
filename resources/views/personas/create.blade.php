@@ -19,7 +19,12 @@
             </ul>
 
         @endif
-    <x-formPersona :accion="route('personas.store')" perfil="Paciente"/>
+    <x-formPersona perfil="Paciente"/>
+    <div class="mt-4">
+        <label class="inline-flex items-center">
+            <input id="guardarOtro" type="checkbox" class="form-checkbox text-indigo-600">
+            <span class="ml-2">Guardar y crear otro</span>
+        </label>
 
     </x-canva>
  @vite('resources/js/crearPersona.js')

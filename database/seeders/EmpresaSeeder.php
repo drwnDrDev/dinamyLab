@@ -20,11 +20,11 @@ class EmpresaSeeder extends Seeder
             'segundo_nombre'=>'Patricia',
             'primer_apellido'=>'Buitrago',
             'segundo_apellido'=>'Hernandez',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
+            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'51934571',
             'fecha_nacimiento'=>'1969-01-11',
             'sexo'=>'F',
-            'nacional'=>true,
+            'pais_origen'=>'170'
         ]);
         $extranjero = Persona::create([
             'primer_nombre'=>'Ronaldo',
@@ -33,15 +33,12 @@ class EmpresaSeeder extends Seeder
             'numero_documento'=>'123466789',
             'fecha_nacimiento'=>'1929-01-11',
             'sexo'=>'M',
-            'nacional'=>false,
+             'pais_origen'=>'840'
         ]);
 
-        $extranjero->procedencia()->create([
-            'pais_codigo_iso'=>'840',
-        ]);
+
         $extranjero->direccion()->create([
-            'municipio_id'=>'11001',
-            'direccion'=>'Calle 80 I sur # 81 J 36'
+            "pais_id" => "840"
         ]);
         $persona->direccion()->create([
             'municipio_id'=>'11001',
@@ -142,7 +139,7 @@ class EmpresaSeeder extends Seeder
             'numero_documento'=>'123456',
             'fecha_nacimiento'=>'1989-11-12',
             'sexo'=>'F',
-            'nacional'=>true,
+           'pais_origen'=>'170'
 
         ]);
         $agente =  Persona::create([
@@ -152,7 +149,7 @@ class EmpresaSeeder extends Seeder
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
             'sexo'=>'M',
-            'nacional'=>false,
+            'pais_origen'=>'840'
 
         ]);
 

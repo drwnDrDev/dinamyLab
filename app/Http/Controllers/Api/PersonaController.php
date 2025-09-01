@@ -7,13 +7,18 @@ use App\Http\Requests\StorePersonaRequest;
 use Illuminate\Http\Request;
 use App\Models\Persona;
 use App\Services\GuardarPersona;
-
+use Illuminate\Support\Facades\Auth;
+use App\Services\NombreParser;
+use Carbon\Carbon;
 
 class PersonaController extends Controller
 {
     public function index()
     {
-        $personas = Persona::all();
+
+
+        $personas = Persona::with(['tipo_documento', 'telefonos', 'direccion.municipio','direccion.pais_residencia', 'email', 'afiliacionSalud', 'contactoEmergencia', 'procedencia'])->get();
+
 
         if($personas->isEmpty()) {
             return response()->json([
@@ -21,9 +26,28 @@ class PersonaController extends Controller
                 'data' => []
             ], 404);
         }
+
        return response()->json([
             'message' => 'Lista de personas',
-            'data' =>  $personas
+            'data' => array_map(function ($persona) {
+                return [
+                    "id" => $persona['id'],
+                    "nombre" => implode(' ',[$persona['primer_nombre'],$persona['segundo_nombre']?? '']),
+                    "apellido" => implode(' ',[$persona['primer_apellido'],$persona['segundo_apellido']?? '']),
+                    "tipo_documento" => $persona['tipo_documento']['cod_rips'],
+                    "numero_documento" => $persona['numero_documento'],
+                    "fecha_nacimiento" => $persona['fecha_nacimiento']? Carbon::parse($persona['fecha_nacimiento'])->format('Y-m-d') : null,
+                    "sexo" => $persona['sexo'],
+                    "procedencia" => $persona['procedencia']?->pais->nombre ?? 'Colombia',
+                    "telefono" => $persona['telefonos']? $persona['telefonos'][0]['numero'] : null,
+                    "direccion" => $persona['direccion']?->direccion ?? null,
+                    "municipio" => $persona['direccion']?->municipio_id ?? 11001,
+                    "pais_residencia" => $persona['procedencia']?->pais_residencia ?? 'Colombia',
+                    "correo" => $persona['email']?->email ?? null,
+                    'eps' => $persona['afiliacionSalud']?->eps ?? null,
+
+                ];
+            }, $personas->toArray())
 
         ]);
     }
@@ -49,8 +73,14 @@ class PersonaController extends Controller
     public function store(StorePersonaRequest $request)
     {
 
-
-        $persona = GuardarPersona::guardar($request);
+        $validated = $request->validated();
+        $persona = GuardarPersona::guardar($request->all());
+        if (!$persona) {
+            return response()->json([
+                'message' => 'Error al crear la persona',
+                'data' => null
+            ], 500);
+        }
         return response()->json([
             'message' => 'Persona creada con éxito',
             'data' => $persona
@@ -211,13 +241,16 @@ class PersonaController extends Controller
                 "numero_documento" => $persona->numero_documento,
                 "fecha_nacimiento" => $persona->fecha_nacimiento? $persona->fecha_nacimiento->format('Y-m-d') : null,
                 "sexo" => $persona->sexo,
-                "nacional" => $persona->nacional,
+                "pais_origen" => $persona->pais_origen ?? 170,
                 "telefono" => $persona->telefonos?->first()->numero ?? null,
                 "direccion" => $persona->direccion?->direccion ?? null,
+                "codigo_postal" => $persona->direccion?->codigo_postal ?? null,
+                "pais_residencia" => $persona->direccion?->pais_id ?? '170',
                 "correo" => $persona->email?->email ?? null,
-                "pais" => $persona->procedencia?->pais_codigo_iso ?? 'COL',
-                "municipio" => $persona->direccion?->municipio_id ?? 11007,
+                "pais_origen" => $persona->pais_origen ?? null,
+                "municipio" => $persona->direccion?->municipio_id ?? 11001,
                 'eps' => $persona->afiliacionSalud?->eps ?? null,
+                'tipo_afiliacion' => $persona->afiliacionSalud?->tipo_afiliacion ?? null,
 
             ]
         ]);

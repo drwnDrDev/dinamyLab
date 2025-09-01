@@ -15,6 +15,7 @@ class GuardarConvenio
 {
     public static function guardarConvenio(array $datos): ?int
     {
+
         if (
             !$datos['razon_social'] ||
             !$datos['numero_documento'] ||
@@ -35,9 +36,6 @@ class GuardarConvenio
             Log::warning('Faltan datos obligatorios para el convenio');
             return null;
         }
-
-
-        GuardarPersona::guardarContacto($datos, $convenio);
 
         if ($convenio->save()) {
             Log::info('Convenio guardado exitosamente');

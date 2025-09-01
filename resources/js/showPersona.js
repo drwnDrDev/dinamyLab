@@ -1,9 +1,4 @@
 
-
-const iniciarEdicion = async () => {
-editarButton.addEventListener('click', handleEditar);
-
-
 const form = document.getElementById('direccion-form');
 const personaId = form?.dataset.personaId;
 const editarButton = document.getElementById('editar-button');
@@ -17,6 +12,9 @@ const handleEditar = () => {
     editarButton.innerText = label;
 }
 
+const iniciarEdicion = async () => {
+
+ editarButton.addEventListener('click', handleEditar);
 
 const direccionForm = document.getElementById('direccion-form');
 const municipioInput = direccionForm?.querySelector('input[name="municipio"]');
