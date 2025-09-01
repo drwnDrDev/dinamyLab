@@ -48,7 +48,8 @@ class StorePersonaRequest extends FormRequest
                     $fail('La fecha de nacimiento no puede ser anterior al 1 de enero de 1900.');
                 }
             }],
-
+            'sexo' => ['nullable', 'in:F,M'],
+            'pais' => ['nullable', 'exists:paises,codigo_iso'],
             'perfil' => ['required',
                 function ($attribute, $value, $fail) {
                     if ($value === 'Paciente'){
@@ -63,9 +64,26 @@ class StorePersonaRequest extends FormRequest
 
             ],
             'telefono' => ['nullable', 'string', 'size:10'],
-            'email' => ['nullable', 'string', 'email', 'max:255'],
+            'correo' => ['nullable', 'string', 'email', 'max:255'],
             'direccion' => ['nullable', 'string', 'max:255'],
-            'municipio' => ['nullable', 'string', 'max:255'],
+            'municipio' => ['nullable', 'string', 'max:5','exists:municipios,id',
+                function ($attribute, $value, $fail) {
+                    if ($this->input('reside_colombia') === 'Sí' && !empty($this->input('direccion')) && empty($value)) {
+                        $fail('El municipio es obligatorio si se proporciona una dirección y la persona reside en Colombia.');
+                    }
+                }
+            ],
+            'pais_residencia' => ['nullable', 'exists:paises,codigo_iso',
+                function ($attribute, $value, $fail) {
+                    if ($this->input('reside_colombia') === 'No' && empty($value)) {
+                        $fail('El país de residencia es obligatorio si la persona no reside en Colombia.');
+                    }
+                }
+            ],
+            'codigo_postal' => ['nullable', 'string', 'max:10'],
+            'zona' => ['nullable', 'in:01,02'],
+            'eps' => ['nullable', 'string', 'max:255'],
+            'tipo_afiliacion' => ['nullable', 'string', 'exists:tipos_afiliaciones,codigo'],
         ];
 
     }

@@ -31,11 +31,7 @@
         <section class="section_examenes p-4" >
 
             <h2 class="font-bold mb-4 text-xl text-text">Exámenes</h2>
-            <div>
 
-                <x-input-label for="16000">16000</x-input-label>
-                 <input type="checkbox" name="16000" id="16000">
-                </div>
             <div>
                 <x-input-label for="busquedaExamen">Buscar por nombre</x-input-label>
                 <input type="text" id="busquedaExamen" placeholder="Buscar examen..." class="form-input w-full mb-2">
@@ -78,7 +74,7 @@
             {{ session('error') }}
         </div>
     @endif
-    
+
     </x-canva>
     @vite('resources/js/main.js')
 </x-app-layout>

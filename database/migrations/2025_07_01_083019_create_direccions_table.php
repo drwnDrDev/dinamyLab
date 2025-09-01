@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('direccion')->nullable();
             $table->morphs('direccionable'); // Polymorphic relation
             $table->foreignId('municipio_id')
+                ->nullable()
                 ->constrained('municipios')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
@@ -26,6 +27,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
             $table->string('codigo_postal', 10)->nullable();
             $table->boolean('rural')->default(false);
+          
             $table->timestamps();
         });
     }

@@ -18,15 +18,14 @@ class Persona extends Model
         'numero_documento',
         'fecha_nacimiento',
         'sexo',
-        'nacional',
+        'pais_origen',
         'telefono',
-
     ];
     protected function casts(): array
     {
         return [
             'fecha_nacimiento' => 'date',
-            'nacional' => 'boolean',
+            'extranjero' => 'boolean',
             'sexo' => 'string',
         ];
     }
@@ -62,8 +61,9 @@ class Persona extends Model
     }
     public function procedencia()
     {
-         return $this->morphOne(PaisProcedencia::class, 'procedencia');
+        return $this->pais_origen == '170' ? 'nacional' : 'extranjero';
     }
+
     public function facturas()
     {
         return $this->morphMany(Factura::class, 'pagador');

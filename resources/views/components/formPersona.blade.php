@@ -1,33 +1,18 @@
 @props([
 'perfil' => 'Paciente', // Valores posibles: paciente, acompañante, pagador
-'accion' => null,
+
 ])
 
 
-<form id="crear{{$perfil}}"
-class="max-w-screen-md mx-auto"
+<form id="crear{{$perfil}}" class="max-w-screen-md mx-auto" method="POST">
 
-            action="{{ $accion }}"
 
-method="POST">
-
-@if ($accion != null)
     @csrf
-@endif
+
 
     <div class="w-full min-w-80 p-4 my-4">
       <div class="flex gap-4">
     <h2 class="font-bold mb-4 text-xl text-titles">Datos {{$perfil}} </h2>
-    <div class="flex justify-end" x-data="{ openEspecial: false }" >
-    <div class="flex justify-around" x-show="!openEspecial">
-      <x-input-label for="numero_orden">Poblacion Especial</x-input-label>
-      <input type="checkbox" id="poblacionEspecial" name="poblacionEspecial" @change="openEspecial = $event.target.checked">
-    </div>
-    <div class="w-full mb-4" x-show="openEspecial">
-        <x-input-label for="tipo_poblacion">Tipo de Población Especial</x-input-label>
-        <x-select-input id="tipo_poblacion" name="tipo_poblacion" :options="['Ninguno' => 'Ninguno', 'Discapacidad' => 'Discapacidad', 'Adulto Mayor' => 'Adulto Mayor']" />
-    </div>
-    </div>
     </div>
         <input type="hidden" id="perfil" name="perfil" value="{{ $perfil }}">
         <div class="row-inputs w-full md:grid  md:grid-cols-3 justify-around gap-2">
@@ -72,6 +57,7 @@ method="POST">
                 <x-input-label for="sexo_masculino" class="font-bold text-2xl">M</x-input-label>
                 <input type="radio" id="sexo_masculino" name="sexo" value="M">
             </div>
+
         </div>
      @endif
         <hr class="m-0 border-1 border-borders">
@@ -97,7 +83,7 @@ method="POST">
                 <x-input-label for="tipo_afiliacion">Tipo de afiliación</x-input-label>
 
 
-                <x-select-input id="parentesco" name="parentesco" :options="[
+                <x-select-input id="tipo_afiliacion" name="tipo_afiliacion" :options="[
                     '12' => 'Particular',
                     '01' => 'Contributivo cotizante',
                     '02' => 'Contributivo beneficiario',
@@ -121,48 +107,47 @@ method="POST">
                 <x-input-label for="parentesco">Parentesco</x-input-label>
                 <x-text-input type="text" id="parentesco" name="parentesco" />
             </div>
-    @endif
+        @endif
         </div>
-        <div class="row-inputs pt-2 w-full md:grid md:grid-cols-3 gap-2" x-data="{ openCiudad: true }">
-            <div class="w-full md:col-span-3 pb-2 flex items-center">
-                <div class="w-full pb-2 flex gap-2 items-center">
-                    <span>¿Reside en Colombia?</span>
-                    <x-input-label for="reside_colombia_actualmente" class="font-bold text-2xl">SÍ</x-input-label>
-                    <input type="radio" id="reside_colombia_actualmente" name="reside_colombia" @change="openCiudad = $event.target.checked" checked>
-                    <x-input-label for="visitante_extranjero" class="font-bold text-2xl">NO</x-input-label>
-                    <input type="radio" id="visitante_extranjero" name="reside_colombia" @change="openCiudad = !$event.target.checked">
-                </div>
+        <div class="row-inputs pt-2 w-full md:grid md:grid-cols-4 gap-2">
+            <div class="w-full h-12" >
+                <x-input-label for="pais_residencia">País de residencia </x-input-label>
+                <x-select-input id="pais_residencia" name="pais_residencia"  :options="['170'=>'Colombia']" />
             </div>
 
-            <div class="w-full h-12 pb-2 relative " x-show="openCiudad">
+            <div class="w-full h-12 pb-2 relative ">
                 <x-input-label for="municipioBusqueda">Municipio</x-input-label>
                 <x-text-input type="text" id="municipioBusqueda" name="municipioBusqueda" placeholder="Buscar municipio..." class="form-input w-full mb-2"/>
                 <div class="municipio-busqueda absolute z-10 bg-white border border-borders w-full max-h-60 overflow-y-auto hidden">
-                    <!-- Resultados de búsqueda de municipios -->
                 </div>
                 <select id="municipio" name="municipio" class="text-sm h-9 w-full p-1 border-borders focus:border-primary focus:ring-primary rounded-md uppercase hidden">
-                    <option value="11007">Bosa</option>
-                    <!-- Opciones de ciudades se llenarán dinámicamente -->
+                    <option value="11001">Bogotá</option>
                 </select>
+
             </div>
 
-
-            <div class="w-full h-12 pb-2 md:col-span-2" x-show="openCiudad">
+            <div class="w-full h-12 pb-2 md:col-span-2">
                 <x-input-label for="direccion">Dirección</x-input-label>
-                <x-text-input type="text" id="direccion" name="direccion" />
+                <x-text-input type="text" id="direccion" name="direccion" class="form-input max-w-80 mb-2" />
             </div>
-            <div class="w-full h-12" x-show="!openCiudad">
-                <x-input-label for="paisResidencia">País de residencia </x-input-label>
-                <x-select-input id="paisResidencia" name="paisResidencia"  :options="['218'=>'Ecuador']" />
+            <div class="w-full h-12 pb-2 pl-1">
+                <x-input-label for="zona" class="w-full text-center ml-1 font-bold text-2xl">Zona</x-input-label>
+                <div class="flex items-center justify-around gap-2 pt-2">
+                    <div class="flex items-center gap-1">
+                        <input type="radio" id="zona_urbana" name="zona" value="01" checked>
+                        <label for="zona_urbana">Urbana</label>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <input type="radio" id="zona_rural" name="zona" value="02">
+                        <label for="zona_rural">Rural</label>
+                    </div>
+                </div>
             </div>
-
-
 
         </div>
 
         <div class="row-inputs py-8 w-full flex justify-center gap-2">
             <x-primary-button id="tipoGuardado" name="tipoGuardado" class="w-40" >Guardar</x-primary-button>
-
         </div>
     </div>
 </form>

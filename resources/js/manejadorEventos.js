@@ -57,7 +57,7 @@ export const handleBuscarMunicipio = (currentBusquedaFormMunicipio) => {
    };
 
   export const handleGuardarPersona = async (e) => {
-        e.preventDefault();
+
         const form = e.target;
         const formData = new FormData(form);
         const isPaciente = formData.get('perfil') === DATA_KEYS.PACIENTE;
@@ -70,13 +70,17 @@ export const handleBuscarMunicipio = (currentBusquedaFormMunicipio) => {
         }
 
         const persona = await guardarPersona(url,formData);
-        console.log(persona);
-        if (!persona) return;
+        
+        return persona;
+    };
 
+
+export const notificarGuardado = (persona,isPaciente=true,form) => {
+      if (!persona) return;
       if(isPaciente) {
-            dom.paciente.value = persona.data.data.id;
+            dom.paciente.value = persona.id;
       }else{
-            dom.acompaniante.value = persona.data.data.id;
+            dom.acompaniante.value = persona.id;
         }
     form.classList.add('bg-green-100', 'dark:bg-green-800', 'border-green-400', 'dark:border-green-600', 'text-green-700', 'dark:text-green-300', 'rounded-lg', 'p-4', 'mb-4');
 
@@ -87,8 +91,6 @@ export const handleBuscarMunicipio = (currentBusquedaFormMunicipio) => {
             }
         });
       }
-
-
 
     export const handleUpdateExamenCantidad = (e) => {
         if (e.target.matches('input[type="number"]')) {
@@ -192,11 +194,25 @@ export const handlePerfilChange = (e) => {
 
     const paisSegunTipoDocumento = (tipoDocumento,inputPais) => {
         const documentosNacionales = appState.tiposDocumento.filter(doc => doc.es_nacional);
-
         const nacional = documentosNacionales.some(doc => doc.cod_rips === tipoDocumento);
         if (nacional) {
-            inputPais.value = 'COL';
+            inputPais.value = '170';
             return;
         }
+
+    }
+
+    const actualizarPaisResidencia = (form) => {
+        const resideColombia = form['reside_colombia'].value;
+        const pais = form['pais_residencia'];
+        if (resideColombia == 'si') {
+            pais.value = '170';
+        }
+            pais.addEventListener('focus', () => displayPaieses(pais));
+
+    }
+    const paisResidencia= (form) => {
+        const resideColombia = form['reside_colombia'];
+        resideColombia.addEventListener('change', () => actualizarPaisResidencia(form));
 
     }

@@ -9,6 +9,9 @@ class Direccion extends Model
     protected $fillable = [
         'direccion',
         'municipio_id',
+        'pais_id',
+        'codigo_postal',
+        'rural',
         'direccionable_id',
         'direccionable_type'
     ];
@@ -16,6 +19,10 @@ class Direccion extends Model
     public function municipio()
     {
         return $this->belongsTo(Municipio::class, 'municipio_id');
+    }
+    public function pais_residencia()
+    {
+        return $this->belongsTo(Pais::class, 'pais_id', 'codigo_iso');
     }
 
     /**
