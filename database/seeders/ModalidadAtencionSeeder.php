@@ -12,17 +12,20 @@ class ModalidadAtencionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear modalidades de atención
-        $modalidades = [
-            ['nombre' => 'Consulta Externa'],
-            ['nombre' => 'Urgencias'],
-            ['nombre' => 'Hospitalización'],
-            ['nombre' => 'Cirugía'],
-            ['nombre' => 'Terapia Física'],
-        ];
+        $lista ="01: Intramural; 02: Extramural unidad móvil 03: Extramural domiciliaria 04:
+Extramural jornada de salud; 06: Telemedicina interactiva; 07: Telemedicina
+no interactiva; 08: Telemedicina telexperticia; 09: Telemedicina
+telemonitoreo";
+        $modalidades = explode(";", $lista);
+
 
         foreach ($modalidades as $modalidad) {
-            \App\Models\ModalidadAtencion::create($modalidad);
+            \App\Models\ModalidadAtencion::create([
+                'codigo' => trim(explode(':', $modalidad)[0]),
+                'nombre' => trim(explode(':', $modalidad)[1]),
+                'nivel' => 1,
+                'activo' => true
+            ]);
         }
     }
 }

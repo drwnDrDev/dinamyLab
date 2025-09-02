@@ -14,10 +14,16 @@ return new class extends Migration
         Schema::create('examenes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('cup');
+            $table->string('cup',10);
+            $table->foreign('cup')
+                ->references('codigo')
+                ->on('codigo_cups')
+                ->onDelete('cascade');
             $table->text('descripcion')->nullable();
             $table->string('nombre_alternativo')->nullable();
             $table->decimal('valor', 10, 2);
+            $table->boolean('activo')->default(true);
+            $table->unsignedInteger('nivel')->default(1);
             $table->timestamps();
         });
     }

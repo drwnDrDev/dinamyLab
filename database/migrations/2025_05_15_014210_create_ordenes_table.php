@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('abono', 10, 2)->nullable();
             $table->decimal('total', 10, 2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
