@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('codigo_departamento');
             $table->string('municipio');
             $table->string('codigo_municipio');
-            $table->unsignedMediumInteger('nivel')->nullable();
+            $table->unsignedInteger('nivel')->default(0);
             $table->timestamps();
         });
     }

@@ -13,7 +13,6 @@ class Examen extends Model
         'valor',
         'desripcion',
         'nombre_alternativo'
-
     ];
 
 
@@ -32,6 +31,15 @@ class Examen extends Model
     public function parametros()
     {
         return $this->hasMany(Parametro::class);
+    }
+
+    public static function booted()
+    {
+        static::created(function ($examen) {
+            if ($examen->cup) {
+                \DB::table('codigo_cups')->where('codigo', $examen->cup)->update(['activo' => true]);
+            }
+        });
     }
 
 

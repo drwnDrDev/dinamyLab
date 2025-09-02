@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('sexo_aplicable',1)->default('A');
             $table->string('grupo_mortalidad')->nullable();
             $table->string('capitulo')->nullable();
-            $table->unsignedTinyInteger('nivel')->default(1);
+            $table->unsignedInteger('nivel')->default(1);
             $table->timestamps();
         });
     }

@@ -12,5 +12,7 @@ class CodigoCup extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
+    
+
 
 }

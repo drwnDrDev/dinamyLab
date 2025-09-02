@@ -12,6 +12,30 @@ class ViaIngresoSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $lista ="01;DEMANDA ESPONTANEA
+02;DERIVADO DE CONSULTA EXTERNA
+03;DERIVADO DE URGENCIAS
+04;DERIVADO DE HOSPITALZACION
+05;DERIVADO DE SALA DE CIRUGIA
+06;DERIVADO DE SALA DE PARTOS
+07;RECIEN NACIDO EN LA INSTITUCION
+08;RECIEN NACIDO EN OTRA INSTITUCION
+09;DERIVADO O REFERIDO DE HOSPITALIZACION DOMICILIARIA
+10;DERIVADO DE ATENCION DOMICILIARIA
+11;DERIVADO DE TELEMEDICINA
+12;DERIVADO DE JORNADA  DE SALUD
+13;REFERIDO DE OTRA INSTITUCION
+14;CONTRAREFERIDO DE OTRA INSTITUCION";
+
+        $lineas = explode("\n", $lista);
+        foreach ($lineas as $linea) {
+            [$codigo, $nombre] = explode(';', $linea);
+            \App\Models\ViaIngreso::create([
+                'codigo' => $codigo,
+                'nombre' => $nombre,
+                'nivel' => 1,
+                'activo' => true
+            ]);
+        }
     }
 }

@@ -13,14 +13,11 @@ return new class extends Migration
     {
 
 
-        Schema::create('modalidad_atencions', function (Blueprint $table) {
-            $table->id();
-            $table->string('codigo')->unique();
+        Schema::create('modalidades_atencion', function (Blueprint $table) {
+            $table->string('codigo')->primary();
             $table->string('nombre');
-            $table->string('descripcion')->nullable();
             $table->boolean('activo')->default(true);
             $table->unsignedTinyInteger('nivel')->default(1);
-            $table->timestamps();
         });
     }
 
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('modalidad_atencions');
+        Schema::dropIfExists('modalidades_atencion');
     }
 };
