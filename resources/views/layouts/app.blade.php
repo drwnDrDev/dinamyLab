@@ -13,12 +13,12 @@
     </head>
     <body class="font-sans antialiased bg-background">
         @include('layouts.header')
-        <div class="min-h-screen bg-background grid grid-rows-[auto_1fr] lg:grid-cols-[56px_1fr] h-screen">
+        <div class="bg-background ">
             
             @include('layouts.navigation')
  
             <!-- Page Content -->
-            <main class="m-auto mt-16 ml-14 p-6 w-[calc(100vw-56px)] md:h-[calc(100vh-64px)] overflow-y-auto h-full print:!p-0 print:!m-0 print:!bg-white">
+            <main class="m-auto mt-16 pl-14 w-full overflow-y-auto h-full print:!p-0 print:!m-0 print:!bg-white">
 
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     @if (session('success') || session('error'))

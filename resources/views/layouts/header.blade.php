@@ -1,4 +1,4 @@
-<header x-data="{ open: false }" class="block fixed border-b border-borders col-span-2 w-full print:hidden">
+<header x-data="{ open: false }" class="fixed top-0 left-0 border-b z-10 bg-background border-borders col-span-2 w-full print:hidden">
     <!-- Primary Navigation Menu -->
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
