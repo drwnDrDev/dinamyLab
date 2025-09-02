@@ -26,8 +26,7 @@ return new class extends Migration
                 ->nullOnDelete()
                 ->cascadeOnUpdate();
             $table->string('codigo_postal', 10)->nullable();
-            $table->boolean('rural')->default(false);
-          
+            $table->enum('zona',['01','02'])->default('02'); // 02 Urbana, 01 Rural
             $table->timestamps();
         });
     }
