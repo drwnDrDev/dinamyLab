@@ -12,6 +12,7 @@ use App\Models\ViaIngreso;
 use App\Models\ModalidadAtencion;
 use App\Models\TipoAfiliacion;
 use App\Models\CausaExterna;
+use App\Models\Finalidad;
 use App\Models\FinalidadConsulta;
 
 use Illuminate\Http\JsonResponse;
@@ -44,7 +45,7 @@ class FrontendDataController extends Controller
                                     ->orderBy('nivel','desc')->get();
             $modalidadAtencion = ModalidadAtencion::where('activo', true)
                                     ->orderBy('nivel','desc')->get();
-            $finaalidadConsulta = FinalidadConsulta::where('activo', true)
+            $finaalidad = Finalidad::where('activo', true)
                                     ->orderBy('nivel','desc')->get();
             $tiposDocumentoPaciente = TipoDocumento::where('es_paciente', true)
                                     ->orderBy('nivel','desc')->get();
@@ -84,7 +85,7 @@ class FrontendDataController extends Controller
                 'modalidad_atencion' => $modalidadAtencion,
                 'tipo_afiliacion' => $tipoAfiliacion,
                 'causa_externa' => $causaExterna,
-                'finalidad_consulta' => $finaalidadConsulta,
+                'finalidad_consulta' => $finaalidad,
             ];
 
         Cache::put('frontend_static_data', $data, now()->addHours(24)); // Cache por 24 horas
