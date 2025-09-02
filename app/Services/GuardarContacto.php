@@ -32,7 +32,7 @@ class GuardarContacto
                 'municipio_id' => $datos['municipio']?? '11001',
                 'pais_id' => $datos['pais_residencia'] ?? 170,
                 'codigo_postal' => $datos['codigo_postal'] ?? null,
-                'rural' => $datos['zona']  ? $datos['zona'] === '02' : false,
+                'zona' => $datos['zona'] ?? '02',
             ]);
         }
         if(isset($datos['pais_residencia'])) {

@@ -23,7 +23,7 @@ class EmpresaSeeder extends Seeder
             'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'51934571',
             'fecha_nacimiento'=>'1969-01-11',
-            'sexo'=>'F',
+            'sexo'=>'M',
             'pais_origen'=>'170'
         ]);
         $extranjero = Persona::create([
@@ -32,7 +32,7 @@ class EmpresaSeeder extends Seeder
            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123466789',
             'fecha_nacimiento'=>'1929-01-11',
-            'sexo'=>'M',
+            'sexo'=>'H',
              'pais_origen'=>'840'
         ]);
 
@@ -138,7 +138,7 @@ class EmpresaSeeder extends Seeder
            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456',
             'fecha_nacimiento'=>'1989-11-12',
-            'sexo'=>'F',
+            'sexo'=>'M',
            'pais_origen'=>'170'
 
         ]);
@@ -148,7 +148,7 @@ class EmpresaSeeder extends Seeder
            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
-            'sexo'=>'M',
+            'sexo'=>'I',
             'pais_origen'=>'840'
 
         ]);
