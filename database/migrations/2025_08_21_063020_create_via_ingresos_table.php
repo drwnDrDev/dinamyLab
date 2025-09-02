@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('via_ingresos', function (Blueprint $table) {
+        Schema::create('vias_ingreso', function (Blueprint $table) {
             $table->string('codigo')->nullable();
             $table->string('nombre')->nullable();
             $table->unsignedTinyInteger('nivel')->default(1);
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('via_ingresos');
+        Schema::dropIfExists('vias_ingreso');
     }
 };

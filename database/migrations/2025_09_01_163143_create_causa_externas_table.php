@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('causas_externas', function (Blueprint $table) {
             $table->string('codigo', 2)->primary();
-            $table->string('descripcion', 255);
+            $table->string('nombre', 255);
             $table->unsignedTinyInteger('nivel')->default(1);
             $table->boolean('activo')->default(true);
         });
