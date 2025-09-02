@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('orden_medica_id')->constrained('ordenes_medicas')->onDelete('cascade');
             $table->foreignId('examen_id')->constrained('examenes')->onDelete('cascade');
             $table->unsignedTinyInteger('cantidad')->default(1);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

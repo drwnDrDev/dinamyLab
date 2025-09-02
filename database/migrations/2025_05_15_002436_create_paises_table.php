@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('codigo_iso_2', 2)->unique();
             $table->string('nombre')->unique();
             $table->unsignedTinyInteger('nivel')->nullable();
+            
         });
     }
 

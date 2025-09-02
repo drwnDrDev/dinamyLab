@@ -79,6 +79,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             EPSsedeer::class,
             FinalidadSeeder::class,
+            CUPSeeder::class,
             ServicioHabilitadoSeeder::class,
             TipoDocumentoSeeder::class,
             MunicipioSeeder::class,
@@ -93,7 +94,7 @@ class DatabaseSeeder extends Seeder
             ColesterolHDLSeeder::class,
             ColesterolLDLSeeder::class,
             AcidoUricoSeeder::class,
-            CUPSeeder::class,
+
             MediosDePagoSeeder::class,
         ]);
 

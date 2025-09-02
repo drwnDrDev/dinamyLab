@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('nombre', 255);
             $table->string('grupo', 255)->nullable();
             $table->boolean('activo')->default(false);
-            $table->unsignedTinyInteger('nivel')->default(1);
+            $table->unsignedInteger('nivel')->default(1);
             $table->string('cod_sin_formato')->nullable();
             $table->timestamps();
+            $table->primary('codigo');
+            $table->softDeletes();
         });
     }
 

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('via_ingresos', function (Blueprint $table) {
-            $table->string('codigo')->nullable();
-            $table->string('nombre')->nullable();
+        Schema::create('causas_externas', function (Blueprint $table) {
+            $table->string('codigo', 2)->primary();
+            $table->string('descripcion', 255);
             $table->unsignedTinyInteger('nivel')->default(1);
-            $table->boolean('activo')->default(1);
+            $table->boolean('activo')->default(true);
         });
     }
 
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('via_ingresos');
+        Schema::dropIfExists('causas_externas');
     }
 };

@@ -37,6 +37,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('estado')->default('pendiente'); // Estado del procedimiento
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
