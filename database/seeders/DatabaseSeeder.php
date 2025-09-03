@@ -100,6 +100,7 @@ class DatabaseSeeder extends Seeder
             ViaIngresoSeeder::class,
             CausaExternaSeeder::class,
             MediosDePagoSeeder::class,
+            DefaultOptionSeeder::class,
         ]);
 
     }

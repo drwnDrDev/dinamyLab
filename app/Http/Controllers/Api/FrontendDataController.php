@@ -51,8 +51,7 @@ class FrontendDataController extends Controller
                                     ->orderBy('nivel','desc')->get();
             $tiposDocumentoPagador = TipoDocumento::where('es_pagador', true)
                                     ->orderBy('nivel','desc')->get();
-            $paises = Pais::select('nombre', 'codigo_iso','nivel')
-                                    ->orderBy('nivel', 'desc')->get();
+            $paises = Pais::select('nombre', 'codigo_iso','nivel')->orderBy('nivel', 'desc')->get();
             $municipios = Municipio::select('municipio', 'id','departamento')
                                     ->orderBy('nivel', 'desc')
                                     ->get()
