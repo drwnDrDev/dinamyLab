@@ -13,14 +13,12 @@
     </head>
     <body class="font-sans antialiased bg-background">
         @include('layouts.header')
-        <div class="bg-background ">
-            
+                    
             @include('layouts.navigation')
  
             <!-- Page Content -->
-            <main class="m-auto mt-16 pl-14 w-full overflow-y-auto h-full print:!p-0 print:!m-0 print:!bg-white">
+            <main class="m-auto mt-16 pl-14 w-full h-full min-h-[calc(100vh-65px)] overflow-y-auto bg-gradient-to-br from-background via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-900 dark:to-black print:!p-0 print:!m-0 print:!bg-white">
 
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     @if (session('success') || session('error'))
                         @if (session('success'))
                             <div class="text-xs bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 print:hidden " role="alert">
@@ -36,16 +34,13 @@
                     @endif
                  <!-- Page Heading -->
                     @isset($header)
-                        <header >
-                            <div class="mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                            <div class="max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
                                 {{ $header }}
                             </div>
-                        </header>
+                        
                     @endisset
 
-                </div>
                 {{ $slot }}
             </main>
-        </div>
     </body>
 </html>

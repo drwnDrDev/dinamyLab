@@ -1,6 +1,11 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-bold text-2xl text-text leading-tight">
+            Dashboard
+        </h2>
+    </x-slot>
 
-   <section class="canva mx-auto sm:p-2 md:p-4 lg:p-8">
+   <x-canva>
 
         <div class="flex gap-4 sm:flex-flow-wrapp">
             <div class="bg-violet-50 w-full p-4  rounded-xl shadow-md">
@@ -62,7 +67,7 @@
                 </div>
             </div>
 
-    </section>
+</x-canva>
 
     @vite('resources/js/obtenerStaticos.js')
 </x-app-layout>

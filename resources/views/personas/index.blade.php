@@ -1,7 +1,11 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-bold text-2xl text-text leading-tight">
+            {{ __('Pacientes') }}
+        </h2>
+    </x-slot>
     <x-canva>
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold">Pacientes recientes</h2>
+        <div class="flex justify-end items-center mb-4">
             <a href="{{ route('personas.create') }}" class="bg-primary text-white px-4 py-2 rounded hover:bg-titles">
                 Nuevo Paciente
             </a>
@@ -26,7 +30,7 @@
                             {{ $paciente->created_at->format('Y-m-d') }}
                         </td>
                         <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                            <a href="{{route('personas.show',$paciente)}}" class="text-titles">{{$paciente->numero_documento}}</a>
+                            <a href="{{route('personas.show',$paciente)}}" class="text-titles hover:text-primary">{{$paciente->numero_documento}}</a>
                         </td>
                         <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
                             {{ $paciente->nombreCompleto() }}
