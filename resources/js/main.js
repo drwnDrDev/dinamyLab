@@ -16,17 +16,13 @@ const init = async () => {
     dom.crearPaciente?.addEventListener('submit',async (e)=> {
       e.preventDefault();
       const persona = await handleGuardarPersona(e);
-      console.log("Paciente guardado:");
-      console.log({persona});
-      console.log(persona);
+
       notificarGuardado(persona,true,e.target);
     });
     dom.crearAcompaniante?.addEventListener('submit',async(e)=> {
       e.preventDefault();
       const persona = await handleGuardarPersona(e);
-      console.log("Acompañante guardado:");
-      console.log({persona});
-      console.log(persona);
+
       notificarGuardado(persona,false,e.target);
     });
 
