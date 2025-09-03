@@ -22,7 +22,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
             $table->string('numero_documento')->unique();
             $table->date('fecha_nacimiento')->nullable();
-            $table->enum('sexo',['H','M','I'])->nullable();
+            $table->string('sexo', 1)->nullable();
             $table->string('pais_origen', 3)
                 ->default('170')
                 ->constrained('paises', 'codigo_iso')
