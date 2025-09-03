@@ -1,4 +1,9 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-bold text-2xl text-text leading-tight">
+            {{ __('Nueva orden de laboratorio') }}
+        </h2>
+    </x-slot>
  <x-canva>
         <div class="section_paciente">
             <x-formPersona perfil="Paciente"  />
