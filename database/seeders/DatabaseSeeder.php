@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\CausaExterna;
 use App\Models\User;
+use App\Models\ViaIngreso;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
@@ -80,6 +82,7 @@ class DatabaseSeeder extends Seeder
             EPSsedeer::class,
             FinalidadSeeder::class,
             CUPSeeder::class,
+            ModalidadAtencionSeeder::class,
             ServicioHabilitadoSeeder::class,
             TipoDocumentoSeeder::class,
             MunicipioSeeder::class,
@@ -94,8 +97,10 @@ class DatabaseSeeder extends Seeder
             ColesterolHDLSeeder::class,
             ColesterolLDLSeeder::class,
             AcidoUricoSeeder::class,
-
+            ViaIngresoSeeder::class,
+            CausaExternaSeeder::class,
             MediosDePagoSeeder::class,
+            DefaultOptionSeeder::class,
         ]);
 
     }

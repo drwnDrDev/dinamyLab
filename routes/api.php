@@ -26,6 +26,10 @@ Route::put('cups/{id}', [CupsController::class, 'update']);
 Route::put('cups/{id}/activar', [CupsController::class, 'activar']);
 Route::delete('cups/{id}', [CupsController::class, 'destroy']);
 
+Route::get('servicios-habilitados', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'index']);
+Route::get('servicios-habilitados/{codigo}', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'show']);
+Route::get('servicios-habilitados/buscar', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'buscarPorNombre']);
+
 Route::get('cie10', [CodigoDiagnosticoController::class, 'index']);
 Route::get('cie10/{id}', [CodigoDiagnosticoController::class, 'show']);
 Route::post('cie10', [CodigoDiagnosticoController::class, 'store']);

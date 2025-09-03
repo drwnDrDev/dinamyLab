@@ -26,6 +26,7 @@ telemonitoreo";
                 'nivel' => 1,
                 'activo' => true
             ]);
+            $this->command->info("Modalidad de atención {$modalidad} creada.");
         }
     }
 }
