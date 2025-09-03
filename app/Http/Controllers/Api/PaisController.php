@@ -10,7 +10,7 @@ class PaisController extends Controller
 
     public function index()
     {
-        $paises = \App\Models\Pais::all();
+        $paises = \App\Models\Pais::select('nombre', 'codigo_iso','nivel')->orderBy('nivel', 'desc')->get();
         if($paises->isEmpty()) {
             return response()->json([
                 'message' => 'No hay paises registrados',

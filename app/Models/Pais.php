@@ -12,13 +12,13 @@ class Pais extends Model
         'nivel',
     ];
 
-    static public function incremetarNivelPais(string $codigo_iso): void
+    static public function incrementarNivelPais(string $codigo_iso): void
     {
         $pais = self::find($codigo_iso);
         if ($pais) {
             $pais->nivel = $pais->nivel + 1;
-            if($pais->nivel<255) {
-            $pais->save();
+            if($pais->nivel<65535){
+                $pais->save();
             } else {
                 Log::warning('Nivel máximo alcanzado para el país: ' . $pais->nombre);
             }

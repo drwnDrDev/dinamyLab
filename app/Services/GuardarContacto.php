@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\Municipio;
 use App\Models\RedSocial;
+use App\Models\Pais;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 
@@ -34,11 +35,13 @@ class GuardarContacto
                 'codigo_postal' => $datos['codigo_postal'] ?? null,
                 'zona' => $datos['zona'] ?? '02',
             ]);
+            Municipio::incrementarNivel($datos['municipio']);
         }
         if(isset($datos['pais_residencia'])) {
             $modelo->direccion()->updateOrCreate([
                 'pais_id' => $datos['pais_residencia']
             ]);
+            Pais::incrementarNivelPais($datos['pais_residencia']);
         }
 
         if($datos['correo']) {
@@ -55,6 +58,7 @@ class GuardarContacto
                 'tipo_afiliacion' => $datos['tipo_afiliacion'] ?? 12
             ]);
         }
+
 
         return true;
     }
