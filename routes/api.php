@@ -29,6 +29,28 @@ Route::delete('cups/{id}', [CupsController::class, 'destroy']);
 Route::get('servicios-habilitados', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'index']);
 Route::get('servicios-habilitados/{codigo}', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'show']);
 Route::get('servicios-habilitados/buscar', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'buscarPorNombre']);
+Route::patch('servicios-habilitados/{codigo}/activar', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'activar'])->name('servicios-habilitados.activar');
+
+Route::get('modalidades-atencion', [\App\Http\Controllers\Api\ModalidadAtencionController::class, 'index']);
+Route::get('modalidades-atencion/{codigo}', [\App\Http\Controllers\Api\ModalidadAtencionController::class, 'show']);
+Route::get('modalidades-atencion/buscar', [\App\Http\Controllers\Api\ModalidadAtencionController::class, 'buscarPorNombre']);
+Route::patch('modalidades-atencion/{codigo}/activar', [\App\Http\Controllers\Api\ModalidadAtencionController::class, 'activar'])->name('modalidades-atencion.activar');
+
+Route::get('finalidades', [\App\Http\Controllers\Api\FinalidadController::class, 'index']);
+Route::get('finalidades/{codigo}', [\App\Http\Controllers\Api\FinalidadController::class, 'show']);
+Route::get('finalidades/buscar', [\App\Http\Controllers\Api\FinalidadController::class, 'buscarPorNombre']);
+Route::patch('finalidades/{codigo}/activar', [\App\Http\Controllers\Api\FinalidadController::class, 'activar'])->name('finalidades.activar');
+
+Route::get('casusa-atencion', [\App\Http\Controllers\Api\CausaExternaController::class, 'index']);
+Route::get('casusa-atencion/{codigo}', [\App\Http\Controllers\Api\CausaExternaController::class, 'show']);
+Route::get('casusa-atencion/buscar', [\App\Http\Controllers\Api\CausaExternaController::class, 'buscarPorNombre']);
+Route::patch('casusa-atencion/{codigo}/activar', [\App\Http\Controllers\Api\CausaExternaController::class, 'activar'])->name('casusa-atencion.activar');
+
+Route::get('vias-ingreso', [\App\Http\Controllers\Api\ViaIngresoController::class, 'index']);
+Route::get('vias-ingreso/{codigo}', [\App\Http\Controllers\Api\ViaIngresoController::class, 'show']);
+Route::patch('vias-ingreso/{codigo}/activar', [\App\Http\Controllers\Api\ViaIngresoController::class, 'activar'])->name('vias-ingreso.activar');
+
+
 
 Route::get('cie10', [CodigoDiagnosticoController::class, 'index']);
 Route::get('cie10/{id}', [CodigoDiagnosticoController::class, 'show']);
