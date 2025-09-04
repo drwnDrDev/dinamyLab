@@ -17,7 +17,7 @@ return new class extends Migration
                 ->constrained('facturas')
                 ->onDelete('cascade');
             $table->foreignId('metodo_pago_id')
-                ->constrained('metodo_pagos')
+                ->constrained('metodos_pagos')
                 ->onDelete('cascade');
             $table->decimal('monto', 12, 2); // Monto pagado con este método
             $table->string('referencia')->nullable(); // Referencia del pago, si aplica
