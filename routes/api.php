@@ -41,14 +41,14 @@ Route::get('finalidades/{codigo}', [\App\Http\Controllers\Api\FinalidadControlle
 Route::get('finalidades/buscar', [\App\Http\Controllers\Api\FinalidadController::class, 'buscarPorNombre']);
 Route::patch('finalidades/{codigo}/activar', [\App\Http\Controllers\Api\FinalidadController::class, 'activar'])->name('finalidades.activar');
 
-Route::get('casusa-atencion', [\App\Http\Controllers\Api\CausaExternaController::class, 'index']);
-Route::get('casusa-atencion/{codigo}', [\App\Http\Controllers\Api\CausaExternaController::class, 'show']);
-Route::get('casusa-atencion/buscar', [\App\Http\Controllers\Api\CausaExternaController::class, 'buscarPorNombre']);
-Route::patch('casusa-atencion/{codigo}/activar', [\App\Http\Controllers\Api\CausaExternaController::class, 'activar'])->name('casusa-atencion.activar');
+Route::get('causa-atencion', [\App\Http\Controllers\Api\CausaExternaController::class, 'index']);
+Route::get('causa-atencion/{codigo}', [\App\Http\Controllers\Api\CausaExternaController::class, 'show']);
+Route::get('causa-atencion/buscar', [\App\Http\Controllers\Api\CausaExternaController::class, 'buscarPorNombre']);
+Route::pat('causa-atencion/{codigo}/activar', [\App\Http\Controllers\Api\CausaExternaController::class, 'activar'])->name('causa-atencion.activar');
 
-Route::get('vias-ingreso', [\App\Http\Controllers\Api\ViaIngresoController::class, 'index']);
-Route::get('vias-ingreso/{codigo}', [\App\Http\Controllers\Api\ViaIngresoController::class, 'show']);
-Route::patch('vias-ingreso/{codigo}/activar', [\App\Http\Controllers\Api\ViaIngresoController::class, 'activar'])->name('vias-ingreso.activar');
+Route::get('via-ingreso', [\App\Http\Controllers\Api\ViaIngresoController::class, 'index']);
+Route::get('via-ingreso/{codigo}', [\App\Http\Controllers\Api\ViaIngresoController::class, 'show']);
+Route::patch('via-ingreso/{codigo}/activar', [\App\Http\Controllers\Api\ViaIngresoController::class, 'activar'])->name('vias-ingreso.activar');
 
 
 
