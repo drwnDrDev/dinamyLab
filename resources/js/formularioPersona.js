@@ -19,12 +19,13 @@
         form["municipioBusqueda"].value=appState.municipios.find(m => m.codigo === persona.municipio)?.municipio || '';
         form["municipio"].classList.remove('hidden');
         form["municipioBusqueda"].classList.add('hidden');
+
         displayPaieses(form["pais"]);
         form["pais"].value=persona.pais_origen || '170'; // Asignar país, por defecto Colombia
         form.querySelectorAll('input[name="sexo"]').forEach(radio => {
             radio.checked = radio.value === persona.sexo;
         });
-
+        
 
         if (form['perfil'].value === DATA_KEYS.PACIENTE) {
             dom.paciente.value = persona.id;

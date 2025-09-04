@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\Pais;
 use App\Models\Persona;
 use App\Services\NombreParser;
 use Carbon\Carbon;
@@ -40,6 +41,7 @@ class GuardarPersona
 
         // Guardar contacto si se proporcionó
         GuardarContacto::guardarContacto($datos, $persona);
+        Pais::incrementarNivelPais($persona->pais_origen);
 
         return $persona;
     }
