@@ -13,11 +13,8 @@ class MetodoPago extends Model
         'nombre'
     ];
 
-    protected $table = 'metodos_pago';
-    protected $primaryKey = 'codigo';
-    public $incrementing = false;
-    protected $keyType = 'string';
-    public $timestamps = false;
+    protected $table = 'metodos_pagos';
+
 
     protected static function booted()
     {

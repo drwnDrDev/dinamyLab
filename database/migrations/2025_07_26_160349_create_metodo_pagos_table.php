@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('metodo_pagos', function (Blueprint $table) {
+        Schema::create('metodos_pagos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100)->unique();
             $table->string('codigo', 20)->unique(); // Código único para identificar el método de pago
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('metodo_pagos');
+        Schema::dropIfExists('metodos_pagos');
     }
 };
