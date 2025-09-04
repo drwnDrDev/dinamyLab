@@ -36,15 +36,6 @@ class PersonaController extends Controller
                     "apellido" => implode(' ',[$persona['primer_apellido'],$persona['segundo_apellido']?? '']),
                     "tipo_documento" => $persona['tipo_documento']['cod_rips'],
                     "numero_documento" => $persona['numero_documento'],
-                    "fecha_nacimiento" => $persona['fecha_nacimiento']? Carbon::parse($persona['fecha_nacimiento'])->format('Y-m-d') : null,
-                    "sexo" => $persona['sexo'],
-                    "procedencia" => $persona['procedencia']?->pais->nombre ?? 'Colombia',
-                    "telefono" => $persona['telefonos']? $persona['telefonos'][0]['numero'] : null,
-                    "direccion" => $persona['direccion']?->direccion ?? null,
-                    "municipio" => $persona['direccion']?->municipio_id ?? 11001,
-                    "pais_residencia" => $persona['procedencia']?->pais_residencia ?? 'Colombia',
-                    "correo" => $persona['email']?->email ?? null,
-                    'eps' => $persona['afiliacionSalud']?->eps ?? null,
 
                 ];
             }, $personas->toArray())
