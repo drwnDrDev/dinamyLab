@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\IncrementaNivel;
 
 class Eps extends Model
 {
+    use IncrementaNivel;
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -20,5 +22,10 @@ class Eps extends Model
             $query->where('nombre', 'like', '%' . $search . '%')
                 ->orWhere('codigo', 'like', '%' . $search . '%');
         });
+    }
+    protected static function booted()
+    {
+        self::incrementarNivel('codigo', 6);
+        self::resetearNiveles(4);
     }
 }

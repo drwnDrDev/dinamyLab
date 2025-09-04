@@ -65,6 +65,7 @@ class PersonaController extends Controller
     {
 
         $validated = $request->validated();
+
         $persona = GuardarPersona::guardar($request->all());
         if (!$persona) {
             return response()->json([
@@ -128,16 +129,11 @@ class PersonaController extends Controller
             $persona->sexo = $request->input('sexo');
         }
         if($request->has('pais')){
-            if($request->input('pais')!==170&& $request->input('pais')!=='' && $persona->nacional){
-                $persona->nacional = false;
+            if($request->input('pais') !== $persona->pais_origen && $request->input('pais')!==''){
                 $persona->procedencia()->updateOrCreate(
                     ['procedencia_id' => $persona->id, 'procedencia_type' => Persona::class],
                     ['pais_codigo_iso' => $request->input('pais')]
                 );
-            } elseif ($request->input('pais')===170 && !$persona->nacional) {
-                $persona->nacional = true;
-                $persona->procedencia()->delete(); // Eliminar la procedencia si es nacional
-
             }
 
         }
@@ -160,7 +156,10 @@ class PersonaController extends Controller
                 ['direccionable_id' => $persona->id, 'direccionable_type' => Persona::class],
                 [
                     'direccion' => $request->input('direccion', ''),
-                    'municipio_id' => $request->input('municipio', 11007) // Valor por defecto para Bogotá
+                    'municipio_id' => $request->input('municipio', 11001) ,
+                    'pais_id' => $request->input('pais_residencia', 170),
+                    'codigo_postal' => $request->input('codigo_postal', ''),
+                    'zona' => $request->input('zona', '02'),
                 ]
             );
         // Actualizar el correo electrónico
@@ -240,6 +239,7 @@ class PersonaController extends Controller
                 "correo" => $persona->email?->email ?? null,
                 "pais_origen" => $persona->pais_origen ?? null,
                 "municipio" => $persona->direccion?->municipio_id ?? 11001,
+                "zona" => $persona->direccion?->zona ?? '02',
                 'eps' => $persona->afiliacionSalud?->eps ?? null,
                 'tipo_afiliacion' => $persona->afiliacionSalud?->tipo_afiliacion ?? null,
 

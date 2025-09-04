@@ -3,20 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\IncrementaNivel;
 
 class CodigoDiagnostico extends Model
 {
+    use IncrementaNivel;
     protected $guarded = ['nivel'];
 
-
-
-        public function incrementNivel()
-        {
-            if ($this->nivel < 255) {
-                $this->nivel += 1;
-                $this->save();
-            }
-            return $this->nivel;
-        }
+    protected static function booted()
+    {
+        self::resetearNiveles(100);
+    }
 
 }

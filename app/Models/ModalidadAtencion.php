@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\IncrementaNivel;
 
 class ModalidadAtencion extends Model
 {
+    use IncrementaNivel;
     protected $table = 'modalidades_atencion';
     protected $primaryKey = 'codigo';
     public $incrementing = false; // Porque la clave primaria no es un entero autoincremental
@@ -18,4 +20,9 @@ class ModalidadAtencion extends Model
         'activo',
         'nivel'
     ];
+    protected static function booted()
+    {
+        self::incrementarNivel('codigo', 30);
+        self::resetearNiveles(20);
+    }
 }

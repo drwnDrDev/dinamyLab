@@ -10,6 +10,7 @@ class TipoAfiliacion extends Model
         'codigo',
         'descripcion',
         'activo',
+
     ];
 
     protected $table = 'tipos_afiliaciones';
@@ -17,4 +18,9 @@ class TipoAfiliacion extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = false;
+
+    static public function descripcionPorCodigo($codigo)
+    {
+        return self::where('codigo', $codigo)->value('descripcion');
+    }
 }
