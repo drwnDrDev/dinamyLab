@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\IncrementaNivel;
 
 class ServicioHabilitado extends Model
 {
+    use IncrementaNivel;
     protected $table = 'servicios_habilitados';
     public $timestamps = false;
     protected $fillable = [
@@ -20,6 +22,10 @@ class ServicioHabilitado extends Model
     public $incrementing = false;
     protected $keyType = 'integer';
 
+    protected static function booted()
+    {
+        self::incrementarNivel('codigo', 100);
+        self::resetearNiveles(50);
+    }
 
-    
 }

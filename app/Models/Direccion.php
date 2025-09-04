@@ -11,7 +11,7 @@ class Direccion extends Model
         'municipio_id',
         'pais_id',
         'codigo_postal',
-        'rural',
+        'zona',
         'direccionable_id',
         'direccionable_type'
     ];

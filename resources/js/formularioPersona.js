@@ -19,14 +19,15 @@
         form["municipioBusqueda"].value=appState.municipios.find(m => m.codigo === persona.municipio)?.municipio || '';
         form["municipio"].classList.remove('hidden');
         form["municipioBusqueda"].classList.add('hidden');
-
+        form["tipo_afiliacion"].value=persona.tipo_afiliacion;
         displayPaieses(form["pais"]);
         form["pais"].value=persona.pais_origen || '170'; // Asignar país, por defecto Colombia
         form.querySelectorAll('input[name="sexo"]').forEach(radio => {
             radio.checked = radio.value === persona.sexo;
         });
-        
-
+        form.querySelectorAll('input[name="zona"]').forEach(radio => {
+            radio.checked = radio.value === persona.zona;
+        });
         if (form['perfil'].value === DATA_KEYS.PACIENTE) {
             dom.paciente.value = persona.id;
         } else {

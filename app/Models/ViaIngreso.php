@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\IncrementaNivel;
 
 class ViaIngreso extends Model
 {
+    use IncrementaNivel;
     protected $table = 'vias_ingreso';
     protected $primaryKey = 'codigo';
     public $incrementing = false; // Porque la clave primaria no es un entero autoincremental
@@ -18,4 +20,10 @@ class ViaIngreso extends Model
         'activo',
         'nivel'
     ];
+
+    protected static function booted()
+    {
+        self::incrementarNivel('codigo', 30);
+        self::resetearNiveles();
+    }
 }

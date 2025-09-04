@@ -76,8 +76,8 @@
 
             @endif
         </div>
-        
-        
+
+
         <div class="flex flex-col gap-4">
             <div class="w-full">
                 <x-input-label for="telefono">Teléfono</x-input-label>
@@ -126,13 +126,20 @@
                 <x-input-label for="direccion">Dirección</x-input-label>
                 <x-text-input type="text" id="direccion" name="direccion" class="form-input max-w-80 mb-2" />
             </div>
-            <div class="w-full flex gap-2 items-center">
-                        <span class="font-semibold text-sm">Zona</span>
-                        <label for="zona_rural">Rural</label> 
-                        <input type="radio" id="zona_urbana" name="zona" value="01">
-                        <label for="zona_urbana">Urbana</label>
-                        <input type="radio" id="zona_rural" name="zona" value="02" checked>
-            </div>
+<fieldset class="w-full flex gap-4 items-center">
+  <legend class="font-semibold text-sm">Zona</legend>
+
+  <div class="flex items-center gap-1">
+    <input type="radio" id="zona_rural" name="zona" value="01" checked>
+    <label for="zona_rural">Rural</label>
+  </div>
+
+  <div class="flex items-center gap-1">
+    <input type="radio" id="zona_urbana" name="zona" value="02">
+    <label for="zona_urbana">Urbana</label>
+  </div>
+</fieldset>
+
         </div>
     </div>
         <div class="row-inputs py-8 w-full flex justify-center gap-2">

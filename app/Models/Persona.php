@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Services\NombreParser;
+use  Illuminate\Database\Eloquent\SoftDeletes;
 
 class Persona extends Model
 {
-
-
+    use SoftDeletes;
     protected $fillable = [
         'primer_nombre',
         'segundo_nombre',
