@@ -25,7 +25,7 @@ class ServicioHabilitado extends Model
     protected static function booted()
     {
         self::incrementarNivel('codigo', 100);
-        self::resetearNiveles(50);
+        self::resetearNiveles(8);
     }
 
 }
