@@ -82,6 +82,9 @@ Route::get('afiliaciones-salud/{id}', [AfiliacionSaludController::class, 'show']
 Route::put('afiliaciones-salud/{id}', [AfiliacionSaludController::class, 'update']);
 Route::delete('afiliaciones-salud/{id}', [AfiliacionSaludController::class, 'destroy']);
 
+Route::get('tipos-afiliacion', [\App\Http\Controllers\Api\TipoAfiliacionController::class, 'index']);
+Route::get('tipos-afiliacion/{codigo}', [\App\Http\Controllers\Api\TipoAfiliacionController::class, 'show']);
+
 Route::get('paises', [\App\Http\Controllers\Api\PaisController::class, 'index']);
 
 Route::get('orden/{id}', [OrdenController::class, 'show']);
