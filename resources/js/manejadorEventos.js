@@ -7,12 +7,9 @@ import { populateFormWithPersonaData, displayValidationErrors,displayMunicipios,
 
 export const handleFiltroExamenes = () => {
         const query = dom.busquedaExamenInput.value.toLowerCase();
-        const solo16k = dom.soloDiezYSeisMil.checked;
-
         appState.examenesVisibles = appState.todosLosExamenes.filter(examen => {
-            const pasaFiltroPrecio = !solo16k || parseFloat(examen.valor) === 16000;
             const pasaFiltroBusqueda = query.length < 1 || examen.nombre.toLowerCase().includes(query);
-            return pasaFiltroPrecio && pasaFiltroBusqueda;
+            return pasaFiltroBusqueda;
         });
 
         renderExamenes(appState.examenesVisibles);
@@ -70,7 +67,7 @@ export const handleBuscarMunicipio = (currentBusquedaFormMunicipio) => {
         }
 
         const persona = await guardarPersona(url,formData);
-        
+
         return persona;
     };
 
@@ -109,9 +106,16 @@ export const notificarGuardado = (persona,isPaciente=true,form) => {
                 examen.currenTotal = examen.valor * examen.cantidad;
 
                 const precioSpan = document.getElementById(`precio-${examen.id}`);
+                
+
+
                 if (precioSpan) {
                     precioSpan.textContent = `$ ${examen.currenTotal.toFixed(2)}`;
                     precioSpan.className = 'text-sm text-gray-900 dark:text-gray-100 precio';
+
+                    if (examen.currenTotal === 0) {
+                        precioSpan.classList.add('hidden');
+                    }
                 }
 
                 updateTotalExamenes();
