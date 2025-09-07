@@ -39,9 +39,7 @@ class CodigoDiagnosticoController extends Controller
         }
         return response()->json([
             'message' => 'Código de diagnóstico encontrado',
-            'data' => [
-                "codigoDiagnostico" => $codigoDiagnostico
-            ]
+            'data' => $codigoDiagnostico
         ], 200);
     }
 
@@ -88,6 +86,16 @@ class CodigoDiagnosticoController extends Controller
     {
         return CodigoDiagnostico::destroy($id);
     }
+    public function buscarPorCodigo($codigo){
+        $codigoDiagnostico = CodigoDiagnostico::where('codigo', $codigo)->first();
+        return response()->json(
+            [
+                'message' => 'Resultados de búsqueda',
+                'data' => $codigoDiagnostico
+            ]
+        );
+    }
+
      public function search(Request $request)
     {
         $query = $request->input('search');

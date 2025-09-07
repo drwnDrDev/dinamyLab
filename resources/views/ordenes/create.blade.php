@@ -8,7 +8,7 @@
         <div class="section_paciente">
             <x-formPersona perfil="Paciente" />
         </div>
-    </x-canva>        
+    </x-canva>
     <x-canva class="mb-4">
         <div x-data="{ open: false }">
             <label for="mostrarAcompaniante">Quieres agregar un acompañante</label>
@@ -17,7 +17,7 @@
                 <x-formPersona perfil="acompaniante" />
             </div>
         </div>
-    </x-canva>        
+    </x-canva>
     <x-canva class="mb-4">
         <form method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
             @csrf
@@ -37,7 +37,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <section class="section_examenes p-4">
 
                 <h2 class="font-bold mb-4 text-xl text-text">Exámenes</h2>
@@ -49,8 +49,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                     <span class="text-lg font-semibold" id="totalExamenes">Total: $ 0.00</span>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4" id="examenesContainer">
-
+                <div class="w-full" id="examenesContainer">
 
                 </div>
                 <input type="hidden" name="paciente_id" id="paciente_id">

@@ -104,11 +104,7 @@ export const notificarGuardado = (persona,isPaciente=true,form) => {
 
                 examen.cantidad = cantidad;
                 examen.currenTotal = examen.valor * examen.cantidad;
-
                 const precioSpan = document.getElementById(`precio-${examen.id}`);
-                
-
-
                 if (precioSpan) {
                     precioSpan.textContent = `$ ${examen.currenTotal.toFixed(2)}`;
                     precioSpan.className = 'text-sm text-gray-900 dark:text-gray-100 precio';
@@ -117,6 +113,26 @@ export const notificarGuardado = (persona,isPaciente=true,form) => {
                         precioSpan.classList.add('hidden');
                     }
                 }
+                    const ciePrincipalSelect = input.closest('.examen-item').querySelector(`select[name="cie_principal[${examen.id}]"]`);
+                    if (ciePrincipalSelect) {
+                        if (cantidad > 0) {
+                            ciePrincipalSelect.removeAttribute('disabled');
+                            ciePrincipalSelect.setAttribute('aria-disabled', 'false');
+                        } else {
+                            ciePrincipalSelect.setAttribute('disabled', 'disabled');
+                            ciePrincipalSelect.value = '';
+                        }
+                    }
+                    const cieSecundarioSelect = input.closest('.examen-item').querySelector(`select[name="cie_secundario[${examen.id}]"]`);
+                    if (cieSecundarioSelect) {
+                        if (cantidad > 0) {
+                            cieSecundarioSelect.removeAttribute('disabled');
+                            cieSecundarioSelect.setAttribute('aria-disabled', 'false');
+                        } else {
+                            cieSecundarioSelect.setAttribute('disabled', 'disabled');
+                            cieSecundarioSelect.value = '';
+                        }
+                    }
 
                 updateTotalExamenes();
             }
