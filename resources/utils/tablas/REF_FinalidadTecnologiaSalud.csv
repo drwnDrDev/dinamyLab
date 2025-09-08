@@ -1,0 +1,35 @@
+Id|Codigo|Nombre|AplicaAC|AplicaAP|Sexo|EdadInicial|EdadFinal
+1|11|Valoración integral para la promoción y mantenimiento|1|1|Z|0|999
+2|12|Detección temprana de enfermedad general|1|1|Z|0|999
+3|13|Detección temprana de enfermedad laboral|1|1|Z|0|999
+4|14|Protección específica|0|1|Z|0|999
+5|15|Diagnóstico|1|1|Z|0|999
+6|16|Tratamiento|1|1|Z|0|999
+7|17|Rehabilitación|1|1|Z|0|999
+8|18|Paliación|1|1|Z|0|999
+9|19|Planificación familiar y anticoncepción|1|1|Z|0|999
+10|20|Promoción y apoyo a la lactancia materna|1|1|F|10|54
+11|21|Atención básica de orientación familiar|1|0|Z|0|999
+12|22|Atención para el cuidado preconcepcional|1|1|Z|0|999
+13|23|Atención para el cuidado prenatal|1|1|F|10|54
+14|24|Interrupción Voluntaria del Embarazo|1|1|F|10|54
+15|25|Atención del parto y puerperio|1|1|F|10|54
+16|26|Atención para el cuidado del recién nacido|0|1|Z|0|999
+17|27|Atención para el seguimiento del recién nacido|1|1|Z|0|999
+18|28|Preparación para la maternidad y la paternidad|0|1|Z|0|999
+19|29|Promoción de actividad física|0|1|Z|0|999
+20|30|Promoción de la cesación del tabaquismo|0|1|Z|0|999
+21|31|Prevención del consumo de sustancias psicoactivas|0|1|Z|0|999
+22|32|Promoción de la alimentación saludable|0|1|Z|0|999
+23|33|Promoción para el ejercicio de los derechos sexuales y derechos reproductivos|0|1|Z|0|999
+24|34|Promoción para el desarrollo de habilidades para la vida|0|1|Z|0|999
+25|35|Promoción para la construcción de estrategias de afrontamiento frente a sucesos vitales|0|1|Z|0|999
+26|36|Promoción de la sana convivencia y el tejido social|0|1|Z|0|999
+27|37|Promoción de un ambiente seguro y de cuidado y protección del ambiente|0|1|Z|0|999
+28|38|Promoción del empoderamiento para el ejercicio del derecho a la salud|0|1|Z|0|999
+29|39|Promoción para la adopción de prácticas de crianza y cuidado para la salud|0|1|Z|0|999
+30|40|Promoción de la capacidad de la agencia y cuidado de la salud|0|1|Z|0|999
+31|41|Desarrollo de habilidades cognitivas|0|1|Z|0|999
+32|42|Intervención colectiva|0|1|Z|0|999
+33|43|Modificación de la estética corporal (fines estéticos)|1|1|Z|0|999
+34|44|Otra|1|1|Z|0|999

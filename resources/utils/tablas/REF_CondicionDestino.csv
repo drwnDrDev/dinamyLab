@@ -1,0 +1,9 @@
+Id|Codigo|Nombre|AplicaAU|AplicaAN|AplicaAH
+1|01|Paciente con destino a su domicilio|SI|SI|SI
+2|02|Paciente muerto|SI|SI|SI
+3|03|Paciente derivado a otro servicio|SI|NO|NO
+4|04|Referido a otra institución|SI|SI|SI
+5|05|Contra referido a otra institución|SI|SI|SI
+6|06|Derivado o referido a hospitalización domiciliaria|SI|SI|SI
+7|07|Derivado a servicio social|SI|SI|SI
+8|08|PACIENTE CONTINUA EN EL SERVICIO (CORTE FACTURACION)|SI|SI|SI

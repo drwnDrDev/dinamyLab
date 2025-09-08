@@ -1,0 +1,10 @@
+Id|Codigo|Nombre|AplicaAC|AplicaAP
+1|01|Intramural|1|1
+2|02|Extramural unidad móvil|1|1
+3|03|Extramural domiciliaria|1|1
+4|04|Extramural jornada de salud|1|1
+5|05|Extramural -Extramural (Atención prehospitalaria o transporte asistencial)|0|1
+6|06|Telemedicina interactiva|1|1
+7|07|Telemedicina no interactiva|1|1
+8|08|Telemedicina telexperticia|1|1
+9|09|Telemedicina telemonitoreo|1|1
