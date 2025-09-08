@@ -1,0 +1,29 @@
+Id|Codigo|Nombre|AplicaAC|AplicaAU|AplicaAH
+1|21|Accidente de trabajo|SI|SI|SI
+2|22|Accidente en el hogar|SI|SI|SI
+3|23|Accidente de tránsito de origen común|SI|SI|SI
+4|24|Accidente de tránsito de origen laboral|SI|SI|SI
+5|25|Accidente en el entorno educativo|SI|SI|SI
+6|26|Otro tipo de accidente|SI|SI|SI
+7|27|Evento catastrófico de origen natural|SI|SI|SI
+8|28|Lesión por agresión|SI|SI|SI
+9|29|Lesión auto infligida|SI|SI|SI
+10|30|Sospecha de violencia física|SI|SI|SI
+11|31|Sospecha de violencia psicológica|SI|SI|SI
+12|32|Sospecha de violencia sexual|SI|SI|SI
+13|33|Sospecha de negligencia y abandono|SI|SI|SI
+14|34|IVE relacionado con peligro a la Salud o vida de la mujer|SI|SI|SI
+15|35|IVE por malformación congénita incompatible con la vida|SI|SI|SI
+16|36|IVE por violencia sexual, incesto o por inseminación artificial o transferencia de ovulo fecundado no consentida|SI|SI|SI
+17|37|Evento adverso en salud|SI|SI|SI
+18|38|Enfermedad general|SI|SI|SI
+19|39|Enfermedad laboral|SI|SI|SI
+20|40|Promoción y mantenimiento de la salud – intervenciones individuales|SI|NO|NO
+21|41|Intervención colectiva|SI|SI|SI
+22|42|Atención de población materno perinatal|SI|SI|SI
+23|43|Riesgo ambiental|SI|SI|SI
+24|44|Otros eventos Catastróficos|SI|SI|SI
+25|45|Accidente de mina antipersonal – MAP|SI|SI|SI
+26|46|Accidente de Artefacto Explosivo Improvisado – AEI|SI|SI|SI
+27|47|Accidente de Munición Sin Explotar- MUSE|SI|SI|SI
+28|48|Otra víctima de conflicto armado colombiano|SI|SI|SI
