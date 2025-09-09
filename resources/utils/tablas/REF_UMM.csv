@@ -1,0 +1,273 @@
+Id|Codigo|Nombre|Habilitado
+1|1|EID50|1
+2|10|Bq|1
+3|100|l|1
+4|101|log10 EID50|1
+5|102|log10 EID51/dosis|1
+6|103|log10 CCID50|1
+7|104|log10 CCID50/dosis|1
+8|105|log10 unidades ELISA|1
+9|106|log10 unidades ELISA/dosis|1
+10|107|log10 FAI50|1
+11|108|log10 FAI50/dosis|1
+12|109|log10 PFU|1
+13|11|Bq/g|1
+14|110|log10 PFU/dosis|1
+15|111|log10 TCID50|1
+16|112|log10 TCID50/dosis|1
+17|113|log10/ml|1
+18|114|LU|1
+19|115|LU/g|1
+20|116|LU/ml|1
+21|117|lm|1
+22|118|lx|1
+23|119|unidades MUSP|1
+24|12|Bq/kg|1
+25|120|MBq|1
+26|121|MBq/g|1
+27|122|MBq/kg|1
+28|123|MBq/l|1
+29|124|MBq/µg|1
+30|125|MBq/µl|1
+31|126|MBq/mg|1
+32|127|MBq/ml|1
+33|128|m|1
+34|129|µCi|1
+35|13|Bq/l|1
+36|130|µCi/g|1
+37|131|µCi/kg|1
+38|132|µCi/l|1
+39|133|µCi/µg|1
+40|134|µCi/µl|1
+41|135|µCi/mg|1
+42|136|µCi/ml|1
+43|137|µg|1
+44|138|µg/m3|1
+45|139|µg/kg|1
+46|14|Bq/µg|1
+47|140|µg/l|1
+48|141|µg/µl|1
+49|142|µg/ml|1
+50|143|µg/m2|1
+51|144|µkat|1
+52|145|µkat|1
+53|146|µl|1
+54|147|µl/ml|1
+55|148|µmol|1
+56|149|µmol/l|1
+57|15|Bq/µl|1
+58|150|µmol/ml|1
+59|151|mCi|1
+60|152|mCi/g|1
+61|153|mCi/kg|1
+62|154|mCi/l|1
+63|155|mCi/µg|1
+64|156|mCi/µl|1
+65|157|mCi/mg|1
+66|158|mCi/ml|1
+67|159|mEq|1
+68|16|Bq/mg|1
+69|160|mEq/g|1
+70|161|mEq/kg|1
+71|162|mEq/l|1
+72|163|mEq/µg|1
+73|164|mEq/µl|1
+74|165|mEq/mg|1
+75|166|mEq/ml|1
+76|167|mg (titer)|1
+77|168|mg|1
+78|169|mg/m3|1
+79|17|Bq/ml|1
+80|170|mg/g|1
+81|171|mg/kg|1
+82|172|mg/l|1
+83|173|mg/ml|1
+84|174|mg/m2|1
+85|175|mkatal|1
+86|176|ml|1
+87|177|ml/cm2|1
+88|178|mm|1
+89|179|mmol|1
+90|18|billon CFU|1
+91|180|mmol/g|1
+92|181|mmol/kg|1
+93|182|mmol/l|1
+94|183|mmol/ml|1
+95|184|millon UFC|1
+96|185|millon UFC/g|1
+97|186|millon UFC/ml|1
+98|187|millon UI|1
+99|188|millon de organismos|1
+100|189|millon de organismos/g|1
+101|19|billon CFU/g|1
+102|190|millon de organismos/mg|1
+103|191|millon de organismos/ml|1
+104|192|millon de unidades USP|1
+105|193|millon de unidades|1
+106|194|mOsm/kg|1
+107|195|min|1
+108|196|mol|1
+109|197|mol/g|1
+110|198|mol/kg|1
+111|199|mol/l|1
+112|2|EID50/dosis|1
+113|20|billon CFU/ml|1
+114|200|mol/mg|1
+115|201|mol/ml|1
+116|202|nCi|1
+117|203|ng|1
+118|204|nkat|1
+119|205|nl|1
+120|206|nmol|1
+121|207|nmol/ml|1
+122|208|N|1
+123|209|unidades NIH/cm2|1
+124|21|billon de organismos|1
+125|210|?|1
+126|211|OZ|1
+127|212|PPM|1
+128|213|PPM|1
+129|214|%|1
+130|215|% (v/v)|1
+131|216|% (p/v)|1
+132|217|% (p/p)|1
+133|218|pg|1
+134|219|pkat|1
+135|22|billon de organismos/g|1
+136|220|PFU|1
+137|221|PFU e. 1000 LD50 en ratón|1
+138|222|PFU/dosis|1
+139|223|PFU/ml|1
+140|224|unidad formadora de viruela|1
+141|225|LB|1
+142|226|unidades de presión/ml|1
+143|227|PNU/ml|1
+144|228|QS|1
+145|229|r/min|1
+146|23|billon de organismos/mg|1
+147|230|s|1
+148|231|S|1
+149|232|Sv|1
+150|233|cm2|1
+151|234|m2|1
+152|235|T|1
+153|236|miles CFU|1
+154|237|miles CFU/g|1
+155|238|miles CFU/ml|1
+156|239|miles de organismos|1
+157|24|billon de organismos/ml|1
+158|240|miles de organismos/g|1
+159|241|miles de organismos/ml|1
+160|242|TCID50/dosis|1
+161|243|titre|1
+162|244|t|1
+163|245|unidad de tuberculina|1
+164|246|unidad de tuberculina/ml|1
+165|247|U|1
+166|248|U/g|1
+167|249|U/ml|1
+168|25|cd|1
+169|250|unidades USP|1
+170|251|V|1
+171|252|W|1
+172|253|Wb|1
+173|254|vp|1
+174|255|DLmin|1
+175|256|DMN|1
+176|26|CCID50|1
+177|27|CCID50/dosis|1
+178|28|°C|1
+179|29|CFU/g|1
+180|3|AU/ml|1
+181|30|CFU/ml|1
+182|31|Co|1
+183|32|m3|1
+184|33|Ci|1
+185|34|Ci/g|1
+186|35|Ci/kg|1
+187|36|Ci/litro|1
+188|37|Ci/µg|1
+189|38|Ci/µl|1
+190|39|Ci/mg|1
+191|4|A|1
+192|40|Ci/ml|1
+193|41|DAgU|1
+194|42|DAgU/ml|1
+195|43|d|1
+196|44|°|1
+197|45|DF|1
+198|46|Gtt|1
+199|47|unidades ELISA|1
+200|48|unidades ELISA/dosis|1
+201|49|unidades ELISA/ml|1
+202|5|AgU|1
+203|50|F|1
+204|51|FAI50|1
+205|52|FAI50/dosis|1
+206|53|GBq|1
+207|54|GBq/g|1
+208|55|GBq/kg|1
+209|56|GBq/l|1
+210|57|GBq/µg|1
+211|58|GBq/µl|1
+212|59|GBq/mg|1
+213|6|AgU/ml|1
+214|60|GBq/ml|1
+215|61|g (titre)|1
+216|62|g|1
+217|63|g/m3|1
+218|64|g/l|1
+219|65|g/ml|1
+220|66|g/m2|1
+221|67|Gy|1
+222|68|H|1
+223|69|Hz|1
+224|7|ATU|1
+225|70|h|1
+226|71|IOU|1
+227|72|UI|1
+228|73|UI/g|1
+229|74|UI/kg|1
+230|75|UI/l|1
+231|76|UI/mg|1
+232|77|UI/ml|1
+233|78|J|1
+234|79|KIU/ml|1
+235|8|anti-Xa IU|1
+236|80|kat|1
+237|81|K|1
+238|82|kUI|1
+239|83|unidades Kusp|1
+240|84|unidades k|1
+241|85|kBq|1
+242|86|kBq/g|1
+243|87|kBq/kg|1
+244|88|kBq/l|1
+245|89|kBq/µg|1
+246|9|anti-Xa IU/ml|1
+247|90|kBq/µl|1
+248|9000|Dosis|1
+249|9001|TPU|1
+250|9002|TSU|1
+251|9003|DBU|1
+252|9004|SU|1
+253|9005|IR|1
+254|9006|DPP|1
+255|9007|HEP|1
+256|9008|UT|1
+257|9009|SQ|1
+258|9010|UB|1
+259|9011|DL50|1
+260|9012|AU|1
+261|9013|BAU|1
+262|9014|PNU|1
+263|9015|DPU|1
+264|91|kBq/mg|1
+265|92|kBq/ml|1
+266|93|kg|1
+267|94|kg/m3|1
+268|95|kg/l|1
+269|96|kg/m2|1
+270|97|LacU|1
+271|98|LfU|1
+272|99|LfU/ml|1

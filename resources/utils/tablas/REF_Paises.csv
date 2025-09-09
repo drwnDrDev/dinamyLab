@@ -1,0 +1,241 @@
+Id|Codigo|Pais|Alfa2|Alfa3
+1|020|Andorra|AD|AND
+2|784|Emiratos Árabes Unidos|AE|ARE
+3|004|Afganistán|AF|AFG
+4|028|Antigua y Barbuda|AG|ATG
+5|660|Anguila|AI|AIA
+6|008|Albania|AL|ALB
+7|051|Armenia|AM|ARM
+8|530|Antillas Neerlandesas|AN|ANT
+9|024|Angola|AO|AGO
+10|010|Antártida|AQ|ATA
+11|032|Argentina|AR|ARG
+12|016|Samoa Americana|AS|ASM
+13|040|Austria|AT|AUT
+14|036|Australia|AU|AUS
+15|533|Aruba|AW|ABW
+16|248|Islas Áland|AX|ALA
+17|031|Azerbaiyán|AZ|AZE
+18|070|Bosnia y Herzegovina|BA|BIH
+19|052|Barbados|BB|BRB
+20|050|Bangladesh|BD|BGD
+21|056|Bélgica|BE|BEL
+22|854|Burkina Faso|BF|BFA
+23|100|Bulgaria|BG|BGR
+24|048|Bahréin|BH|BHR
+25|108|Burundi|BI|BDI
+26|204|Benin|BJ|BEN
+27|652|San Bartolomé|BL|BLM
+28|060|Bermudas|BM|BMU
+29|096|Brunéi|BN|BRN
+30|068|Bolivia|BO|BOL
+31|076|Brasil|BR|BRA
+32|044|Bahamas|BS|BHS
+33|064|Bhután|BT|BTN
+34|074|Isla Bouvet|BV|BVT
+35|072|Botsuana|BW|BWA
+36|112|Belarús|BY|BLR
+37|084|Belice|BZ|BLZ
+38|124|Canadá|CA|CAN
+39|166|Islas Cocos|CC|CCK
+40|140|República Centro-Africana|CF|CAF
+41|178|Congo|CG|COG
+42|756|Suiza|CH|CHE
+43|384|Costa de Marfil|CI|CIV
+44|184|Islas Cook|CK|COK
+45|152|Chile|CL|CHL
+46|120|Camerún|CM|CMR
+47|156|China|CN|CHN
+48|170|Colombia|CO|COL
+49|188|Costa Rica|CR|CRI
+50|192|Cuba|CU|CUB
+51|132|Cabo Verde|CV|CPV
+52|162|Islas Christmas|CX|CXR
+53|196|Chipre|CY|CYP
+54|203|República Checa|CZ|CZE
+55|276|Alemania|DE|DEU
+56|262|Yibuti|DJ|DJI
+57|208|Dinamarca|DK|DNK
+58|212|Domínica|DM|DMA
+59|214|República Dominicana|DO|DOM
+60|012|Argel|DZ|DZA
+61|218|Ecuador|EC|ECU
+62|233|Estonia|EE|EST
+63|818|Egipto|EG|EGY
+64|732|Sahara Occidental|EH|ESH
+65|232|Eritrea|ER|ERI
+66|724|España|ES|ESP
+67|231|Etiopía|ET|ETH
+68|246|Finlandia|FI|FIN
+69|242|Fiji|FJ|FJI
+70|238|Islas Malvinas|FK|KLK
+71|583|Micronesia|FM|FSM
+72|234|Islas Faroe|FO|FRO
+73|250|Francia|FR|FRA
+74|266|Gabón|GA|GAB
+75|826|Reino Unido|GB|GBR
+76|308|Granada|GD|GRD
+77|268|Georgia|GE|GEO
+78|254|Guayana Francesa|GF|GUF
+79|831|Guernsey|GG|GGY
+80|288|Ghana|GH|GHA
+81|292|Gibraltar|GI|GIB
+82|304|Groenlandia|GL|GRL
+83|270|Gambia|GM|GMB
+84|324|Guinea|GN|GIN
+85|312|Guadalupe|GP|GLP
+86|226|Guinea Ecuatorial|GQ|GNQ
+87|300|Grecia|GR|GRC
+88|239|Georgia del Sur e Islas Sandwich del Sur|GS|SGS
+89|320|Guatemala|GT|GTM
+90|316|Guam|GU|GUM
+91|624|Guinea-Bissau|GW|GNB
+92|328|Guayana|GY|GUY
+93|344|Hong Kong|HK|HKG
+94|334|Islas Heard y McDonald|HM|HMD
+95|340|Honduras|HN|HND
+96|191|Croacia|HR|HRV
+97|332|Haití|HT|HTI
+98|348|Hungría|HU|HUN
+99|360|Indonesia|ID|IDN
+100|372|Irlanda|IE|IRL
+101|376|Israel|IL|ISR
+102|833|Isla de Man|IM|IMN
+103|356|India|IN|IND
+104|086|Territorio Británico del Océano Índico|IO|IOT
+105|368|Irak|IQ|IRQ
+106|364|Irán|IR|IRN
+107|352|Islandia|IS|ISL
+108|380|Italia|IT|ITA
+109|832|Jersey|JE|JEY
+110|388|Jamaica|JM|JAM
+111|400|Jordania|JO|JOR
+112|392|Japón|JP|JPN
+113|404|Kenia|KE|KEN
+114|417|Kirguistán|KG|KGZ
+115|116|Camboya|KH|KHM
+116|296|Kiribati|KI|KIR
+117|174|Comoros|KM|COM
+118|659|San Cristóbal y Nieves|KN|KNA
+119|408|Corea del Norte|KP|PRK
+120|410|Corea del Sur|KR|KOR
+121|414|Kuwait|KW|KWT
+122|136|Islas Caimán|KY|CYM
+123|398|Kazajstán|KZ|KAZ
+124|418|Laos|LA|LAO
+125|422|Líbano|LB|LBN
+126|662|Santa Lucía|LC|LCA
+127|438|Liechtenstein|LI|LIE
+128|144|Sri Lanka|LK|LKA
+129|430|Liberia|LR|LBR
+130|426|Lesotho|LS|LSO
+131|440|Lituania|LT|LTU
+132|442|Luxemburgo|LU|LUX
+133|428|Letonia|LV|LVA
+134|434|Libia|LY|LBY
+135|504|Marruecos|MA|MAR
+136|492|Mónaco|MC|MCO
+137|498|Moldova|MD|MDA
+138|499|Montenegro|ME|MNE
+139|450|Madagascar|MG|MDG
+140|584|Islas Marshall|MH|MHL
+141|807|Macedonia|MK|MKD
+142|466|Mali|ML|MLI
+143|104|Myanmar|MM|MMR
+144|496|Mongolia|MN|MNG
+145|446|Macao|MO|MAC
+146|474|Martinica|MQ|MTQ
+147|478|Mauritania|MR|MRT
+148|500|Montserrat|MS|MSR
+149|470|Malta|MT|MLT
+150|480|Mauricio|MU|MUS
+151|462|Maldivas|MV|MDV
+152|454|Malawi|MW|MWI
+153|484|México|MX|MEX
+154|458|Malasia|MY|MYS
+155|508|Mozambique|MZ|MOZ
+156|516|Namibia|NA|NAM
+157|540|Nueva Caledonia|NC|NCL
+158|562|Níger|NE|NER
+159|574|Islas Norkfolk|NF|NFK
+160|566|Nigeria|NG|NGA
+161|558|Nicaragua|NI|NIC
+162|528|Países Bajos|NL|NLD
+163|578|Noruega|0|0R
+164|524|Nepal|NP|NPL
+165|520|Nauru|NR|NRU
+166|570|Niue|NU|NIU
+167|554|Nueva Zelanda|NZ|NZL
+168|512|Omán|OM|OMN
+169|591|Panamá|PA|PAN
+170|604|Perú|PE|PER
+171|258|Polinesia Francesa|PF|PYF
+172|598|Papúa Nueva Guinea|PG|PNG
+173|608|Filipinas|PH|PHL
+174|586|Pakistán|PK|PAK
+175|616|Polonia|PL|POL
+176|666|San Pedro y Miquelón|PM|SPM
+177|612|Islas Pitcairn|PN|PCN
+178|630|Puerto Rico|PR|PRI
+179|275|Palestina|PS|PSE
+180|620|Portugal|PT|PRT
+181|585|Islas Palaos|PW|PLW
+182|600|Paraguay|PY|PRY
+183|634|Qatar|QA|QAT
+184|638|Reunión|RE|REU
+185|642|Rumanía|RO|ROU
+186|688|Serbia y Montenegro|RS|SRB
+187|643|Rusia|RU|RUS
+188|646|Ruanda|RW|RWA
+189|682|Arabia Saudita|SA|SAU
+190|090|Islas Solomón|SB|SLB
+191|690|Seychelles|SC|SYC
+192|736|Sudán|SD|SDN
+193|752|Suecia|SE|SWE
+194|702|1ngapur|SG|SGP
+195|654|Santa Elena|SH|SHN
+196|705|Eslovenia|1|SVN
+197|744|Islas Svalbard y Jan Mayen|SJ|SJM
+198|703|Eslovaquia|SK|SVK
+199|694|1erra Leona|SL|SLE
+200|674|San Marino|SM|SMR
+201|686|Senegal|SN|SEN
+202|706|Somalia|SO|SOM
+203|740|Surinam|SR|SUR
+204|678|Santo Tomé y Príncipe|ST|STP
+205|222|El Salvador|SV|SLV
+206|760|1ria|SY|SYR
+207|748|Suazilandia|SZ|SWZ
+208|796|Islas Turcas y Caicos|TC|TCA
+209|148|Chad|TD|TCD
+210|260|Territorios Australes Franceses|TF|ATF
+211|768|Togo|TG|TGO
+212|764|Tailandia|TH|THA
+213|834|Tanzania|TH|TZA
+214|762|Tayikistán|TJ|TJK
+215|772|Tokelau|TK|TKL
+216|626|Timor-Leste|TL|TLS
+217|795|Turkmenistán|TM|TKM
+218|788|Túnez|TN|TUN
+219|776|Tonga|TO|TON
+220|792|Turquía|TR|TUR
+221|780|Trinidad y Tobago|TT|TTO
+222|798|Tuvalu|TV|TUV
+223|158|Taiwán|TW|TWN
+224|804|Ucrania|UA|UKR
+225|800|Uganda|UG|UGA
+226|840|Estados Unidos de América|US|USA
+227|858|Uruguay|UY|URY
+228|860|Uzbekistán|UZ|UZB
+229|336|Ciudad del Vaticano|VA|VAT
+230|670|San Vicente y las Granadinas|VC|VCT
+231|862|Venezuela|VE|VEN
+232|092|Islas Vírgenes Británicas|VG|VGB
+233|850|Islas Vírgenes de los Estados Unidos de América|VI|VIR
+234|704|Vietnam|VN|VNM
+235|548|Vanuatu|VU|VUT
+236|876|Wallis y Futuna|WF|WLF
+237|882|Samoa|WS|WSM
+238|887|Yemen|YE|YEM
+239|175|Mayotte|YT|MYT
+240|710|Sudáfrica|ZA|ZAF

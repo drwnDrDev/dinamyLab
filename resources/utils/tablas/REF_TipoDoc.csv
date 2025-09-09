@@ -1,0 +1,16 @@
+Id|TipoDocumentoIdentificacion|DocumentoIdentificacion|UsuarioRips|RealizaAtencionRips
+1|CC|Cédula ciudadanía|1|1
+2|CE|Cédula de extranjería|1|1
+3|CD|Carné diplomático|1|1
+4|PA|Pasaporte|1|1
+5|SC|Salvoconducto de permanencia|1|1
+6|PE|Permiso Especial de Permanencia|1|1
+7|RC|Registro civil|1|0
+8|TI|Tarjeta de identidad|1|0
+9|CN|Certificado de nacido vivo|1|0
+10|AS|Adulto sin identificar|1|0
+11|MS|Menor sin identificar|1|0
+12|DE|Documento extranjero|1|1
+13|PT|Permiso Temporal de Permanencia|1|1
+13|NI|Número de identificación tributario NIT|1|1
+13|SI|Sin identificación|1|1
