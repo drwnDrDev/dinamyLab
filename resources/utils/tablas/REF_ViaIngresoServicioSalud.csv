@@ -1,0 +1,15 @@
+Id|Codigo|Nombre|AplicaAP|AplicaAH
+1|01|Demanda espontánea|SI|NO
+2|02|Derivado de consulta externa|SI|SI
+3|03|Derivado de urgencias|SI|SI
+4|04|Derivado de hospitalización|SI|SI
+5|05|Derivado de sala de cirugía|SI|SI
+6|06|Derivado de sala de partos|SI|SI
+7|07|Recién nacido en la institución|SI|SI
+8|08|Recién nacido en otra institución|SI|SI
+9|09|Derivado o referido de hospitalización domiciliaria|SI|SI
+10|10|Derivado de atención domiciliaria|SI|SI
+11|11|Derivado de telemedicina|SI|SI
+12|12|Derivado de jornada de salud|SI|SI
+13|13|Referido de otra institución|SI|SI
+14|14|Contrarreferido de otra institución|SI|SI
