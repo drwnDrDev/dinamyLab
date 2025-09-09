@@ -10,6 +10,7 @@ const apiClient = axios.create({
     });
 
 export const fetchExamenes = async () => {
+ 
     try {
         const response = await apiClient.get('/api/examenes');
          return response.data.data.examenes || [];
@@ -67,7 +68,7 @@ export const fetchPaises = async () => {
 }
 
 export const  guardarPersona =  (url, formData) =>{
-    
+
     try {
         return apiClient.post(url, formData)
             .then(response => {
