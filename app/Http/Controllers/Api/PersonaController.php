@@ -246,4 +246,28 @@ class PersonaController extends Controller
             ]
         ]);
     }
+
+    public function cambiarNombre(Request $request, $id)
+    {
+        $persona = Persona::findOrFail($id);
+
+        $request->validate([
+            'primer_nombre' => 'required|string|max:255',
+            'segundo_nombre' => 'nullable|string|max:255',
+            'primer_apellido' => 'required|string|max:255',
+            'segundo_apellido' => 'nullable|string|max:255',
+        ]);
+
+        $persona->update([
+            'primer_nombre' => $request->input('primer_nombre'),
+            'segundo_nombre' => $request->input('segundo_nombre'),
+            'primer_apellido' => $request->input('primer_apellido'),
+            'segundo_apellido' => $request->input('segundo_apellido'),
+        ]);
+
+        return response()->json([
+            'message' => 'Nombre actualizado con éxito',
+            'data' => $persona
+        ]);
+    }
 }
