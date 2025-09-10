@@ -13,8 +13,16 @@ return new class extends Migration
     {
         Schema::create('cup_finalidad', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo', 10)->unique();
-            $table->string('nombre', 255);
+            $table->string('codigo_cup', 10);
+            $table->foreign('codigo_cup')
+                ->references('codigo')
+                ->on('codigo_cups')
+                ->onDelete('cascade');
+            $table->string('codigo_finalidad');
+            $table->foreign('codigo_finalidad')
+                ->references('codigo')
+                ->on('finalidades')
+                ->onDelete('cascade');
             $table->unsignedSmallInteger('nivel')->default(1);
             $table->timestamps();
         });

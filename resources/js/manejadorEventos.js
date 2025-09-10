@@ -94,7 +94,6 @@ export const notificarGuardado = (persona,isPaciente=true,form) => {
             const input = e.target;
             const examenId = parseInt(input.closest('.examen-item').dataset.examenId, 10);
             const examen = appState.examenesVisibles.find(ex => ex.id === examenId);
-
             if (examen) {
                 let cantidad = parseInt(input.value, 10);
                 if (isNaN(cantidad) || cantidad < 0) {
@@ -104,14 +103,18 @@ export const notificarGuardado = (persona,isPaciente=true,form) => {
 
                 examen.cantidad = cantidad;
                 examen.currenTotal = examen.valor * examen.cantidad;
+
                 const precioSpan = document.getElementById(`precio-${examen.id}`);
+
                 if (precioSpan) {
                     precioSpan.textContent = `$ ${examen.currenTotal.toFixed(2)}`;
-                    precioSpan.className = 'text-sm text-gray-900 dark:text-gray-100 precio';
+                    precioSpan.className = 'text-sm text-gray-900 dark:text-green-500 precio';
 
-                    if (examen.currenTotal === 0) {
-                        precioSpan.classList.add('hidden');
+                    if (examen.currenTotal == 0) {
+                        precioSpan.textContent = `$ 0.00`;
+                        precioSpan.className = 'text-sm text-gray-900 dark:text-gray-500 precio';
                     }
+                   
                 }
                     const ciePrincipalSelect = input.closest('.examen-item').querySelector(`select[name="cie_principal[${examen.id}]"]`);
                     if (ciePrincipalSelect) {
