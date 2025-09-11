@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('nombre_alternativo')->nullable();
             $table->decimal('valor', 10, 2);
             $table->boolean('activo')->default(true);
+          
             $table->unsignedInteger('nivel')->default(1);
             $table->timestamps();
         });

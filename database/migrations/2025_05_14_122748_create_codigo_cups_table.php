@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('activo')->default(false);
             $table->unsignedInteger('nivel')->default(1);
             $table->string('cod_sin_formato')->nullable();
+            $table->string('sexo_aplicable', 1)->default('A');
             $table->timestamps();
             $table->primary('codigo');
             $table->softDeletes();

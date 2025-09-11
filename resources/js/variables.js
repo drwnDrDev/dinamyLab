@@ -19,6 +19,10 @@ export const DATA_KEYS = Object.freeze({
 export const appState = {
         todosLosExamenes: [],
         examenesVisibles: [],
+        paciente: null,
+        acompaniante: null,
+        totalExamenes: 0,
+        verFormularioExamenes: true,
         verFomularioPaciente: false,
         verFomularioAcompaniante: false,
         tiposDocumento: JSON.parse(localStorage.getItem(DATA_KEYS.DOCUMENTOS_PACIENTE)) || [],
