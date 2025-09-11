@@ -56,11 +56,10 @@
                 <input type="hidden" name="acompaniante_id" id="acompaniante_id">
 
                 <div class="w-full p-4 border border-borders rounded-sm shadow-md my-4" x-data="{ open: false }">
-                    <label for="mostrarObservaciones">Observaciones</label>
+                    <label for="mostrarObservaciones" x-show="!open" >Observaciones</label>
                     <input type="checkbox" id="mostrarObservaciones" @change="open = $event.target.checked">
                     <div x-show="open" x-transition>
                         <x-input-label for="observaciones">Observaciones</x-input-label>
-
                         <textarea id="observaciones" name="observaciones" class="form-textarea w-full h-32" placeholder="Escribe aquí las observaciones..."></textarea>
                     </div>
                 </div>
