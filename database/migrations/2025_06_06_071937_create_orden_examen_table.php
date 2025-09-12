@@ -19,12 +19,15 @@ return new class extends Migration
             $table->foreignId('examen_id')
                     ->constrained('examenes')
                     ->onDelete('cascade');
-            $table->foreignId('diagnostico_principal')
-                    ->constrained('codigo_diagnosticos','codigo')
+            $table->string('diagnostico_principal',10);
+            $table->string('diagnostico_relacionado',10)->nullable();
+            $table->foreign('diagnostico_principal')
+                    ->references('codigo')
+                    ->on('codigo_diagnosticos')
                     ->onDelete('cascade');
-            $table->foreignId('diagnostico_relacionado')
-                    ->nullable()
-                    ->constrained('codigo_diagnosticos','codigo')
+            $table->foreign('diagnostico_relacionado')
+                    ->references('codigo')
+                    ->on('codigo_diagnosticos')
                     ->onDelete('cascade');
             $table->string('codigo_finalidad');
             $table->foreign('codigo_finalidad')
