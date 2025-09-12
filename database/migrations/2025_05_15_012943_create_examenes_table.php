@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('examenes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->foreignId('codigo_cup')
-                ->constrained('codigo_cups','id')
+            $table->foreignId('cup')
+                ->constrained('codigo_cups','codigo')
                 ->onDelete('cascade');
             $table->text('descripcion')->nullable();
             $table->string('nombre_alternativo')->nullable();
