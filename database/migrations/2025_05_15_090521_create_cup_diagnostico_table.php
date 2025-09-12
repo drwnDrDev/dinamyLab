@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::create('cup_diagnostico', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo_cup', 10);
-            $table->foreign('codigo_cup')
-                ->references('codigo')
-                ->on('codigo_cups')
+            $table->foreignId('codigo_cup')
+                ->constrained('codigo_cups','id')
                 ->onDelete('cascade');
             $table->foreignId('codigo_diagnostico')
-                ->constrained('codigo_diagnosticos')
+                ->constrained('codigo_diagnosticos','id')
                 ->onDelete('cascade');
             $table->unsignedSmallInteger('nivel')->default(1);
             $table->timestamps();
