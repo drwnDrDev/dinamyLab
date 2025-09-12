@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('codigo_diagnosticos', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo', 10);
+            $table->string('codigo', 10)->unique();
             $table->string('nombre', 255);
             $table->string('descripcion');
             $table->string('grupo', 255)->nullable();
             $table->unsignedTinyInteger('sub_grupo')->nullable();
             $table->boolean('activo')->default(true);
-            $table->unsignedTinyInteger('edad_minima')->nullable();
-            $table->unsignedTinyInteger('edad_maxima')->nullable();
+            $table->unsignedTinyInteger('edad_minima')->default(0);
+            $table->unsignedTinyInteger('edad_maxima')->default(255);
             $table->string('sexo_aplicable',1)->default('A');
             $table->string('grupo_mortalidad')->nullable();
             $table->string('capitulo')->nullable();
