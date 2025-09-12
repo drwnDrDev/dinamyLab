@@ -5,7 +5,15 @@
             documentosPagador: 'documentos_pagador',
             paises: 'paises',
             municipios: 'municipios',
-            eps: 'eps'
+            eps: 'eps',
+            cups: 'cups',
+            defaultCies: 'default_cies',
+            // cie10: 'cie10', --- IGNORE ---
+            servicios_habilitados: 'servicios_habilitados',
+            via_ingreso: 'via_ingreso',
+            modalidad_atencion: 'modalidad_atencion',
+            finalidad_consulta: 'finalidad_consulta'
+
         };
 
         try {
@@ -19,46 +27,20 @@
             }
 
             const serverData = await response.json();
-            console.log('Datos recibidos del servidor:', serverData.documentosPaciente);
-
+            localStorage.setItem('frontend_data_last_update', new Date().toISOString());
             if (serverData.error) {
                 console.error('Error recibido del servidor:', serverData.error);
                 return;
             }
 
-
-
-
             // Almacenar cada conjunto de datos en localStorage
-            if (serverData.documentos_paciente) {
-                console.log('Guardando documentos de Paciente en localStorage...');
-
-                localStorage.setItem(dataKeys.documentosPaciente, JSON.stringify(serverData.documentos_paciente));
-                console.log('Documentos de Paciente guardados en localStorage.');
-            }
-
-            if (serverData.documentos_pagador) {
-                localStorage.setItem(dataKeys.documentosPagador, JSON.stringify(serverData.documentos_pagador));
-                console.log('Documentos de Pagador guardados en localStorage.');
-            }
-
-            if (serverData.paises) {
-                localStorage.setItem(dataKeys.paises, JSON.stringify(serverData.paises));
-                console.log('Países guardados en localStorage.');
-            }
-
-            if (serverData.municipios) {
-                localStorage.setItem(dataKeys.municipios, JSON.stringify(serverData.municipios));
-                console.log('Municipios guardados en localStorage.');
-            }
-            if (serverData.eps) {
-                localStorage.setItem(dataKeys.eps, JSON.stringify(serverData.eps));
-                console.log('EPS guardadas en localStorage.');
-            }
-
-
-            console.log('Estáticos han sido cargados y almacenados en localStorage.');
-
+            Object.entries(dataKeys).forEach(([key, storageKey]) => {
+                if (serverData[key]) {
+                    localStorage.setItem(`${storageKey}_data`, JSON.stringify(serverData[key]));
+                } else {
+                    console.warn(`Datos para ${key} no encontrados en la respuesta del servidor.`);
+                }
+            });
         } catch (error) {
             console.error('Error al cargar o almacenar datos para el frontend:', error);
             // Aquí podrías implementar una lógica de reintento o notificación al usuario.

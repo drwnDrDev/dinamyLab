@@ -20,11 +20,11 @@ return new class extends Migration
                     ->constrained('examenes')
                     ->onDelete('cascade');
             $table->foreignId('diagnostico_principal')
-                    ->constrained('codigo_diagnosticos')
+                    ->constrained('codigo_diagnosticos','codigo')
                     ->onDelete('cascade');
             $table->foreignId('diagnostico_relacionado')
                     ->nullable()
-                    ->constrained('codigo_diagnosticos')
+                    ->constrained('codigo_diagnosticos','codigo')
                     ->onDelete('cascade');
             $table->string('codigo_finalidad');
             $table->foreign('codigo_finalidad')
