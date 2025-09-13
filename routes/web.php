@@ -97,6 +97,7 @@ Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () 
     Route::get('/cie10',[CodigoDiagnosticoController::class,'index'])->name('cie10.index');
     Route::post('/cie10/buscar',[CodigoDiagnosticoController::class,'search'])->name('cie10.search');
     Route::get('/cie10/{codigoDiagnostico}',[CodigoDiagnosticoController::class,'show'])->name('cie10.show');
+    Route::get('/adminstracion/configuracion',[AdministracionController::class,'setup'])->name('empleados.index');
     Route::delete('/personas/{persona}',[PersonaController::class,'destroy'])->name('personas.destroy');
     Route::get('/personas/{persona}/edit',[PersonaController::class,'edit'])->name('personas.edit');
     Route::put('/personas/{persona}',[PersonaController::class,'update'])->name('personas.update');
