@@ -8,6 +8,9 @@
 
         </nav>
     </x-slot>
+    <div id="root">
+        
+    </div>
 
         Procedimientos Pendientes:
         <div class="flex flex-col gap-1 overflow-hidden shadow-sm sm:rounded-lg">
