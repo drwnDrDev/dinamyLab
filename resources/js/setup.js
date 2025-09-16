@@ -12,6 +12,7 @@ const setupData = {
     activos: [],
     todos: [],
     buscador: '',
+    base: window.location.origin
 };
 
 const botones = {
@@ -49,23 +50,68 @@ const toggleButtonState = (key) => {
 const obtenerListado = (key) => {
     const data = setupData[key];
     setupData.activos = data.filter(item => item.activo);
-
     setupData.visibles = data.filter(item => item.activo);
     setupData.todos = data;
     if (setupData.buscador) {
         const buscado = setupData.buscador.toLowerCase();
+        if(key === 'serviciosHabilitados'){
+            setupData.visibles = data.filter(item => (item.nombre && item.nombre.toLowerCase().includes(buscado)) || (item.grupo && item.grupo.toLowerCase().includes(buscado)) || (item.codigo===parseInt(buscado)) );
+            return;
+        }
         setupData.visibles = data.filter(item => (item.nombre && item.nombre.toLowerCase().includes(buscado)) || (item.descripcion && item.descripcion.toLowerCase().includes(buscado)) || (item.codigo && item.codigo.toLowerCase().includes(buscado)));
+    }
+};
+
+const toggleActivarItem = (item) => {
+    const accion = item.activo ? 'desactivar' : 'activar';
+    if (confirm(`¿Estás seguro de que deseas ${accion} el ítem "${item.nombre || item.descripcion}"?`)) {
+        fetch(`${setupData.base}/api/setup/${item.codigo}/${accion}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message || `Ítem ${accion}do exitosamente.`);
+            item.activo = !item.activo;
+            obtenerListado(Object.keys(botones).find(key => botones[key].classList.contains('bg-gray-500')));
+            renderIndice();
+        })
+        .catch(error => {
+            console.error('Error al procesar la solicitud:', error);
+            alert('Ocurrió un error al procesar la solicitud. Por favor, intenta nuevamente.');
+        });
     }
 };
 
 const renderRegistro = (item) => {
     const div = document.createElement('div');
-    div.classList.add('border', 'p-2', 'mb-2');
+    div.classList.add('border', 'p-2', 'mb-2','bg-pink-50', 'dark:bg-gray-800', 'rounded', 'shadow',);
+
+    div.addEventListener('click', (item) =>{
+            cosole.log(item);
+
+        });
     div.innerHTML = `
         <h3 class="font-bold col-span-4">${item.nombre || item.descripcion || 'Sin nombre'}</h3>
-        <p> ${item.codigo || 'Sin código'}</p>
-        <p>${item.activo ? '<a class="text-green-500" href="#">activo</a>' : '<a class="text-red-500" href="#">inactivo</a>'}</p>
-    `;
+        <p> ${item.codigo || 'Sin código'}</p>`;
+    const boton = document.createElement('button');
+    boton.classList.add('mt-2', 'px-4', 'py-2', 'rounded', item.activo ? 'bg-red-500' : 'bg-green-500', 'text-white', 'font-bold');
+    boton.textContent = item.activo ? 'Desactivar' : 'Activar';
+    boton.addEventListener('click', (e) => {
+        e.stopPropagation(); // Evitar que el clic se propague al div padre
+        alert(item.nombre);
+        toggleActivarItem(item);
+    });
+    div.appendChild(boton);
+//
+
     return div;
 }
 
@@ -80,7 +126,7 @@ const renderIndice = () => {
             <button id="btn-todos" class="bg-purple-500 text-white font-bold py-2 px-4 rounded mr-2">Todos (${todos.length})</button>
         </div>
         <div id="listado" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            ${visibles.map(item => renderRegistro(item).outerHTML).join('')}
+            ${visibles.map(item => renderRegistro(item).outerHTML).join('\n')}
         </div>
     `;
 
@@ -111,9 +157,9 @@ export const initializeSetupData = async () => {
     Object.keys(botones).forEach(key => {
         botones[key].addEventListener('click', () => {
             toggleButtonState(key)
-            document.getElementById('buscador').addEventListener('input', (event) => {
+            document.getElementById('buscador').addEventListener('input',
+                 (event) => {
                 setupData.buscador = event.target.value;
-                console.log('Buscador:', setupData.buscador);
                 obtenerListado(key);
                 renderIndice();
             });
