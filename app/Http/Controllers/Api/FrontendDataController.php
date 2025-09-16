@@ -30,15 +30,11 @@ class FrontendDataController extends Controller
 
 
         try {
-            // $cachedData = Cache::get('frontend_static_data');
-            // if ($cachedData) {
-            //     return response()->json($cachedData);
-            // }
+
             $servicosHabilitados = ServicioHabilitado::where('activo', true)
                                     ->orderBy('nivel','desc')->get();
             $viaIngreso = ViaIngreso::where('activo', true)
                                     ->orderBy('nivel','desc')->get();
-
             $tipoAfiliacion = TipoAfiliacion::where('activo', true)
                                     ->orderBy('nivel','desc')->get();
             $causaExterna = CausaExterna::where('activo', true)
@@ -69,7 +65,10 @@ class FrontendDataController extends Controller
             ->orderBy('nivel','desc')->get();
 
             $cupsActivos = CodigoCup::where('activo', true)->get();
-            $diacgonosticosActivos = \App\Models\CodigoDiagnostico::where('activo', true)->get();
+            $defaultCies = \App\Models\CodigoDiagnostico::where('activo', true)->get('codigo', 'nombre')->take(5);
+            if($defaultCies->isEmpty()) {
+                $defaultCies =\App\Models\CodigoDiagnostico::orderBy('nivel','desc')->limit(5)->get();
+            }
 
             $data = [
                 'documentos_paciente' => $tiposDocumentoPaciente,
@@ -78,7 +77,7 @@ class FrontendDataController extends Controller
                 'municipios' => $municipios,
                 'eps' => $eps,
                 'cups' => $cupsActivos,
-                'cie10' => $diacgonosticosActivos,
+                'defaultCies' => $defaultCies,
                 'servicios_habilitados' => $servicosHabilitados,
                 'via_ingreso' => $viaIngreso,
                 'modalidad_atencion' => $modalidadAtencion,
@@ -87,8 +86,7 @@ class FrontendDataController extends Controller
                 'finalidad_consulta' => $finaalidad,
             ];
 
-        Cache::put('frontend_static_data', $data, now()->addHours(24)); // Cache por 24 horas
-           return response()->json($data);
+    return response()->json($data);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error al procesar la solicitud de datos.',

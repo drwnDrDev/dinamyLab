@@ -1,14 +1,11 @@
-<x-app-layout >
+<x-app-layout>
     <x-slot name="title">
       Balance de Caja
     </x-slot>
 <x-slot name="header">
-
-
-@dump($NoExamenes)
-@dump($paises)
-@dump($municipios)
-@dump($eps)
-
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Balance de Caja') }}
+    </h2>
+</x-slot>
 
 </x-app-layout>

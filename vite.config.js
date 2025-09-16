@@ -18,7 +18,8 @@ export default defineConfig({
                 'resources/js/react-app.jsx',
             ],
             refresh: true,
+            
         }),
-        react(),
+        
     ],
 });
