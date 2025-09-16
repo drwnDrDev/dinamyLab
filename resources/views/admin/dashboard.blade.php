@@ -8,6 +8,9 @@
 
         </nav>
     </x-slot>
+    <div id="root">
+        
+    </div>
 
         Procedimientos Pendientes:
         <div class="flex flex-col gap-1 overflow-hidden shadow-sm sm:rounded-lg">
@@ -38,5 +41,5 @@
             @endforeach
         </div>
 
-     @vite('resources/js/obtenerStaticos.js')
+     @vite('resources/js/app.jsx')
 </x-app-layout>

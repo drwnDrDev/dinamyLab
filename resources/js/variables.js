@@ -19,8 +19,14 @@ export const DATA_KEYS = Object.freeze({
 export const appState = {
         todosLosExamenes: [],
         examenesVisibles: [],
+
+        paciente: null,
+        acompaniante: null,
+        totalExamenes: 0,
+        verFormularioExamenes: true,
         verFomularioPaciente: false,
         verFomularioAcompaniante: false,
+        defaultCies: JSON.parse(localStorage.getItem('default_cies_data')) || [],
         tiposDocumento: JSON.parse(localStorage.getItem(DATA_KEYS.DOCUMENTOS_PACIENTE)) || [],
         municipios: JSON.parse(localStorage.getItem(DATA_KEYS.MUNICIPIOS)) || [],
         paises: JSON.parse(localStorage.getItem(DATA_KEYS.PAISES)) || [],

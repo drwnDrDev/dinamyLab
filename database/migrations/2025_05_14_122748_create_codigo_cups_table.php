@@ -12,15 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('codigo_cups', function (Blueprint $table) {
-            $table->string('codigo', 10);
+            $table->id();
+            $table->string('codigo', 10)->unique();
             $table->string('nombre', 255);
             $table->string('grupo', 255)->nullable();
             $table->boolean('activo')->default(false);
             $table->unsignedInteger('nivel')->default(1);
-            $table->string('cod_sin_formato')->nullable();
+            $table->string('sexo_aplicable', 1)->default('A');
+            $table->unsignedTinyInteger('edad_minima')->default(0);
+            $table->unsignedTinyInteger('edad_maxima')->default(255);
+            $table->boolean('qx')->default(false);
+            $table->string('cobertura')->nullable();
             $table->timestamps();
-            $table->primary('codigo');
-            $table->softDeletes();
         });
     }
 
