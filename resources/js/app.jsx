@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -15,7 +14,14 @@ import DropdownComponent from './components/DropdownComponent';
 if (document.getElementById('dropdownComponent')) {
     const root = createRoot(document.getElementById('dropdownComponent'));
     const nombre = document.getElementById('dropdownComponent').getAttribute('data-nombre') || 'nombre';
-    root.render(<DropdownComponent name={nombre} />);
+    root.render(
+        <DropdownComponent
+            name="Perfil"
+            support="Soporte"
+            license="Licencia"
+            signOut="Cerrar sesión"
+        />
+    );
 }
 
 if (document.getElementById('testComponent')) {
