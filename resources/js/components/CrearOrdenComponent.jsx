@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 
-const CrearOrdenComponent = () => {
-    const [data, setData] = useState({});
+export default function CrearOrdenComponent(){
+    const [count, setCount] = useState(0);
 
     return (
         <div className="border p-4 rounded-lg">
@@ -17,5 +17,3 @@ const CrearOrdenComponent = () => {
         </div>
     );
 };
-
-export default CrearOrdenComponent;
