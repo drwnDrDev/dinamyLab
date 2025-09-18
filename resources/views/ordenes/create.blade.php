@@ -4,20 +4,24 @@
             {{ __('Nueva orden de laboratorio') }}
         </h2>
     </x-slot>
+
+    <div id="react-crear-orden" class="mb-4"></div>
+
     <x-canva class="mb-4">
         <div class="section_paciente">
             <x-formPersona perfil="Paciente" />
         </div>
     </x-canva>
+
     <x-canva class="mb-4">
-        <div x-data="{ open: false }">
-            <label for="mostrarAcompaniante">Quieres agregar un acompañante</label>
-            <input type="checkbox" id="mostrarAcompaniante" @change="open = $event.target.checked">
-            <div x-show="open" x-transition>
+        <div>
+            <h3 class="font-bold text-lg">Acompañante</h3>
+            <div class="mt-2">
                 <x-formPersona perfil="acompaniante" />
             </div>
         </div>
     </x-canva>
+
     <x-canva class="mb-4">
         <form method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
             @csrf
@@ -28,10 +32,10 @@
                     <x-text-input type="text" id="numero_orden" name="numero_orden" class="form-input w-32" value="{{$orden_numero}}" />
                 </div>
 
-                <div x-data="{ open: false }" class="w-full flex flex-wrap items-center gap-2">
+                <div class="w-full flex flex-wrap items-center gap-2">
                     <label for="pago">Pago</label>
-                    <input type="checkbox" id="pago" name="pago" @change="open = !$event.target.checked" checked>
-                    <div x-show="open" x-transition>
+                    <input type="checkbox" id="pago" name="pago" checked>
+                    <div>
                         <x-input-label for="abono">Abono</x-input-label>
                         <x-text-input type="number" id="abono" name="abono" value="0" class="form-input w-32" />
                     </div>
@@ -55,14 +59,9 @@
                 <input type="hidden" name="paciente_id" id="paciente_id">
                 <input type="hidden" name="acompaniante_id" id="acompaniante_id">
 
-                <div class="w-full p-4 border border-borders rounded-sm shadow-md my-4" x-data="{ open: false }">
-                    <label for="mostrarObservaciones">Observaciones</label>
-                    <input type="checkbox" id="mostrarObservaciones" @change="open = $event.target.checked">
-                    <div x-show="open" x-transition>
-                        <x-input-label for="observaciones">Observaciones</x-input-label>
-
-                        <textarea id="observaciones" name="observaciones" class="form-textarea w-full h-32" placeholder="Escribe aquí las observaciones..."></textarea>
-                    </div>
+                <div class="w-full p-4 border border-borders rounded-sm shadow-md my-4">
+                    <label for="observaciones" class="font-bold">Observaciones</label>
+                    <textarea id="observaciones" name="observaciones" class="form-textarea w-full h-32 mt-2" placeholder="Escribe aquí las observaciones..."></textarea>
                 </div>
 
                 <x-primary-button id="enviarOrden" class="btn btn-primary mt-4">Crear Orden</x-primary-button>
@@ -85,5 +84,5 @@
         @endif
 
     </x-canva>
-    @vite('resources/js/main.js')
+    @vite(['resources/js/main.js', 'resources/js/react-app.jsx'])
 </x-app-layout>

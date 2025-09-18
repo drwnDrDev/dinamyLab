@@ -1,5 +1,34 @@
 import {dom,appState} from './variables.js'
 
+
+const createCieSelectOptions = (examen, remover = null) => {
+
+       const cieOptions = (examen.cieOptions || []).map(cie => ({
+            value: cie.codigo,
+            text: `${cie.codigo} - ${cie.nombre}`
+        }));
+
+        if(cieOptions.length === 0 && appState.defaultCies.length > 0) {
+            appState.defaultCies.forEach(cie => {
+                cieOptions.push({value: cie.codigo, text: `${cie.codigo} - ${cie.nombre}`});
+            });
+        }
+
+
+        if (remover) {
+            const index = cieOptions.findIndex(cie => cie.value === remover);
+            if (index !== -1) {
+                cieOptions.splice(index, 1);
+            }
+        }
+        if(cieOptions.length === 0){
+            cieOptions.push({value: '', text: 'Buscar CIE...'});
+        }
+
+
+    return cieOptions.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('\n');
+}
+
  const createExamenItemElement = (examen) => {
         const item = document.createElement('div');
         item.className = 'examen-item grid grid-cols-9 gap-2 border-b border-gray-200 dark:border-gray-700';
@@ -11,27 +40,24 @@ import {dom,appState} from './variables.js'
                    class="flex w-20 px-2 py-1 text-center rounded border border-borders bg-white focus:outline-none focus:ring-2 focus:ring-primary"
                    min="0" value="${examen.cantidad || 0}" step="1">
 
-                <p class="col-span-2 flex w-24 h-10 text-sm ">
-                    <label for="cie_principal">
-                    <select name="cie_principal[${examen.id}]"
-                     class="w-32 ml-1 px-1 py-0.5 border border-borders rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                    ${examen.cantidad > 0 ? '' : 'disabled'}>
-                        <option value="12056">Z017 - EXAMEN DE LABORATORIO</option>
-                        <option value="B00">Z006 -EXAMEN PARA COMPARACION Y CONTROL NORMALES EN PROGRAMA DE INVESTIGACION CLINICA</option>
 
+                    <label for="cie_principal[${examen.id}]" class="col-span-2 flex w-24 h-10 text-sm ">
+                    <select name="cie_principal[${examen.id}]" id="cie_principal[${examen.id}]"
+                     class=" w-32 ml-1 px-1 py-0.5 border border-borders rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                    ${examen.cantidad > 0 ? '' : 'disabled'}>
+                        ${createCieSelectOptions(examen)}
                     </select>
                     </label>
-                </p>
-                <p class="col-span-2 flex justify-center text-sm">
 
-                    <select name="cie_secundario[${examen.id}]"
+                <label for="cie_secundario[${examen.id}]" class="col-span-2 flex justify-center text-sm">
+
+                    <select name="cie_secundario[${examen.id}]" id="cie_secundario[${examen.id}]"
                     class="w-full ml-1 px-1 py-0.5 border border-borders rounded focus:outline-none focus:ring-2 focus:ring-primary"
                     ${examen.cantidad > 0 ? 'aria-disabled="false"' : 'disabled'}>
-                        <option value="12056">Z017 - EXAMEN DE LABORATORIO</option>
-                        <option value="B00">Z006 -EXAMEN PARA COMPARACION Y CONTROL NORMALES EN PROGRAMA DE INVESTIGACION CLINICA</option>
+                        ${createCieSelectOptions(examen, examen.ciePrincipal ?? null)}
                     </select>
 
-                </p>
+                </label>
 
 
             <p id="precio-${examen.id}"

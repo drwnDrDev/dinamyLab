@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
     plugins: [
+
         laravel({
             input: [
                 'resources/css/app.css',
@@ -11,13 +13,13 @@ export default defineConfig({
                 'resources/js/buscarPersona.js',
                 'resources/js/crearOrdenes.js',
                 'resources/js/obtenerStaticos.js',
-                'resources/js/obtenerStaticos.js',
-                'resources/js/main.js',
                 'resources/js/crearPersona.js',
                 'resources/js/ticket.js',
-
-                ],
+                'resources/js/react-app.jsx',
+            ],
             refresh: true,
+
         }),
+
     ],
 });
