@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 
+
 import Setup from './components/Setup';
 import TestComponent from './components/TestComponent';
 import '../css/app.css';
@@ -14,12 +15,11 @@ import DropdownComponent from './components/DropdownComponent';
 if (document.getElementById('dropdownComponent')) {
     const root = createRoot(document.getElementById('dropdownComponent'));
     const nombre = document.getElementById('dropdownComponent').getAttribute('data-nombre') || 'nombre';
+    const profileUrl = document.getElementById('dropdownComponent').getAttribute('data-profile-url') || '/profile';
     root.render(
         <DropdownComponent
-            name="Perfil"
-            support="Soporte"
-            license="Licencia"
-            signOut="Cerrar sesión"
+            name={nombre}
+            profileUrl={profileUrl}
         />
     );
 }

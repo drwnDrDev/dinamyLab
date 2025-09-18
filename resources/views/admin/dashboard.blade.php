@@ -8,7 +8,6 @@
 
         </nav>
     </x-slot>
-    <div id="dropdownComponent" class="absolute z-10" data-nombre="{{ $nombre ?? 'nombre' }}"></div>
 
         Procedimientos Pendientes:
         <div class="flex flex-col gap-1 overflow-hidden shadow-sm sm:rounded-lg">

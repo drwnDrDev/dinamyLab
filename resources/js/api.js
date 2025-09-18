@@ -1,5 +1,6 @@
 import {displayValidationErrors} from './formularioPersona.js';
 import {appState} from './variables.js';
+import axios from 'axios';
 const TOKEN= document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const apiClient = axios.create({
