@@ -1,0 +1,165 @@
+{
+    "data": [
+        {
+            "grupo": "Examen fisico quimico",
+            "parametros": [
+                {
+                    "parametro": "color",
+                    "resultado": {
+                        "nombre": "color",
+                        "tipo": "datalist",
+                        "items": [
+                            "amarillo",
+                            "cafe"
+                        ],
+                        "default":"cafe"
+                    }
+                },
+                {
+                    "parametro": "consistencia",
+                    "resultado": {
+                        "nombre": "consistencia",
+                        "tipo": "datalist",
+                        "items": [
+                            "diarreica",
+                            "blanda",
+                            "dura",
+                            "pastosa"
+                        ],
+                        "default":"blanda"
+                    }
+                },
+                {
+                    "parametro": "glucotest",
+                    "resultado": {
+                        "nombre": "glucotest",
+                        "default": "negativo",
+                        "tipo": "text"
+                    }
+                },
+                {
+                    "parametro": "pH",
+                    "resultado": {
+                        "tipo": "number",
+                        "default": 7.0,
+                        "nombre": "ph"
+                    },
+                    "default":7.0
+                },
+                {
+                    "parametro": "moco",
+                    "resultado": {
+                        "nombre": "moco",
+                        "default": "negativo",
+                        "tipo": "text"
+                    }
+                },
+                {
+                    "parametro": "hemoglobina",
+                    "resultado": {
+                        "nombre": "hemoglobina",
+                        "default": "negativo",
+                        "tipo": "text"
+                    }
+                }
+            ]
+        },
+        {
+            "grupo": "Examen microscópico",
+            "parametros": [
+                {
+                    "parametro": "celulosa",
+                    "resultado": {
+                        "nombre": "celulosa",
+                        "default": "-",
+                        "tipo": "text"
+                    }
+                },
+                {
+                    "parametro": "fibras vegetales",
+                    "resultado": {
+                        "nombre": "fibras_vegetales",
+                        "default": "-",
+                        "tipo": "text"
+                    }
+                },
+                {
+                    "parametro": "almidones",
+                    "resultado": {
+                        "nombre": "almidones",
+                        "default": "-",
+                        "tipo": "text"
+                    }
+                },
+                {
+                    "parametro": "grasas neutras",
+                    "resultado": {
+                        "nombre": "grasas_neutras",
+                        "default": "-",
+                        "tipo": "text"
+                    }
+                },
+                {
+                    "parametro": "ácidos grasos",
+                    "resultado": {
+                        "nombre": "acidos_grasos",
+                        "default": "-",
+                        "tipo": "text"
+                    }
+                },
+                {
+                    "parametro": "leucocitos",
+                    "resultado": {
+                        "nombre": "leucocitos",
+                        "tipo": "text"
+                    },"unidades":"xC"
+                },
+                {
+                    "parametro": "hematies",
+                    "resultado": {
+                        "nombre": "hematies",
+                        "tipo": "text"
+                    },"unidades":"xC"
+                },
+                {
+                    "parametro": "levaduras en gemación",
+                    "resultado": {
+                        "nombre": "lev_gemacion",
+                        "tipo": "text"
+                    }
+                },
+                {
+                    "parametro": "Flora bacteriana",
+                    "resultado": {
+                        "nombre": "f_bacteriana",
+                        "tipo": "lista",
+                        "items": [
+                            "normal",
+                            "ligeramente aumentada",
+                            "aumentada",
+                            "escasa"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+        "grupo": "Examen parasitológico",
+        "parametros":[
+            {
+            "parametro": "Informe",
+            "resultado": {
+                "nombre": "parasitologico",
+                "default": "No se observan estructuras parasitarias en la muestra analizada",
+                "tipo": "textarea"
+            }},
+            {
+                "parametro": "Coloracion de Gram",
+                "resultado": {
+                    "nombre": "col-gram",
+                  
+                    "tipo": "textarea"
+                }}]
+        }
+    ]
+}

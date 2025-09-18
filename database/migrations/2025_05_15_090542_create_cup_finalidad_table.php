@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('cup_finalidad', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo_cup', 10);
-            $table->foreign('codigo_cup')
+            $table->string('cup', 10);
+            $table->foreign('cup')
                 ->references('codigo')
                 ->on('codigo_cups')
                 ->onDelete('cascade');
-            $table->string('codigo_finalidad');
-            $table->foreign('codigo_finalidad')
+            $table->string('finalidad');
+            $table->foreign('finalidad')
                 ->references('codigo')
                 ->on('finalidades')
                 ->onDelete('cascade');

@@ -16,6 +16,11 @@ class AdministracionController extends Controller
     {
         return view('dashboard.index');
     }
+
+    public function setup()
+    {
+        return view('admin.setup');
+    }
     public function caja()
     {
 

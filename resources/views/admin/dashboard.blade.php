@@ -38,5 +38,6 @@
             @endforeach
         </div>
 
-     @vite('resources/js/obtenerStaticos.js')
+
+     @vite('resources/js/app.jsx')
 </x-app-layout>

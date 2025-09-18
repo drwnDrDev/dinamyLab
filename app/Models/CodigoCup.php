@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class CodigoCup extends Model
 {
     use IncrementaNivel;
-    use SoftDeletes;
+
 
     protected $table = 'codigo_cups';
     protected $fillable = ['codigo', 'nombre', 'descripcion', 'estado'];

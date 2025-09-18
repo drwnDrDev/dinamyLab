@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string('cup',10);
             $table->foreign('cup')
                 ->references('codigo')
-                ->on('codigo_cups')
-                ->onDelete('cascade');
+                ->on('codigo_cups');
             $table->text('descripcion')->nullable();
             $table->string('nombre_alternativo')->nullable();
             $table->decimal('valor', 10, 2);

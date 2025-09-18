@@ -1,5 +1,6 @@
 import {displayValidationErrors} from './formularioPersona.js';
 import {appState} from './variables.js';
+import axios from 'axios';
 const TOKEN= document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const apiClient = axios.create({
@@ -10,7 +11,7 @@ const apiClient = axios.create({
     });
 
 export const fetchExamenes = async () => {
- 
+
     try {
         const response = await apiClient.get('/api/examenes');
          return response.data.data.examenes || [];
@@ -92,4 +93,66 @@ export const  guardarPersona =  (url, formData) =>{
     }
 
     };
-
+export const fetchFinalidades = async () => {
+    try {
+        const response = await apiClient.get('/api/finalidades');
+        return response.data.data.finalidades || [];
+    } catch (error) {
+        console.error('Error al obtener las finalidades:', error);
+        return [];
+    }
+}
+export const fetchServiciosHabilitados = async () => {
+    try {
+        const response = await apiClient.get('/api/servicios-habilitados');
+        return response.data.data|| [];
+    } catch (error) {
+        console.error('Error al obtener los servicios habilitados:', error);
+        return [];
+    }
+}
+export const fetchViaIngreso = async () => {
+    try {
+        const response = await apiClient.get('/api/via-ingreso');
+        return response.data.data|| [];
+    } catch (error) {
+        console.error('Error al obtener las vías de ingreso:', error);
+        return [];
+    }
+}
+export const fetchCausasExternas = async () => {
+    try {
+        const response = await apiClient.get('/api/causa-atencion');
+        return response.data.data.causas_externas || [];
+    } catch (error) {
+        console.error('Error al obtener las causas externas:', error);
+        return [];
+    }
+}
+export const fetchDiagnosticos = async () => {
+    try {
+        const response = await apiClient.get('/api/cie10');
+        return response.data.data.codigoDiagnostico || [];
+    } catch (error) {
+        console.error('Error al obtener los diagnósticos:', error);
+        return [];
+    }
+}
+export const fetchTiposAfiliacion = async () => {
+    try {
+        const response = await apiClient.get('/api/tipos-afiliacion');
+        return response.data.data.tipos_afiliacion || [];
+    } catch (error) {
+        console.error('Error al obtener los tipos de afiliación:', error);
+        return [];
+    }
+}
+export const fetchTiposAtencion = async () => {
+    try {
+        const response = await apiClient.get('/api/modalidades-atencion');
+        return response.data.data.modalidades_atencion || [];
+    } catch (error) {
+        console.error('Error al obtener los tipos de atención:', error);
+        return [];
+    }
+}

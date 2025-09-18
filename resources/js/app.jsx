@@ -1,0 +1,42 @@
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+
+
+
+import Setup from './components/Setup';
+import TestComponent from './components/TestComponent';
+import '../css/app.css';
+import DropdownComponent from './components/DropdownComponent';
+
+// Renderizado condicional basado en la presencia de elementos en el DOM
+
+
+
+if (document.getElementById('dropdownComponent')) {
+    const root = createRoot(document.getElementById('dropdownComponent'));
+    const nombre = document.getElementById('dropdownComponent').getAttribute('data-nombre') || 'nombre';
+    const profileUrl = document.getElementById('dropdownComponent').getAttribute('data-profile-url') || '/profile';
+    root.render(
+        <DropdownComponent
+            name={nombre}
+            profileUrl={profileUrl}
+        />
+    );
+}
+
+if (document.getElementById('testComponent')) {
+    const element = document.getElementById('testComponent');
+    const loginUser = element.getAttribute('data-login-user');
+    const registerUser = element.getAttribute('data-register-user');
+    const authUser = JSON.parse(element.getAttribute('data-auth-user'));
+
+    const root = createRoot(element);
+    root.render(<TestComponent loginUser={loginUser} registerUser={registerUser} authUser={authUser} />);
+}
+
+if (document.getElementById('root')) {
+    const root = createRoot(document.getElementById('root'));
+    root.render(<Setup />);
+}
+
+//

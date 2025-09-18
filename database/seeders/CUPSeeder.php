@@ -47,7 +47,7 @@ class CUPSeeder extends Seeder
                         'grupo' => $row[2] ?? null,
                         'activo' => false, // Default value
                         'nivel' => 1,      // Default value
-                        'cod_sin_formato' => $row[3] ?? null,
+       
                         'created_at' => $now,
                         'updated_at' => $now,
                     ];
