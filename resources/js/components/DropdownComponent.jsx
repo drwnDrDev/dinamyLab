@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import React from 'react';
+import axios from 'axios';
 
 export default function DropdownComponent(props) {
     const [verOpciones, setVerOpciones] = useState(false);
@@ -21,7 +22,7 @@ export default function DropdownComponent(props) {
                 aria-haspopup="true"
                 onClick={() =>{
                     toggleDropdown();
-                    setTimeout(() => setVerOpciones(false), 800);
+                    setTimeout(() => setVerOpciones(false), 1200);
 
                 }}>
                     {props.name}
@@ -32,7 +33,7 @@ export default function DropdownComponent(props) {
             </div>
 
             {verOpciones ? (
-                <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
+                <div className="origin-top-right absolute right-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
                     <div className="py-1" role="none">
                         <a href={props.profileUrl} className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" tabIndex="-1" id="menu-item-0">Perfil</a>
                         <button
