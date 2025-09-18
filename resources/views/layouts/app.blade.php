@@ -9,13 +9,13 @@
         <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     </head>
     <body class="font-sans antialiased bg-background">
         @include('layouts.header')
-                    
+
             @include('layouts.navigation')
- 
+
             <!-- Page Content -->
             <main class="m-auto mt-16 pl-14 w-full h-full min-h-[calc(100vh-65px)] overflow-y-auto bg-gradient-to-br from-background via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-900 dark:to-black print:!p-0 print:!m-0 print:!bg-white">
 
@@ -37,7 +37,7 @@
                             <div class="max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
                                 {{ $header }}
                             </div>
-                        
+
                     @endisset
 
                 {{ $slot }}
