@@ -5,7 +5,8 @@
         </h2>
     </x-slot>
 
-    <div id="react-crear-orden" class="mb-4"></div>
+
+    <article id="react-crear-orden"></article>
 
     <x-canva class="mb-4">
         <div class="section_paciente">
