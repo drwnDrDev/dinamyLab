@@ -1,8 +1,8 @@
    // Función para cargar y almacenar los datos
     async function loadAndStoreFrontendData() {
         const dataKeys = {
-            documentosPaciente: 'documentos_paciente',
-            documentosPagador: 'documentos_pagador',
+            documentos_paciente: 'documentos_paciente',
+            documentos_pagador: 'documentos_pagador',
             paises: 'paises',
             municipios: 'municipios',
             eps: 'eps',
