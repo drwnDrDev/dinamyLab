@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import SelectField from "./SelectField";
 
 const DatosPaciente = ({ pacienteId }) => {
     const [paciente, setPaciente] = useState(null);
@@ -31,15 +32,29 @@ const DatosPaciente = ({ pacienteId }) => {
         // Cargar datos estáticos del localStorage
         const loadStaticData = () => {
             try {
+                // Obtener y validar los datos
                 const documentosData = JSON.parse(localStorage.getItem('documentos_paciente_data')) || [];
                 const paisesData = JSON.parse(localStorage.getItem('paises_data')) || [];
                 const municipiosData = JSON.parse(localStorage.getItem('municipios_data')) || [];
                 const epsData = JSON.parse(localStorage.getItem('eps_data')) || [];
 
-                setDocumentosTipos(documentosData);
-                setPaises(paisesData);
-                setMunicipios(municipiosData);
-                setEpsList(epsData);
+                // Verificar que los datos existan antes de actualizar el estado
+                if (documentosData) {
+                    setDocumentosTipos(documentosData);
+                    console.log('Documentos cargados:', documentosData);
+                }
+                if (paisesData) setPaises(paisesData);
+                if (municipiosData) setMunicipios(municipiosData);
+                if (epsData) setEpsList(epsData);
+
+                // Log de verificación
+                console.log('Datos cargados:', {
+                    documentos: documentosData,
+                    paises: paisesData,
+                    municipios: municipiosData,
+                    eps: epsData
+                });
+
             } catch (error) {
                 console.error("Error al cargar datos estáticos:", error);
                 setError("Error al cargar datos del formulario");
@@ -54,7 +69,7 @@ const DatosPaciente = ({ pacienteId }) => {
         } else {
             setLoading(false);
         }
-    }, [pacienteId]);
+    }, []); // Removido pacienteId del array de dependencias si no es necesario
 
     const fetchPacienteData = async () => {
         try {
@@ -113,6 +128,7 @@ const DatosPaciente = ({ pacienteId }) => {
 
     if (loading) return <div>Cargando...</div>;
     if (error) return <div className="text-red-600">Error: {error}</div>;
+    console.log('Datos del state de tipos de documento:', documentosTipos);
 
     return (
 
@@ -130,10 +146,16 @@ const DatosPaciente = ({ pacienteId }) => {
                             onChange={handleInputChange}
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         >
-                            <option value="">Seleccione...</option>
-                            {documentosTipos.map(doc => (
-                                <option key={doc.id} value={doc.id}>{doc.nombre}</option>
-                            ))}
+                            <option value="">Seleccione un tipo de documento</option>
+                            {documentosTipos && documentosTipos.length > 0 ? (
+                            documentosTipos.map(doc => (
+                                <option key={doc.id} value={doc.id}>
+                                    {doc.nombre || doc.descripcion}
+                                </option>
+                            ))
+                        ) : (
+                            <option value="" disabled>No hay tipos de documento disponibles</option>
+                        )}
                         </select>
                     </div>
 
@@ -185,7 +207,7 @@ const DatosPaciente = ({ pacienteId }) => {
                     <button
                         type=""  /*desactivando el evento por ahora*/
                         className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-titles focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        /*disabled={loading}*/
+                    /*disabled={loading}*/
                     >
                         {loading ? 'Guardando...' : 'Guardar'}
                     </button>
