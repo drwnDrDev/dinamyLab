@@ -7,6 +7,7 @@ import Setup from './components/Setup';
 import TestComponent from './components/TestComponent';
 import '../css/app.css';
 import DropdownComponent from './components/DropdownComponent';
+import Typewriter from './components/guest/Typewriter';
 
 // Renderizado condicional basado en la presencia de elementos en el DOM
 
@@ -23,7 +24,12 @@ if (document.getElementById('dropdownComponent')) {
         />
     );
 }
-
+if (document.getElementById('typewriter')) {
+    const element = document.getElementById('typewriter');
+    const text = element.getAttribute('text') || 'Your trusted partner in clinical laboratory management';
+    const root = createRoot(element);
+    root.render(<Typewriter text={text} typingSpeed={50} />);
+}
 if (document.getElementById('testComponent')) {
     const element = document.getElementById('testComponent');
     const loginUser = element.getAttribute('data-login-user');
