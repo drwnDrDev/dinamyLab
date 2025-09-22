@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    fetchServiciosHabilitados, 
-    fetchViaIngreso, 
-    fetchDiagnosticos, 
-    fetchFinalidades, 
-    fetchCausasExternas, 
-    fetchTiposAtencion 
+import {
+    fetchServiciosHabilitados,
+    fetchViaIngreso,
+    fetchDiagnosticos,
+    fetchFinalidades,
+    fetchCausasExternas,
+    fetchTiposAtencion
 } from "../api";
 
 const Setup = () => {
@@ -74,7 +74,7 @@ const Setup = () => {
             ...prev,
             [key]: !prev[key]
         }));
-        
+
         if (!estadoBotones[key]) {
             obtenerListado(key);
         }
@@ -92,13 +92,13 @@ const Setup = () => {
         if (setupData.buscador) {
             const buscado = setupData.buscador.toLowerCase();
             const filtrados = key === 'serviciosHabilitados'
-                ? data.filter(item => 
-                    (item.nombre && item.nombre.toLowerCase().includes(buscado)) || 
-                    (item.grupo && item.grupo.toLowerCase().includes(buscado)) || 
+                ? data.filter(item =>
+                    (item.nombre && item.nombre.toLowerCase().includes(buscado)) ||
+                    (item.grupo && item.grupo.toLowerCase().includes(buscado)) ||
                     (item.codigo === parseInt(buscado)))
-                : data.filter(item => 
-                    (item.nombre && item.nombre.toLowerCase().includes(buscado)) || 
-                    (item.descripcion && item.descripcion.toLowerCase().includes(buscado)) || 
+                : data.filter(item =>
+                    (item.nombre && item.nombre.toLowerCase().includes(buscado)) ||
+                    (item.descripcion && item.descripcion.toLowerCase().includes(buscado)) ||
                     (item.codigo && item.codigo.toLowerCase().includes(buscado)));
 
             setSetupData(prev => ({
@@ -110,7 +110,7 @@ const Setup = () => {
 
     const toggleActivarItem = async (item) => {
         const accion = item.activo ? 'desactivar' : 'activar';
-        
+
         if (window.confirm(`¿Estás seguro de que deseas ${accion} el ítem "${item.nombre || item.descripcion}"?`)) {
             try {
                 const response = await fetch(`${window.location.origin}/api/setup/${item.codigo}/${accion}`, {
@@ -124,7 +124,7 @@ const Setup = () => {
 
                 const data = await response.json();
                 alert(data.message || `Ítem ${accion}do exitosamente.`);
-                
+
                 // Actualizar el estado del ítem
                 const activeKey = Object.keys(estadoBotones).find(key => estadoBotones[key]);
                 if (activeKey) {
@@ -183,7 +183,7 @@ const Setup = () => {
             {/* Listado de items */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {setupData.visibles.map((item, index) => (
-                    <div 
+                    <div
                         key={index}
                         className="border p-2 mb-2 bg-pink-50 dark:bg-gray-800 rounded shadow"
                         onClick={() => console.log(item)}
