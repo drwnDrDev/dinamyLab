@@ -9,8 +9,7 @@ class ServicioHabilitadoController extends Controller
 {
     public function index()
     {
-        $servicios = ServicioHabilitado::where('activo', true)
-                        ->orderBy('nivel','desc')
+        $servicios = ServicioHabilitado::orderBy('nivel','desc')
                         ->get();
 
         if ($servicios->isEmpty()) {
@@ -115,5 +114,5 @@ class ServicioHabilitadoController extends Controller
 
         return response()->json(['message' => 'Servicio Habilitado eliminado exitosamente'], 200);
     }
-    
+
 }

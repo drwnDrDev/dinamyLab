@@ -6,7 +6,7 @@ import {
     fetchFinalidades,
     fetchCausasExternas,
     fetchTiposAtencion
-} from "../api";
+} from "../../api";
 
 const Setup = () => {
     // Estados
@@ -24,12 +24,40 @@ const Setup = () => {
     });
 
     const [estadoBotones, setEstadoBotones] = useState({
-        serviciosHabilitados: false,
-        viasIngreso: false,
-        diagnosticos: false,
-        finalidades: false,
-        causasExternas: false,
-        tiposAtencion: false
+        serviciosHabilitados: {
+            activo: false,
+            nombre: 'Servicios Habilitados',
+            clases: 'bg-blue-500'
+        },
+        viasIngreso: {
+            activo:false,
+            nombre: 'Vías de Ingreso',
+            clases: 'bg-green-500'
+
+        },
+        diagnosticos: {
+            activo:false,
+            nombre: 'Diagnósticos',
+            clases: 'bg-red-500'
+
+        },
+        finalidades: {
+            activo:false,
+            nombre: 'Finalidades',
+            clases: 'bg-yellow-500'
+        },
+        causasExternas: {
+            activo:false,
+            nombre: 'Causas Externas',
+            clases: 'bg-purple-500'
+
+        },
+        tiposAtencion: {
+            activo: false,
+            nombre: 'Tipos de Atención',
+            clases: 'bg-yellow-500'
+
+        }
     });
 
     // Efecto para cargar datos iniciales
@@ -70,12 +98,18 @@ const Setup = () => {
     };
 
     const toggleButtonState = (key) => {
-        setEstadoBotones(prev => ({
-            ...prev,
-            [key]: !prev[key]
-        }));
+        // Reset all buttons to inactive first
+        const resetButtons = {};
+        Object.keys(estadoBotones).forEach(k => {
+            resetButtons[k] = {
+                ...estadoBotones[k],
+                activo: k === key ? !estadoBotones[k].activo : false
+            };
+        });
 
-        if (!estadoBotones[key]) {
+        setEstadoBotones(resetButtons);
+
+        if (!estadoBotones[key].activo) {
             obtenerListado(key);
         }
     };
@@ -146,10 +180,10 @@ const Setup = () => {
                         key={key}
                         onClick={() => toggleButtonState(key)}
                         className={`px-4 py-2 rounded ${
-                            estadoBotones[key] ? 'bg-gray-500' : 'bg-gray-200'
+                            estadoBotones[key].activo ? estadoBotones[key].clases: 'bg-gray-200'
                         } text-white`}
                     >
-                        {key.replace(/([A-Z])/g, ' $1').trim()}
+                        {estadoBotones[key].nombre}
                     </button>
                 ))}
             </div>
