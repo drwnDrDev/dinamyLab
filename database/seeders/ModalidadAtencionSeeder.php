@@ -12,10 +12,7 @@ class ModalidadAtencionSeeder extends Seeder
      */
     public function run(): void
     {
-        $lista ="01: Intramural; 02: Extramural unidad móvil 03: Extramural domiciliaria 04:
-Extramural jornada de salud; 06: Telemedicina interactiva; 07: Telemedicina
-no interactiva; 08: Telemedicina telexperticia; 09: Telemedicina
-telemonitoreo";
+        $lista ="01: Intramural; 02: Extramural unidad móvil; 03: Extramural domiciliaria; 04: Extramural jornada de salud; 06: Telemedicina interactiva; 07: Telemedicina no interactiva; 08: Telemedicina telexperticia; 09: Telemedicina telemonitoreo";
         $modalidades = explode(";", $lista);
 
 

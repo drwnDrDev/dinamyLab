@@ -16,6 +16,7 @@ export default defineConfig({
                 'resources/js/crearPersona.js',
                 'resources/js/ticket.js',
                 'resources/js/react-app.jsx',
+                'resources/js/app.jsx',
             ],
             refresh: true,
 
