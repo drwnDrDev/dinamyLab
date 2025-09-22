@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 
 
-import Setup from './components/Setup';
+import Setup from './components/setup/Setup';
 import TestComponent from './components/TestComponent';
 import '../css/app.css';
 import DropdownComponent from './components/DropdownComponent';
