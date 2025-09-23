@@ -11,14 +11,7 @@ import {
 const Setup = () => {
     // Estados
     const [setupData, setSetupData] = useState({
-        serviciosHabilitados: [],
-        viasIngreso: [],
-        diagnosticos: [],
-        finalidades: [],
-        causasExternas: [],
-        tiposAtencion: [],
         visibles: [],
-        activos: [],
         todos: [],
         buscador: ''
     });
@@ -27,7 +20,8 @@ const Setup = () => {
         serviciosHabilitados: {
             activo: false,
             nombre: 'Servicios Habilitados',
-            clases: 'bg-blue-500'
+            clases: 'bg-blue-500',
+            modificar: 'api/setup/servicios-habilitados'
         },
         viasIngreso: {
             activo:false,

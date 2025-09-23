@@ -11,8 +11,8 @@ test('elegir sede', function () {
 test('elegir sede con empleado en session', function () {
     $this->seed(); // Ejecuta DatabaseSeeder
     $empleado = \App\Models\Empleado::find(1);
-    // session(['empleado' => $empleado]);
-    // $sede = ElegirEmpresa::elegirSede();
-    $this->assertNotNull($empleado);
+    session(['empleado' => $empleado]);
+    $sede = ElegirEmpresa::elegirSede();
+    $this->assertNotNull($sede);
 
 });
