@@ -12,13 +12,13 @@ import {
 const Setup = () => {
   // Estado principal
   const [categorias, setCategorias] = useState({
-    serviciosHabilitados: { nombre: 'Servicios Habilitados', clases: 'bg-blue-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/servicios-habilitados' },
-    viasIngreso:         { nombre: 'Vías de Ingreso', clases: 'bg-green-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/via-ingreso' },
-    diagnosticos:        { nombre: 'Diagnósticos', clases: 'bg-red-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/cie10' },
-    finalidades:         { nombre: 'Finalidades', clases: 'bg-yellow-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/finalidades' },
-    causasExternas:      { nombre: 'Causas Externas', clases: 'bg-purple-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/causa-atencion' },
-    tiposAtencion:       { nombre: 'Modalidades de Atención', clases: 'bg-yellow-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/modalidades-atencion' },
-    tiposAfiliacion:     { nombre: 'Tipos de Afiliación', clases: 'bg-pink-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/tipos-afiliacion' },
+    serviciosHabilitados: { nombre: 'Servicios Habilitados', clases: 'bg-blue-200 text-blue-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/servicios-habilitados' },
+    viasIngreso:         { nombre: 'Vías de Ingreso', clases: 'bg-green-200 text-green-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/via-ingreso' },
+    diagnosticos:        { nombre: 'Diagnósticos', clases: 'bg-stone-200 text-stone-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/cie10' },
+    finalidades:         { nombre: 'Finalidades', clases: 'bg-yellow-200 text-yellow-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/finalidades' },
+    causasExternas:      { nombre: 'Causas Externas', clases: 'bg-purple-200 text-purple-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/causa-atencion' },
+    tiposAtencion:       { nombre: 'Modalidades de Atención', clases: 'bg-teal-200 text-teal-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/modalidades-atencion' },
+    tiposAfiliacion:     { nombre: 'Tipos de Afiliación', clases: 'bg-pink-200 text-pink-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/tipos-afiliacion' },
   });
 
   const [buscador, setBuscador] = useState('');
@@ -168,7 +168,7 @@ const Setup = () => {
           <button
             key={key}
             onClick={() => toggleButtonState(key)}
-            className={`px-4 py-2 rounded ${categorias[key].activo ? categorias[key].clases : 'bg-gray-200'} text-white`}
+            className={`px-4 py-2 rounded ${categorias[key].activo ? categorias[key].clases : 'bg-gray-200text-white'}`}
           >
             {categorias[key].nombre}
           </button>
