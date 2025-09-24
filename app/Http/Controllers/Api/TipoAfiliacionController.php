@@ -35,4 +35,20 @@ class TipoAfiliacionController extends Controller
             ], 200
         );
     }
+    public function activar($codigo)
+    {
+        $tipoAfiliacion = \App\Models\TipoAfiliacion::where('codigo', $codigo)->first();
+
+        if (!$tipoAfiliacion) {
+            return response()->json(['message' => 'Tipo de afiliación no encontrado'], 404);
+        }
+
+        $tipoAfiliacion->activo = !$tipoAfiliacion->activo;
+        $tipoAfiliacion->save();
+
+        return response()->json([
+            'message' => 'Tipo de afiliación ' . ($tipoAfiliacion->activo ? 'activado' : 'desactivado') . ' exitosamente',
+            'data' => $tipoAfiliacion
+        ], 200);
+    }
 }

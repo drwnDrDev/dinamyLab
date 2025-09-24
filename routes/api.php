@@ -84,6 +84,7 @@ Route::delete('afiliaciones-salud/{id}', [AfiliacionSaludController::class, 'des
 
 Route::get('tipos-afiliacion', [\App\Http\Controllers\Api\TipoAfiliacionController::class, 'index']);
 Route::get('tipos-afiliacion/{codigo}', [\App\Http\Controllers\Api\TipoAfiliacionController::class, 'show']);
+Route::patch('tipos-afiliacion/{codigo}/activar', [\App\Http\Controllers\Api\TipoAfiliacionController::class, 'activar'])->name('tipos-afiliacion.activar');
 
 Route::get('paises', [\App\Http\Controllers\Api\PaisController::class, 'index']);
 
