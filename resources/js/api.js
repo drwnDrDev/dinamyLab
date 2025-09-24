@@ -141,7 +141,7 @@ export const fetchDiagnosticos = async () => {
 export const fetchTiposAfiliacion = async () => {
     try {
         const response = await apiClient.get('/api/tipos-afiliacion');
-        return response.data.data.tipos_afiliacion || [];
+        return response.data.data || [];
     } catch (error) {
         console.error('Error al obtener los tipos de afiliación:', error);
         return [];

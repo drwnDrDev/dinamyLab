@@ -5,21 +5,24 @@ import {
   fetchDiagnosticos,
   fetchFinalidades,
   fetchCausasExternas,
-  fetchTiposAtencion
+  fetchTiposAtencion,
+  fetchTiposAfiliacion
 } from "../../api";
 
 const Setup = () => {
   // Estado principal
   const [categorias, setCategorias] = useState({
     serviciosHabilitados: { nombre: 'Servicios Habilitados', clases: 'bg-blue-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/servicios-habilitados' },
-    viasIngreso:         { nombre: 'Vías de Ingreso', clases: 'bg-green-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/vias-ingreso' },
+    viasIngreso:         { nombre: 'Vías de Ingreso', clases: 'bg-green-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/via-ingreso' },
     diagnosticos:        { nombre: 'Diagnósticos', clases: 'bg-red-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/cie10' },
     finalidades:         { nombre: 'Finalidades', clases: 'bg-yellow-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/finalidades' },
     causasExternas:      { nombre: 'Causas Externas', clases: 'bg-purple-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/causa-atencion' },
     tiposAtencion:       { nombre: 'Modalidades de Atención', clases: 'bg-yellow-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/modalidades-atencion' },
+    tiposAfiliacion:     { nombre: 'Tipos de Afiliación', clases: 'bg-pink-500', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/tipos-afiliacion' },
   });
 
   const [buscador, setBuscador] = useState('');
+  const [filtro, setFiltro] = useState('inactivos');
 
   // Map de funciones para inicializar
   const fetchers = {
@@ -29,9 +32,10 @@ const Setup = () => {
     finalidades: fetchFinalidades,
     causasExternas: fetchCausasExternas,
     tiposAtencion: fetchTiposAtencion,
+    tiposAfiliacion: fetchTiposAfiliacion
   };
 
-  // Inicializar datos
+  // useEffect para la carga inicial de datos (solo una vez)
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -41,10 +45,11 @@ const Setup = () => {
         setCategorias(prev => {
           const updated = { ...prev };
           keys.forEach((key, i) => {
-            updated[key].datos = results[i];
-            updated[key].todos = results[i];
-            updated[key].visibles = results[i];
-            updated[key].activos = results[i].filter(d => d.activo);
+            const fetchedData = results[i];
+            updated[key].datos = fetchedData;
+            updated[key].todos = fetchedData;
+            updated[key].activos = fetchedData.filter(d => d.activo);
+            updated[key].visibles = fetchedData;
           });
           return updated;
         });
@@ -52,9 +57,16 @@ const Setup = () => {
         console.error('Error al inicializar los datos:', error);
       }
     };
-
     initialize();
-  }, []);
+  }, []); // Solo una vez al montar
+
+  // Nuevo useEffect para filtrar cuando cambien filtro, buscador o la categoría activa
+  useEffect(() => {
+    const activeKey = Object.keys(categorias).find(key => categorias[key].activo);
+    if (activeKey) {
+      obtenerListado(activeKey);
+    }
+  }, [filtro, buscador, categorias]);
 
   // Filtrado genérico
   const filtrar = (item, texto, esServicio) => {
@@ -68,20 +80,32 @@ const Setup = () => {
     );
   };
 
-  // Obtener listado
+  // Refactorización de obtenerListado para que sea una función pura
   const obtenerListado = (key) => {
-    const data = categorias[key].datos;
-    const activos = data.filter(d => d.activo);
+    setCategorias(prev => {
+      const data = prev[key].datos;
+      let visibles;
 
-    let visibles = activos;
-    if (buscador) {
-      visibles = data.filter(item => filtrar(item, buscador, key === 'serviciosHabilitados'));
-    }
+      if (filtro === 'activos') {
+        visibles = data.filter(d => d.activo);
+      } else if (filtro === 'inactivos') {
+        visibles = data.filter(d => !d.activo);
+      } else {
+        visibles = data;
+      }
 
-    setCategorias(prev => ({
-      ...prev,
-      [key]: { ...prev[key], visibles, activos, todos: data }
-    }));
+      if (buscador) {
+        visibles = visibles.filter(item => filtrar(item, buscador, key === 'serviciosHabilitados'));
+      }
+
+      return {
+        ...prev,
+        [key]: {
+          ...prev[key],
+          visibles,
+        },
+      };
+    });
   };
 
   // Toggle botón
@@ -93,56 +117,43 @@ const Setup = () => {
       });
       return updated;
     });
-
-    if (!categorias[key].activo) {
-      obtenerListado(key);
-    }
   };
 
   // Activar/Desactivar ítem
-const toggleActivarItem = async (item, key) => {
-  const categoria = categorias[key];
-  const url = `${window.location.origin}/${categoria.activeChange}/${item.codigo}/activar`;
+  const toggleActivarItem = async (item, key) => {
+    const categoria = categorias[key];
+    const url = `${window.location.origin}/${categoria.activeChange}/${item.codigo}/activar`;
 
-  try {
-    const response = await fetch(url, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json'}
-    });
+    try {
+      const response = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json'}
+      });
 
-    if (!response.ok) throw new Error('Error en la respuesta del servidor');
-    const data = await response.json();
-    alert(data.message || `${item.nombre || item.descripcion} actualizado exitosamente.`);
+      if (!response.ok) throw new Error('Error en la respuesta del servidor');
+      const data = await response.json();
+      alert(data.message || `${item.nombre || item.descripcion} actualizado exitosamente.`);
 
-    // ✅ actualizar localmente sin esperar refresh
-    setCategorias(prev => {
-      const updated = { ...prev };
-      updated[key] = {
-        ...prev[key],
-        datos: prev[key].datos.map(d =>
-          d.codigo === item.codigo ? { ...d, activo: !d.activo } : d
-        ),
-      };
-      // recalcular visibles, activos y todos
-      const nuevosDatos = updated[key].datos;
-      updated[key].todos = nuevosDatos;
-      updated[key].activos = nuevosDatos.filter(d => d.activo);
-
-      let visibles = nuevosDatos.filter(d => d.activo);
-      if (buscador) {
-        visibles = nuevosDatos.filter(i =>
-          filtrar(i, buscador, key === 'serviciosHabilitados')
-        );
-      }
-      updated[key].visibles = visibles;
-
-      return updated;
-    });
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Ocurrió un error al procesar la solicitud.');
-  }
-};
+      // actualizar localmente sin esperar refresh
+      setCategorias(prev => {
+        const updated = { ...prev };
+        updated[key] = {
+          ...prev[key],
+          datos: prev[key].datos.map(d =>
+            d.codigo === item.codigo ? { ...d, activo: !d.activo } : d
+          ),
+        };
+        // recalcular todos y activos
+        const nuevosDatos = updated[key].datos;
+        updated[key].todos = nuevosDatos;
+        updated[key].activos = nuevosDatos.filter(d => d.activo);
+        return updated;
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Ocurrió un error al procesar la solicitud.');
+    }
+  };
 
 
   // Identificar la categoría activa
@@ -170,22 +181,28 @@ const toggleActivarItem = async (item, key) => {
         placeholder="Buscar..."
         className="w-full p-2 mb-4 border rounded"
         value={buscador}
-        onChange={(e) => {
-          setBuscador(e.target.value);
-          if (activeKey) obtenerListado(activeKey);
-        }}
+        onChange={(e) => setBuscador(e.target.value)}
       />
 
       {/* Estadísticas */}
       {activa && (
         <div className="mb-4">
-          <button className="bg-cyan-500 text-white font-bold py-2 px-4 rounded mr-2">
+          <button
+            className="bg-cyan-500 text-white font-bold py-2 px-4 rounded mr-2"
+            onClick={() => setFiltro('activos')}
+          >
             Activos ({activa.activos.length})
           </button>
-          <button className="bg-yellow-500 text-white font-bold py-2 px-4 rounded mr-2">
+          <button
+            className="bg-yellow-500 text-white font-bold py-2 px-4 rounded mr-2"
+            onClick={() => setFiltro('inactivos')}
+          >
             Inactivos ({activa.todos.length - activa.activos.length})
           </button>
-          <button className="bg-purple-500 text-white font-bold py-2 px-4 rounded mr-2">
+          <button
+            className="bg-purple-500 text-white font-bold py-2 px-4 rounded mr-2"
+            onClick={() => setFiltro('todos')}
+          >
             Todos ({activa.todos.length})
           </button>
         </div>

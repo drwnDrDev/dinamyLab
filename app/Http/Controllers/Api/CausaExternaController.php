@@ -23,4 +23,39 @@ class CausaExternaController extends Controller
             ]
         ]);
     }
+    public function show($codigo)
+    {
+        $causa = \App\Models\CausaExterna::where('codigo', $codigo)->first();
+
+        if (!$causa) {
+            return response()->json([
+                'message' => 'Causa externa no encontrada',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Causa externa encontrada',
+            'data' => $causa
+        ]);
+    }
+    public function activar($codigo)
+    {
+        $causa = \App\Models\CausaExterna::where('codigo', $codigo)->first();
+
+        if (!$causa) {
+            return response()->json([
+                'message' => 'Causa externa no encontrada',
+                'data' => null
+            ], 404);
+        }
+
+        $causa->activo = !$causa->activo;
+        $causa->save();
+
+        return response()->json([
+            'message' => 'Causa externa actualizada',
+            'data' => $causa
+        ]);
+    }
 }
