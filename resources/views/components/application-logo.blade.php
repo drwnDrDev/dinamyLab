@@ -1,1 +1,1 @@
-<img {{ $attributes->merge(['alt' => 'Application Logo', 'loading' => 'lazy']) }} src="{{ asset('images/application-logo.svg') }}">
+<h2 class="text-5xl font-bold tracking-tighter text-primary">🔬</h2>

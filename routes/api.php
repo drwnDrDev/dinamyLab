@@ -55,7 +55,7 @@ Route::patch('via-ingreso/{codigo}/activar', [\App\Http\Controllers\Api\ViaIngre
 Route::get('cie10', [CodigoDiagnosticoController::class, 'index']);
 Route::get('cie10/{id}', [CodigoDiagnosticoController::class, 'show']);
 Route::post('cie10', [CodigoDiagnosticoController::class, 'store']);
-Route::put('cie10/{id}', [CodigoDiagnosticoController::class, 'update']);
+Route::patch('cie10/{id}', [CodigoDiagnosticoController::class, 'update']);
 Route::patch('cie10/{id}/activar', [CodigoDiagnosticoController::class, 'activar'])->name('cie10.activar');
 
 Route::get('cie10/buscar', [CodigoDiagnosticoController::class, 'buscarPorNombre']);
@@ -84,6 +84,7 @@ Route::delete('afiliaciones-salud/{id}', [AfiliacionSaludController::class, 'des
 
 Route::get('tipos-afiliacion', [\App\Http\Controllers\Api\TipoAfiliacionController::class, 'index']);
 Route::get('tipos-afiliacion/{codigo}', [\App\Http\Controllers\Api\TipoAfiliacionController::class, 'show']);
+Route::patch('tipos-afiliacion/{codigo}/activar', [\App\Http\Controllers\Api\TipoAfiliacionController::class, 'activar'])->name('tipos-afiliacion.activar');
 
 Route::get('paises', [\App\Http\Controllers\Api\PaisController::class, 'index']);
 
