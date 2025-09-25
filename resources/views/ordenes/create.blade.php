@@ -8,11 +8,6 @@
 
     <article id="react-crear-orden"></article>
 
-    <x-canva class="mb-4">
-        <div class="section_paciente">
-            <x-formPersona perfil="Paciente" />
-        </div>
-    </x-canva>
 
     <x-canva class="mb-4">
         <div>
@@ -85,5 +80,5 @@
         @endif
 
     </x-canva>
-    @vite(['resources/js/main.js', 'resources/js/react-app.jsx'])
+    @vite(['resources/js/react-app.jsx'])
 </x-app-layout>
