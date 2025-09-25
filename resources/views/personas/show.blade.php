@@ -39,7 +39,13 @@
         <div class="py-4 grid grid-cols-2" id="info">
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
                 <p class="text-titles  font-normal leading-normal">Fecha de Nacimiento</p>
-                <p class=" font-normal leading-normal" id="fecha-nacimiento">{{ $persona->fecha_nacimiento->format('d/m/Y') }}</p>
+                <p class=" font-normal leading-normal" id="fecha-nacimiento">{{ $persona->fecha_nacimiento ? $persona->fecha_nacimiento->format('d/m/Y') : 'Actualizar Fecha de Nacimiento' }}
+                <span class=" font-ubuntu leading-normal text-sm text-blue-900" id="edad">
+                    @if($persona->fecha_nacimiento)
+                       ( {{ $persona->edad() }})
+                    @endif
+                </span>
+                </p>
             </div>
             <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Sexo</p>
@@ -98,7 +104,7 @@
             </div>
             <div>
                 <p class="text-titles  font-normal leading-normal">Tipo de Afiliación</p>
-                <p class=" font-normal leading-normal" id="tipo-afiliacion">{{ optional($persona->afiliacionSalud)->tipoAfiliacion()->nombre?? 'Sin Información'}}</p>
+                <p class=" font-normal leading-normal" id="tipo-afiliacion">{{optional($persona->afiliacionSalud)->tipoAfiliacion->codigo ?? NULL}} - {{ optional($persona->afiliacionSalud)->tipoAfiliacion->descripcion ?? 'Sin Información'}}</p>
             </div>
         </div>
 

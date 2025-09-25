@@ -33,6 +33,7 @@ class ServicioHabilitadoSeeder extends Seeder
                 'codigo' => $line[0],
                 'nombre' => $line[1],
                 'grupo' => $line[2],
+                'activo' => false,
                 'codigo_grupo' => str_pad($line[3], 2, '0', STR_PAD_LEFT)
             ]);
         }
