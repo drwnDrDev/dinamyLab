@@ -149,8 +149,8 @@ const DatosPaciente = ({ pacienteId }) => {
                             <option value="">Seleccione un tipo de documento</option>
                             {documentosTipos && documentosTipos.length > 0 ? (
                             documentosTipos.map(doc => (
-                                <option key={doc.id} value={doc.id}>
-                                    {doc.nombre || doc.descripcion}
+                                <option key={doc.id} value={doc.id} name="tipo_documento">
+                                    {doc.nombre}
                                 </option>
                             ))
                         ) : (
@@ -199,6 +199,50 @@ const DatosPaciente = ({ pacienteId }) => {
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         />
                     </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Pais de Nacimiento
+                        </label>
+                        <select
+                            name="pais_id"
+                            value={formData.pais_id}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        >
+                            <option value="">Seleccione un país</option>
+                            {paises && paises.length > 0 ? (
+                                paises.map(pais => (
+                                    <option key={pais.codigo_iso} value={pais.codigo_iso}>
+                                        {pais.nombre}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value="" disabled>No hay países disponibles</option>
+                            )}
+                        </select>
+                    </div>
+                    <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Municipio de Residencia
+                            </label>
+                            <select
+                                name="municipio_id"
+                                value={formData.municipio_id}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            >
+                                <option value="">Seleccione un municipio</option>
+                                {municipios && municipios.length > 0 ? (
+                                    municipios.map(mun => (
+                                        <option key={mun.codigo} value={mun.codigo}>
+                                            {mun.municipio} - {mun.departamento}
+                                        </option>
+                                    ))
+                                ) : (
+                                    <option value="" disabled>No hay municipios disponibles</option>
+                                )}
+                            </select>
+                        </div>
 
                     {/* Continuar con el resto de campos... */}
                 </div>
