@@ -23,4 +23,36 @@ class ModalidadAtencionController extends Controller
             ]
         ]);
     }
+    public function show($codigo)
+    {
+        $modalidad = \App\Models\ModalidadAtencion::where('codigo', $codigo)->first();
+
+        if (!$modalidad) {
+            return response()->json([
+                'message' => 'Modalidad de atencion no encontrada',
+                'data' => null
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Modalidad de atencion encontrada',
+            'data' => $modalidad
+        ]);
+    }
+    public function activar($codigo)
+    {
+        $modalidad = \App\Models\ModalidadAtencion::where('codigo', $codigo)->first();
+        if (!$modalidad) {
+            return response()->json([
+                'message' => 'Modalidad de atencion no encontrada',
+                'data' => null
+            ], 404);
+        }
+        $modalidad->activo = !$modalidad->activo;
+        $modalidad->save();
+        return response()->json([
+            'message' => 'Modalidad de atencion actualizada',
+            'data' => $modalidad
+        ]);
+    }
 }

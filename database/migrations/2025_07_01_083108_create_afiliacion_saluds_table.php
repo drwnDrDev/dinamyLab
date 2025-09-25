@@ -18,9 +18,10 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->string('eps');
-            $table->string('tipo_afiliacion')
-                ->default('12') // Default to 'Particular'
-                ->constrained('tipos_afiliaciones', 'codigo')
+            $table->string('tipo_afiliacion')->default('12');
+            $table->foreign('tipo_afiliacion')
+                ->references('codigo')
+                ->on('tipos_afiliaciones')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
         });

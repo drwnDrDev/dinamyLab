@@ -9,24 +9,20 @@ class ServicioHabilitadoController extends Controller
 {
     public function index()
     {
-        $servicios = ServicioHabilitado::where('activo', true)
-                        ->orderBy('nivel','desc')
-                        ->get();
-
+        $servicios = ServicioHabilitado::orderBy('nivel','desc')->get();
         if ($servicios->isEmpty()) {
-            return response()->json(['message' => 'No hay servicios habilitados activos'], 204);
+            return response()->json(['message' => 'No hay servicios habilitados'], 204);
         }
 
         return response()->json([
-            "message" => "Servicios Habilitados activos",
+            "message" => "Servicios Habilitados",
              "data"=>  $servicios
         ], 200);
     }
     public function show($codigo)
     {
         $servicio = ServicioHabilitado::where('codigo', $codigo)
-                        ->where('activo', true)
-                        ->first();
+                               ->first();
 
         if (!$servicio) {
             return response()->json(['message' => 'Servicio no encontrado'], 404);
@@ -49,7 +45,6 @@ class ServicioHabilitadoController extends Controller
         }
 
         $servicios = ServicioHabilitado::where('nombre', 'LIKE', '%' . $nombre . '%')
-                        ->where('activo', true)
                         ->orderBy('nivel','desc')
                         ->get();
 
@@ -103,6 +98,25 @@ class ServicioHabilitadoController extends Controller
             "data" => $servicio
         ], 200);
     }
+
+    public function activar($codigo)
+    {
+        $servicio = ServicioHabilitado::where('codigo', $codigo)->first();
+
+        if (!$servicio) {
+            return response()->json(['message' => 'Servicio no encontrado'], 404);
+        }
+
+        $servicio->activo = !$servicio->activo;
+        $servicio->save();
+
+        return response()->json([
+            'message' => 'Estado del servicio actualizado exitosamente',
+            'data' => $servicio
+        ], 200);
+    }
+
+
     public function destroy($codigo)
     {
         $servicio = ServicioHabilitado::where('codigo', $codigo)->first();
@@ -115,5 +129,5 @@ class ServicioHabilitadoController extends Controller
 
         return response()->json(['message' => 'Servicio Habilitado eliminado exitosamente'], 200);
     }
-    
+
 }
