@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tipos_afiliaciones', function (Blueprint $table) {
             $table->string('codigo')->primary();
-            $table->string('descripcion')->nullable();
+            $table->string('nombre')->unique();
             $table->boolean('activo')->default(true);
             $table->unsignedTinyInteger('nivel')->default(1);
         });

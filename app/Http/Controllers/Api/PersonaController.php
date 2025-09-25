@@ -17,7 +17,7 @@ class PersonaController extends Controller
     {
 
 
-        $personas = Persona::with(['tipo_documento', 'telefonos', 'direccion.municipio','direccion.pais_residencia', 'email', 'afiliacionSalud', 'contactoEmergencia', 'procedencia'])->get();
+        $personas = Persona::get('*')->load('tipo_documento');
 
 
         if($personas->isEmpty()) {
@@ -34,6 +34,8 @@ class PersonaController extends Controller
                     "id" => $persona['id'],
                     "nombre" => implode(' ',[$persona['primer_nombre'],$persona['segundo_nombre']?? '']),
                     "apellido" => implode(' ',[$persona['primer_apellido'],$persona['segundo_apellido']?? '']),
+                    "sexo" => $persona['sexo'],
+                    "fecha_nacimiento" => $persona['fecha_nacimiento'] ?? null,
                     "tipo_documento" => $persona['tipo_documento']['cod_rips'],
                     "numero_documento" => $persona['numero_documento'],
 

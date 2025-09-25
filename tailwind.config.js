@@ -7,7 +7,7 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
-     
+        './resources/js/**/*.jsx',
         './resources/js/*.js',
     ],
 
@@ -15,6 +15,9 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                headline: ['Ubuntu', 'sans-serif', 'system-ui'],
+                ubuntu: ['Ubuntu', 'sans-serif', 'system-ui'],
+                ubuntuBold: ['Ubuntu', 'sans-serif', 'system-ui', 'bold'],
             },
             colors: {
                 text: '#0d191c',
@@ -25,7 +28,7 @@ export default {
                 borders: '#cfe4e8'
 
             },
-            
+
         },
     },
     plugins: [forms],

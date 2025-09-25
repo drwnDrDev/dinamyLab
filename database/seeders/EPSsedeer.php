@@ -105,7 +105,7 @@ $tipoAfiliacionArray = explode("\n", $tipoAfiliacion);
                 $parts = explode(",", $tipo);
                 return [
                     'codigo' => trim($parts[0]),
-                    'descripcion' => trim($parts[1]),
+                    'nombre' => trim($parts[1]),
                     'nivel' => intval(trim($parts[2]),10)??0,
                 ];
             },
