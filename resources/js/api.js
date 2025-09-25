@@ -1,7 +1,7 @@
 import {displayValidationErrors} from './formularioPersona.js';
 import {appState} from './variables.js';
 import axios from 'axios';
-const TOKEN= document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const TOKEN= document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
 const apiClient = axios.create({
         headers: {
@@ -141,7 +141,7 @@ export const fetchDiagnosticos = async () => {
 export const fetchTiposAfiliacion = async () => {
     try {
         const response = await apiClient.get('/api/tipos-afiliacion');
-        return response.data.data.tipos_afiliacion || [];
+        return response.data.data || [];
     } catch (error) {
         console.error('Error al obtener los tipos de afiliación:', error);
         return [];

@@ -5,13 +5,9 @@
         </h2>
     </x-slot>
 
-    <div id="react-crear-orden" class="mb-4"></div>
 
-    <x-canva class="mb-4">
-        <div class="section_paciente">
-            <x-formPersona perfil="Paciente" />
-        </div>
-    </x-canva>
+    <article id="react-crear-orden"></article>
+
 
     <x-canva class="mb-4">
         <div>
@@ -84,5 +80,5 @@
         @endif
 
     </x-canva>
-    @vite(['resources/js/main.js', 'resources/js/react-app.jsx'])
+    @vite(['resources/js/react-app.jsx'])
 </x-app-layout>

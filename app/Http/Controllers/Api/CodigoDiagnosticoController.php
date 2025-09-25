@@ -69,9 +69,9 @@ class CodigoDiagnosticoController extends Controller
         return $codigoDiagnostico;
     }
 
-        public function activar($id)
+    public function activar($codigo)
     {
-        $codigoDiagnostico = CodigoDiagnostico::find($id);
+        $codigoDiagnostico = CodigoDiagnostico::where('codigo', $codigo)->first();
         $codigoDiagnostico->activo = !$codigoDiagnostico->activo;
         $codigoDiagnostico->save();
         return response()->json([
