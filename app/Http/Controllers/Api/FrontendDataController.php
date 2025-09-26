@@ -65,7 +65,7 @@ class FrontendDataController extends Controller
             ->orderBy('nivel','desc')->get();
 
             $cupsActivos = CodigoCup::where('activo', true)->get();
-            $defaultCies = \App\Models\CodigoDiagnostico::where('activo', true)->get('codigo', 'nombre')->take(5);
+            $defaultCies = \App\Models\CodigoDiagnostico::where('activo', true)->get()->take(5);
             if($defaultCies->isEmpty()) {
                 $defaultCies =\App\Models\CodigoDiagnostico::orderBy('nivel','desc')->limit(5)->get();
             }
