@@ -5,7 +5,7 @@ import { useTablasRef } from "./hooks/useTablasRef";
 import SelectField from "./SelectField";
 
 const DatosPaciente = ({ pacienteId = null }) => {
-    const [paciente, setPaciente] = useState(null);
+    const [personaExistente, setPersonaExistente] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -33,49 +33,153 @@ const DatosPaciente = ({ pacienteId = null }) => {
     });
 
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    // Función para buscar persona por documento
+    const buscarPersonaPorDocumento = async (numDoc) => {
+        if (!numDoc.trim()) return;
+        
         setLoading(true);
-
         try {
-            const url = pacienteId
-                ? `/api/personas/${pacienteId}`
-                : '/api/personas';
-
-            const method = pacienteId ? 'PUT' : 'POST';
-
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) throw new Error('Error al guardar los datos');
-
-            // Manejar respuesta exitosa
-            const result = await response.json();
-            // Aquí puedes agregar lógica adicional post-guardado
-
+            const response = await fetch(`/api/personas/buscar/${numDoc}`);
+            if (!response.ok) return null;
+            
+            const data = await response.json();
+            if (data) {
+                console.log('✅ Persona encontrada:', data);
+                setPersonaExistente(data);
+                return data;
+            }
+            setPersonaExistente(null);
+            return null;
         } catch (err) {
-            setError(err.message);
+            console.log('❌ Error al buscar persona:', err);
+            setPersonaExistente(null);
+            return null;
         } finally {
             setLoading(false);
         }
     };
 
-    console.log('Datos del state de tipos de documento:', tiposDocumento);
+    // Manejador del evento blur para el número de documento
+    const handleDocumentoBlur = async (e) => {
+        const numeroDocumento = e.target.value.trim();
+        if (!numeroDocumento) return;
+
+        const usuario = await buscarPersonaPorDocumento(numeroDocumento);
+        if (usuario && usuario.data) {
+
+            const persona = usuario.data;
+
+            setFormData(prev => ({
+                ...prev,
+                nombres: persona.nombre || '',
+                apellidos: persona.apellido || '',
+                fecha_nacimiento: persona.fecha_nacimiento || '',
+                sexo: persona.sexo || '',
+                pais_nacimiento: persona.pais_origen || '',
+                municipio_id: persona.municipio_id || '',
+                direccion: persona.direccion || '',
+                telefono: persona.telefono || '',
+                zona_residencia: persona.zona || '',
+                pais_residencia: persona.pais_residencia || '',
+                email: persona.correo || '',
+                eps_id: persona.eps_id || '',
+                tipo_afiliacion: persona.tipo_afiliacion || ''
+            }));
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        setFormData(prev => {
+            const newFormData = {
+                ...prev,
+                [name]: value
+            };
+            return newFormData;
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        try {
+            // Determinar si es una actualización o creación
+            const esActualizacion = personaExistente !== null;
+            const url = esActualizacion 
+                ? `/api/personas/${personaExistente.id}`
+                : '/api/personas';
+            
+            const method = esActualizacion ? 'PUT' : 'POST';
+
+            // Log pre-envío
+            console.log('📋 ENVIANDO FORMULARIO:', {
+                operacion: esActualizacion ? 'Actualización' : 'Nuevo Registro',
+                metodo: method,
+                url: url,
+                datos: formData
+            });
+
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const resultado = await response.json();
+
+            if (!response.ok) {
+                // Si el servidor devuelve errores de validación
+                if (response.status === 422) {
+                    const errores = Object.values(resultado.errors || {}).flat().join('\n');
+                    throw new Error(`Errores de validación:\n${errores}`);
+                }
+                // Si es otro tipo de error
+                throw new Error(resultado.message || `Error al ${esActualizacion ? 'actualizar' : 'crear'} la persona`);
+            }
+            console.log('✅ Operación exitosa:', resultado);
+
+            // Aquí podrías agregar alguna notificación de éxito
+            alert(`Persona ${esActualizacion ? 'actualizada' : 'creada'} exitosamente`);
+
+            // Opcional: limpiar el formulario después de crear
+            if (!esActualizacion) {
+                setFormData({
+                    tipo_documento: '',
+                    numero_documento: '',
+                    nombres: '',
+                    apellidos: '',
+                    fecha_nacimiento: '',
+                    sexo: '',
+                    pais_nacimiento: '',
+                    municipio_id: '',
+                    direccion: '',
+                    telefono: '',
+                    zona_residencia: '',
+                    pais_residencia: '',
+                    email: '',
+                    eps_id: '',
+                    tipo_afiliacion: ''
+                });
+                setPersonaExistente(null);
+            }
+
+        } catch (err) {
+            console.error('❌ Error:', err);
+            console.log('Estado del formulario al momento del error:', formData);
+            setError(err.message);
+            alert(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+   
 
     return (
 
@@ -102,14 +206,21 @@ const DatosPaciente = ({ pacienteId = null }) => {
                             <label className="block font-medium text-sm text-text">
                                 Número de Documento
                             </label>
+                                                    <div className="relative">
                             <input
                                 type="text"
                                 name="numero_documento"
                                 value={formData.numero_documento}
                                 onChange={handleInputChange}
-                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                                onBlur={handleDocumentoBlur}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             />
+                            {loading && (
+                                <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
+                                </div>
+                            )}
+                        </div>
                         </div>
 
                         <SelectField
@@ -160,7 +271,7 @@ const DatosPaciente = ({ pacienteId = null }) => {
                                 rounded-md"
                             />
                         </div>
-                        <div class="w-full pb-2 flex gap-2 items-center">
+                        <div className="w-full pb-2 flex gap-2 items-center">
                             <span className="font-semibold">Sexo</span>
                             <label htmlFor="sexo_femenino" className="inline-flex items-center">F</label>
                             <input
@@ -212,9 +323,33 @@ const DatosPaciente = ({ pacienteId = null }) => {
 
                     {/*INFORMACION DE CONTACTO*/}
 
-                    <div class="flex flex-col gap-4 mb-4 md:m-0">
+                    <div className="flex flex-col gap-4 mb-4 md:m-0">
                         <div>
                             <h3 className="font-medium text-normal text-titles my-4">Información de contacto</h3>
+                        </div>
+                        <div className="w-full pb-2 flex gap-2 items-center">
+                            <span className="font-semibold">Zona de Residencia</span>
+                            <label htmlFor="zona_urbana" className="inline-flex items-center">Urbana</label>
+                            <input
+                                type="radio"
+                                id="zona_urbana"
+                                name="zona_residencia"
+                                value="02"
+                                checked={formData.zona_residencia === '02'}
+                                onChange={handleInputChange}
+                                className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
+                            />
+                            <label htmlFor="zona_rural" className="inline-flex items-center">Rural</label>
+                            <input
+                                type="radio"
+                                id="zona_rural"
+                                name="zona_residencia"
+                                value="01"
+                                checked={formData.zona_residencia === '01'}
+                                onChange={handleInputChange}
+                                className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
+                            />
+
                         </div>
                         <div>
                             <label className="block font-medium text-sm text-text">
@@ -272,19 +407,25 @@ const DatosPaciente = ({ pacienteId = null }) => {
                                 codigo: mun.codigo,
                                 nombre: `${mun.municipio} - ${mun.departamento}`
                             }))}
-                        />
-                        
+                        />                     
                     </div>
-
                 </div>
+
 
                 <div className="flex justify-end space-x-3">
                     <button
-                        type="button"  /*desactivando el evento por ahora*/
-                        className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-titles focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    /*disabled={loading}*/
+                        type="submit"
+                        disabled={loading}
+                        className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-titles focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
                     >
-                        {loading ? 'Guardando...' : 'Guardar'}
+                        {loading ? (
+                            <>
+                                <div className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></div>
+                                {personaExistente ? 'Actualizando...' : 'Guardando...'}
+                            </>
+                        ) : (
+                            personaExistente ? 'Actualizar' : 'Guardar'
+                        )}
                     </button>
                 </div>
             </form>

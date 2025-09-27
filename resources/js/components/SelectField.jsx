@@ -29,7 +29,7 @@ const SelectField = ({
       <label htmlFor={name} className="block font-medium text-sm text-text">
         {label} {required && <span className="text-danger">*</span>}
       </label>
-      {console.log('Options received in SelectField:', options)}
+      
       <select
         id={name}
         name={name}
