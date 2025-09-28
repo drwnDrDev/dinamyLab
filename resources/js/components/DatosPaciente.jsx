@@ -15,6 +15,8 @@ const DatosPaciente = ({ pacienteId = null }) => {
 
     // Estados para los datos del formulario
     const [formData, setFormData] = useState({
+        id: null,
+        perfil: 'Paciente',
         tipo_documento: '',
         numero_documento: '',
         nombres: '',
@@ -71,6 +73,10 @@ const DatosPaciente = ({ pacienteId = null }) => {
 
             setFormData(prev => ({
                 ...prev,
+                id: persona.id || null,
+                perfil: 'Paciente',
+                tipo_documento: persona.tipo_documento || '',
+                numero_documento: persona.numero_documento || '',
                 nombres: persona.nombre || '',
                 apellidos: persona.apellido || '',
                 fecha_nacimiento: persona.fecha_nacimiento || '',
@@ -133,7 +139,7 @@ const DatosPaciente = ({ pacienteId = null }) => {
             });
 
             const resultado = await response.json();
-
+            
             if (!response.ok) {
                 // Si el servidor devuelve errores de validación
                 if (response.status === 422) {
@@ -151,6 +157,7 @@ const DatosPaciente = ({ pacienteId = null }) => {
             // Opcional: limpiar el formulario después de crear
             if (!esActualizacion) {
                 setFormData({
+                    perfil: 'Paciente',
                     tipo_documento: '',
                     numero_documento: '',
                     nombres: '',
@@ -185,7 +192,7 @@ const DatosPaciente = ({ pacienteId = null }) => {
 
         <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
             <form onSubmit={handleSubmit} className="max-w-screen-lg mx-auto">
-                <input type="hidden" id="perfil" name="perfil" value=""></input>
+                
                 <div className="flex gap-4">
                     <h2 className="font-bold mb-4 text-xl text-titles">Datos del Paciente </h2>
                 </div>
@@ -199,7 +206,7 @@ const DatosPaciente = ({ pacienteId = null }) => {
                             name="tipo_documento"
                             value={formData.tipo_documento}
                             onChange={handleInputChange}
-                            options={tiposDocumento.map(doc => ({ codigo: doc.id, nombre: doc.nombre }))}
+                            options={tiposDocumento.map(doc => ({ key: doc.id, codigo: doc.cod_rips, nombre: doc.nombre }))}
                         />
 
                         <div>
