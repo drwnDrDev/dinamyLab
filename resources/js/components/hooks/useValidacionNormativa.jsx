@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export const useValidacionNormativa = ({ tipoDocConfig, numeroDocumento, fechaNacimiento }) => {
+export const useValidacionNormativa = (tipoDocConfig, numeroDocumento, fechaNacimiento) => {
   const [errores, setErrores] = useState({
     numero_documento: null,
     fecha_nacimiento: null,
