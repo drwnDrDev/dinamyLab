@@ -39,7 +39,7 @@ const SelectField = ({
         disabled={disabled}
       >
         {Array.isArray(options) && options.map((opt) => (
-          <option className='capitalize' key={opt.codigo} value={opt.codigo}>
+          <option className='capitalize' key={opt.key ?? opt.codigo} value={opt.codigo}>
             {opt.nombre}
           </option>
         ))}
