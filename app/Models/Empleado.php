@@ -7,18 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Empleado extends Model
 
 {
+        /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\PersonaFactory> */
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+
     protected $fillable = [
         'cargo',
         'firma',
-        'tipo_documento',
+        'tipo_documento_id',
         'numero_documento',
-        'fecha_ingreso',
-        'fecha_retiro',
         'fecha_nacimiento',
         'user_id',
-        'empresa_id',
-        'persona_id',
-        'contacto_id',
+        'empresa_id'
     ];
 
 

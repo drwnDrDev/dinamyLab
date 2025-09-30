@@ -118,7 +118,7 @@ class EmpresaSeeder extends Seeder
         $admon= \App\Models\Empleado::create([
             'cargo'=>'Administrador',
             'firma'=>'ramirez.png',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
+            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'80920160',
             'fecha_nacimiento'=>'1985-08-08',
             'user_id'=>1,
