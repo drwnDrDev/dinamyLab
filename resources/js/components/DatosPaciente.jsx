@@ -5,7 +5,7 @@ import { useTablasRef } from "./hooks/useTablasRef";
 import SelectField from "./SelectField";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
 
-const DatosPaciente = ({ pacienteId = null }) => {
+const DatosPaciente = ({ persona, setPersona }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -66,6 +66,7 @@ const DatosPaciente = ({ pacienteId = null }) => {
         }
     };
 
+  
     // Manejador del evento blur para el número de documento
     const handleDocumentoBlur = async (e) => {
         const numeroDocumento = e.target.value.trim();
@@ -156,7 +157,8 @@ const DatosPaciente = ({ pacienteId = null }) => {
                 throw new Error(resultado.message || `Error al ${esActualizacion ? 'actualizar' : 'crear'} la persona`);
             }
             console.log('✅ Operación exitosa:', resultado);
-
+            setPersona(resultado); // Actualizar el estado global con la persona creada/actualizada
+            console.log('Persona actualizada en el componente padre:', resultado);
             // Aquí podrías agregar alguna notificación de éxito
             alert(`Persona ${esActualizacion ? 'actualizada' : 'creada'} exitosamente`);
 
@@ -203,6 +205,12 @@ const DatosPaciente = ({ pacienteId = null }) => {
                     <h2 className="font-bold mb-4 text-xl text-titles">Datos del Paciente </h2>
                 </div>
 
+                {persona && (
+                    <div className="mb-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded">
+                        <strong>Paciente seleccionado:</strong> {persona.data.primer_nombre} {persona.data.primer_apellido} - Documento: {persona.data.numero_documento}
+                    </div>
+                )}
+
                 <div className="inputs_container md:grid md:grid-cols-2 gap-8 w-full min-w-80 p-4">
                     <div className="flex flex-col gap-4 mb-4 md:m-0">
                         {/* Tipo de documento */}
@@ -226,7 +234,7 @@ const DatosPaciente = ({ pacienteId = null }) => {
                                     value={formData.numero_documento}
                                     onChange={handleInputChange}
                                     onBlur={handleDocumentoBlur}
-                                    className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
+                                    className={erroresValidacion.numero_documento ? `h-9 w-full p-2 border-borders focus:border-red-500 focus:ring-red-500 rounded-md` : `h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md`}
                                 />
                                 {loading && (
                                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
@@ -276,6 +284,7 @@ const DatosPaciente = ({ pacienteId = null }) => {
                                 rounded-md"
                             />
                         </div>
+                        <div>
                         <div className="w-full pb-2 flex gap-2 items-center">
                             <label className="block font-medium text-sm text-text">
                                 Fecha de Nacimiento
@@ -285,9 +294,11 @@ const DatosPaciente = ({ pacienteId = null }) => {
                                 name="fecha_nacimiento"
                                 value={formData.fecha_nacimiento}
                                 onChange={handleInputChange}
-                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                                className={erroresValidacion.fecha_nacimiento ? `h-9 w-full p-2 border-borders rounded-md focus:border-red-500 focus:ring-red-500` : 
+                                    `h-9 w-full p-2 border-borders rounded-md focus:border-primary focus:ring-primary`
+                                }
                             />
+                        </div>
                             {erroresValidacion.fecha_nacimiento && (
                                 <div className="text-sm text-red-500 mt-1">
                                     {erroresValidacion.fecha_nacimiento}
