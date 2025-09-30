@@ -1,13 +1,11 @@
-<nav x-data="{ open: false }" 
-    @click.outside="open = false"
-    :class="{'block fixed top-16 left-0 w-60 row-span-1 h-full bg-background border-r border-t border-borders transition-[width] duration-300 ease-in-out z-10 shadow-2xl print:hidden': open, 'block fixed top-16 left-0 w-14 row-span-1 h-full bg-background border-r border-t border-borders transition-[width] duration-300 ease-in-out z-10 print:hidden': ! open }">
+<nav id="sideNav" class="block fixed top-16 left-0 w-14 row-span-1 h-full bg-background border-r border-t border-borders transition-[width] duration-300 ease-in-out z-10 print:hidden">
     <!-- Hamburger -->
     <div class="p-2 mb-4 gap-24 flex items-center justify-end">
         <h3 class="font-bold text-primary text-xl">LissApp</h3>
-        <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-text hover:text-titles focus:outline-none transition duration-150 ease-in-out">
+        <button id="toggleNav" class="inline-flex items-center justify-center p-2 rounded-md text-text hover:text-titles focus:outline-none transition duration-150 ease-in-out">
             <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                <path :class="{'hidden': ! open, 'inline-flex': open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <path id="hamburgerIcon" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                <path id="closeIcon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
     </div>
@@ -58,6 +56,47 @@
 
 
     </div>
-
-
 </nav>
+
+<script>
+    const sideNav = document.getElementById('sideNav');
+    const toggleNav = document.getElementById('toggleNav');
+    const hamburgerIcon = document.getElementById('hamburgerIcon');
+    const closeIcon = document.getElementById('closeIcon');
+    let isOpen = false;
+
+    function toggleNavigation() {
+        isOpen = !isOpen;
+        
+        if (isOpen) {
+            sideNav.classList.remove('w-14');
+            sideNav.classList.add('w-60', 'shadow-2xl');
+            hamburgerIcon.classList.add('hidden');
+            hamburgerIcon.classList.remove('inline-flex');
+            closeIcon.classList.add('inline-flex');
+            closeIcon.classList.remove('hidden');
+        } else {
+            sideNav.classList.add('w-14');
+            sideNav.classList.remove('w-60', 'shadow-2xl');
+            hamburgerIcon.classList.remove('hidden');
+            hamburgerIcon.classList.add('inline-flex');
+            closeIcon.classList.remove('inline-flex');
+            closeIcon.classList.add('hidden');
+        }
+    }
+
+    // Click en el botón de toggle
+    if (toggleNav) {
+        toggleNav.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleNavigation();
+        });
+    }
+
+    // Click fuera del nav para cerrarlo
+    document.addEventListener('click', (e) => {
+        if (isOpen && !sideNav.contains(e.target) && !toggleNav.contains(e.target)) {
+            toggleNavigation();
+        }
+    });
+</script>
