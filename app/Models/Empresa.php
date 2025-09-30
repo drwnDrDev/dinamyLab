@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
 {
+        /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\PersonaFactory> */
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+
     protected $fillable = [
         'razon_social',
         'nit',

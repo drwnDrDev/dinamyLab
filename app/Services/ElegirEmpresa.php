@@ -41,7 +41,7 @@ class ElegirEmpresa
             return session('empresa')->sedes->first();
         }
         if (session('empleado')) {
-            return session('empleado')->sede;
+            return session('empleado')->sedes->first();
         }
 
         return null;
