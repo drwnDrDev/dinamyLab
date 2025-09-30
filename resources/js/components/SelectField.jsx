@@ -8,26 +8,39 @@ const SelectField = ({
   onChange,
   required = false,
   disabled = false,
-  placeholder = 'Seleccione una opción...',
   error = null,
 }) => {
+  // Establecer el valor por defecto si no hay valor seleccionado y hay opciones disponibles
+  React.useEffect(() => {
+    if (!value && Array.isArray(options) && options.length > 0 && onChange) {
+      const defaultOption = options[0];
+      const event = {
+        target: {
+          name: name,
+          value: defaultOption.codigo
+        }
+      };
+      onChange(event);
+    }
+  }, [options, value, onChange, name]);
+
   return (
-    <div className="form-group mb-3">
-      <label htmlFor={name} className="form-label">
+    <div>
+      <label htmlFor={name} className="block font-medium text-sm text-text">
         {label} {required && <span className="text-danger">*</span>}
       </label>
+      
       <select
         id={name}
         name={name}
-        className={`form-select ${error ? 'is-invalid' : ''}`}
-        value={value || ''}
+        className={`text-sm h-9 w-full p-1 border-borders focus:border-primary focus:ring-primary rounded-md uppercase ${error ? 'is-invalid' : ''}`}
+        value={value || (options[0]?.codigo || '')}
         onChange={onChange}
         disabled={disabled}
       >
-        <option value="">{placeholder}</option>
-        {options.map((opt) => (
-          <option key={opt.codigo} value={opt.codigo}>
-            {opt.descripcion}
+        {Array.isArray(options) && options.map((opt) => (
+          <option className='capitalize' key={opt.key ?? opt.codigo} value={opt.codigo}>
+            {opt.nombre}
           </option>
         ))}
       </select>
