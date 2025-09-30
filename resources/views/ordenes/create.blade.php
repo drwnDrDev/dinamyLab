@@ -10,15 +10,6 @@
 
 
     <x-canva class="mb-4">
-        <div>
-            <h3 class="font-bold text-lg">Acompañante</h3>
-            <div class="mt-2">
-                <x-formPersona perfil="acompaniante" />
-            </div>
-        </div>
-    </x-canva>
-
-    <x-canva class="mb-4">
         <form method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
             @csrf
             <h2 class="font-bold mb-4 text-xl text-text">Datos de la Orden</h2>
