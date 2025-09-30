@@ -5,7 +5,7 @@ import { useTablasRef } from "./hooks/useTablasRef";
 import SelectField from "./SelectField";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
 
-const DatosPaciente = ({ persona, setPersona }) => {
+const FormPersona = ({ persona, setPersona }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -157,9 +157,13 @@ const DatosPaciente = ({ persona, setPersona }) => {
                 throw new Error(resultado.message || `Error al ${esActualizacion ? 'actualizar' : 'crear'} la persona`);
             }
             console.log('✅ Operación exitosa:', resultado);
-            setPersona(resultado); // Actualizar el estado global con la persona creada/actualizada
-            console.log('Persona actualizada en el componente padre:', resultado);
-            // Aquí podrías agregar alguna notificación de éxito
+            
+            // Actualizar el estado de forma controlada
+            const personaActualizada = resultado.data;
+            setPersonaExistente(null); // Limpiar el estado de persona existente
+            setPersona(personaActualizada); // Actualizar el estado global
+            
+            console.log('Persona actualizada en el componente padre:', personaActualizada);
             alert(`Persona ${esActualizacion ? 'actualizada' : 'creada'} exitosamente`);
 
             // Opcional: limpiar el formulario después de crear
@@ -198,7 +202,7 @@ const DatosPaciente = ({ persona, setPersona }) => {
 
     return (
 
-        <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
+        
             <form onSubmit={handleSubmit} className="max-w-screen-lg mx-auto">
 
                 <div className="flex gap-4">
@@ -474,8 +478,7 @@ const DatosPaciente = ({ persona, setPersona }) => {
                     </button>
                 </div>
             </form>
-        </section>
     );
 };
 
-export default DatosPaciente;
+export default FormPersona;

@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import DatosPaciente from './DatosPaciente';
+import FormPersona from './FormPersona';
 import DatosExamenes from './DatosExamenes';
+import DatosPersona from './DatosPersona';
 
 const CrearOrdenComponent = () => {
     const initialFormState = {
@@ -23,25 +24,28 @@ const CrearOrdenComponent = () => {
     const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
     useEffect(() => {
+        if (!persona) {
+            return;
+        }
+
         console.log('🔄 useEffect triggered - Persona actualizada:', persona);
-        
+
         setFormOrden(prev => {
             const newState = {
                 ...prev,
-                paciente_id: persona?.data?.id || null
+                paciente_id: persona.id || null
             };
             console.log('📝 Estado del formulario actualizado:', newState);
             return newState;
         });
     }, [persona]);
-    
-
-    
 
     // Handler para actualizar la persona
     const handlePersonaUpdate = (nuevaPersona) => {
         console.log('🔄 Actualizando persona:', nuevaPersona);
-        setPersona(nuevaPersona);
+        // Si nuevaPersona tiene la propiedad data, extraemos solo los datos
+        const datosPersona = nuevaPersona?.data || nuevaPersona;
+        setPersona(datosPersona);
     };
 
     if (error) {
@@ -49,12 +53,40 @@ const CrearOrdenComponent = () => {
     }
 
     return (
-        <div className="crear-orden-container">
-            <DatosPaciente 
-                persona={persona} 
-                setPersona={handlePersonaUpdate}
-            />
-            
+        <div className="crear-orden-wrapper">
+            <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
+                {persona ? (
+                    <>
+                        <DatosPersona persona={persona} />
+                        <div className="mt-4 flex justify-end">
+                            <button
+                                onClick={() => setPersona(null)}
+                                className="px-4 py-2 text-sm text-gray-600 hover:text-primary"
+                            >
+                                Cambiar paciente
+                            </button>
+                        </div>
+                    </>
+                ) : (
+                    <FormPersona
+                        persona={persona}
+                        setPersona={handlePersonaUpdate}
+                    />
+                )}
+            </section>
+
+            {/* Debug info */}
+            {/* {process.env.NODE_ENV !== 'production' && (
+                <div className="mt-4 p-4 bg-gray-100 rounded max-w-5xl mx-2 lg:mx-auto">
+                    <h3 className="font-bold text-sm">Estado del Componente:</h3>
+                    <pre className="text-xs mt-2">
+                        {JSON.stringify({
+                            persona_id: persona?.id,
+                            form_orden: formOrden
+                        }, null, 2)}
+                    </pre>
+                </div>
+            )} */}
         </div>
     );
 };
