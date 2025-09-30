@@ -74,19 +74,20 @@ const CrearOrdenComponent = () => {
                     />
                 )}
             </section>
+            {persona && (
+                <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
+                    <DatosExamenes
+                        formExamenes={formOrden.examenes}
+                        onUpdate={(nuevosExamenes) =>
+                            setFormOrden((prev) => ({
+                                ...prev,
+                                examenes: nuevosExamenes,
+                            }))
+                        }
+                    />
+                </section>
+            )}
 
-            {/* Debug info */}
-            {/* {process.env.NODE_ENV !== 'production' && (
-                <div className="mt-4 p-4 bg-gray-100 rounded max-w-5xl mx-2 lg:mx-auto">
-                    <h3 className="font-bold text-sm">Estado del Componente:</h3>
-                    <pre className="text-xs mt-2">
-                        {JSON.stringify({
-                            persona_id: persona?.id,
-                            form_orden: formOrden
-                        }, null, 2)}
-                    </pre>
-                </div>
-            )} */}
         </div>
     );
 };
