@@ -1,15 +1,23 @@
-<?php
-use Illuminate\Foundation\Testing\RefreshDatabase;
-uses(RefreshDatabase::class);
+// Ejemplo de tests/Feature/TuPrueba.php
 
+<?php
+
+use App\Models\Sede;
+use App\Models\User;
 
 test('orden page is displayed for authenticated employee', function () {
 
-    $usuarios = \App\Models\User::factory(100)->create();
-    $this->assertNotNull($usuarios);
+    $sede = Sede::factory()->create();
+    $usuario = User::factory()->create([
+        'sede_id' => $sede->id,
+        'role' => 'empleado',
+    ]);
+        $this->assertNotNull($usuario);
+
+
     $response = $this
-        ->actingAs($usuarios->first())
-        ->get('/orden');
+        ->actingAs($usuario)
+        ->get('/ordenes-medicas');
 
+    $response->assertStatus(200);
 });
-

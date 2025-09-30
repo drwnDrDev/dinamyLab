@@ -1,10 +1,12 @@
 <x-app-layout>
     <x-slot name="title">
-        Nuevo Resultado
+       Resultados de Procedimientos
     </x-slot>
     <x-slot name="header">
     </x-slot>
     <x-canva>
+
+
         <section class="grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
             <div class="col-span-2 flex gap-2">
                 <span class="font-normal ">Paciente: </span>

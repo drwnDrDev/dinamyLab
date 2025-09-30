@@ -38,6 +38,4 @@
             @endforeach
         </div>
 
-
-     @vite('resources/js/app.jsx')
 </x-app-layout>
