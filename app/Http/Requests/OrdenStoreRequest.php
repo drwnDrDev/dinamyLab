@@ -25,6 +25,11 @@ class OrdenStoreRequest extends FormRequest
         return [
             'numero_orden' => 'required|string|max:255',
             'paciente_id' => 'required|exists:personas,id',
+            'fecha' => 'nullable|date',
+            'sede_id' => 'required|exists:sedes,id',
+            'examenes' => 'required|array',
+            'examenes.*.id' => 'required|exists:examenes,id',
+            'examenes.*.cantidad' => 'required|integer|min:1',
             'acompaniante_id' => 'nullable|exists:personas,id',
             'observaciones' => 'nullable|string|max:1000',
 

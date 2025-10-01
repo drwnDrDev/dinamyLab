@@ -35,7 +35,6 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('contacto_emergencias')
                 ->onDelete('cascade');
-            
             $table->string('estado')->default('pendiente'); // Estado del procedimiento
             $table->timestamps();
             $table->softDeletes();
