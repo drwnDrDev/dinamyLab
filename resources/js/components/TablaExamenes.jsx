@@ -32,7 +32,7 @@ const TablaExamenes = ({ examenes, onRemove }) => {
                 <td className="px-4 py-2">{ex.cup || 'N/A'}</td>
                 <td className="px-4 py-2">{ex.nombre || 'Sin nombre'}</td>
                 <td className="px-4 py-2 text-right">
-                  ${typeof ex.valor === 'number' ? ex.valor.toFixed(2) : '0.00'}
+                  ${typeof ex.valor === 'number' ? ex.valor.toFixed(2) : ex.valor || '0.00'}
                 </td>
                 <td className="px-4 py-2 text-center">
                   <button 
