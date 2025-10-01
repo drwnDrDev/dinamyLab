@@ -30,7 +30,43 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'paciente_id' => 'required|exists:pacientes,id',
+            'sede_id' => 'required|exists:sedes,id',
+            'numero' => 'required|integer',
+            'fecha' => 'required|date',
+            'examenes' => 'required|array',
+            'examenes.*.id' => 'required|exists:examenes,id',
+            'examenes.*.cantidad' => 'required|integer|min:1',
+        ]);
+        // Crear la orden
+        $orden = Orden::create([
+            'paciente_id' => $request->input('paciente_id'),
+            'sede_id' => $request->input('sede_id'),
+            'numero' => $request->input('numero'),
+            'fecha' => $request->input('fecha'),
+            'user_id' => Auth::id(),
+        ]);
+        // Asociar los exámenes a la orden y crear los procedimientos
+        foreach ($request->input('examenes') as $examenData) {
+            $orden->examenes()->attach($examenData['id'], [
+                'cantidad' => $examenData['cantidad'],
+            ]);
+            // Crear los procedimientos asociados a la orden
+            $procedimientos = [];
+            for ($i = 0; $i < $examenData['cantidad']; $i++) {
+                $procedimientos[] = [
+                    'orden_id' => $orden->id,
+                    'examen_id' => $examenData['id'],
+                    'fecha' => now(),
+                    'estado' => Estado::PROCESO,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+            DB::table('procedimientos')->insert($procedimientos);
+        }
+        return response()->json(['message' => 'Orden creada correctamente.', 'orden_id' => $orden->id], 201);
     }
 
     /**
@@ -38,11 +74,11 @@ class OrdenController extends Controller
      */
     public function show(string $id)
     {
-        
-     
+
+
         $orden = Orden::findOrFail($id);
         return response()->json($orden);
-     
+
     }
 
     /**
@@ -72,14 +108,14 @@ class OrdenController extends Controller
         $cantidad = $request->input('cantidad');
         $orden->examenes()->attach($examen_id, [
             'cantidad' => $cantidad,
-     
+
         ]);
         // Crear los procedimientos asociados a la orden
         $procedimientos = [];
         for ($i = 0; $i < $cantidad; $i++) {
             $procedimientos[] = [
                 'orden_id' => $orden->id,
-          
+
                 'examen_id' => $examen_id,
                 'fecha' => now(),
                 'estado' => Estado::PROCESO,
