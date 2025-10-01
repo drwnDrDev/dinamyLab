@@ -1,4 +1,5 @@
 // ExamenesSection.jsx
+
 import React, { useState } from 'react';
 import { useExamenes } from './hooks/useExamenes';
 import TablaExamenes from './TablaExamenes';
@@ -22,6 +23,8 @@ const DatosExamenes = ({ formExamenes, onUpdate }) => {
   }
 
   console.log('Exámenes disponibles, desde localStorage var=disponibles:', disponibles);
+  console.log('Exámenes en el formulario, prop formExamenes:', formExamenes);
+
   return (
     <section className='examenes_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4'>
       <h2>Exámenes</h2>
@@ -32,11 +35,7 @@ const DatosExamenes = ({ formExamenes, onUpdate }) => {
         <TablaExamenes
           examenes={formExamenes}
           onRemove={handleRemove}
-          onCantidadChange={(idx, nuevaCantidad) => {
-            const nuevosExamenes = [...formExamenes];
-            nuevosExamenes[idx].cantidad = nuevaCantidad;
-            onUpdate(nuevosExamenes);
-          }}
+          
         />
       )}
 
