@@ -11,15 +11,15 @@ const ExamenesTable = ({ examenes, onRemove, onCantidadChange }) => {
         </thead>
         <tbody>
           {examenes.map((ex, idx) => (
-            <tr key={ex.codigo}>
-              <td>{ex.codigo}</td>
+            <tr key={ex.id}>
+              <td>{ex.cup}</td>
               <td>{ex.nombre}</td>
-              <td>${ex.precio.toFixed(2)}</td>
+              <td>${ex.valor.toFixed(2)}</td>
               <td>
                 <input type="number" value={ex.cantidad} min={1}
                   onChange={e => onCantidadChange(idx, parseInt(e.target.value))} />
               </td>
-              <td>${(ex.precio * ex.cantidad).toFixed(2)}</td>
+              <td>${(ex.valor * ex.cantidad).toFixed(2)}</td>
               <td><button onClick={() => onRemove(idx)}>🗑️</button></td>
             </tr>
           ))}

@@ -43,8 +43,21 @@ const CrearOrdenComponent = () => {
     // Handler para actualizar la persona
     const handlePersonaUpdate = (nuevaPersona) => {
         console.log('🔄 Actualizando persona:', nuevaPersona);
+        // Validamos que nuevaPersona no sea null y tenga los datos necesarios
+        if (!nuevaPersona) {
+            console.error('Error: nuevaPersona es null o undefined');
+            return;
+        }
+        
         // Si nuevaPersona tiene la propiedad data, extraemos solo los datos
         const datosPersona = nuevaPersona?.data || nuevaPersona;
+        
+        // Validamos que tengamos los datos mínimos necesarios
+        if (!datosPersona.id) {
+            console.error('Error: La persona no tiene ID');
+            return;
+        }
+        
         setPersona(datosPersona);
     };
 

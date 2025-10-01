@@ -42,8 +42,14 @@ const DatosPersona = ({ persona }) => {
         }
     };
 
+    // Verificamos que tengamos datos válidos
     console.log('Renderizando DatosPersona con:', persona);
-    console.log('data dentro de persona:', persona.data);
+    
+    // Si persona es null o undefined, retornamos null
+    if (!persona) {
+        console.warn('DatosPersona: persona es null o undefined');
+        return null;
+    }
 
     return (
         <section className="print_paciente grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
