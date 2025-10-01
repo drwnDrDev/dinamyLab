@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TipoDocumento extends Model
 {
-
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     protected $fillable = [
         'nombre',
         'cod_rips',
@@ -38,7 +38,7 @@ class TipoDocumento extends Model
      * @return string
      * @throws \InvalidArgumentException
      * */
-    
+
 
     public static function regexPorCodigoRips(string $codigo): string
         {
