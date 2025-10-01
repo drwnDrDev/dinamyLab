@@ -1,12 +1,11 @@
 import React from 'react';
 
-const ModalExamenes = ({ disponibles, onAgregar, examenesActuales }) => {
+const ModalExamenes = ({ disponibles, onAgregar, examenesActuales, onClose }) => {
   const yaAgregados = new Set(examenesActuales.map(e => e.cup));
 
   console.log('ModalExamenes - Exámenes "disponibles":', disponibles);
 
   return (
-    
     <div className="modal border border-secondary shadow-lg p-4 bg-white">
       <h3>Seleccionar Exámenes</h3>
       <ul>
@@ -20,7 +19,6 @@ const ModalExamenes = ({ disponibles, onAgregar, examenesActuales }) => {
         ))}
       </ul>
     </div>
-    
   );
 };
 export default ModalExamenes;

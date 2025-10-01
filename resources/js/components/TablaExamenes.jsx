@@ -1,32 +1,53 @@
-const ExamenesTable = ({ examenes, onRemove, onCantidadChange }) => {
-  const total = examenes.reduce((acc, ex) => acc + ex.precio * ex.cantidad, 0);
+import React from 'react';
+
+const TablaExamenes = ({ examenes, onRemove }) => {
+  console.log('TablaExamenes - examenes recibidos:', examenes);
+
+  if (!Array.isArray(examenes)) {
+    console.error('TablaExamenes: examenes no es un array');
+    return null;
+  }
 
   return (
     <>
-      <table>
-        <thead>
+      <table className="w-full mt-4">
+        <thead className="bg-gray-50">
           <tr>
-            <th>Código</th><th>Nombre</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th>
+            <th className="px-4 py-2 text-left">Código</th>
+            <th className="px-4 py-2 text-left">Nombre</th>
+            <th className="px-4 py-2 text-right">Precio</th>
+            <th className="px-4 py-2"></th>
           </tr>
         </thead>
         <tbody>
-          {examenes.map((ex, idx) => (
-            <tr key={ex.id}>
-              <td>{ex.cup}</td>
-              <td>{ex.nombre}</td>
-              <td>${ex.valor.toFixed(2)}</td>
-              <td>
-                <input type="number" value={ex.cantidad} min={1}
-                  onChange={e => onCantidadChange(idx, parseInt(e.target.value))} />
-              </td>
-              <td>${(ex.valor * ex.cantidad).toFixed(2)}</td>
-              <td><button onClick={() => onRemove(idx)}>🗑️</button></td>
-            </tr>
-          ))}
+          {examenes.map((ex, idx) => {
+            // Validación de datos
+            if (!ex) {
+              console.warn(`Examen en índice ${idx} es null o undefined`);
+              return null;
+            }
+
+            return (
+              <tr key={idx} className="border-b hover:bg-gray-50">
+                <td className="px-4 py-2">{ex.cup || 'N/A'}</td>
+                <td className="px-4 py-2">{ex.nombre || 'Sin nombre'}</td>
+                <td className="px-4 py-2 text-right">
+                  ${typeof ex.valor === 'number' ? ex.valor.toFixed(2) : '0.00'}
+                </td>
+                <td className="px-4 py-2 text-center">
+                  <button 
+                    onClick={() => onRemove(idx)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
-      <div className="total">Total: ${total.toFixed(2)}</div>
     </>
   );
 };
-export default ExamenesTable;
+export default TablaExamenes;
