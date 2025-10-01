@@ -88,7 +88,7 @@ const CrearOrdenComponent = () => {
                 )}
             </section>
             {persona && (
-                <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
+                <section className="examenes_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
                     <DatosExamenes
                         formExamenes={formOrden.examenes}
                         onUpdate={(nuevosExamenes) =>

@@ -22,11 +22,21 @@ const DatosExamenes = ({ formExamenes, onUpdate }) => {
     onUpdate(nuevosExamenes);
   }
 
+  const handleCantidadChange = (index, nuevaCantidad) => {
+    if (nuevaCantidad < 1) return; // No permitir cantidades menores a 1
+    const nuevosExamenes = [...formExamenes];
+    nuevosExamenes[index] = {
+      ...nuevosExamenes[index],
+      cantidad: nuevaCantidad
+    };
+    onUpdate(nuevosExamenes);
+  }
+
   console.log('Exámenes disponibles, desde localStorage var=disponibles:', disponibles);
   console.log('Exámenes en el formulario, prop formExamenes:', formExamenes);
 
   return (
-    <section className='examenes_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4'>
+    <section>
       <h2>Exámenes</h2>
       <button className='bg-secondary' onClick={() => setIsModalOpen(true)}>Agregar examen</button>
       {formExamenes.length === 0 && <p>No hay exámenes seleccionados.</p>}
@@ -35,7 +45,7 @@ const DatosExamenes = ({ formExamenes, onUpdate }) => {
         <TablaExamenes
           examenes={formExamenes}
           onRemove={handleRemove}
-          
+          onCantidadChange={handleCantidadChange}
         />
       )}
 
