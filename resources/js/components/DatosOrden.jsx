@@ -1,10 +1,10 @@
 import React from "react";
 import { useState, useEffect } from 'react';
 import SelectField from "./SelectField";
-import { useTablasRef} from './hooks/useTablasRef';
+import { useTablasRef } from './hooks/useTablasRef';
 import { useCieCups } from './hooks/useCieCups';
 
-const DatosOrden = ({ formOrden, onUpdate}) => {
+const DatosOrden = ({ formOrden, onUpdate }) => {
     const { modalidades, finalidades, viasIngreso, tiposAfiliacion, servicios } = useTablasRef();
     const { cups, cie10 } = useCieCups();
 
@@ -20,28 +20,6 @@ const DatosOrden = ({ formOrden, onUpdate}) => {
                     options={modalidades}
                     onChange={onUpdate}
 
-                />
-                <SelectField
-                    label="Finalidad de Consulta"
-                    name="finalidad_consulta"
-                    value={formOrden.finalidad|| ''}
-                    options={finalidades}
-                    onChange={onUpdate}
-                /> 
-
-                <SelectField
-                    label="Vía de Ingreso"
-                    name="via_ingreso"
-                    value={formOrden.via_ingreso || ''}
-                    options={viasIngreso}
-                    onChange={onUpdate}
-                />
-                <SelectField
-                    label="Tipo de Afiliación"
-                    name="tipo_afiliacion"
-                    value={formOrden.tipo_afiliacion || ''}
-                    options={tiposAfiliacion}
-                    onChange={onUpdate}
                 />
                 <SelectField
                     label="Servicio Habilitado"
@@ -64,10 +42,26 @@ const DatosOrden = ({ formOrden, onUpdate}) => {
                     options={cie10}
                     onChange={onUpdate}
                 />
+                <SelectField
+                    label="Finalidad de Consulta"
+                    name="finalidad_consulta"
+                    value={formOrden.finalidad || ''}
+                    options={finalidades}
+                    onChange={onUpdate}
+                />
+
+                <SelectField
+                    label="Vía de Ingreso"
+                    name="via_ingreso"
+                    value={formOrden.via_ingreso || ''}
+                    options={viasIngreso}
+                    onChange={onUpdate}
+                />
+
             </div>
         </section>
     );
-                    
+
 }
 export default DatosOrden;
 
