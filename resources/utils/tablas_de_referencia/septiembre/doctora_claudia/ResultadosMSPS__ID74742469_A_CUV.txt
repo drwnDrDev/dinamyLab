@@ -1,0 +1,9 @@
+{
+  "ResultState": true,
+  "ProcesoId": 74742469,
+  "NumFactura": "0920253",
+  "CodigoUnicoValidacion": "0b6d6e245daa57fd5d715e3f7f4ef5129c3f4104d723b95fc7db76dffdf2e38c0addd9e691458aed291855cc1bbb889c",
+  "FechaRadicacion": "2025-10-04T17:32:06.3714841-05:00",
+  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\tablas_de_referencia\\septiembre\\doctora_claudia",
+  "ResultadosValidacion": []
+}
