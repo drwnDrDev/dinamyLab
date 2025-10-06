@@ -1,0 +1,9 @@
+{
+  "ResultState": true,
+  "ProcesoId": 74716593,
+  "NumFactura": "092025",
+  "CodigoUnicoValidacion": "e4f5095eeaaa57c3d02390f68c1652c7b0bf60330611be91596872f1bd1ab32e50778f8802da796523bb0525b4a7d4c0",
+  "FechaRadicacion": "2025-10-04T16:07:02.150055-05:00",
+  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\tablas_de_referencia\\septiembre\\doctora_sandra",
+  "ResultadosValidacion": []
+}
