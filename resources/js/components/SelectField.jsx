@@ -9,6 +9,7 @@ const SelectField = ({
   required = false,
   disabled = false,
   error = null,
+  codigo = false,
 }) => {
   // Solo establecemos el valor por defecto una vez al montar el componente
   React.useEffect(() => {
@@ -44,7 +45,7 @@ const SelectField = ({
         {/* <option value="">Seleccione una opción</option> */}
         {Array.isArray(options) && options.map((opt) => (
           <option className='capitalize' key={opt.key ?? opt.codigo} value={opt.codigo}>
-            {opt.codigo} - {opt.nombre}
+            {codigo ? `${opt.codigo} - ${opt.nombre}` : opt.nombre} 
           </option>
         ))}
       </select>
