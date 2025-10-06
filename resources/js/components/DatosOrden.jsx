@@ -17,6 +17,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     label="Modalidad de Atención"
                     name="modalidad_atencion"
                     value={formOrden.modalidad || ''}
+                    codigo={true}
                     options={modalidades}
                     onChange={onUpdate}
 
@@ -25,6 +26,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     label="Servicio Habilitado"
                     name="cod_servicio"
                     value={formOrden.cod_servicio || ''}
+                    codigo={true}
                     options={servicios}
                     onChange={onUpdate}
                 />
@@ -32,6 +34,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     label="CIE Principal"
                     name="cie_principal"
                     value={formOrden.cie_principal || ''}
+                    codigo={true}
                     options={cie10}
                     onChange={onUpdate}
                 />
@@ -39,6 +42,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     label="CIE Relacionado"
                     name="cie_relacionado"
                     value={formOrden.cie_relacionado || ''}
+                    codigo={true}
                     options={cie10}
                     onChange={onUpdate}
                 />
@@ -46,6 +50,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     label="Finalidad de Consulta"
                     name="finalidad_consulta"
                     value={formOrden.finalidad || ''}
+                    codigo={true}
                     options={finalidades}
                     onChange={onUpdate}
                 />
@@ -54,6 +59,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     label="Vía de Ingreso"
                     name="via_ingreso"
                     value={formOrden.via_ingreso || ''}
+                    codigo={true}
                     options={viasIngreso}
                     onChange={onUpdate}
                 />
