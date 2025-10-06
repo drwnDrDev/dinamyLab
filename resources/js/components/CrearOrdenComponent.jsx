@@ -15,7 +15,6 @@ const CrearOrdenComponent = () => {
         cie_principal: null,
         cie_relacionado: null,
         finalidad: '15',
-        causa_externa: '38',
         modalidad: '01',
         fecha_orden: new Date().toISOString().slice(0, 10), // Formato YYYY-MM-DD hh:mm:ss
     };
