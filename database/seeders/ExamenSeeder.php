@@ -156,7 +156,7 @@ class ExamenSeeder extends Seeder
   array('parametros' => '[{"parametro": "Coloración de gram", "resultado": {"tipo": "datalist", "nombre": "gram_a", "items": ["cocos Gram positivos aislados escasos", "negativo para diplococos gram Negativos intra y extra celulares"]}}, {"parametro": "reacción leucocitaria", "resultado": {"tipo": "select", "nombre": "r_leuc", "items": ["escasa", "moderada", "aumentada"]}}]','nombre_examen' => 'Frotis de secreción','nombre_alternativo' => 'COLORACIÓN DE GRAM','descripcion' => 'usado para ayudar a identificar bacterias. Se puede tomar una muestra para evaluación de los fluidos corporales que normalmente no contienen bacterias, tales como sangre, orina o líquido cefalorraquídeo','CUP' => '901107','valor' => '16000.00'),
   array('parametros' => '[{"parametro": "Serología", "resultado": {"tipo": "text", "nombre": "resultado", "default": "NO REACTIVA"}}]','nombre_examen' => 'Serologia (Prueba no treponemica) VDRL','nombre_alternativo' => 'Serologia','descripcion' => 'comprueban la presencia o el nivel de anticuerpos específicos en la sangre','CUP' => '906915','valor' => '16000.00'),
   array('parametros' => '[{"parametro": "Fosa nasal derecha", "resultado": {"nombre": "poli_de", "tipo": "number"}, "unidades": "%", "grupo": "Polimorfonucleares"}, {"parametro": "Fosa nasal izquierda", "resultado": {"nombre": "poli_iz", "tipo": "number"}, "unidades": "%", "grupo": "Polimorfonucleares"}, {"parametro": "Fosa nasal derecha", "resultado": {"nombre": "mono_de", "tipo": "number"}, "unidades": "%", "grupo": "Mononucleares"}, {"parametro": "Fosa nasal izquierda", "resultado": {"nombre": "mono_iz", "tipo": "number"}, "unidades": "%", "grupo": "Mononucleares"}, {"parametro": "Fosa nasal derecha", "resultado": {"nombre": "eos_de", "tipo": "number"}, "unidades": "%", "grupo": "Eosinofilos"}, {"parametro": "Fosa nasal izquierda", "resultado": {"nombre": "eos_iz", "tipo": "number"}, "unidades": "%", "grupo": "Eosinofilos"}, {"parametro": "observaciones", "resultado": {"nombre": "observaciones", "tipo": "textarea"}, "grupo": null}]','nombre_examen' => 'Eosinofilos en moco nasal','nombre_alternativo' => 'Conteo y medición de células eosinofilos en moco nasal, respuesta unflamtoriaalergica','descripcion' => '','CUP' => '902219','valor' => '36000.00'),
-  array('parametros' => '[{"parametro": "Antigeno específico de próstata", "subtitulo": "Prueba rápida semicuantitativa para (PSA) \\n Negativo menor a 3 ng/ml", "resultado": {"tipo": "select", "nombre": "psa", "items": ["positivo", "negativo"]}}, {"parametro": "observaciones", "resultado": {"tipo": "textarea", "nombre": "observacion", "items": ["Se sugiere realizar prueba cuantitativa"]}}]','nombre_examen' => 'ANTIGENO ESPECÍFICO DE PRÓSTATA (PSA)','nombre_alternativo' => 'PSA','descripcion' => 'Prueba rápida para detectar semicuantitativamente niveles de Antigeno Prostatico Especifico(PSA) en sangre suero o plasma','CUP' => '906610','valor' => '26000.00')
+  array('parametros' => '[{"parametro": "Antigeno específico de próstata", "subtitulo": "Prueba rápida semicuantitativa para (PSA) \\n Negativo menor a 3 ng/ml", "resultado": {"tipo": "select", "nombre": "psa", "items": ["positivo", "negativo"]}}, {"parametro": "observaciones", "resultado": {"tipo": "textarea", "nombre": "observacion", "items": ["Se sugiere realizar prueba cuantitativa"]}}]','nombre_examen' => 'Antigeno específico de próstata','nombre_alternativo' => 'PSA','descripcion' => 'Prueba rápida para detectar semicuantitativamente niveles de Antigeno Prostatico Especifico(PSA) en sangre suero o plasma','CUP' => '906610','valor' => '26000.00')
 );
 
 // Función para reestructurar los parámetros
@@ -170,9 +170,9 @@ foreach ($examens as &$examen) {
         ['nombre' => $examen['nombre_examen']],
         [
             'nombre' => $examen['nombre_examen'],
-            'nombre_alternativo' => $examen['nombre_alternativo'],
+            'nombre_alternativo' => $examen['nombre_alternativo'] ??'A',
             'descripcion' => $examen['descripcion'],
-            'CUP' => $examen['CUP'],
+            'cup' => $examen['CUP'],
             'valor' => $examen['valor']
         ]
     );
