@@ -1,7 +1,20 @@
 import React from 'react';
+import { useState } from 'react';
 
-const ModalExamenes = ({ disponibles, onAgregar, examenesActuales, onClose }) => {
-  const yaAgregados = new Set(examenesActuales.map(e => e.cup));
+const ModalExamenes = ({ disponibles, onAgregar, examenesActuales, onClose, sexoPaciente }) => {
+  const yaAgregados = new Set(examenesActuales.map(e => e.id));
+  const [disponiblesFiltrados, setDisponiblesFiltrados] = useState(disponibles);
+
+  // Filtrar exámenes según el sexo del paciente
+  React.useEffect(() => {
+    if (sexoPaciente === 'M') {
+      setDisponiblesFiltrados(disponibles.filter(ex => ex.sexo_aplicable !== 'F'));
+    } else if (sexoPaciente === 'F') {
+      setDisponiblesFiltrados(disponibles.filter(ex => ex.sexo_aplicable !== 'M'));
+    } else {
+      setDisponiblesFiltrados(disponibles);
+    }
+  }, [sexoPaciente, disponibles]);
 
   console.log('ModalExamenes - Exámenes "disponibles":', disponibles);
 
@@ -12,7 +25,7 @@ const ModalExamenes = ({ disponibles, onAgregar, examenesActuales, onClose }) =>
         
         <div className="max-h-[60vh] overflow-y-auto">
           <ul className="space-y-2">
-            {disponibles.map(ex => (
+            {disponiblesFiltrados.map(ex => (
               <li key={ex.id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
                 <div>
                   <span className="mr-2">{ex.cup}</span>
@@ -20,15 +33,15 @@ const ModalExamenes = ({ disponibles, onAgregar, examenesActuales, onClose }) =>
                   <span>${ex.valor}</span>
                 </div>
                 <button 
-                  disabled={yaAgregados.has(ex.cup)} 
+                  disabled={yaAgregados.has(ex.id)} 
                   onClick={() => onAgregar(ex)}
                   className={`px-3 py-1 rounded ${
-                    yaAgregados.has(ex.cup) 
+                    yaAgregados.has(ex.id) 
                       ? 'bg-gray-200 text-gray-500' 
                       : 'bg-primary text-white'
                   }`}
                 >
-                  {yaAgregados.has(ex.cup) ? "Agregado" : "Agregar"}
+                  {yaAgregados.has(ex.id) ? "Agregado" : "Agregar"}
                 </button>
               </li>
             ))}

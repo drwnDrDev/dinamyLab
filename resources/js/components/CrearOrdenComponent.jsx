@@ -69,6 +69,16 @@ const CrearOrdenComponent = () => {
         }));
     }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        console.log('Enviando formulario de orden:', formOrden);
+
+        
+    }
+
 
     if (error) {
         return <div className="text-red-600">Error: {error}</div>;
@@ -76,10 +86,17 @@ const CrearOrdenComponent = () => {
 
     return (
         <div className="crear-orden-wrapper relative">
+            <div className="header mb-4 flex justify-between items-center max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
+                <h1 className="text-2xl font-bold text-titles">Crear Nueva Orden</h1>
+                <input type="number" onChange={handleTablasRefUpdate} name="numero_orden" value={formOrden.numero_orden} placeholder="N° de Orden" className="h-9 w-32 p-2 border-borders focus:border-primary focus:ring-primary
+                                rounded-md"
+                />
+
+            </div>
             <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
                 {persona ? (
                     <>
-                        <DatosPersona persona={persona} />
+                        <DatosPersona persona={persona}/>
                         <div className="mt-4 flex justify-end">
                             <button
                                 onClick={() => setPersona(null)}
@@ -93,6 +110,7 @@ const CrearOrdenComponent = () => {
                     <FormPersona
                         persona={persona}
                         setPersona={handlePersonaUpdate}
+                        perfil="Paciente"
                     />
                 )}
             </section>
@@ -106,6 +124,7 @@ const CrearOrdenComponent = () => {
                                 examenes: nuevosExamenes,
                             }))
                         }
+                        persona={persona}
                     />
                 </section>
             )}
@@ -118,6 +137,23 @@ const CrearOrdenComponent = () => {
                 </section>
             )}
 
+            <div className="flex justify-end space-x-3">
+                <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-titles focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                >
+                    {loading ? (
+                        <>
+                            <div className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></div>
+                            {personaExistente ? 'Actualizando...' : 'Guardando...'}
+                        </>
+                    ) : (
+                        'Guardar'
+                    )}
+                </button>
+            </div>
 
         </div>
     );
