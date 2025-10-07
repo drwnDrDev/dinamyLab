@@ -20,7 +20,7 @@ class FrotisUretraSeeder extends Seeder
         // Define los datos del examen principal
         $examenData = [
             'nombre' => 'Frotis de secreción uretral',
-            'CUP' => '901107',
+            'cup' => '901107',
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'técnica de tinción bacteriana que diferencia las bacterias en dos grupos principales: grampositivas y gramnegativas, según la estructura de sus paredes celulares',
             'nombre_alternativo' => 'Coloración de Gram',

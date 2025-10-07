@@ -20,7 +20,7 @@ class ColesterolTotalSeeder extends Seeder
         // Define los datos del examen principal
         $examenData = [
             'nombre' => 'Colesterol Total',
-            'CUP' => '903818',
+            'cup' => '903818',
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'Cantidad total de colesterol en la sangre. Incluye ambos tipos: El colesterol de lipoproteína de baja densidad y el colesterol de lipoproteína de alta densidad ,suero o plasma sanguíneo',
             'nombre_alternativo' => 'colesterol en la sangre',

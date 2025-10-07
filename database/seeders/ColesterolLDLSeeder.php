@@ -20,7 +20,7 @@ class ColesterolLDLSeeder extends Seeder
         // Define los datos del examen principal
         $examenData = [
             'nombre' => 'Colesterol LDL',
-            'CUP' => '903816',
+            'cup' => '903816',
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'cantidad de triglicéridos(son un tipo de grasa) en la sangre',
             'nombre_alternativo' => 'lipoproteínas de baja densidad',

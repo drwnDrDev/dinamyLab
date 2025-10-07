@@ -20,7 +20,7 @@ class GlucosaSeeder extends Seeder
         // Define los datos del examen principal
         $examenData = [
             'nombre' => 'Glicemia',
-            'CUP' => '903841',
+            'cup' => '903841',
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'concentración de glucosa libre en la sangre, ​​ suero o plasma sanguíneo',
             'nombre_alternativo' => 'glucosa en la sangre',

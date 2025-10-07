@@ -20,7 +20,7 @@ class AcidoUricoSeeder extends Seeder
         // Define los datos del examen principal
         $examenData = [
             'nombre' => 'Ácido Úrico',
-            'CUP' => '903801',
+            'cup' => '903801',
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'mide la cantidad de ácido úrico en una muestra de sangre u orina. El ácido úrico es un producto de desecho que se forma cuando el cuerpo descompone purinas, que son sustancias que se encuentran en ciertos alimentos y bebidas. Un nivel elevado de ácido úrico puede indicar problemas de salud como gota o enfermedad renal.',
             'nombre_alternativo' => null,

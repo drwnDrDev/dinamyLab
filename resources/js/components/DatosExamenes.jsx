@@ -7,7 +7,7 @@ import ModalExamenes from './ModalExamenes';
 
 const DatosExamenes = ({ formExamenes, onUpdate }) => {
   const { examenes, loading } = useExamenes(); // desde LocalStorage
-  const disponibles = examenes?.data?.examenes || [];
+  const disponibles = examenes?.data|| [];
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAgregar = (nuevoExamen) => {
