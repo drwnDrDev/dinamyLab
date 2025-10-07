@@ -10,7 +10,8 @@ class ExamenesController extends Controller
 {
     public function index()
     {
-        $examenes = Examen::all();
+        $examenes = Examen::with('cup')->orderBy('nivel','desc')->get();
+        
         return response()->json([
             'message' => 'Lista de examenes',
             'data' => [

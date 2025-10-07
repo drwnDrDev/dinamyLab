@@ -42,6 +42,10 @@ class Examen extends Model
         });
     }
 
+    public function cup()
+    {
+        return $this->belongsTo(CodigoCup::class, 'cup', 'codigo');
+    }
 
     protected $table = 'examenes';
     public function casts()
