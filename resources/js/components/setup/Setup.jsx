@@ -12,13 +12,13 @@ import {
 const Setup = () => {
     // Estado principal
     const [categorias, setCategorias] = useState({
-        serviciosHabilitados: { nombre: 'Servicios Habilitados', clases: 'bg-blue-200 text-blue-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/servicios-habilitados' },
-        viasIngreso: { nombre: 'Vías de Ingreso', clases: 'bg-green-200 text-green-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/via-ingreso' },
-        diagnosticos: { nombre: 'Diagnósticos', clases: 'bg-stone-200 text-stone-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/cie10' },
-        finalidades: { nombre: 'Finalidades', clases: 'bg-yellow-200 text-yellow-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/finalidades' },
-        causasExternas: { nombre: 'Causas Externas', clases: 'bg-purple-200 text-purple-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/causa-atencion' },
-        tiposAtencion: { nombre: 'Modalidades de Atención', clases: 'bg-teal-200 text-teal-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/modalidades-atencion' },
-        tiposAfiliacion: { nombre: 'Tipos de Afiliación', clases: 'bg-pink-200 text-pink-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/tipos-afiliacion' },
+        serviciosHabilitados: { nombre: 'Servicios Habilitados', clases: 'bg-blue-200 text-blue-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/servicios-habilitados', localStorageKey: 'servicios_habilitados_data' },
+        viasIngreso: { nombre: 'Vías de Ingreso', clases: 'bg-green-200 text-green-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/via-ingreso', localStorageKey: 'vias_ingreso_data' },
+        diagnosticos: { nombre: 'Diagnósticos', clases: 'bg-stone-200 text-stone-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/cie10', localStorageKey: 'diagnosticos_data' },
+        finalidades: { nombre: 'Finalidades', clases: 'bg-yellow-200 text-yellow-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/finalidades', localStorageKey: 'finalidades_data' },
+        causasExternas: { nombre: 'Causas Externas', clases: 'bg-purple-200 text-purple-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/causa-atencion', localStorageKey: 'causas_externas_data' },
+        tiposAtencion: { nombre: 'Modalidades de Atención', clases: 'bg-teal-200 text-teal-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/modalidades-atencion', localStorageKey: 'tipos_atencion_data' },
+        tiposAfiliacion: { nombre: 'Tipos de Afiliación', clases: 'bg-pink-200 text-pink-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/tipos-afiliacion', localStorageKey: 'tipos_afiliacion_data' },
     });
 
     const [buscador, setBuscador] = useState('');
@@ -140,7 +140,7 @@ const Setup = () => {
             });
 
             if (!response.ok) throw new Error('Error en la respuesta del servidor');
-          
+
 
             // actualizar localmente sin esperar refresh
             setCategorias(prev => {
@@ -155,6 +155,7 @@ const Setup = () => {
                 const nuevosDatos = updated[key].datos;
                 updated[key].todos = nuevosDatos;
                 updated[key].activos = nuevosDatos.filter(d => d.activo);
+                localStorage.setItem(updated[key].localStorageKey, JSON.stringify(updated[key].activos));
                 obtenerListado(key); // actualizar visibles
                 return updated;
             });

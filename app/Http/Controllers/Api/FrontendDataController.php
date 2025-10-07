@@ -33,8 +33,12 @@ class FrontendDataController extends Controller
 
             $servicosHabilitados = ServicioHabilitado::where('activo', true)
                                     ->orderBy('nivel','desc')->get();
+            if($servicosHabilitados->isEmpty()) {
+                $servicosHabilitados = ServicioHabilitado::orderBy('nivel','desc')
+                                    ->limit(12)->get();
+            }
             $viaIngreso = ViaIngreso::where('activo', true)
-                                    ->orderBy('nivel','desc')->get();
+                        ->orderBy('nivel','desc')->get();
             $tipoAfiliacion = TipoAfiliacion::where('activo', true)
                                     ->orderBy('nivel','desc')->get();
             $causaExterna = CausaExterna::where('activo', true)
@@ -65,9 +69,9 @@ class FrontendDataController extends Controller
             ->orderBy('nivel','desc')->get();
 
             $cupsActivos = CodigoCup::where('activo', true)->get();
-            $defaultCies = \App\Models\CodigoDiagnostico::where('activo', true)->get()->take(5);
+            $defaultCies = \App\Models\CodigoDiagnostico::where('activo', true)->get();
             if($defaultCies->isEmpty()) {
-                $defaultCies =\App\Models\CodigoDiagnostico::orderBy('nivel','desc')->limit(5)->get();
+                $defaultCies =\App\Models\CodigoDiagnostico::orderBy('nivel','desc')->limit(12)->get();
             }
 
             $data = [
