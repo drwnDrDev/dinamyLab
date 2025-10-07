@@ -5,13 +5,14 @@ import { useExamenes } from './hooks/useExamenes';
 import TablaExamenes from './TablaExamenes';
 import ModalExamenes from './ModalExamenes';
 
-const DatosExamenes = ({ formExamenes, onUpdate }) => {
+const DatosExamenes = ({ formExamenes, onUpdate, persona }) => {
   const { examenes, loading } = useExamenes(); // desde LocalStorage
   const disponibles = examenes?.data?.examenes || [];
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sexoPaciente, setSexoPaciente] = useState(persona?.sexo_aplicable || 'A');
 
   const handleAgregar = (nuevoExamen) => {
-    const yaExiste = formExamenes.some(e => e.cup === nuevoExamen.cup);
+    const yaExiste = formExamenes.some(e => e.id === nuevoExamen.id);
     if (!yaExiste) {
       onUpdate([...formExamenes, { ...nuevoExamen, cantidad: 1 }]);
     }
@@ -55,6 +56,7 @@ const DatosExamenes = ({ formExamenes, onUpdate }) => {
           examenesActuales={formExamenes}
           onAgregar={handleAgregar}
           onClose={() => setIsModalOpen(false)}
+          sexoPaciente={sexoPaciente}
         />
       )}
     </section>
