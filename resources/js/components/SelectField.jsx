@@ -9,10 +9,11 @@ const SelectField = ({
   required = false,
   disabled = false,
   error = null,
+  codigo = false,
 }) => {
-  // Establecer el valor por defecto si no hay valor seleccionado y hay opciones disponibles
+  // Solo establecemos el valor por defecto una vez al montar el componente
   React.useEffect(() => {
-    if (!value && Array.isArray(options) && options.length > 0 && onChange) {
+    if (!value && Array.isArray(options) && options.length > 0 && onChange && !disabled) {
       const defaultOption = options[0];
       const event = {
         target: {
@@ -20,9 +21,12 @@ const SelectField = ({
           value: defaultOption.codigo
         }
       };
-      onChange(event);
+      // Usamos setTimeout para evitar actualizaciones durante el render
+      setTimeout(() => {
+        onChange(event);
+      }, 0);
     }
-  }, [options, value, onChange, name]);
+  }, []); // Solo se ejecuta al montar el componente
 
   return (
     <div>
@@ -34,13 +38,14 @@ const SelectField = ({
         id={name}
         name={name}
         className={`text-sm h-9 w-full p-1 border-borders focus:border-primary focus:ring-primary rounded-md uppercase ${error ? 'is-invalid' : ''}`}
-        value={value || (options[0]?.codigo || '')}
+        value={value ?? ''}
         onChange={onChange}
         disabled={disabled}
       >
+        {/* <option value="">Seleccione una opción</option> */}
         {Array.isArray(options) && options.map((opt) => (
           <option className='capitalize' key={opt.key ?? opt.codigo} value={opt.codigo}>
-            {opt.nombre}
+            {codigo ? `${opt.codigo} - ${opt.nombre}` : opt.nombre} 
           </option>
         ))}
       </select>

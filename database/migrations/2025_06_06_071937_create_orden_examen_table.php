@@ -34,6 +34,7 @@ return new class extends Migration
                 ->references('codigo')
                 ->on('finalidades')
                 ->onDelete('cascade');
+     
             $table->unsignedTinyInteger('cantidad')->default(1);
             $table->softDeletes();
             $table->timestamps();
