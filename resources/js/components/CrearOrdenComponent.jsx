@@ -48,16 +48,16 @@ const CrearOrdenComponent = () => {
             console.error('Error: nuevaPersona es null o undefined');
             return;
         }
-        
+
         // Si nuevaPersona tiene la propiedad data, extraemos solo los datos
         const datosPersona = nuevaPersona?.data || nuevaPersona;
-        
+
         // Validamos que tengamos los datos mínimos necesarios
         if (!datosPersona.id) {
             console.error('Error: La persona no tiene ID');
             return;
         }
-        
+
         setPersona(datosPersona);
     };
 
@@ -73,10 +73,50 @@ const CrearOrdenComponent = () => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-
         console.log('Enviando formulario de orden:', formOrden);
+        try {
+            // Validar que se haya seleccionado un paciente
+            if (!formOrden.paciente_id) {
+                setError('Por favor, seleccione un paciente.');
+                setLoading(false);
+                return;
+            }
+            // Validar que se haya seleccionado al menos un examen
+            if (formOrden.examenes.length === 0) {
+                setError('Por favor, seleccione al menos un examen.');
+                setLoading(false);
+                return;
+            }
 
-        
+            // Enviar los datos al backend
+            const response = await fetch('/api/ordenes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: formOrden ? JSON.stringify(formOrden) : null,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error al crear la orden.');
+            }
+
+            const data = await response.json();
+            console.log('Orden creada con éxito:', data);
+            // Resetear el formulario después de crear la orden
+            setFormOrden(initialFormState);
+            setPersona(null);
+        } catch (err) {
+                console.error('Error al crear la orden:', err);
+                setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+
+
+
+
     }
 
 
@@ -150,7 +190,7 @@ const CrearOrdenComponent = () => {
                             {personaExistente ? 'Actualizando...' : 'Guardando...'}
                         </>
                     ) : (
-                        'Guardar'
+                        'Nueva Orden'
                     )}
                 </button>
             </div>

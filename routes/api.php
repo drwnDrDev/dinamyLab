@@ -89,6 +89,7 @@ Route::patch('tipos-afiliacion/{codigo}/activar', [\App\Http\Controllers\Api\Tip
 Route::get('paises', [\App\Http\Controllers\Api\PaisController::class, 'index']);
 
 Route::get('orden/{id}', [OrdenController::class, 'show']);
+Route::post('ordenes', [OrdenController::class, 'store']);
 Route::patch('/ordenes-medicas/{orden}',[OrdenController::class,'add'])->name('ordenes.add');
 
 
