@@ -24,6 +24,7 @@ class FrotisUretraSeeder extends Seeder
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'técnica de tinción bacteriana que diferencia las bacterias en dos grupos principales: grampositivas y gramnegativas, según la estructura de sus paredes celulares',
             'nombre_alternativo' => 'Coloración de Gram',
+            'sexo_aplicable'=>'M',
         ];
 
         // Crea el examen
