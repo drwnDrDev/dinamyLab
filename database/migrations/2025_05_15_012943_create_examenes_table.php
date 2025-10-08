@@ -19,7 +19,8 @@ return new class extends Migration
                 ->references('codigo')
                 ->on('codigo_cups');
             $table->text('descripcion')->nullable();
-            $table->string('sexo_aplicable',1)->default('A'); // M, F, A
+            $table->string('sexo_aplicable',1)
+                    ->default('A'); // M, F, A
             $table->string('nombre_alternativo')->nullable();
             $table->decimal('valor', 10, 2);
             $table->boolean('activo')->default(true);
