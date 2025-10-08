@@ -30,15 +30,24 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'paciente_id' => 'required|exists:pacientes,id',
-            'sede_id' => 'required|exists:sedes,id',
-            'numero' => 'required|integer',
-            'fecha' => 'required|date',
-            'examenes' => 'required|array',
-            'examenes.*.id' => 'required|exists:examenes,id',
-            'examenes.*.cantidad' => 'required|integer|min:1',
-        ]);
+        try {
+            // Validar los datos de entrada
+            $validated = $request->validate([
+                'paciente_id' => 'required|exists:pacientes,id',
+                'sede_id' => 'required|exists:sedes,id',
+                'numero_orden' => 'required|integer',
+                'fecha_orden' => 'required|date',
+                'examenes' => 'required|array',
+                'examenes.*.id' => 'required|exists:examenes,id',
+                'examenes.*.cantidad' => 'required|integer|min:1',
+                'mopdalidad' => 'required|string',
+                'finalidad' => 'required|string',
+                'via_ingreso' => 'required|string',
+                'cie_principal' => 'nullable|string',
+                'cie_relacionado' => 'nullable|string',
+            ]);
+
+        
         // Crear la orden
         $orden = Orden::create([
             'paciente_id' => $request->input('paciente_id'),
@@ -67,8 +76,14 @@ class OrdenController extends Controller
             DB::table('procedimientos')->insert($procedimientos);
         }
         return response()->json(['message' => 'Orden creada correctamente.', 'orden_id' => $orden->id], 201);
+            return response()->json(['message' => 'Orden creada correctamente.', 'orden_id' => $orden->id], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        }
     }
-
     /**
      * Display the specified resource.
      */
