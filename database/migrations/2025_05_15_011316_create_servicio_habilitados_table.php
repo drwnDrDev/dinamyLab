@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('servicios_habilitados', function (Blueprint $table) {
-
-            $table->unsignedInteger('codigo');
+            $table->unsignedInteger('codigo')->primary();
             $table->string('nombre');
             $table->string('grupo');
             $table->string('codigo_grupo');

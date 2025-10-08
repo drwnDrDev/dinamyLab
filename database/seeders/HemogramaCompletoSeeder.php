@@ -20,7 +20,7 @@ class HemogramaCompletoSeeder extends Seeder
         // Define los datos del examen principal
         $examenData = [
             'nombre' => 'Cuadro Hemático',
-            'CUP' => '902207',
+            'cup' => '902207',
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'Este examen evalúa los componentes de la sangre, incluyendo glóbulos rojos, glóbulos blancos y plaquetas.',
             'nombre_alternativo' => 'Hemograma',
@@ -165,7 +165,7 @@ class HemogramaCompletoSeeder extends Seeder
                     );
                 }
             }
-            
+
             if (isset($paramData['resultado']['items'])) {
 
                     foreach ($paramData['resultado']['items'] as $opcionValor) {

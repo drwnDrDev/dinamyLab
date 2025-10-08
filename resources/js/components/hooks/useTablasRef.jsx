@@ -7,7 +7,8 @@ export const useTablasRef = () => {
     finalidades: [],
     viasIngreso: [],
     tiposAfiliacion: [],
-    servicios: []
+    servicios: [],
+    causaAtencion: []  // Agregado causaAtencion
   });
 
   useEffect(() => {
@@ -31,9 +32,10 @@ export const useTablasRef = () => {
       const viasIngreso = await cargarTabla('via_ingreso_data', '/api/via-ingreso');
       const tiposAfiliacion = await cargarTabla('tipos_afiliacion_data', '/api/tipos-afiliacion');
       const servicios = await cargarTabla('servicios_habilitados_data', '/api/servicios-habilitados');
+      // const causaAtencion = await cargarTabla('causa_atencion_data', '/api/causas-atencion'); // Si se necesita causaAtencion
       
 
-      setTablas({ modalidades, finalidades, viasIngreso, tiposAfiliacion, servicios });
+      setTablas({ modalidades, finalidades, viasIngreso, tiposAfiliacion, servicios, causaAtencion: [] }); // Agregado causaAtencion
     };
 
     cargar();

@@ -9,7 +9,7 @@
     <article id="react-crear-orden"></article>
 
 
-    <x-canva class="mb-4">
+    <!-- <x-canva class="mb-4">
         <form method="post" id="crearOrden" action="{{ route('ordenes.store') }}" class="mt-4">
             @csrf
             <h2 class="font-bold mb-4 text-xl text-text">Datos de la Orden</h2>
@@ -27,9 +27,9 @@
                         <x-text-input type="number" id="abono" name="abono" value="0" class="form-input w-32" />
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <section class="section_examenes p-4">
+            <!-- <section class="section_examenes p-4">
 
                 <h2 class="font-bold mb-4 text-xl text-text">Exámenes</h2>
 
@@ -51,10 +51,10 @@
                     <textarea id="observaciones" name="observaciones" class="form-textarea w-full h-32 mt-2" placeholder="Escribe aquí las observaciones..."></textarea>
                 </div>
 
-                <x-primary-button id="enviarOrden" class="btn btn-primary mt-4">Crear Orden</x-primary-button>
+                <x-primary-button id="enviarOrden" class="btn btn-primary mt-4">Crear Orden</x-primary-button> -->
 
 
-        </form>
+        <!-- </form>
 
         </div>
         @if (session('success'))
@@ -70,6 +70,6 @@
         </div>
         @endif
 
-    </x-canva>
+    </x-canva> -->
     @vite(['resources/js/react-app.jsx'])
 </x-app-layout>

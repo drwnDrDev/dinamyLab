@@ -20,7 +20,7 @@ class ColesterolHDLSeeder extends Seeder
         // Define los datos del examen principal
         $examenData = [
             'nombre' => 'Colesterol HDL',
-            'CUP' => '903815',
+            'cup' => '903815',
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'se le llama colesterol "bueno" porque transporta el colesterol de otras partes de su cuerpo a su hígado. Su hígado luego elimina el colesterol de su cuerpo,El HDL desempeña un papel crucial en la prevención de la aterosclerosis, una enfermedad que estrecha y endurece las arterias, aumentando el riesgo de ataques cardíacos y accidentes cerebrovasculares',
             'nombre_alternativo' => 'lipoproteínas de alta densidad',

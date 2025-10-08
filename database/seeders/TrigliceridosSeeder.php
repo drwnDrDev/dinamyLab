@@ -20,7 +20,7 @@ class TrigliceridosSeeder extends Seeder
         // Define los datos del examen principal
         $examenData = [
             'nombre' => 'Triglicéridos',
-            'CUP' => '903868',
+            'cup' => '903868',
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'cantidad de triglicéridos(son un tipo de grasa) en la sangre',
             'nombre_alternativo' => 'lípidos',

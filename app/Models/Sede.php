@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sede extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     /**
      * The attributes that are mass assignable.
      *
@@ -16,7 +17,7 @@ class Sede extends Model
         'codigo_prestador',
         'logo',
         'empresa_id',
-        
+
     ];
 
     public function empresa()

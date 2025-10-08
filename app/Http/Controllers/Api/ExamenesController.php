@@ -10,12 +10,11 @@ class ExamenesController extends Controller
 {
     public function index()
     {
-        $examenes = Examen::all();
+        $examenes = Examen::select('cup','id','nombre','valor','nombre_alternativo','sexo_aplicable')->orderBy('nivel','desc')->get();
+
         return response()->json([
             'message' => 'Lista de examenes',
-            'data' => [
-                "examenes" => $examenes
-            ]
+            'data' => $examenes
         ]);
     }
 

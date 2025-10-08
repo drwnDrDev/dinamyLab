@@ -20,7 +20,7 @@ class UroanalisisSeeder extends Seeder
         // Define los datos del examen principal
         $examenData = [
             'nombre' => 'Uroanalisis',
-            'CUP' => '907106',
+            'cup' => '907106',
             'valor' => '18000.00', // Un valor de ejemplo
             'descripcion' => 'Ayuda a identificar infecciones del tracto urinario, enfermedades renales, diabetes, y otras condiciones metabólicas.',
             'nombre_alternativo' => 'Parcial de orina',

@@ -22,7 +22,8 @@ return new class extends Migration
                     ->references('codigo')
                     ->on('codigo_diagnosticos')
                     ->onDelete('cascade');
-            $table->unsignedSmallInteger('nivel')->default(1);
+            $table->unsignedSmallInteger('nivel')
+                    ->default(1);
             $table->timestamps();
         });
     }
