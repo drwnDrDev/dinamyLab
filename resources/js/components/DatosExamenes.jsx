@@ -9,7 +9,7 @@ const DatosExamenes = ({ formExamenes, onUpdate, persona }) => {
   const { examenes, loading } = useExamenes(); // desde LocalStorage
   const disponibles = examenes?.data|| [];
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [sexoPaciente, setSexoPaciente] = useState(persona?.sexo_aplicable || 'A');
+  const [sexoPaciente, setSexoPaciente] = useState(persona?.sexo || 'A');
 
   const handleAgregar = (nuevoExamen) => {
     const yaExiste = formExamenes.some(e => e.id === nuevoExamen.id);
