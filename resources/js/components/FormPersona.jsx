@@ -1,18 +1,18 @@
-import React from "react";
+import React, { use } from "react";
 import { useState, useEffect } from "react";
 import { usePersonaReferencias } from "./hooks/usePersonaReferencias";
 import { useTablasRef } from "./hooks/useTablasRef";
 import SelectField from "./SelectField";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
 
-const FormPersona = ({ persona, setPersona }) => {
+const FormPersona = ({ persona, setPersona, perfil }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     // Estados para los datos del formulario
     const [formData, setFormData] = useState({
         id: null,
-        perfil: 'Paciente',
+        perfil: '',
         tipo_documento: 'CC',
         numero_documento: '',
         nombres: '',
@@ -40,6 +40,13 @@ const FormPersona = ({ persona, setPersona }) => {
         formData.fecha_nacimiento
     );
 
+    useEffect(() => {
+        setFormData(prev => ({
+            ...prev,
+            perfil: perfil || ''
+        }));
+    }, [perfil]);
+   
     // Función para buscar persona por documento
     const buscarPersonaPorDocumento = async (numDoc) => {
         if (!numDoc.trim()) return;
@@ -80,7 +87,7 @@ const FormPersona = ({ persona, setPersona }) => {
             setFormData(prev => ({
                 ...prev,
                 id: persona.id || null,
-                perfil: 'Paciente',
+                perfil: '',
                 tipo_documento: persona.tipo_documento || '',
                 numero_documento: persona.numero_documento || '',
                 nombres: persona.nombre || '',
@@ -169,7 +176,7 @@ const FormPersona = ({ persona, setPersona }) => {
             // Opcional: limpiar el formulario después de crear
             if (!esActualizacion) {
                 setFormData({
-                    perfil: 'Paciente',
+                    perfil: '',
                     tipo_documento: '',
                     numero_documento: '',
                     nombres: '',
@@ -184,7 +191,8 @@ const FormPersona = ({ persona, setPersona }) => {
                     pais_residencia: '',
                     correo: '',
                     eps: '',
-                    tipo_afiliacion: ''
+                    tipo_afiliacion: '',
+                    parentesco: ''
                 });
                 setPersonaExistente(null);
             }
@@ -206,12 +214,12 @@ const FormPersona = ({ persona, setPersona }) => {
         <form onSubmit={handleSubmit} className="max-w-screen-lg mx-auto">
 
             <div className="flex gap-4">
-                <h2 className="font-bold mb-4 text-xl text-titles">Datos del Paciente </h2>
+                <h2 className="font-bold mb-4 text-xl text-titles">Nuevo registro de {perfil} </h2>
             </div>
 
             {persona && (
                 <div className="mb-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded">
-                    <strong>Paciente seleccionado:</strong> {persona.data.primer_nombre} {persona.data.primer_apellido} - Documento: {persona.data.numero_documento}
+                    <strong>{perfil} seleccionado:</strong> {persona.data.primer_nombre} {persona.data.primer_apellido} - Documento: {persona.data.numero_documento}
                 </div>
             )}
 
@@ -253,7 +261,7 @@ const FormPersona = ({ persona, setPersona }) => {
                             )}
                         </div>
                     </div>
-
+                    {perfil === 'Paciente' && (
                         <SelectField
                             label="Pais de Nacimiento"
                             name="pais_nacimiento"
@@ -262,6 +270,7 @@ const FormPersona = ({ persona, setPersona }) => {
                             codigo={false}
                             options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
                         />
+                    )}
 
                     <div>
                         <label className="block font-medium text-sm text-text">
@@ -290,6 +299,7 @@ const FormPersona = ({ persona, setPersona }) => {
                                 rounded-md"
                         />
                     </div>
+                    {perfil !== 'Pagador' && (
                     <div>
                         <div className="w-full pb-2 flex gap-2 items-center">
                             <label className="block font-medium text-sm text-text">
@@ -311,6 +321,8 @@ const FormPersona = ({ persona, setPersona }) => {
                             </div>
                         )}
                     </div>
+                    )}
+                    {perfil === 'Paciente' && (
                         <div className="w-full pb-2 flex gap-2 items-center">
                             <span className="font-semibold">Sexo</span>
                             <label htmlFor="sexo_femenino" className="inline-flex items-center">F</label>
@@ -344,34 +356,42 @@ const FormPersona = ({ persona, setPersona }) => {
                                 className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
                             />
                         </div>
+                    )}
 
-                        {/*meter el componente a un datalist Y DAR STILOS*/}
-                    <div>
-                        <input
-                            list="eps_list"
-                            name="eps"
-                            value={formData.eps}
-                            onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
+                    {perfil === 'Paciente' && (
+                        <div>
+                            <label className="block font-medium text-sm text-text">
+                                EPS
+                            </label>
+                            <input
+                                list="eps_list"
+                                name="eps"
+                                value={formData.eps}
+                                onChange={handleInputChange}
+                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
                                 rounded-md"
-                        />
-                        <datalist id="eps_list">
-                            {epsList.map(e => (
-                                <option key={e.id} value={e.nombre} />
-                            ))}
-                        </datalist>
-                    </div>
+                            />
+                            <datalist id="eps_list">
+                                {epsList.map(e => (
+                                    <option key={e.id} value={e.nombre} />
+                                ))}
+                            </datalist>
+                        </div>
+                    )}
+                    {perfil === 'Paciente' && (
 
-                    <SelectField
-                        label="Tipo de Afiliación"
-                        name="tipo_afiliacion"
-                        value={formData.tipo_afiliacion}
-                        onChange={handleInputChange}
-                        codigo={true}
-                        options={tiposAfiliacion.data}
-                    />
+                        <SelectField
+                            label="Tipo de Afiliación"
+                            name="tipo_afiliacion"
+                            value={formData.tipo_afiliacion}
+                            onChange={handleInputChange}
+                            codigo={true}
+                            options={tiposAfiliacion.data}
+                        />
+                    )}
 
                 </div>
+
 
                 {/*INFORMACION DE CONTACTO*/}
 
@@ -379,6 +399,7 @@ const FormPersona = ({ persona, setPersona }) => {
                     <div>
                         <h3 className="font-medium text-normal text-titles my-4">Información de contacto</h3>
                     </div>
+                    {perfil === 'Paciente' && (
                     <div className="w-full pb-2 flex gap-2 items-center">
                         <span className="font-semibold">Zona de Residencia</span>
                         <label htmlFor="zona_urbana" className="inline-flex items-center">Urbana</label>
@@ -401,8 +422,9 @@ const FormPersona = ({ persona, setPersona }) => {
                             onChange={handleInputChange}
                             className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
                         />
-
                     </div>
+                    )}
+                    {perfil === 'Paciente' && (
                     <div>
                         <label className="block font-medium text-sm text-text">
                             Dirección
@@ -416,6 +438,7 @@ const FormPersona = ({ persona, setPersona }) => {
                                 rounded-md"
                         />
                     </div>
+                    )}
                     <div>
                         <label className="block font-medium text-sm text-text">
                             Teléfono
@@ -429,6 +452,7 @@ const FormPersona = ({ persona, setPersona }) => {
                                 rounded-md"
                         />
                     </div>
+                    {perfil === 'Paciente' && (
                     <div>
                         <label className="block font-medium text-sm text-text">
                             Email
@@ -442,7 +466,8 @@ const FormPersona = ({ persona, setPersona }) => {
                                 rounded-md"
                         />
                     </div>
-
+                    )}
+                    {perfil === 'Paciente' && (
                     <SelectField
                         label="Pais de Residencia"
                         name="pais_residencia"
@@ -451,6 +476,9 @@ const FormPersona = ({ persona, setPersona }) => {
                         codigo={false}
                         options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
                     />
+                    )}
+                   
+                    {perfil === 'Paciente' && (
                     <SelectField
                         label="Municipio"
                         name="municipio"
@@ -462,6 +490,31 @@ const FormPersona = ({ persona, setPersona }) => {
                             nombre: `${mun.municipio} - ${mun.departamento}`
                         }))}
                     />
+                    )}
+                    
+                    {perfil === 'Acompaniante' && (
+                        <div>
+                            <label className="block font-medium text-sm text-text">
+                                Parentesco
+                            </label>
+                            <input
+                                list="parentesco_list"
+                                name="Parentesco"
+                                value={formData.parentesco}
+                                onChange={handleInputChange}
+                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
+                                rounded-md"
+                            />
+                            <datalist id="parentesco_list">
+                                <option value="Madre" />
+                                <option value="Padre" />
+                                <option value="Hermano(a)" />
+                                <option value="Hijo(a)" />
+                                <option value="Esposo(a)" />
+                                <option value="Amigo(a)" />
+                            </datalist>
+                        </div>
+                    )}
                 </div>
             </div>
 
