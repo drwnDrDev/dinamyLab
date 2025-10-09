@@ -144,10 +144,10 @@ class PersonaController extends Controller
         if (
             $request->has('telefono') &&
             $request->input('telefono') !== '' &&
-            $request->input('telefono') !== null &&
-            !$persona->telefonos()->where('numero', $request->input('telefono'))->exists()
+            $request->input('telefono') !== null
+            && !$persona->telefonos()->where('numero', $request->input('telefono'))->exists()
         ) {
-            $persona->telefonos()->create([
+            $persona->telefonos()->updateOrCreate([
                 'numero' => $request->input('telefono'),
             ]);
         } elseif ($request->has('telefono') && $request->input('telefono') === '') {
