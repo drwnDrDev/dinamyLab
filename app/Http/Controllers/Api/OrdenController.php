@@ -30,32 +30,55 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validar los datos de entrada
+
+
             $validated = $request->validate([
                 'paciente_id' => 'required|exists:pacientes,id',
-                'sede_id' => 'required|exists:sedes,id',
                 'numero_orden' => 'required|integer',
                 'fecha_orden' => 'required|date',
                 'examenes' => 'required|array',
                 'examenes.*.id' => 'required|exists:examenes,id',
                 'examenes.*.cantidad' => 'required|integer|min:1',
-                'mopdalidad' => 'required|string',
+                'modalidad' => 'required|string',
                 'finalidad' => 'required|string',
                 'via_ingreso' => 'required|string',
                 'cie_principal' => 'nullable|string',
                 'cie_relacionado' => 'nullable|string',
             ]);
 
-        
-        // Crear la orden
+        //mostrar errores de validacion
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $validated->errors(),
+            ], 422);
+        }
+
+        // Calcular el total de la orden
+        $total = $request->input('examenes')->sum(function ($examen) {
+            return $examen['valor'] * $examen['cantidad'];
+        });
+
+        if($request->input('total', 0) !== $total && $request->input('observaciones', '') == ''){
+            return response()->json([
+                'message' => 'El total de la orden no coincide con la suma de los exámenes.',
+            ], 422);
+        }
+
+
+
+        // Crear la orden médica
         $orden = Orden::create([
+            'sede_id' => session('sede')->id,
+            'numero' => $request->input('numero_orden'),
+            'user_id' => $request->user()->id,
             'paciente_id' => $request->input('paciente_id'),
-            'sede_id' => $request->input('sede_id'),
-            'numero' => $request->input('numero'),
-            'fecha' => $request->input('fecha'),
-            'user_id' => Auth::id(),
+            'codigo_recaudo' => '05', // Consulta externa
+            'observaciones' => $request->input('observaciones', null),
+            'abono' => $request->input('abono', null),
+            'total' => $request->input('total'),
         ]);
+
         // Asociar los exámenes a la orden y crear los procedimientos
         foreach ($request->input('examenes') as $examenData) {
             $orden->examenes()->attach($examenData['id'], [
@@ -76,13 +99,7 @@ class OrdenController extends Controller
             DB::table('procedimientos')->insert($procedimientos);
         }
         return response()->json(['message' => 'Orden creada correctamente.', 'orden_id' => $orden->id], 201);
-            return response()->json(['message' => 'Orden creada correctamente.', 'orden_id' => $orden->id], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'message' => 'Error de validación',
-                'errors' => $e->errors()
-            ], 422);
-        }
+
     }
     /**
      * Display the specified resource.

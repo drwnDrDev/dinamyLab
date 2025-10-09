@@ -17,6 +17,12 @@ class Procedimiento extends Model
         'fecha',
         'sede_id',
         'contacto_emergencia_id',
+        'diagnostico_principal',
+        'codigo_servicio',
+        'diagnostico_relacionado',
+        'codigo_finalidad',
+        'codigo_modalidad',
+        'codigo_via_ingreso',
         'estado'
     ];
 
@@ -53,10 +59,36 @@ class Procedimiento extends Model
     {
         return $this->belongsTo(Factura::class);
     }
+    public function finalidad()
+    {
+        return $this->belongsTo(Finalidad::class, 'codigo_finalidad', 'codigo');
+    }
+    public function modalidad()
+    {
+        return $this->belongsTo(Modalidad::class, 'codigo_modalidad', 'codigo');
+    }
+    public function viaIngreso()
+    {
+        return $this->belongsTo(ViaIngreso::class, 'codigo_via_ingreso', 'codigo');
+    }
+    public function diagnosticoPrincipal()
+    {
+        return $this->belongsTo(CodigoDiagnostico::class, 'diagnostico_principal', 'codigo');
+    }
+    public function diagnosticoRelacionado()
+    {
+        return $this->belongsTo(CodigoDiagnostico::class, 'diagnostico_relacionado', 'codigo');
+    }
+    public function servicioHabilitado()
+    {
+        return $this->belongsTo(ServicioHabilitado::class, 'codigo_servicio', 'codigo');
+    }
+
     public function scopePendientes($query)
     {
         return $query->whereNull('resultados');
     }
+
 
 
 
