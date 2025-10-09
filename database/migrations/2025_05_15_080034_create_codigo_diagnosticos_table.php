@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('codigo_diagnosticos', function (Blueprint $table) {
-            $table->id();
-            $table->string('codigo', 10)->unique();
+            $table->string('codigo', 10)->primary();
             $table->string('nombre', 255);
             $table->string('descripcion');
             $table->string('grupo', 255)->nullable();
