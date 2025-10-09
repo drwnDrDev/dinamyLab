@@ -69,7 +69,6 @@ class OrdenController extends Controller
     public function store(OrdenStoreRequest $request)
     {
 
-        return $request->all();
         $request->validated(); // Validar los datos del formulario
         $sede = ElegirEmpresa::elegirSede();
 
@@ -100,9 +99,6 @@ class OrdenController extends Controller
             }
             return [
                 'examen_id' => $examenId,
-                'diagnostico_principal' => 'Z017', // Se puede actualizar más tarde
-                'diagnostico_relacionado' => 'Z018', // Se puede actualizar más tarde
-                'codigo_finalidad' => '12', // Asumiendo un valor por defecto,
                 'cantidad' => $cantidad
             ];
         })->values()->toArray();

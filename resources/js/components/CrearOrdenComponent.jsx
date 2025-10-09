@@ -73,7 +73,7 @@ const CrearOrdenComponent = () => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-        console.log('Enviando formulario de orden:', formOrden);
+        console.log('Enviando formulario de orden:', JSON.stringify(formOrden));
         try {
             // Validar que se haya seleccionado un paciente
             if (!formOrden.paciente_id) {
@@ -93,13 +93,17 @@ const CrearOrdenComponent = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'redirect': 'follow',
                 },
-                body: formOrden ? JSON.stringify(formOrden) : null,
+                body: formOrden,
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error al crear la orden.');
+
+
+            if (response) {
+                const result = await response.json();
+                console.log('Respuesta del servidor:', result);
             }
 
             const data = await response.json();
@@ -108,8 +112,8 @@ const CrearOrdenComponent = () => {
             setFormOrden(initialFormState);
             setPersona(null);
         } catch (err) {
-                console.error('Error al crear la orden:', err);
-                setError(err.message);
+                console.error('Error al crear la orden:', JSON.stringify(err));
+                setError(err);
         } finally {
             setLoading(false);
         }
