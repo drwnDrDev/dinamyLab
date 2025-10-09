@@ -96,7 +96,7 @@ const CrearOrdenComponent = () => {
                     'Accept': 'application/json',
                     'redirect': 'follow',
                 },
-                body: formOrden,
+                body: JSON.stringify(formOrden),
             });
 
 
@@ -112,7 +112,6 @@ const CrearOrdenComponent = () => {
             setFormOrden(initialFormState);
             setPersona(null);
         } catch (err) {
-                console.error('Error al crear la orden:', JSON.stringify(err));
                 setError(err);
         } finally {
             setLoading(false);

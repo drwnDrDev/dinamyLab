@@ -23,7 +23,10 @@ class OrdenController extends Controller
      */
     public function index()
     {
+
+
         $sede = session('sede');
+
         if (!$sede) {
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }
@@ -33,9 +36,9 @@ class OrdenController extends Controller
             ->where('created_at', '>=', now()->subDays(3)) // los ultimos 3 dias
             ->orderBy('created_at', 'desc')
             ->get();
+
         if ($ordenes->isEmpty()) {
-            return to_route('ordenes.create')
-                ->with('info', 'No hay órdenes médicas recientes. Crea una nueva orden.');
+            return response()->json(['message' => 'No hay órdenes médicas disponibles.'], 404);
         }
         return view('ordenes.index', compact('ordenes'));
     }
@@ -117,7 +120,7 @@ class OrdenController extends Controller
             $acompaniante = null;
         }
 
-   $ordenCreada =  DB::transaction(function () use ($request, $paciente,$contactoEmergencia, $examenesSolicitados, $examenesData,$orden_examen, $sede) {
+        $ordenCreada =  DB::transaction(function () use ($request, $paciente,$contactoEmergencia, $examenesSolicitados, $examenesData,$orden_examen, $sede) {
 
             $total = $examenesData->sum(function ($examen) use ($examenesSolicitados) {
                 return $examen->valor * $examenesSolicitados[$examen->id];

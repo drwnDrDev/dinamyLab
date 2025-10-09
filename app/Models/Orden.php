@@ -16,6 +16,7 @@ class Orden extends Model
         'observaciones',
         'terminada',
         'abono',
+        'user_id',
         'total',
     ];
 
