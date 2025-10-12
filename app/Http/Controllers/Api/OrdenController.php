@@ -74,14 +74,17 @@ class OrdenController extends Controller
 
             // Asociar los exámenes a la orden y crear los procedimientos
             foreach ($validated['examenes'] as $examenData) {
-                $orden->examenes()->attach($examenData['id'], [
-                    'cantidad' => $examenData['cantidad'],
-                ]);
-                // Crear los procedimientos asociados a la orden
-                $procedimientos = [];
-                for ($i = 0; $i < $examenData['cantidad']; $i++) {
-                    $procedimientos[] = [
-                        'orden_id' => $orden->id,
+                $orden->examenes()->attach(
+                    $examenData['id'],
+                    ['cantidad' => $examenData['cantidad']]
+                );
+
+
+            // Crear los procedimientos asociados a la orden
+            $procedimientos = [];
+            for ($i = 0; $i < $examenData['cantidad']; $i++) {
+                $procedimientos[] = [
+                    'orden_id' => $orden->id,
                         'examen_id' => $examenData['id'],
                         'diagnostico_principal' => $validated['cie_principal'] ?? 'Z017', // Asignar un valor por defecto si no se proporciona
                         'diagnostico_relacionado' => $validated['cie_relacionado'] ?? null,
@@ -95,9 +98,11 @@ class OrdenController extends Controller
                         'updated_at' => now(),
                     ];
                 }
+
             DB::table('procedimientos')->insert($procedimientos);
-            return $orden; // Retorna la orden creada para usarla fuera de la transacción
             }
+            return $orden; // Retorna la orden creada para usarla fuera de la transacción
+
         });
 
         return response()->json(['message' => 'Orden creada correctamente.', 'data' => $ordenCreada], 201);
