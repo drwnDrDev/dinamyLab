@@ -79,14 +79,14 @@
                             @endif
                         </h3>
                     </div>
-                     <x-primary-button type="button" class="mt-4 flex print:hidden" id="printButton" >
+                     <x-primary-button type="button" class="mt-4 flex print:hidden" onclick="window.print()">
                               {{ __('Print ticket') }}
                      </x-primary-button>
 
 
         </section>
 
-    <section class="container mx-auto hidden print:!block" id="ticket">
+    <section class="container mx-auto print:!block" >
 
         <div class="grid grid-cols-6 border border-borders rounded-md">
             <p>Examen</p>
@@ -122,54 +122,13 @@
 
     </section>
 
-<section class="container print:hidden bg-slate-300 p-4 rounded-md">
-        <div class="flex justify-between items-center mb-4">
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-600">Nº: {{ $orden->numero }}</span>
-                <span class="text-sm text-gray-600">Fecha: {{ $orden->created_at->format('d-m-Y') }}</span>
-            </div>
-        </div>
 
-            <form action="{{route('facturas.store')}}" method="post" id="formMediosPago">
-                @csrf
-
-                <div class="max-w-lg grid mx-auto grid-cols-2 items-between mb-2">
-
-                <input type="hidden" name="orden" id="orden" value="{{$orden->id}}">
-
-                <h2 class="text-lg font-semibold">Medio de pago</h2>
-                    <input type="number" disabled name="total" id="totalOrden" value="{{$orden->abono}}" class="border-0 bg-transparent p-0 m-0 text-base text-gray-900 font-bold focus:ring-0 focus:outline-none appearance-none cursor-default" style="pointer-events: none;">
-                <p>Saldo:<span id="diferencia" class="text-sm text-gray-600"></span>COP</p>
-                </div>
-
-
-                @foreach ($mediosPago as $medio)
-                    <div class="max-w-screen-md grid mx-auto grid-cols-4 items-between mb-2">
-                        <x-input-label for="medio_pago_{{ $medio->id }}">{{ $medio->nombre }}</x-input-label>
-                        <x-text-input type="number" name="medio_pago[{{ $medio->id }}]" id="medio_pago_{{ $medio->id }}" class="ml-2" min="0" step="0.01" value="{{ old('medio_pago.'.$medio->id, $abono=$medio->nombre == 'Efectivo'? $orden->abono : 0) }}" required />
-                        <x-input-error :messages="$errors->get('medio_pago.'.$medio->id)" class="mt-2" />
-                        @if ($medio->nombre !== 'Efectivo')
-                            <x-text-input name="medio_pago_ref_{{ $medio->id }}" id="medio_pago_ref_{{ $medio->id }}" placeholder="Referencia" class="ml-2" value="{{ old('medio_pago_ref.'.$medio->id) }}" />
-                            <x-input-error :messages="$errors->get('medio_pago_ref.'.$medio->id)" class="mt-2" />
-                        @endif
-                    </div>
-                @endforeach
-
-
-                <x-primary-button type="submit" class="print:hidden">
-                    {{ __('Mark as completed') }}
-                </x-primary-button>
-
-                <x-input-error :messages="$errors->get('medio_pago')" class="mt-2" />
-            </form>
-
-
-
-            </form>
-
-</section>
 </x-canva>
 
 
-    @vite(['resources/js/ticket.js'])
+    @vite(['resources/js/Ticket.jsx'])
+
+    <div id="ticket" ordenId="{{$orden->id}}" class="print:hidden">
+
+    </div>
 </x-app-layout>

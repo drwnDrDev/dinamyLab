@@ -1,0 +1,168 @@
+import React, { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { fetchOrden } from './api.js';
+
+export default function Ticket({ ordenId }) {
+    const [totalOrden, setTotalOrden] = useState(0);
+    const [orden, setOrden] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [procedimientos, setProcedimientos] = useState([]);
+
+
+    useEffect(() => {
+        // obtener id desde la ruta como en el código original
+        const currentUrl = new URL(window.location.href);
+        const idFromPath = currentUrl.pathname.split('/');
+        const id = idFromPath[2];
+
+        if (id) {
+            fetchOrden(id)
+                .then((orden) => {
+                    if (orden) {
+                        setOrden(orden);
+                        setProcedimientos(orden.procedimientos || []);
+                        setTotalOrden(orden.total || 0);
+                        setLoading(false);
+                        console.log('Orden cargada:', orden);
+                    }
+                })
+                .catch((err) => {
+                    console.error('Error al obtener la orden:', err);
+                    setError('Error al obtener la orden');
+                    setLoading(false);
+                });
+        }
+    }, []);
+    // estados para los catálogos estáticos
+    const [lookups, setLookups] = useState({
+        cies: {},
+        finalidades: {},
+        vias_ingreso: {},
+        modalidades: {},
+        servicios: {},
+    });
+
+    // helper para convertir array de {codigo|id, nombre|descripcion} a map
+    const toMap = (arr) => {
+        if (!Array.isArray(arr)) return {};
+        return arr.reduce((acc, it) => {
+            const key = it.codigo ?? it.code ?? it.id ?? it.value;
+            const label = it.nombre ?? it.name ?? it.descripcion ?? it.label ?? it.descripcion_corta ?? it.descripcion_larga;
+            if (key != null) acc[key] = label ?? String(key);
+            return acc;
+        }, {});
+    };
+
+    // cargar catálogos estáticos desde la API
+    useEffect(() => {
+        const base = window.location.origin;
+        const endpoints = {
+            cies: `${base}/api/cie10`,
+            finalidades: `${base}/api/finalidades`,
+            vias_ingreso: `${base}/api/via-ingreso`,
+            modalidades: `${base}/api/modalidades-atencion`,
+            servicios: `${base}/api/servicios-habilitados`,
+        };
+
+        const fetchAll = async () => {
+            try {
+                const responses = await Promise.all(
+                    Object.values(endpoints).map((url) => fetch(url).then((r) => (r.ok ? r.json() : [])))
+                );
+                const [cies, finalidades, vias_ingreso, modalidades, servicios] = responses;
+                setLookups({
+                    cies: toMap(cies.data.diagnostico_principal || cies.data.codigoDiagnostico || []),
+                    finalidades: toMap(finalidades),
+                    vias_ingreso: toMap(vias_ingreso),
+                    modalidades: toMap(modalidades),
+                    servicios: toMap(servicios),
+                });
+
+            } catch (err) {
+                console.error('Error cargando catálogos estáticos:', err);
+            }
+        };
+
+        fetchAll();
+    }, []);
+
+    // cuando los catálogos estén disponibles, reemplazar códigos por etiquetas en procedimientos
+    useEffect(() => {
+        if (!procedimientos || procedimientos.length === 0) return;
+
+        const anyLookupLoaded = Object.values(lookups).some((m) => Object.keys(m).length > 0);
+
+        if (!anyLookupLoaded) return;
+
+        setProcedimientos((prev) =>
+            prev.map((p) => {
+                if (p._mapped) return p; // evitar remapear varias veces
+                return {
+                    ...p,
+                    diagnostico_principal: lookups.cies[p.diagnostico_principal] ?? p.diagnostico_principal,
+                    diagnostico_relacionado: lookups.cies[p.diagnostico_relacionado] ?? p.diagnostico_relacionado,
+                    codigo_finalidad: lookups.finalidades[p.codigo_finalidad] ?? p.codigo_finalidad,
+                    codigo_modalidad: lookups.modalidades[p.codigo_modalidad] ?? p.codigo_modalidad,
+                    codigo_servicio: lookups.servicios[p.codigo_servicio] ?? p.codigo_servicio,
+                    codigo_via_ingreso: lookups.vias_ingreso[p.codigo_via_ingreso] ?? p.codigo_via_ingreso,
+                    _mapped: true, // marcar como mapeado
+                };
+            })
+        );
+    }, [lookups, procedimientos]);
+
+
+
+    return (
+    <div className='print:hidden p-6'>
+
+        <h1 className="text-2xl font-bold mb-4">Orden N° {orden?.numero}  </h1>
+        <p className="text-lg">Total de la Orden: ${totalOrden}</p>
+        {loading && <p>Cargando...</p>}
+        {error && <p className="text-red-500">Error: {error}</p>}
+        {!loading && !error && (
+            <table className="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr>
+                        <th className="py-2 px-4 border-b border-gray-300" title='Nombre del examen o procedimiento'>Examen</th>
+                        <th className="py-2 px-4 border-b border-gray-300" title='Estado actual del procedimiento'>Estado</th>
+                        <th className="py-2 px-4 border-b border-gray-300" title='diagnostico principal'>Cie 1</th>
+                        <th className="py-2 px-4 border-b border-gray-300" title='diagnostico relacionado'>Cie 2</th>
+                        <th className="py-2 px-4 border-b border-gray-300" title='codigo finalidad'>Finalidad</th>
+                        <th className="py-2 px-4 border-b border-gray-300" title='codigo modalidad'>Modalidad</th>
+                        <th className="py-2 px-4 border-b border-gray-300" title='codigo servicio'>Servicio</th>
+                        <th className="py-2 px-4 border-b border-gray-300" title='codigo via ingreso'>Vía</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {procedimientos.map((procedimiento) => (
+                        <tr key={procedimiento.id}>
+                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.examen.nombre}</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.estado}</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.diagnostico_principal}</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.diagnostico_relacionado}</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.codigo_finalidad}</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.codigo_modalidad}</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.codigo_servicio}</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.codigo_via_ingreso}</td>
+
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        )}
+        <div className="mt-4">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded">Imprimir Ticket</button>
+        </div>
+
+</div>
+);
+}
+
+if (document.getElementById('ticket')) {
+    document.addEventListener('DOMContentLoaded', () => {
+        const root = createRoot(document.getElementById('ticket'));
+        root.render(<Ticket ordenId={document.getElementById('ticket').getAttribute('ordenId')} />);
+    });
+}
