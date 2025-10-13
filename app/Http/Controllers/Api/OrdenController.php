@@ -115,8 +115,14 @@ class OrdenController extends Controller
     public function show(string $id)
     {
 
+        $orden = Orden::where('id', $id)
+                ->with(['paciente', 'procedimientos.examen'])->first();
 
-        $orden = Orden::findOrFail($id);
+        if (!$orden) {
+            return response()->json(['message' => 'Orden no encontrada.'], 404);
+        }
+
+
         return response()->json($orden);
     }
 

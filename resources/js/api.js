@@ -156,3 +156,13 @@ export const fetchTiposAtencion = async () => {
         return [];
     }
 }
+
+export const fetchOrden = async (id) => {
+    try {
+        const response = await apiClient.get(`/api/orden/${id}`);
+        return response.data || null;
+    } catch (error) {
+        console.error('Error al obtener la orden:', error);
+        return null;
+    }
+}
