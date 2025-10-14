@@ -5,7 +5,7 @@ import { useExamenes } from './hooks/useExamenes';
 import TablaExamenes from './TablaExamenes';
 import ModalExamenes from './ModalExamenes';
 
-const DatosExamenes = ({ formExamenes, onUpdate, persona }) => {
+const DatosExamenes = ({ formExamenes, onUpdate, persona, onChangeValores }) => {
   const { examenes, loading } = useExamenes(); // desde LocalStorage
   const disponibles = examenes?.data|| [];
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,6 +47,7 @@ const DatosExamenes = ({ formExamenes, onUpdate, persona }) => {
           examenes={formExamenes}
           onRemove={handleRemove}
           onCantidadChange={handleCantidadChange}
+          onChangeValores={onChangeValores}
         />
       )}
 

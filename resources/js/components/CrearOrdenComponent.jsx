@@ -16,6 +16,8 @@ const CrearOrdenComponent = () => {
         cie_relacionado: null,
         finalidad: '15',
         modalidad: '01',
+        abono: 0,
+        total: 0,
         fecha_orden: new Date().toISOString().slice(0, 10), // Formato YYYY-MM-DD hh:mm:ss
     };
 
@@ -69,9 +71,16 @@ const CrearOrdenComponent = () => {
         }));
     }
 
+    const handleValoresUpdate = (name, value) => {
+        setFormOrden((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        setLoading(false);
         setError(null);
         console.log('Enviando formulario de orden:', JSON.stringify(formOrden));
         try {
@@ -168,6 +177,7 @@ const CrearOrdenComponent = () => {
                             }))
                         }
                         persona={persona}
+                        onChangeValores={handleValoresUpdate}
                     />
                 </section>
             )}
@@ -190,7 +200,7 @@ const CrearOrdenComponent = () => {
                     {loading ? (
                         <>
                             <div className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></div>
-                            {personaExistente ? 'Actualizando...' : 'Guardando...'}
+                            {loading ? 'Actualizando...' : 'Guardando...'}
                         </>
                     ) : (
                         'Nueva Orden'
