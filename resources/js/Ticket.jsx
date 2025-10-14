@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { fetchOrden } from './api.js';
+import BuscarModelo from './BuscarModelo.jsx';
 
 export default function Ticket({ ordenId }) {
     const [totalOrden, setTotalOrden] = useState(0);
@@ -24,7 +25,7 @@ export default function Ticket({ ordenId }) {
                         setProcedimientos(orden.procedimientos || []);
                         setTotalOrden(orden.total || 0);
                         setLoading(false);
-                        console.log('Orden cargada:', orden);
+
                     }
                 })
                 .catch((err) => {
@@ -73,10 +74,10 @@ export default function Ticket({ ordenId }) {
                 const [cies, finalidades, vias_ingreso, modalidades, servicios] = responses;
                 setLookups({
                     cies: toMap(cies.data.diagnostico_principal || cies.data.codigoDiagnostico || []),
-                    finalidades: toMap(finalidades),
-                    vias_ingreso: toMap(vias_ingreso),
-                    modalidades: toMap(modalidades),
-                    servicios: toMap(servicios),
+                    finalidades: toMap(finalidades.data.finalidades || []),
+                    vias_ingreso: toMap(vias_ingreso.data || []),
+                    modalidades: toMap(modalidades.data.modalidades_atencion || []),
+                    servicios: toMap(servicios.data || []),
                 });
 
             } catch (err) {
@@ -85,33 +86,15 @@ export default function Ticket({ ordenId }) {
         };
 
         fetchAll();
-    }, []);
+        console.log('Catálogos estáticos cargados', lookups);
+    }, [lookups]);
 
-    // cuando los catálogos estén disponibles, reemplazar códigos por etiquetas en procedimientos
-    useEffect(() => {
-        if (!procedimientos || procedimientos.length === 0) return;
 
-        const anyLookupLoaded = Object.values(lookups).some((m) => Object.keys(m).length > 0);
-
-        if (!anyLookupLoaded) return;
-
-        setProcedimientos((prev) =>
-            prev.map((p) => {
-                if (p._mapped) return p; // evitar remapear varias veces
-                return {
-                    ...p,
-                    diagnostico_principal: lookups.cies[p.diagnostico_principal] ?? p.diagnostico_principal,
-                    diagnostico_relacionado: lookups.cies[p.diagnostico_relacionado] ?? p.diagnostico_relacionado,
-                    codigo_finalidad: lookups.finalidades[p.codigo_finalidad] ?? p.codigo_finalidad,
-                    codigo_modalidad: lookups.modalidades[p.codigo_modalidad] ?? p.codigo_modalidad,
-                    codigo_servicio: lookups.servicios[p.codigo_servicio] ?? p.codigo_servicio,
-                    codigo_via_ingreso: lookups.vias_ingreso[p.codigo_via_ingreso] ?? p.codigo_via_ingreso,
-                    _mapped: true, // marcar como mapeado
-                };
-            })
-        );
-    }, [lookups, procedimientos]);
-
+ const buscarCie = (e) => {
+        const codigo = e.target.innerText;
+        const descripcion = lookups.cies[codigo] ?? 'Descripción no encontrada';
+        alert(<BuscarModelo />);
+    }
 
 
     return (
@@ -140,12 +123,27 @@ export default function Ticket({ ordenId }) {
                         <tr key={procedimiento.id}>
                             <td className="py-2 px-4 border-b border-gray-300">{procedimiento.examen.nombre}</td>
                             <td className="py-2 px-4 border-b border-gray-300">{procedimiento.estado}</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.diagnostico_principal}</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.diagnostico_relacionado}</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.codigo_finalidad}</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.codigo_modalidad}</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.codigo_servicio}</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{procedimiento.codigo_via_ingreso}</td>
+                            <td className="py-2 px-4 border-b border-gray-300"
+                            title={lookups.cies[procedimiento.diagnostico_principal]?? procedimiento.diagnostico_principal}
+                            onClick={buscarCie}
+                            >{
+                                 procedimiento.diagnostico_principal
+                            }</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{
+                           lookups.cies[procedimiento.diagnostico_relacionado]?? procedimiento.diagnostico_relacionado
+                            }</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{
+                           lookups.finalidades[procedimiento.codigo_finalidad]?? procedimiento.codigo_finalidad
+                            }</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{
+                           lookups.modalidades[procedimiento.codigo_modalidad]?? procedimiento.codigo_modalidad
+                            }</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{
+                           lookups.servicios[procedimiento.codigo_servicio]?? procedimiento.codigo_servicio
+                            }</td>
+                            <td className="py-2 px-4 border-b border-gray-300">{
+                           lookups.vias_ingreso[procedimiento.codigo_via_ingreso]?? procedimiento.codigo_via_ingreso
+                            }</td>
 
                         </tr>
                     ))}
@@ -155,7 +153,7 @@ export default function Ticket({ ordenId }) {
         <div className="mt-4">
             <button className="bg-blue-500 text-white px-4 py-2 rounded">Imprimir Ticket</button>
         </div>
-
+        <BuscarModelo />
 </div>
 );
 }
