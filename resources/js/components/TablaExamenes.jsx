@@ -1,12 +1,28 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 
-const TablaExamenes = ({ examenes, onRemove, onCantidadChange }) => {
+const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }) => {
   console.log('TablaExamenes - examenes recibidos:', examenes);
+  const [abono, setAbono] = useState(0); // Estado para el abono
+  const [descuento, setDescuento] = useState(0); // Estado para el descuento
+  const [abonoActive, setAbonoActive] = useState(false); // Estado para activar/desactivar el abono
+  const [descuentoActive, setDescuentoActive] = useState(false); // Estado para activar/desactivar el descuento
 
   if (!Array.isArray(examenes)) {
     console.error('TablaExamenes: examenes no es un array');
     return null;
   }
+
+  const handleAbonoChange = (e) => {
+    const value = parseFloat(e.target.value);
+    setAbono(isNaN(value) ? 0 : value);
+  };
+
+  const handleDescuentoChange = (e) => {
+    const value = parseFloat(e.target.value);
+    setDescuento(isNaN(value) ? 0 : value);
+  };
+
 
   // Función para convertir valor a número
   const parseValor = (valor) => {
@@ -18,12 +34,28 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange }) => {
     return 0;
   };
 
+
   // Calcular el total general
   const total = examenes.reduce((sum, ex) => {
     const cantidad = ex.cantidad || 1;
     const valor = parseValor(ex.valor);
-    return sum + (cantidad * valor);
+    const sub = (cantidad * valor) - (descuentoActive ? descuento : 0);
+    return sub > 0 ? sum + sub : sum; // Evitar que el subtotal sea negativo
   }, 0);
+
+  const saldo = abonoActive ? total - abono : total;
+
+
+  console.log('valor State abono:', abono);
+  console.log('valor State descuento:', descuento);
+  console.log('valor total antes de abono y descuento:', total);
+
+  useEffect(() => {
+    console.log('useEffect - Valores actualizados:', { total, abono, descuento, saldo });
+    // Actualizar los valores en el componente padre
+    onChangeValores('total', total);
+    onChangeValores('abono', abonoActive ? abono : 0);
+  }, [total, abono, descuento, saldo, abonoActive, descuentoActive]);  
 
   return (
     <div className="overflow-x-auto">
@@ -78,13 +110,44 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange }) => {
           })}
         </tbody>
         <tfoot>
+          {abonoActive && (
+          <tr className="border-t-2 border-gray-200 font-semibold">
+            <td colSpan="4" className="px-4 py-3 text-right">Abono:</td>
+            <td className="px-4 py-3 text-right">
+              <input type="number" onChange={handleAbonoChange}/>
+            </td>
+            <td></td>
+          </tr>
+          )}
+          {abonoActive && (
+          <tr className="border-t-2 border-gray-200 font-semibold">
+            <td colSpan="4" className="px-4 py-3 text-right">Saldo:</td>
+            <td className="px-4 py-3 text-right">${saldo.toFixed(2)}</td>
+            <td></td>
+          </tr>
+          )}
+          {descuentoActive && (
+          <tr className="border-t-2 border-gray-200 font-semibold">
+            <td colSpan="4" className="px-4 py-3 text-right">Descuento:</td>
+            <td className="px-4 py-3 text-right">
+              <input type="number" onChange={handleDescuentoChange}/>
+            </td>
+            <td></td>
+          </tr>
+          )}
           <tr className="border-t-2 border-gray-200 font-semibold">
             <td colSpan="4" className="px-4 py-3 text-right">Total:</td>
             <td className="px-4 py-3 text-right">${total.toFixed(2)}</td>
             <td></td>
           </tr>
+
         </tfoot>
       </table>
+      <div>
+        <button onClick={()=>setDescuentoActive(!descuentoActive)}>Descuento</button>
+        <button onClick={()=>setAbonoActive(!abonoActive)}>Abono</button>
+      </div>
+
     </div>
   );
 };
