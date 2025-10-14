@@ -126,7 +126,7 @@
 </x-canva>
 
 
-    @vite(['resources/js/Ticket.jsx'])
+    @vite(['resources/js/components/Ticket.jsx'])
 
     <div id="ticket" ordenId="{{$orden->id}}" class="print:hidden">
 

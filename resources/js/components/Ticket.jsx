@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { fetchOrden } from './api.js';
+import { fetchOrden } from '../api.js';
 import BuscarModelo from './BuscarModelo.jsx';
+
 
 export default function Ticket({ ordenId }) {
     const [totalOrden, setTotalOrden] = useState(0);
@@ -87,7 +88,7 @@ export default function Ticket({ ordenId }) {
 
         fetchAll();
         console.log('Catálogos estáticos cargados', lookups);
-    }, [lookups]);
+    }, []);
 
 
  const buscarCie = (e) => {
@@ -120,7 +121,7 @@ export default function Ticket({ ordenId }) {
                 </thead>
                 <tbody>
                     {procedimientos.map((procedimiento) => (
-                        <tr key={procedimiento.id}>
+                        <tr key={procedimiento.id} className="hover:bg-gray-100 cursor-pointer">
                             <td className="py-2 px-4 border-b border-gray-300">{procedimiento.examen.nombre}</td>
                             <td className="py-2 px-4 border-b border-gray-300">{procedimiento.estado}</td>
                             <td className="py-2 px-4 border-b border-gray-300"
@@ -129,20 +130,28 @@ export default function Ticket({ ordenId }) {
                             >{
                                  procedimiento.diagnostico_principal
                             }</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{
-                           lookups.cies[procedimiento.diagnostico_relacionado]?? procedimiento.diagnostico_relacionado
+                            <td className="py-2 px-4 border-b border-gray-300"
+
+                            title={lookups.cies[procedimiento.diagnostico_relacionado]?? procedimiento.diagnostico_relacionado}
+                            onClick={buscarCie}
+                            >{
+                             procedimiento.diagnostico_relacionado
                             }</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{
-                           lookups.finalidades[procedimiento.codigo_finalidad]?? procedimiento.codigo_finalidad
+                            <td className="py-2 px-4 border-b border-gray-300"
+                            title={lookups.finalidades[procedimiento.codigo_finalidad]}>{
+                                procedimiento.codigo_finalidad
                             }</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{
-                           lookups.modalidades[procedimiento.codigo_modalidad]?? procedimiento.codigo_modalidad
+                            <td className="py-2 px-4 border-b border-gray-300"
+                            title={lookups.modalidades[procedimiento.codigo_modalidad] }>{
+                            procedimiento.codigo_modalidad
                             }</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{
-                           lookups.servicios[procedimiento.codigo_servicio]?? procedimiento.codigo_servicio
+                            <td className="py-2 px-4 border-b border-gray-300"
+                            title={lookups.servicios[procedimiento.codigo_servicio] }>{
+                      procedimiento.codigo_servicio
                             }</td>
-                            <td className="py-2 px-4 border-b border-gray-300">{
-                           lookups.vias_ingreso[procedimiento.codigo_via_ingreso]?? procedimiento.codigo_via_ingreso
+                            <td className="py-2 px-4 border-b border-gray-300"
+                            title={lookups.vias_ingreso[procedimiento.codigo_via_ingreso]}>{
+                            procedimiento.codigo_via_ingreso
                             }</td>
 
                         </tr>
