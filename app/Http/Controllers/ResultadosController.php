@@ -71,6 +71,20 @@ class ResultadosController extends Controller
     }
     public function store(Request $request, Procedimiento $procedimiento)
     {
+        // Validar unicidad de (procedimiento_id, parametro_id) antes de guardar
+        $input = collect($request->except(['_token', 'submit']));
+        $duplicates = [];
+
+        foreach ($input->keys() as $paramId) {
+            if (is_numeric($paramId) && $procedimiento->resultado()->where('parametro_id', $paramId)->exists()) {
+                $duplicates[] = $paramId;
+            }
+        }
+
+        if (!empty($duplicates)) {
+            return redirect()->back()
+                ->with('warning', 'Ya existen resultados para los parámetros: ' . implode(', ', $duplicates));
+        }
 
         EscogerReferencia::guardaResultado($request->except(['_token', 'submit']), $procedimiento);
 
@@ -94,7 +108,7 @@ class ResultadosController extends Controller
     public function historia_show(Request $request, Persona $persona)
     {
 
-        $sede = session('sede');
+        $sede = request()->session()->get('sede');
         $procedimientos = Procedimiento::find(array_keys($request->all()))->map(
             function ($procedimiento) {
                 return [
@@ -103,8 +117,6 @@ class ResultadosController extends Controller
                 ];
             }
         );
-
-
 
         return view(
             'resultados.historia_show', compact('persona', 'procedimientos', 'sede')
