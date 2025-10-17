@@ -112,18 +112,21 @@ const CrearOrdenComponent = () => {
 
             if (response) {
                 const result = await response.json();
-                console.log('Respuesta del servidor:', result);
+                const ordenId = result.data.id;
+                console.log('Respuesta del servidor:', result, 'ID de la orden:', ordenId);
+                
+                // Redirigir a la página de la nueva orden
+                window.location.href = `/ordenes-medicas/${ordenId}/ver`;
             }
 
-            const data = await response.json();
-            console.log('Orden creada con éxito:', data);
-            // Resetear el formulario después de crear la orden
             setFormOrden(initialFormState);
             setPersona(null);
+            
         } catch (err) {
                 setError(err);
         } finally {
             setLoading(false);
+            
         }
 
 
