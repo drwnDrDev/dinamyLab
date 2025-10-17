@@ -95,7 +95,14 @@ class ProcedimientoController extends Controller
      */
 
     public function reportes(){
-        return view('procedimientos.rips');
+        $procedimientos = Procedimiento::with(['examen'])
+            ->where('fecha', '>=', now()->startOfMonth())
+            ->where('fecha', '<=', now()->endOfMonth())
+            ->selectRaw('examen_id, COUNT(*) as total_procedimientos')
+            ->groupBy('examen_id')
+            ->orderByDesc('total_procedimientos')
+            ->get();
+        return view('procedimientos.rips', compact('procedimientos'));
     }
 
     public function examenes()
