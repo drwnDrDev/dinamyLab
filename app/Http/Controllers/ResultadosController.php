@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
 use App\Estado;
@@ -89,11 +90,11 @@ class ResultadosController extends Controller
             compact('persona', 'ordenes')
         );
     }
-    
+
     public function historia_show(Request $request, Persona $persona)
     {
-     
-        $sede = session('sede'); 
+
+        $sede = session('sede');
         $procedimientos = Procedimiento::find(array_keys($request->all()))->map(
             function ($procedimiento) {
                 return [
@@ -103,7 +104,7 @@ class ResultadosController extends Controller
             }
         );
 
-       
+
 
         return view(
             'resultados.historia_show', compact('persona', 'procedimientos', 'sede')
