@@ -44,6 +44,7 @@
             @csrf
             @php
             $lastGroup = null;
+            
             @endphp
 
             @foreach ($parametros as $parametro)

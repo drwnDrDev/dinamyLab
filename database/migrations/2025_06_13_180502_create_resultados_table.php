@@ -17,6 +17,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('posicion')->default(0);
             $table->foreignId('parametro_id')->constrained('parametros');
             $table->foreignId('procedimiento_id')->constrained('procedimientos');
+
+            $table->unique(['parametro_id', 'procedimiento_id']);
+
             $table->timestamps();
         });
     }

@@ -1,11 +1,57 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Estado;
 use Illuminate\Http\Request;
+use App\Models\Procedimiento;
+use App\Http\Controllers\Controller;
+use App\Services\EscogerReferencia;
+use Symfony\Component\Console\Input\Input;
 
-class ResultadoController extends Controller
+class ResultadosController extends Controller
 {
+
+public function index()
+{
+    $resultados = Resultado::with(['procedimiento', 'procedimiento.persona', 'procedimiento.examen'])->get();
+
+    if ($resultados->isEmpty()) {
+        return response()->json(['message' => 'No hay resultados disponibles'], 204);
+    }
+
+    return response()->json([
+        "message" => "Resultados obtenidos",
+         "data"=>  $resultados
+    ], 200);
+}
+
+public function show($id)
+{
+    $resultado = Resultado::with(['procedimiento', 'procedimiento.persona', 'procedimiento.examen'])
+                         ->find($id);
+
+    if (!$resultado) {
+        return response()->json(['message' => 'Resultado no encontrado'], 404);
+    }
+
+    return response()->json([
+        "message" => "Resultado encontrado",
+         "data"=>  $resultado
+    ], 200);
+}
+
+    public function store(Request $request, Procedimiento $procedimiento)
+    {
+
+        EscogerReferencia::guardaResultado($request->except(['_token', 'submit']), $procedimiento);
+        $procedimiento->estado = Estado::TERMINADO; // Cambia el estado del procedimiento a 'terminado'
+        $procedimiento->fecha =$request->input('fecha_procedimiento', now()) ; // Actualiza la fecha del procedimiento
+        $procedimiento->empleado_id = $request->input('empleado_id'); // Asigna el ID del empleado que realizó el procedimiento
+        $procedimiento->save();
+        
+        return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados guardados correctamente.');
+    }
 
 public function json_rips(Request $request)
 {

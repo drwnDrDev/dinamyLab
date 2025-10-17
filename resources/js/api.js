@@ -166,3 +166,20 @@ export const fetchOrden = async (id) => {
         return null;
     }
 }
+
+export const guardarOrden = async (url, formData) => {
+    try {
+        const response = await apiClient.post(url, formData);
+        if (response.data.status === 'error') {
+            displayValidationErrors(document.querySelector('form'), response.data.errors);
+            return null;
+        }
+        return response.data.data || null;
+    } catch (error) {
+        console.error("Error al guardar la orden:", error);
+        if (error.response?.data?.errors) {
+            displayValidationErrors(document.querySelector('form'), error.response.data.errors);
+        }
+        return null;
+    }
+}

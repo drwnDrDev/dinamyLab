@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ExamenesController;
 use App\Http\Controllers\Api\OrdenController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\Api\AfiliacionSaludController;
+use App\Http\Controllers\Api\ResultadosController;
 use App\Models\Factura;
 
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
@@ -92,6 +93,7 @@ Route::get('orden/{id}', [OrdenController::class, 'show']);
 Route::post('ordenes', [OrdenController::class, 'store']);
 Route::patch('/ordenes-medicas/{orden}',[OrdenController::class,'add'])->name('ordenes.add');
 
+Route::post('resultados/{procedimiento}',[ResultadosController::class,'store']);
 
 
 Route::get('user', function (Request $request) {
