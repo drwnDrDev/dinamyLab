@@ -20,14 +20,14 @@
                 @isset($orden->procedimientos)
                     @foreach($orden->procedimientos as $procedimiento)
                         <div class="grid grid-cols-4 gap-4">
-                            
+
                             <span><input type="checkbox" name="{{$procedimiento->id}}" id="{{$procedimiento->id}}"
-                                            class="mr-4"> 
+                                            class="mr-4">
                                 {{ $procedimiento->created_at->format('d-m-Y') }}
                             </span>
                             <span>{{ $procedimiento->examen->nombre }}</span>
                             <span>{{ $procedimiento->estado }}</span>
-                            <span>{{ $procedimiento->empleado->user->name}}</span>
+                            <span>{{ $procedimiento->empleado?->user->name}}</span>
                         </div>
 
                     @endforeach
