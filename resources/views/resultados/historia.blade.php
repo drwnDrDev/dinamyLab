@@ -19,6 +19,7 @@
                 </div>
                 @isset($orden->procedimientos)
                     @foreach($orden->procedimientos as $procedimiento)
+                    @if($procedimiento->estado === 'terminado')
                         <div class="grid grid-cols-4 gap-4">
 
                             <span><input type="checkbox" name="{{$procedimiento->id}}" id="{{$procedimiento->id}}"
@@ -26,9 +27,10 @@
                                 {{ $procedimiento->created_at->format('d-m-Y') }}
                             </span>
                             <span>{{ $procedimiento->examen->nombre }}</span>
-                            <span>{{ $procedimiento->estado }}</span>
+
                             <span>{{ $procedimiento->empleado?->user->name}}</span>
                         </div>
+                    @endif
 
                     @endforeach
                 @endisset
@@ -36,7 +38,6 @@
 
                 <x-primary-button>Imprimir</x-primary-button>
             </form>
-            @dump($persona)
-            @dump($ordenes)
+
     </x-canva>
 </x-app-layout>
