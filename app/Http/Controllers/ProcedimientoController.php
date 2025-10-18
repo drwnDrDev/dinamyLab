@@ -143,7 +143,7 @@ public function json_rips(Request $request)
         ->where('sede_id', $request->input('sede_id',1))
         ->get();
 
-    $i=0;
+
     $procedimientos = $procedimientos->groupBy('orden.paciente_id')->map(function ($usuarios) use (&$i) {
         $currentUsuario = $usuarios->first()->orden->paciente;
         $i++;
@@ -207,6 +207,9 @@ if (!empty($procedimientos)) {
         ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
 }
 }
+
+
+
 public function usuarios()
 {
 $personas = Persona::with(['procedimientos.examen'])
