@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/resultados/{procedimiento}/ver',[ResultadosController::class,'show'])->name('resultados.show');
 
     Route::get('reportes',[ProcedimientoController::class,'reportes'])->name('reportes');
+    Route::post('reportes/rips',[ProcedimientoController::class,'json_rips'])->name('descargar.rips');
 
     Route::get('administracion/sede/{sede}',[SedeController::class,'elegirSede'])->name('elegir.sede');
 

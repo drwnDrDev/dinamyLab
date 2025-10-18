@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Examen;
+use App\Models\Empleado;
 use App\Models\Orden;
+use App\Models\Persona;
 use App\Models\Procedimiento;
 use Illuminate\Http\Request;
 
@@ -95,7 +97,14 @@ class ProcedimientoController extends Controller
      */
 
     public function reportes(){
-        return view('procedimientos.rips');
+        $procedimientos = Procedimiento::with(['examen'])
+            ->where('fecha', '>=', now()->startOfMonth())
+            ->where('fecha', '<=', now()->endOfMonth())
+            ->selectRaw('examen_id, COUNT(*) as total_procedimientos')
+            ->groupBy('examen_id')
+            ->orderByDesc('total_procedimientos')
+            ->get();
+        return view('procedimientos.rips', compact('procedimientos'));
     }
 
     public function examenes()
@@ -128,62 +137,78 @@ class ProcedimientoController extends Controller
 
 public function json_rips(Request $request)
 {
-    $procedimientos = Procedimiento::with(['persona', 'examen'])
-        ->whereBetween('fecha_procedimiento', ['2025-07-01', '2025-07-31'])
-        ->where('prestador_id', 1)
+
+
+    $procedimientos = Procedimiento::whereBetween('fecha', [$request->input('fecha_inicio',now()->startOfMonth()), $request->input('fecha_fin',now()->endOfMonth())])
+        ->where('sede_id', $request->input('sede_id',1))
         ->get();
 
-    $procedimientosPorPersona = $procedimientos->groupBy('persona_id');
 
-    $usuarios = $procedimientosPorPersona->map(function($usuario) {
-        return array(
-            "tipoDocumentoIdentificacion" => $usuario->tID,
-            "numDocumentoIdentificacion" => $usuario->numero_doc,
+    $procedimientos = $procedimientos->groupBy('orden.paciente_id')->map(function ($usuarios) use (&$i) {
+        $currentUsuario = $usuarios->first()->orden->paciente;
+        $i++;
+
+        return [
+            "tipoDocumentoIdentificacion" => $currentUsuario->tipo_documento->cod_rips,
+            "numDocumentoIdentificacion" => $currentUsuario->numero_documento,
             "tipoUsuario" => "04",
-            "fechaNacimiento" => $usuario->fecha_nacimiento,
-            "codSexo" => $usuario->sexo,
-            "codPaisResidencia" => "170",
-            "codMunicipioResidencia" => "11001",
-            "codZonaTerritorialResidencia" => "01",
-            "incapacidad" => "NO",
-            "codPaisOrigen" => "170",
-            "consecutivo" => 1,
-            "servicios" => array(
-                "procedimientos" => array_map(function($procedimiento) {
-                    return array(
-                        "codPrestador" => "110010822701",
-                        "fechaInicioAtencion" => $procedimiento['fecha_procedimiento'] . " 00:00",
+            "fechaNacimiento" => $currentUsuario->fecha_nacimiento->format('Y-m-d'),
+            "codSexo" => $currentUsuario->sexo,
+            "codPaisResidencia" =>$currentUsuario->cod_pais_residencia ?? "170",
+            "codMunicipioResidencia" => $currentUsuario->cod_municipio_residencia ?? "11001",
+            "codZonaTerritorialResidencia" => $currentUsuario->cod_zona_territorial_residencia ?? "01",
+            "incapacidad" => $currentUsuario->incapacidad ?? "NO",
+            "codPaisOrigen" => $currentUsuario->cod_pais_origen ?? "170",
+            "consecutivo" => $i,
+            "procedimientos" => $usuarios->map(function($procedimiento, $index) {
+                return [
+                        "codPrestador" => $procedimiento->sede->codigo_prestador,
+                        "fechaInicioAtencion" => $procedimiento->fecha->format('Y-m-d H:i'),
                         "idMIPRES" => "",
-                        "numAutorizacion" => $procedimiento['factura'],
-                        "codProcedimiento" => $procedimiento['CUP'],
-                        "viaIngresoServicioSalud" => "03",
-                        "modalidadGrupoServicioTecSal" => "01",
-                        "grupoServicios" => "03",
-                        "codServicio" => 328,
-                        "finalidadTecnologiaSalud" => "15",
+                        "numAutorizacion" => null,
+                        "codProcedimiento" => $procedimiento->examen->cup,
+                        "viaIngresoServicioSalud" => $procedimiento->codigo_via_ingreso,
+                        "modalidadGrupoServicioTecSal" => $procedimiento->codigo_modalidad,
+                        "grupoServicios" => $procedimiento->servicioHabilitado->codigo_grupo ?? "03",
+                        "codServicio" => $procedimiento->codigo_servicio,
+                        "finalidadTecnologiaSalud" => $procedimiento->codigo_finalidad,
                         "tipoDocumentoIdentificacion" => "CC",
-                        "numDocumentoIdentificacion" => "51934571",
-                        "codDiagnosticoPrincipal" => "Z017",
-                        "codDiagnosticoRelacionado" => null,
+                        "numDocumentoIdentificacion" => '51934571',//valor por defecto para pruebas
+                        "codDiagnosticoPrincipal" => $procedimiento->diagnosticoPrincipal->codigo,
+                        "codDiagnosticoRelacionado" => $procedimiento->diagnosticoRelacionado->codigo ?? null,
                         "codComplicacion" => null,
                         "vrServicio" => 0,
                         "conceptoRecaudo" => "05",
                         "valorPagoModerador" => 0,
                         "numFEVPagoModerador" => "",
-                        "consecutivo" => 1
-                    );
-                }, $usuario->procedimientos->toArray())
-            )
-        );
+                        "consecutivo" => $index + 1
+                ];
+            })
 
-    });
+     ];
+    })->values();
 
-    return response()->json([
-        'procedimientos' => $procedimientos,
-        'procedimientosPorPersona' => $procedimientosPorPersona,
-        'usuarios' => $usuarios
-    ]);
+
+
+
+//descargar el archivo JSON
+if (!empty($procedimientos)) {
+    $json = json_encode(array(
+           "numDocumentoIdObligado"=> "51934571",
+            "numFactura"=> null,
+            "tipoNota"=> "RS",
+            "numNota"=> "6532",
+        "usuarios" => $procedimientos
+    ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    $fileName = 'rips_'.date('YmdHis').'.json';
+
+    return response($json, 200)
+        ->header('Content-Type', 'application/json')
+        ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
 }
+}
+
+
 
 public function usuarios()
 {
