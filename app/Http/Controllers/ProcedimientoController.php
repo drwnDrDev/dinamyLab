@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Examen;
 use App\Models\Orden;
+use App\Models\Persona;
 use App\Models\Procedimiento;
 use Illuminate\Http\Request;
 
@@ -135,17 +136,33 @@ class ProcedimientoController extends Controller
 
 public function json_rips(Request $request)
 {
-    $procedimientos = Procedimiento::with(['persona', 'examen'])
-        ->whereBetween('fecha_procedimiento', ['2025-07-01', '2025-07-31'])
-        ->where('prestador_id', 1)
+
+
+    $procedimientos = Procedimiento::with(['orden.paciente', 'examen'])
+        ->whereBetween('fecha', [$request->input('fecha_inicio',now()->startOfMonth()), $request->input('fecha_fin',now()->endOfMonth())])
+        ->where('sede_id', $request->input('sede_id',1))
         ->get();
 
-    $procedimientosPorPersona = $procedimientos->groupBy('persona_id');
+   $procedimientoData= $procedimientos->groupBy('orden.paciente.numero_documento')->map(function($items, $key) {
+        return [
+            'numero_documento' => $key,
+            'procedimientos' => $items->map(function($procedimiento) {
+                return [
+                    'fecha_procedimiento' => $procedimiento->fecha,
+                    'factura' => $procedimiento->factura_id,
+                    'CUP' => $procedimiento->examen->CUP,
+                ];
+            })->toArray(),
+        ];
+    })->values()->toArray();
 
-    $usuarios = $procedimientosPorPersona->map(function($usuario) {
+    dd($procedimientoData);
+
+
+    $usuarios = $procedimientos->map(function($usuario) {
         return array(
-            "tipoDocumentoIdentificacion" => $usuario->tID,
-            "numDocumentoIdentificacion" => $usuario->numero_doc,
+            "tipoDocumentoIdentificacion" => $usuario->tipo_documento,
+            "numDocumentoIdentificacion" => $usuario->numero_documento,
             "tipoUsuario" => "04",
             "fechaNacimiento" => $usuario->fecha_nacimiento,
             "codSexo" => $usuario->sexo,
@@ -184,14 +201,22 @@ public function json_rips(Request $request)
         );
 
     });
+//descargar el archivo JSON
+if (!empty($usuarios)) {
+    $json = json_encode(array(
+           "numDocumentoIdObligado"=> "51934571",
+            "numFactura"=> null,
+            "tipoNota"=> "RS",
+            "numNota"=> "6532",
+        "usuarios" => $usuarios
+    ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    $fileName = 'rips.json';
 
-    return response()->json([
-        'procedimientos' => $procedimientos,
-        'procedimientosPorPersona' => $procedimientosPorPersona,
-        'usuarios' => $usuarios
-    ]);
+    return response($json, 200)
+        ->header('Content-Type', 'application/json')
+        ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
 }
-
+}
 public function usuarios()
 {
 $personas = Persona::with(['procedimientos.examen'])
