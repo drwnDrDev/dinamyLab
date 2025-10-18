@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Examen;
+use App\Models\Empleado;
 use App\Models\Orden;
 use App\Models\Persona;
 use App\Models\Procedimiento;
@@ -138,79 +139,68 @@ public function json_rips(Request $request)
 {
 
 
-    $procedimientos = Procedimiento::with(['orden.paciente', 'examen'])
-        ->whereBetween('fecha', [$request->input('fecha_inicio',now()->startOfMonth()), $request->input('fecha_fin',now()->endOfMonth())])
+    $procedimientos = Procedimiento::whereBetween('fecha', [$request->input('fecha_inicio',now()->startOfMonth()), $request->input('fecha_fin',now()->endOfMonth())])
         ->where('sede_id', $request->input('sede_id',1))
         ->get();
 
-   $procedimientoData= $procedimientos->groupBy('orden.paciente.numero_documento')->map(function($items, $key) {
+    $i=0;
+    $procedimientos = $procedimientos->groupBy('orden.paciente_id')->map(function ($usuarios) use (&$i) {
+        $currentUsuario = $usuarios->first()->orden->paciente;
+        $i++;
+
         return [
-            'numero_documento' => $key,
-            'procedimientos' => $items->map(function($procedimiento) {
-                return [
-                    'fecha_procedimiento' => $procedimiento->fecha,
-                    'factura' => $procedimiento->factura_id,
-                    'CUP' => $procedimiento->examen->CUP,
-                ];
-            })->toArray(),
-        ];
-    })->values()->toArray();
-
-    dd($procedimientoData);
-
-
-    $usuarios = $procedimientos->map(function($usuario) {
-        return array(
-            "tipoDocumentoIdentificacion" => $usuario->tipo_documento,
-            "numDocumentoIdentificacion" => $usuario->numero_documento,
+            "tipoDocumentoIdentificacion" => $currentUsuario->tipo_documento->cod_rips,
+            "numDocumentoIdentificacion" => $currentUsuario->numero_documento,
             "tipoUsuario" => "04",
-            "fechaNacimiento" => $usuario->fecha_nacimiento,
-            "codSexo" => $usuario->sexo,
-            "codPaisResidencia" => "170",
-            "codMunicipioResidencia" => "11001",
-            "codZonaTerritorialResidencia" => "01",
-            "incapacidad" => "NO",
-            "codPaisOrigen" => "170",
-            "consecutivo" => 1,
-            "servicios" => array(
-                "procedimientos" => array_map(function($procedimiento) {
-                    return array(
-                        "codPrestador" => "110010822701",
-                        "fechaInicioAtencion" => $procedimiento['fecha_procedimiento'] . " 00:00",
+            "fechaNacimiento" => $currentUsuario->fecha_nacimiento->format('Y-m-d'),
+            "codSexo" => $currentUsuario->sexo,
+            "codPaisResidencia" =>$currentUsuario->cod_pais_residencia ?? "170",
+            "codMunicipioResidencia" => $currentUsuario->cod_municipio_residencia ?? "11001",
+            "codZonaTerritorialResidencia" => $currentUsuario->cod_zona_territorial_residencia ?? "01",
+            "incapacidad" => $currentUsuario->incapacidad ?? "NO",
+            "codPaisOrigen" => $currentUsuario->cod_pais_origen ?? "170",
+            "consecutivo" => $i,
+            "procedimientos" => $usuarios->map(function($procedimiento, $index) {
+                return [
+                        "codPrestador" => $procedimiento->sede->codigo_prestador,
+                        "fechaInicioAtencion" => $procedimiento->fecha->format('Y-m-d H:i'),
                         "idMIPRES" => "",
-                        "numAutorizacion" => $procedimiento['factura'],
-                        "codProcedimiento" => $procedimiento['CUP'],
-                        "viaIngresoServicioSalud" => "03",
-                        "modalidadGrupoServicioTecSal" => "01",
-                        "grupoServicios" => "03",
-                        "codServicio" => 328,
-                        "finalidadTecnologiaSalud" => "15",
+                        "numAutorizacion" => null,
+                        "codProcedimiento" => $procedimiento->examen->cup,
+                        "viaIngresoServicioSalud" => $procedimiento->codigo_via_ingreso,
+                        "modalidadGrupoServicioTecSal" => $procedimiento->codigo_modalidad,
+                        "grupoServicios" => $procedimiento->servicioHabilitado->codigo_grupo ?? "03",
+                        "codServicio" => $procedimiento->codigo_servicio,
+                        "finalidadTecnologiaSalud" => $procedimiento->codigo_finalidad,
                         "tipoDocumentoIdentificacion" => "CC",
-                        "numDocumentoIdentificacion" => "51934571",
-                        "codDiagnosticoPrincipal" => "Z017",
-                        "codDiagnosticoRelacionado" => null,
+                        "numDocumentoIdentificacion" => '51934571',//valor por defecto para pruebas
+                        "codDiagnosticoPrincipal" => $procedimiento->diagnosticoPrincipal->codigo,
+                        "codDiagnosticoRelacionado" => $procedimiento->diagnosticoRelacionado->codigo ?? null,
                         "codComplicacion" => null,
                         "vrServicio" => 0,
                         "conceptoRecaudo" => "05",
                         "valorPagoModerador" => 0,
                         "numFEVPagoModerador" => "",
-                        "consecutivo" => 1
-                    );
-                }, $usuario->procedimientos->toArray())
-            )
-        );
+                        "consecutivo" => $index + 1
+                ];
+            })
 
-    });
+     ];
+    })->values();
+
+
+
+
 //descargar el archivo JSON
-if (!empty($usuarios)) {
+if (!empty($procedimientos)) {
     $json = json_encode(array(
            "numDocumentoIdObligado"=> "51934571",
             "numFactura"=> null,
             "tipoNota"=> "RS",
             "numNota"=> "6532",
-        "usuarios" => $usuarios
+        "usuarios" => $procedimientos
     ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    $fileName = 'rips.json';
+    $fileName = 'rips_'.date('YmdHis').'.json';
 
     return response($json, 200)
         ->header('Content-Type', 'application/json')
