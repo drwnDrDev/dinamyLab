@@ -104,7 +104,7 @@ class EmpresaSeeder extends Seeder
         $empleado = \App\Models\Empleado::create([
             'cargo'=>'Bacteriologa',
             'firma'=>'firma_claudia.png',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
+            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'51934571',
             'fecha_nacimiento'=>'1969-01-11',
             'user_id'=>2,
