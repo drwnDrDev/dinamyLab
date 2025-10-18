@@ -88,8 +88,9 @@ class Procedimiento extends Model
     {
         return $query->whereNull('resultados');
     }
-
-
+    protected $casts = [
+        'fecha' => 'datetime',
+    ];
 
 
 }
