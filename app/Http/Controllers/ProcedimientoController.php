@@ -160,6 +160,7 @@ public function json_rips(Request $request)
             "incapacidad" => $currentUsuario->incapacidad ?? "NO",
             "codPaisOrigen" => $currentUsuario->cod_pais_origen ?? "170",
             "consecutivo" => $i,
+            "servicios" => [
             "procedimientos" => $usuarios->map(function($procedimiento, $index) {
                 return [
                         "codPrestador" => $procedimiento->sede->codigo_prestador,
@@ -185,7 +186,7 @@ public function json_rips(Request $request)
                 ];
             })
 
-     ];
+     ]];
     })->values();
 
 
