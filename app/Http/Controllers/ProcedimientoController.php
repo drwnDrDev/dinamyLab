@@ -137,10 +137,9 @@ class ProcedimientoController extends Controller
 
 public function json_rips(Request $request)
 {
-
-
     $procedimientos = Procedimiento::whereBetween('fecha', [$request->input('fecha_inicio',now()->startOfMonth()), $request->input('fecha_fin',now()->endOfMonth())])
         ->where('sede_id', $request->input('sede_id',1))
+        ->where('estado','terminado')
         ->get();
 
 
@@ -198,7 +197,7 @@ if (!empty($procedimientos)) {
            "numDocumentoIdObligado"=> "51934571",
             "numFactura"=> null,
             "tipoNota"=> "RS",
-            "numNota"=> "6532",
+            "numNota"=> date('Ym'),
         "usuarios" => $procedimientos
     ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     $fileName = 'rips_'.date('YmdHis').'.json';

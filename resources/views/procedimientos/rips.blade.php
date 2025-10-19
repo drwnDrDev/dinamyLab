@@ -5,13 +5,13 @@
 <x-slot name="header">
 <div class="max-w-7xl mx-auto flex items-center justify-between py-4">
 
-<div class="w-full md:w-1/2 grid sm:grid-cols-2 mx-auto bg-white rounded-lg border border-gray-200 shadow-md print:hidden">
+<div class="w-full md:w-1/2 grid sm:grid-cols-2 justify-center p-3 mx-auto bg-white rounded-lg border border-gray-200 shadow-md print:hidden">
 
     <h2 class="font-semibold text-xl col-span-2 flex flex-col md:flex-row justify-center items-end gap-3 text-text leading-tight print:hidden">
      Este mes <span class="text-gray-500 text-sm">{{now()->startOfMonth()->translatedFormat('F Y')}} </span>
     </h2>
 @foreach($procedimientos as $procedimiento)
-    <div class="w-full flex justify-between items-center border-b border-borders py-2">
+    <div class="w-11/12 flex justify-between items-center border-b border-borders py-2">
         <div>
             <p class="text-lg font-bold leading-tight tracking-[-0.015em]">{{ $procedimiento->examen->nombre }}</p>
             <p class="text-titles">Total Procedimientos: {{ $procedimiento->total_procedimientos }}</p>

@@ -14,6 +14,7 @@ use App\Http\Controllers\ResultadosController;
 use App\Http\Controllers\ResolucionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ExamenController;
+use App\Http\Controllers\ParametroController;
 use App\Http\Controllers\SedeController;
 use App\Models\Resultado;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('reportes',[ProcedimientoController::class,'reportes'])->name('reportes');
     Route::post('reportes/rips',[ProcedimientoController::class,'json_rips'])->name('descargar.rips');
+    Route::get('parametros',[App\Http\Controllers\ParametroController::class,'index'])->name('parametros.index');
 
     Route::get('administracion/sede/{sede}',[SedeController::class,'elegirSede'])->name('elegir.sede');
 
