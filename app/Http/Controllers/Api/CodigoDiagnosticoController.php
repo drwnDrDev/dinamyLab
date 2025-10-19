@@ -74,9 +74,7 @@ class CodigoDiagnosticoController extends Controller
         $codigoDiagnostico->save();
         return response()->json([
             'message' => 'Estado actualizado',
-            'data' => [
-                "codigoDiagnostico" => $codigoDiagnostico
-            ]
+            'data' => $codigoDiagnostico
         ],200);
     }
 

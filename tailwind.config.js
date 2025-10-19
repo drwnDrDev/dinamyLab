@@ -28,6 +28,12 @@ export default {
                 borders: '#cfe4e8'
 
             },
+            backgroundImage: {
+                'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                'gradient-conic':
+                    'conic-gradient(from 180deg at center, var(--tw-gradient-stops))',
+                'rips-cargador': "url('./rips-cargador.png')",
+            },
 
         },
     },
