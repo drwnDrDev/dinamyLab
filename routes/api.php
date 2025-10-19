@@ -56,12 +56,10 @@ Route::patch('via-ingreso/{codigo}/activar', [\App\Http\Controllers\Api\ViaIngre
 Route::get('cie10', [CodigoDiagnosticoController::class, 'index']);
 Route::get('cie10/{id}', [CodigoDiagnosticoController::class, 'show']);
 Route::post('cie10', [CodigoDiagnosticoController::class, 'store']);
-Route::patch('cie10/{id}', [CodigoDiagnosticoController::class, 'update']);
-Route::patch('cie10/{id}/activar', [CodigoDiagnosticoController::class, 'activar'])->name('cie10.activar');
+Route::patch('cie10/{codigo}/activar', [CodigoDiagnosticoController::class, 'activar']);
 
 Route::get('cie10/buscar', [CodigoDiagnosticoController::class, 'buscarPorNombre']);
 Route::get('cie10/buscar/{codigo}', [CodigoDiagnosticoController::class, 'buscarPorCodigo']);
-Route::delete('cie10/{id}', [CodigoDiagnosticoController::class, 'destroy']);
 
 Route::get('personas', [PersonaController::class, 'index']);
 Route::get('personas/{id}', [PersonaController::class, 'show']);

@@ -22,9 +22,7 @@ class CodigoDiagnosticoController extends Controller
         }
         return response()->json([
             'message' => 'Códigos de diagnóstico encontrados',
-            'data' => [
-                "codigoDiagnostico" => $codigoDiagnostico
-            ]
+            'data' =>  $codigoDiagnostico
         ], 200);
     }
 
@@ -79,7 +77,7 @@ class CodigoDiagnosticoController extends Controller
             'data' => [
                 "codigoDiagnostico" => $codigoDiagnostico
             ]
-        ]);
+        ],200);
     }
 
     public function destroy($id)

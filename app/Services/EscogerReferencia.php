@@ -174,6 +174,7 @@ class EscogerReferencia
                 'grupo'     => $resultado->parametro->grupo,
                 'posicion' =>  $resultado->parametro->posicion,
                 'es_normal' => $isNormal,
+                'tipo_dato' => $resultado->parametro->tipo_dato,
                 'resultado' => $resultado->resultado,
                 'metodo'    => $resultado->parametro->metodo,
                 'unidades'  => $resultado->parametro->unidades,

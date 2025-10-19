@@ -132,6 +132,7 @@ const Setup = () => {
     const toggleActivarItem = async (item, key) => {
         const categoria = categorias[key];
         const url = `${window.location.origin}/${categoria.activeChange}/${item.codigo}/activar`;
+        
 
         try {
             const response = await fetch(url, {
