@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Examen;
 use App\Models\Parametro;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,10 @@ class ParametroController extends Controller
      */
     public function index()
     {
-        //
+      $examenes  = Examen::select('nombre','id','cup','nombre_alternativo','sexo_aplicable')
+                ->with('parametros')->get();
+     
+        return view('examenes.parametros', compact('examenes'));
     }
 
     /**
