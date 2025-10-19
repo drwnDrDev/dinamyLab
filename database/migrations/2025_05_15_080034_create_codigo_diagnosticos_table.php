@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('descripcion');
             $table->string('grupo', 255)->nullable();
             $table->unsignedTinyInteger('sub_grupo')->nullable();
-            $table->boolean('activo')->default(true);
+            $table->boolean('activo')->default(false);
             $table->unsignedTinyInteger('edad_minima')->default(0);
             $table->unsignedTinyInteger('edad_maxima')->default(255);
             $table->string('sexo_aplicable',1)->default('A');
