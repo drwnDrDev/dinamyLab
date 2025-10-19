@@ -9,6 +9,11 @@ class CodigoDiagnostico extends Model
 {
 
     protected $guarded = ['nivel'];
+    protected $primaryKey = 'codigo';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+
 
 
 

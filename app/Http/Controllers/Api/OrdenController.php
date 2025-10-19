@@ -59,7 +59,7 @@ class OrdenController extends Controller
         $sede = session('sede') ?? Sede::first();
         $usuario = Auth::user();
 
-    $ordenCreada =  DB::transaction(function () use ($sede, $usuario, $validated, $total) {
+        $ordenCreada =  DB::transaction(function () use ($sede, $usuario, $validated, $total) {
             // Crear la orden médica
             $orden = Orden::create([
                 'sede_id' => $sede->id,

@@ -96,15 +96,20 @@ class ProcedimientoController extends Controller
      * Display a listing of the examenes.
      */
 
-    public function reportes(){
+    public function reportes(Request $request){
+
+        $startDate = $request->input('fecha_inicio', now()->startOfMonth()->toDateString());
+        $endDate = $request->input('fecha_fin', now()->endOfMonth()->toDateString());
         $procedimientos = Procedimiento::with(['examen'])
-            ->where('fecha', '>=', now()->startOfMonth())
-            ->where('fecha', '<=', now()->endOfMonth())
+            ->where('fecha', '>=', $startDate)
+            ->where('fecha', '<=', $endDate)
             ->selectRaw('examen_id, COUNT(*) as total_procedimientos')
             ->groupBy('examen_id')
             ->orderByDesc('total_procedimientos')
             ->get();
-        return view('procedimientos.rips', compact('procedimientos'));
+
+        $sedes = \App\Models\Sede::orderBy('nombre')->get();
+        return view('procedimientos.rips', compact('procedimientos', 'sedes','startDate', 'endDate'));
     }
 
     public function examenes()
@@ -137,13 +142,15 @@ class ProcedimientoController extends Controller
 
 public function json_rips(Request $request)
 {
+
+
     $procedimientos = Procedimiento::whereBetween('fecha', [$request->input('fecha_inicio',now()->startOfMonth()), $request->input('fecha_fin',now()->endOfMonth())])
-        ->where('sede_id', $request->input('sede_id',1))
+        ->where('sede_id', $request->input('sede_id',$sedeActual->id))
         ->where('estado','terminado')
         ->get();
 
 
-    $procedimientos = $procedimientos->groupBy('orden.paciente_id')->map(function ($usuarios) use (&$i) {
+        $procedimientos = $procedimientos->groupBy('orden.paciente_id')->map(function ($usuarios) use (&$i) {
         $currentUsuario = $usuarios->first()->orden->paciente;
         $i++;
 
