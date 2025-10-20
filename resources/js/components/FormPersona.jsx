@@ -46,7 +46,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
             perfil: perfil || ''
         }));
     }, [perfil]);
-   
+
     // Función para buscar persona por documento
     const buscarPersonaPorDocumento = async (numDoc) => {
         if (!numDoc.trim()) return;
@@ -146,7 +146,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify(formData)
@@ -477,7 +476,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
                     />
                     )}
-                   
+
                     {perfil === 'Paciente' && (
                     <SelectField
                         label="Municipio"
@@ -491,7 +490,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         }))}
                     />
                     )}
-                    
+
                     {perfil === 'Acompaniante' && (
                         <div>
                             <label className="block font-medium text-sm text-text">
