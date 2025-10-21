@@ -1,12 +1,14 @@
 import {displayValidationErrors} from './formularioPersona.js';
 import {appState} from './variables.js';
 import axios from 'axios';
-const TOKEN= document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+axios.defaults.withCredentials = true;
+
 
 const apiClient = axios.create({
         headers: {
-            'X-CSRF-TOKEN': TOKEN,
+            'X-CSRF-TOKEN':axios.get('/sanctum/csrf-cookie'),
             'Accept': 'application/json',
+            'Content-Type': 'application/json',
         }
     });
 
@@ -68,7 +70,7 @@ export const fetchPaises = async () => {
     }
 }
 
-export const  guardarPersona =  (url, formData) =>{
+export const guardarPersona =  (url, formData) =>{
 
     try {
         return apiClient.post(url, formData)

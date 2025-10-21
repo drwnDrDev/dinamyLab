@@ -4,6 +4,7 @@ import { usePersonaReferencias } from "./hooks/usePersonaReferencias";
 import { useTablasRef } from "./hooks/useTablasRef";
 import SelectField from "./SelectField";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
+import { guardarPersona } from "../api";
 
 const FormPersona = ({ persona, setPersona, perfil }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
@@ -142,14 +143,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 datos: formData
             });
 
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
+            const response = await guardarPersona(url,formData);
 
             const resultado = await response.json();
 

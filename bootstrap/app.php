@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
 
         // 1. Configura el grupo de middleware 'api'
         $middleware->api(prepend: [
@@ -22,19 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Session\Middleware\StartSession::class,
         ]);
 
-        // Si necesitas que otros middlewares del grupo 'web' también estén en 'api',
-        // podrías considerarlos, pero generalmente con los de arriba es suficiente
-
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
 
-// NOTA: Esta línea '$app->singleton(...)' está fuera de la función de configuración
-// y es incorrecta en Laravel 12. Asumo que es un error de copia.
-// La configuración del Kernel está implícita en 'Application::configure'.
-
-// $app->singleton(
-// Illuminate\Contracts\Console\Kernel::class,
-// App\Console\Kernel::class
-// );
