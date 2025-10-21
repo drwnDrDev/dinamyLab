@@ -1,48 +1,87 @@
 import {displayValidationErrors} from './formularioPersona.js';
 import {appState} from './variables.js';
 import axios from 'axios';
+
 axios.defaults.withCredentials = true;
 
+// Función para obtener el token CSRF del meta tag
+const getCsrfToken = () => {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+};
 
+// Crear el cliente sin await en nivel superior
 const apiClient = axios.create({
-        headers: {
-            'X-CSRF-TOKEN':axios.get('/sanctum/csrf-cookie'),
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
+
+    withCredentials: true,
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    }
+});
+
+// Interceptor para agregar el CSRF token en cada request
+apiClient.interceptors.request.use(
+    async (config) => {
+        // Obtener cookie de Sanctum si aún no existe
+        if (!document.cookie.includes('XSRF-TOKEN')) {
+            await axios.get('/sanctum/csrf-cookie');
         }
-    });
+
+        // Agregar CSRF token al header
+        const token = getCsrfToken();
+        if (token) {
+            config.headers['X-CSRF-TOKEN'] = token;
+        }
+
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Interceptor para manejar errores de autenticación
+apiClient.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response?.status === 401) {
+            console.error('No autenticado. Redirigiendo al login...');
+            window.location.href = '/login';
+        }
+        if (error.response?.status === 419) {
+            console.error('CSRF token expirado. Recargando página...');
+            window.location.reload();
+        }
+        return Promise.reject(error);
+    }
+);
 
 export const fetchExamenes = async () => {
-
     try {
-        const response = await apiClient.get('/api/examenes');
-         return response.data.data.examenes || [];
-
+        const response = await apiClient.get('/examenes'); // Ya no necesitas '/api'
+        return response.data.data.examenes || [];
     } catch (error) {
-         console.error('Error al obtener los exámenes:', error);
-         return [];
+        console.error('Error al obtener los exámenes:', error);
+        return [];
     }
 }
 
 export const fetchPersonaPorDocumento = async (numeroDocumento) => {
-        if (numeroDocumento.length <= 3) return null;
-        try {
-            const response = await apiClient.get(`/api/personas/buscar/${numeroDocumento}`);
-
-
-            return response.data.data || null;
-        } catch (error) {
-            // Un 404 es esperado si el usuario no existe, no es un error crítico.
-            if (error.response?.status !== 404) {
-                console.error("Error al buscar persona:", error);
-            }
-            return null;
+    if (numeroDocumento.length <= 3) return null;
+    try {
+        const response = await apiClient.get(`/personas/buscar/${numeroDocumento}`);
+        return response.data.data || null;
+    } catch (error) {
+        if (error.response?.status !== 404) {
+            console.error("Error al buscar persona:", error);
         }
-    };
+        return null;
+    }
+};
 
 export const fetchMunicipios = async () => {
     try {
-        const response = await apiClient.get('/api/municipios');
+        const response = await apiClient.get('/municipios');
         return response.data.data.municipios || [];
     } catch (error) {
         console.error('Error al obtener los municipios:', error);
@@ -51,7 +90,7 @@ export const fetchMunicipios = async () => {
 }
 export const fetchTiposDocumento = async () => {
     try {
-        const response = await apiClient.get('/api/tipos-documento');
+        const response = await apiClient.get('/tipos-documento');
         localStorage.setItem('tipos_documento_data', JSON.stringify(response.data.data.tipos_documento || []));
         appState.tiposDocumento = response.data.data.tipos_documento || [];
         return response.data.data.tipos_documento || [];
@@ -62,7 +101,7 @@ export const fetchTiposDocumento = async () => {
 }
 export const fetchPaises = async () => {
     try {
-        const response = await apiClient.get('/api/paises');
+        const response = await apiClient.get('/paises');
         return response.data.data.paises || [];
     } catch (error) {
         console.error('Error al obtener los países:', error);
@@ -82,7 +121,7 @@ export const guardarPersona =  (url, formData) =>{
                 return response.data.data;
             })
             .catch(error => {
-                console.error("Error al guardar persona:", error);
+                console.error("Error al guardar persona:", error,error.response.data);
                 if (error.response?.data?.errors) {
                     displayValidationErrors(document.querySelector('form'), error.response.data.errors);
                 }
@@ -97,7 +136,7 @@ export const guardarPersona =  (url, formData) =>{
     };
 export const fetchFinalidades = async () => {
     try {
-        const response = await apiClient.get('/api/finalidades');
+        const response = await apiClient.get('/finalidades');
         return response.data.data.finalidades || [];
     } catch (error) {
         console.error('Error al obtener las finalidades:', error);
@@ -106,7 +145,7 @@ export const fetchFinalidades = async () => {
 }
 export const fetchServiciosHabilitados = async () => {
     try {
-        const response = await apiClient.get('/api/servicios-habilitados');
+        const response = await apiClient.get('/servicios-habilitados');
         return response.data.data|| [];
     } catch (error) {
         console.error('Error al obtener los servicios habilitados:', error);
@@ -115,7 +154,7 @@ export const fetchServiciosHabilitados = async () => {
 }
 export const fetchViaIngreso = async () => {
     try {
-        const response = await apiClient.get('/api/via-ingreso');
+        const response = await apiClient.get('/via-ingreso');
         return response.data.data|| [];
     } catch (error) {
         console.error('Error al obtener las vías de ingreso:', error);
@@ -124,7 +163,7 @@ export const fetchViaIngreso = async () => {
 }
 export const fetchCausasExternas = async () => {
     try {
-        const response = await apiClient.get('/api/causa-atencion');
+        const response = await apiClient.get('/causa-atencion');
         return response.data.data.causas_externas || [];
     } catch (error) {
         console.error('Error al obtener las causas externas:', error);
@@ -133,7 +172,7 @@ export const fetchCausasExternas = async () => {
 }
 export const fetchDiagnosticos = async () => {
     try {
-        const response = await apiClient.get('/api/cie10');
+        const response = await apiClient.get('/cie10');
         return response.data.data || [];
     } catch (error) {
         console.error('Error al obtener los diagnósticos:', error);
@@ -142,7 +181,7 @@ export const fetchDiagnosticos = async () => {
 }
 export const fetchTiposAfiliacion = async () => {
     try {
-        const response = await apiClient.get('/api/tipos-afiliacion');
+        const response = await apiClient.get('/tipos-afiliacion');
         return response.data.data || [];
     } catch (error) {
         console.error('Error al obtener los tipos de afiliación:', error);
@@ -151,7 +190,7 @@ export const fetchTiposAfiliacion = async () => {
 }
 export const fetchTiposAtencion = async () => {
     try {
-        const response = await apiClient.get('/api/modalidades-atencion');
+        const response = await apiClient.get('/modalidades-atencion');
         return response.data.data.modalidades_atencion || [];
     } catch (error) {
         console.error('Error al obtener los tipos de atención:', error);
@@ -161,7 +200,7 @@ export const fetchTiposAtencion = async () => {
 
 export const fetchOrden = async (id) => {
     try {
-        const response = await apiClient.get(`/api/orden/${id}`);
+        const response = await apiClient.get(`/orden/${id}`);
         return response.data || null;
     } catch (error) {
         console.error('Error al obtener la orden:', error);
