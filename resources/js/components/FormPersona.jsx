@@ -1,10 +1,10 @@
-import React, { use } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
 import { usePersonaReferencias } from "./hooks/usePersonaReferencias";
 import { useTablasRef } from "./hooks/useTablasRef";
 import SelectField from "./SelectField";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
-import { guardarPersona } from "../api";
+import axios from "axios";
 
 const FormPersona = ({ persona, setPersona, perfil }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
@@ -54,10 +54,15 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
 
         setLoading(true);
         try {
-            const response = await fetch(`/api/personas/buscar/${numDoc}`);
-            if (!response.ok) return null;
+            const response = await axios.get(`/personas/buscar/${numDoc}`, {
+                headers: {
+                    'Accept': 'application/json',
+                }
+            });
 
-            const data = await response.json();
+            if (response.status !== 200) return null;
+
+            const data = response.data;
             if (data) {
                 console.log('✅ Persona encontrada:', data);
                 setPersonaExistente(data);
@@ -126,75 +131,90 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
         setError(null);
 
         try {
-            // Determinar si es una actualización o creación
-            console.log('Persona existente al enviar:', personaExistente);
+            // Obtener el token CSRF del meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            if (!csrfToken) {
+                throw new Error('No se encontró el token CSRF. Verifica que esté en el layout.');
+            }
+
             const esActualizacion = personaExistente !== null;
             const url = esActualizacion
-                ? `/api/personas/${personaExistente.data.id}`
-                : '/api/personas';
+                ? `/personas/${personaExistente.data.id}`
+                : '/personas';
 
-            const method = esActualizacion ? 'PUT' : 'POST';
-
-            // Log pre-envío
             console.log('📋 ENVIANDO FORMULARIO:', {
                 operacion: esActualizacion ? 'Actualización' : 'Nuevo Registro',
-                metodo: method,
                 url: url,
                 datos: formData
             });
 
-            const response = await guardarPersona(url,formData);
-
-            const resultado = await response.json();
-
-            if (!response.ok) {
-                // Si el servidor devuelve errores de validación
-                if (response.status === 422) {
-                    const errores = Object.values(resultado.errors || {}).flat().join('\n');
-                    throw new Error(`Errores de validación:\n${errores}`);
+            const response = await axios({
+                method: esActualizacion ? 'PUT' : 'POST',
+                url: url,
+                data: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
                 }
-                // Si es otro tipo de error
-                throw new Error(resultado.message || `Error al ${esActualizacion ? 'actualizar' : 'crear'} la persona`);
-            }
+            });
+
+            const resultado = response.data;
+
             console.log('✅ Operación exitosa:', resultado);
 
-            // Actualizar el estado de forma controlada
             const personaActualizada = resultado.data;
-            setPersonaExistente(null); // Limpiar el estado de persona existente
-            setPersona(personaActualizada); // Actualizar el estado global
+            setPersonaExistente(null);
+            setPersona(personaActualizada);
 
             console.log('Persona actualizada en el componente padre:', personaActualizada);
             alert(`Persona ${esActualizacion ? 'actualizada' : 'creada'} exitosamente`);
 
-            // Opcional: limpiar el formulario después de crear
             if (!esActualizacion) {
                 setFormData({
+                    id: null,
                     perfil: '',
-                    tipo_documento: '',
+                    tipo_documento: 'CC',
                     numero_documento: '',
                     nombres: '',
                     apellidos: '',
                     fecha_nacimiento: '',
                     sexo: '',
-                    pais_nacimiento: '',
-                    municipio: '',
+                    pais_nacimiento: '170',
+                    municipio: '11001',
                     direccion: '',
                     telefono: '',
-                    zona: '',
-                    pais_residencia: '',
+                    zona: '02',
+                    pais_residencia: '170',
                     correo: '',
                     eps: '',
-                    tipo_afiliacion: '',
-                    parentesco: ''
+                    tipo_afiliacion: ''
                 });
                 setPersonaExistente(null);
             }
 
         } catch (err) {
-            console.error('❌ Error:', err);
-            console.log('Estado del formulario al momento del error:', formData);
-            setError(err.message);
-            alert(err.message);
+            console.error('❌ Error completo:', err);
+            console.error('Respuesta del servidor:', err.response?.data);
+
+            let mensajeError = 'Error al procesar la solicitud';
+
+            if (err.response?.status === 422) {
+                const errores = Object.values(err.response.data.errors || {}).flat().join('\n');
+                mensajeError = `Errores de validación:\n${errores}`;
+            } else if (err.response?.status === 401) {
+                mensajeError = 'No estás autenticado. Por favor, inicia sesión nuevamente.';
+                window.location.href = '/login';
+            } else if (err.response?.status === 419) {
+                mensajeError = 'Sesión expirada. Recargando la página...';
+                setTimeout(() => window.location.reload(), 2000);
+            } else if (err.response?.data?.message) {
+                mensajeError = err.response.data.message;
+            }
+
+            setError(mensajeError);
+            alert(mensajeError);
         } finally {
             setLoading(false);
         }

@@ -109,3 +109,9 @@ Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () 
 });
 
 require __DIR__.'/auth.php';
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/personas', [PersonaController::class, 'store'])->name('personas.store');
+    Route::put('/personas/{id}', [PersonaController::class, 'update'])->name('personas.update');
+    Route::get('/personas/buscar/{numeroDocumento}', [PersonaController::class, 'buscar']);
+});
