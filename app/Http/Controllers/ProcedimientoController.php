@@ -7,6 +7,7 @@ use App\Models\Empleado;
 use App\Models\Orden;
 use App\Models\Persona;
 use App\Models\Procedimiento;
+use App\Models\Sede;
 use Illuminate\Http\Request;
 
 class ProcedimientoController extends Controller
@@ -107,8 +108,7 @@ class ProcedimientoController extends Controller
             ->groupBy('examen_id')
             ->orderByDesc('total_procedimientos')
             ->get();
-
-        $sedes = \App\Models\Sede::orderBy('nombre')->get();
+        $sedes = $request->user()->empleado->sedes;
         return view('procedimientos.rips', compact('procedimientos', 'sedes','startDate', 'endDate'));
     }
 
@@ -142,6 +142,16 @@ class ProcedimientoController extends Controller
 
 public function json_rips(Request $request)
 {
+
+
+        $sede = Sede::find($request->input('sede_id'));
+        if (!$sede || !$request->user()->empleado->sedes->contains($sede)) {
+            return response()->json(['error' => 'La sede seleccionada no es válida o no pertenece al empleado.'], 403);
+        }
+
+
+
+    $sedeActual = $request->session()->get('sede');
 
 
     $procedimientos = Procedimiento::whereBetween('fecha', [$request->input('fecha_inicio',now()->startOfMonth()), $request->input('fecha_fin',now()->endOfMonth())])
@@ -214,63 +224,5 @@ if (!empty($procedimientos)) {
         ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
 }
 }
-
-
-
-public function usuarios()
-{
-$personas = Persona::with(['procedimientos.examen'])
-    ->whereHas('procedimientos', function ($query) {
-        $query->whereBetween('fecha_procedimiento', ['2025-07-01', '2025-07-31'])
-              ->where('prestador_id', 1);
-    })
-    ->get();
-
-$usuarios = $personas->map(function($persona) {
-    return [
-        "tipoDocumentoIdentificacion" => $persona->tID,
-        "numDocumentoIdentificacion" => $persona->numero_doc,
-        "tipoUsuario" => "12",
-        "fechaNacimiento" => $persona->fecha_nacimiento,
-        "codSexo" => $persona->sexo,
-        "codPaisResidencia" => "170",
-        "codMunicipioResidencia" => "11007",
-        "codZonaTerritorialResidencia" => "01",
-        "incapacidad" => "NO",
-        "codPaisOrigen" => "170",
-        "consecutivo" => 1,
-        "servicios" => [
-            "procedimientos" => $persona->procedimientos->map(function($procedimiento) {
-                return [
-                    "codPrestador" => "110010822701",
-                    "fechaInicioAtencion" => $procedimiento->fecha_procedimiento . " 00:00",
-                    "idMIPRES" => "",
-                    "numAutorizacion" => $procedimiento->factura,
-                    "codProcedimiento" => $procedimiento->examen->CUP,
-                    "viaIngresoServicioSalud" => "03",
-                    "modalidadGrupoServicioTecSal" => "01",
-                    "grupoServicios" => "03",
-                    "codServicio" => 328,
-                    "finalidadTecnologiaSalud" => "15",
-                    "tipoDocumentoIdentificacion" => $persona->tID,
-                    "numDocumentoIdentificacion" => $persona->numero_doc,
-                    "codDiagnosticoPrincipal" => "Z017",
-                    "codDiagnosticoRelacionado" => null,
-                    "codComplicacion" => null,
-                    "vrServicio" => 0,
-                    "conceptoRecaudo" => "05",
-                    "valorPagoModerador" => 0,
-                    "numFEVPagoModerador" => "",
-                    "consecutivo" => 1
-                ];
-            })
-        ]
-    ];
-});
-
-return response()->json([
-    'usuarios' => $usuarios
-]);
-
 }
-}
+
