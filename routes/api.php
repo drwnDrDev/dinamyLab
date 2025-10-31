@@ -10,13 +10,12 @@ use App\Http\Controllers\Api\MunicipioController;
 use App\Http\Controllers\Api\FrontendDataController;
 use App\Http\Controllers\Api\ExamenesController;
 use App\Http\Controllers\Api\OrdenController;
-use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\Api\AfiliacionSaludController;
 use App\Http\Controllers\Api\ResultadosController;
-use App\Models\Factura;
+
 
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum','api')->group(function () {
     Route::get('cups', [CupsController::class, 'index']);
     Route::get('cups/{codigo}', [CupsController::class, 'show']);
     Route::get('cups/buscar/{codigo}', [CupsController::class, 'buscarPorCodigo']);
@@ -69,7 +68,7 @@ Route::get('personas', [PersonaController::class, 'index']);
 Route::get('personas/{id}', [PersonaController::class, 'show']);
 Route::post('personas', [PersonaController::class, 'store']);
 Route::put('personas/{id}', [PersonaController::class, 'update']);
-Route::get('personas/buscar/{numero_documento}', [PersonaController::class, 'buscar']);
+Route::get('personas/buscar/{numero_documento}', [\App\Http\Controllers\Api\PersonaController::class, 'buscar']);
 
 Route::get('examenes', [ExamenesController::class, 'index']);
 Route::get('examenes/{id}', [ExamenesController::class, 'show']);
