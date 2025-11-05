@@ -1,0 +1,25 @@
+{
+  "ProcesoId": 89022908,
+  "NumFactura": "SINFEV",
+  "CodigoUnicoValidacion": "No aplica a paquetes procesados en estado [RECHAZADO] o validaciones realizadas antes del envío al Ministerio de Salud y Protección Social",
+  "FechaRadicacion": "2025-11-04T19:11:50.0189383-05:00",
+  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\tablas_de_referencia\\octubre\\doctora_sandra\\rips",
+  "ResultadosValidacion": [
+    {
+      "Clase": "RECHAZADO",
+      "Codigo": "RVG02",
+      "Descripcion": "Los datos de los RIPS deben coincidir con los registrados en la factura electrónica de venta y demás documentos electrónicos.",
+      "Observaciones": "Los datos del número de nit del prestador y número de nota ya se encuentran registrados en la Base de datos del Ministerio de Salud; El número de Nota informado ya fue procesado, no es posible presentarlo nuevamenteNúmero Documento:  - Rips: 63362234 Codigo CUV Registrado: 18cebfc978e81592119f4b99a4f4adb4fc2d48f6926ee6b54737d617a8a11907b01303f3ae14def2907657fcb980a8db",
+      "PathFuente": "rips.numNota",
+      "Fuente": "RipsSinFactura"
+    },
+    {
+      "Clase": "RECHAZADO",
+      "Codigo": "RVG18",
+      "Descripcion": "El Código CUV ya fue aprobado previamente en otro proceso.",
+      "Observaciones": "18cebfc978e81592119f4b99a4f4adb4fc2d48f6926ee6b54737d617a8a11907b01303f3ae14def2907657fcb980a8db",
+      "PathFuente": "",
+      "Fuente": "FevRips"
+    }
+  ]
+}
