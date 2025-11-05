@@ -1,0 +1,9 @@
+{
+  "ResultState": true,
+  "ProcesoId": 89654089,
+  "NumFactura": "1020251",
+  "CodigoUnicoValidacion": "63b7844c37f9c034728c0317076e9762d52ac61a6c0b811e6ccc4428136d97170e0ac49b0eaa666f2ef2933c1b5253d6",
+  "FechaRadicacion": "2025-11-05T18:11:26.1672784-05:00",
+  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\tablas_de_referencia\\octubre\\doctora_claudia",
+  "ResultadosValidacion": []
+}
