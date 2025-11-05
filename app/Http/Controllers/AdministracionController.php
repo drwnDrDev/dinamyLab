@@ -62,7 +62,7 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-$filePath = base_path('resources/utils/tablas_de_referencia/septiembre/doctora_pilar/bitacora.csv');
+    $filePath = base_path('resources/utils/tablas_de_referencia/octubre/doctora_sandra/octubre.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
@@ -75,6 +75,7 @@ if ($file === false) {
 }
 
 $lista = $file->fread($file->getSize());
+
 $recordsToInsert = [];
 try {
     $file->rewind(); // Asegura que estamos al inicio del archivo
@@ -93,20 +94,22 @@ $recordsToInsert = array_slice($recordsToInsert, 1);
 
 
 
+
 $listaProcedimientos = array_map(function($line) {
     $data = explode(";", $line[0]);
     return array(
         "tipoDocumentoIdentificacion" => $data[0],
         "numDocumentoIdentificacion" => $data[1],
-        "fechaNacimiento" => $data[2],
-        "sexo" => $data[3],
-        "fechaProcedimiento" => $data[4],
-        "horaProcedimiento" => $data[5],
+        "fechaNacimiento" => $data[5],
+        "sexo" => $data[6],
+        "fechaProcedimiento" => $data[15],
+        //"horaProcedimiento" => $data[9],
 
         "factura" =>null,
         "CUP" => null,
+        "CIE10" => $data[13],
 
-        "CupProcedimiento" => $data[6]
+        "CupProcedimiento" => $data[12]
     );
 }, $recordsToInsert);
 
@@ -164,19 +167,19 @@ foreach ($listaProcedimientos as $procedimiento) {
     // );
 
     $usuariosMap[$key]['servicios']['procedimientos'][] = array(
-                    "codPrestador" => "110013629101",
-                    "fechaInicioAtencion" => $procedimiento['fechaProcedimiento']." ".$procedimiento['horaProcedimiento'],
+                    "codPrestador" => "110010219801",
+                    "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'],
                     "idMIPRES" => "",
                     "numAutorizacion" => $procedimiento['factura'],
                     "codProcedimiento" => $procedimiento['CupProcedimiento'],
                     "viaIngresoServicioSalud" => "01",//demanda expontanea
                     "modalidadGrupoServicioTecSal" => "01", //Intramural
-                    "grupoServicios" => "02",
-                    "codServicio" => 706,
-                    "finalidadTecnologiaSalud" => "15",
+                    "grupoServicios" => "01",//01 consulta externa 02 APOYO DIAGNOSTICO Y COMPLEMENTACION TERAPEUTICA
+                    "codServicio" => 334,
+                    "finalidadTecnologiaSalud" => "16",
                     "tipoDocumentoIdentificacion" => "CC",
-                    "numDocumentoIdentificacion" => "51712439",
-                    "codDiagnosticoPrincipal" => "Z017",
+                    "numDocumentoIdentificacion" => "63362234",
+                    "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
                     "codDiagnosticoRelacionado" => null,
                     "codComplicacion" => null,
                     "vrServicio" => 0,
@@ -195,10 +198,10 @@ foreach ($listaProcedimientos as $procedimiento) {
 //descargar el archivo JSON
 if (!empty($usuarios)) {
     $json = json_encode(array(
-           "numDocumentoIdObligado"=> "51712439",
+           "numDocumentoIdObligado"=> "63362234",
             "numFactura"=> null,
             "tipoNota"=> "RS",
-            "numNota"=> "92025",
+            "numNota"=> "102025",
         "usuarios" => $usuarios
     ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     $fileName = 'usuarios.json';
@@ -256,7 +259,7 @@ $usuarios = array_map(function($procedimiento) {
 //descargar el archivo JSON
 if (!empty($usuarios)) {
     $json = json_encode(array(
-           "numDocumentoIdObligado"=> "51934571",
+           "numDocumentoIdObligado"=> "63362234",
             "numFactura"=> null,
             "tipoNota"=> "RS",
             "numNota"=> "6532",

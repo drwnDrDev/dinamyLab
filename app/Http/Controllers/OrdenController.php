@@ -159,7 +159,7 @@ class OrdenController extends Controller
             return $orden; // Retorna la orden creada para usarla fuera de la transacción
         }); // Fin de la transacción
 
-        return to_route('ordenes.show',$ordenCreada)->with('success', 'Orden médica creada correctamente');
+        return response()->json(['data' => $ordenCreada], 201);
     }
 
     /**
