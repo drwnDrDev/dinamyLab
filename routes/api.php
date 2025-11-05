@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\ResultadosController;
 
 
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
-Route::middleware('auth:sanctum','api')->group(function () {
+Route::middleware('auth:sanctum', 'api')->group(function () {
     Route::get('cups', [CupsController::class, 'index']);
     Route::get('cups/{codigo}', [CupsController::class, 'show']);
     Route::get('cups/buscar/{codigo}', [CupsController::class, 'buscarPorCodigo']);

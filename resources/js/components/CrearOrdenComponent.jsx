@@ -98,7 +98,7 @@ const CrearOrdenComponent = () => {
             }
 
             // Enviar los datos al backend
-            const response = await fetch('/api/ordenes', {
+            const response = await fetch('/ordenes-medicas/store', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

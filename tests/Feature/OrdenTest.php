@@ -1,77 +1,67 @@
-// Ejemplo de tests/Feature/TuPrueba.php
-
 <?php
 
-use App\Models\Sede;
+namespace Tests\Feature;
+
 use App\Models\User;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use App\Models\Persona;
+use App\Models\Examen;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-test('orden page is displayed for authenticated employee', function () {
+class OrdenTest extends TestCase
+{
+    use RefreshDatabase;
 
-    // Crear roles y permisos necesarios
-    Role::create(['name' => 'admin']);
-    Role::create(['name' => 'agente']);
-    Role::create(['name' => 'prestador']);
-    Role::create(['name' => 'paciente']);
-    Role::create(['name' => 'contable']);
-    Permission::create(['name' => 'ver_resultado']);
-    Permission::create(['name' => 'crear_persona']);
-    Permission::create(['name' => 'editar_persona']);
-    Permission::create(['name' => 'ver_persona']);
-    Permission::create(['name' => 'ver_orden']);
-    Permission::create(['name' => 'eliminar_persona']);
-    Permission::create(['name' => 'ver_cuentas']);
-    Permission::create(['name' => 'crear_cuenta']);
-    Permission::create(['name' => 'editar_cuenta']);
-    Permission::create(['name' => 'ver_examen']);
-    Permission::create(['name' => 'crear_examen']);
-    Permission::create(['name' => 'editar_examen']);
-    Permission::create(['name' => 'ver_empresa']);
-    Permission::create(['name' => 'ver_facturas']);
+    public function test_the_create_order_view_is_rendered_correctly(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
 
+        $response = $this->get('/ordenes-medicas/create');
 
+        $response->assertStatus(200);
+        $response->assertSee('Crear Nueva Orden');
+    }
 
-        $role = Role::findByName('prestador');
-        $role->givePermissionTo(Permission::all());
-    // Crear una sede y un empleado asociado
+    public function test_a_new_order_can_be_created(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
 
-    $cedula = App\Models\TipoDocumento::factory()->create([
-        'cod_dian' => 'CC',
-        'nombre' => 'Cédula de ciudadanía',
-    ]);
+        $paciente = Persona::factory()->create();
+        $examen1 = Examen::factory()->create(['valor' => 100]);
+        $examen2 = Examen::factory()->create(['valor' => 50]);
 
-    $sede = Sede::factory()->create();
-    $usuario = User::factory()->create();
-    $usuario->assignRole('prestador');
-    $empleado = $usuario->empleado()->create([
-        'user_id' => $usuario->id,
-        'cargo' => 'Agente',
-        'numero_documento' => fake()->unique()->numerify('#########'),
-        'fecha_nacimiento' => fake()->date(),
-        'empresa_id' => $sede->empresa_id,
-        'tipo_documento_id' => $cedula->id,
-    ]);
-    $empleado->sedes()->attach($sede->id);
-    $this->assertNotNull($usuario);
-    $this->assertNotNull($empleado);
+        $orderData = [
+            'numero_orden' => '12345',
+            'paciente_id' => $paciente->id,
+            'examenes' => [
+                ['examen_id' => $examen1->id, 'cantidad' => 1],
+                ['examen_id' => $examen2->id, 'cantidad' => 2],
+            ],
+            'total' => 200,
+        ];
 
-    session()->put('sede', $sede);
+        $response = $this->postJson('/ordenes-medicas/store', $orderData);
 
-    $response = $this
-        ->actingAs($usuario)
-        ->get('/ordenes-medicas');
+        $response->assertStatus(201)
+            ->assertJsonFragment(['numero' => '12345']);
 
-    $response->assertStatus(302);
+        $this->assertDatabaseHas('ordenes_medicas', [
+            'numero' => '12345',
+            'paciente_id' => $paciente->id,
+            'total' => 200,
+        ]);
+    }
 
-    $response->assertRedirect('/ordenes-medicas/create');
+    public function test_it_returns_validation_errors_if_data_is_missing(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
 
-});
+        $response = $this->postJson('/ordenes-medicas/store', []);
 
-test('orden page is not accessible for unauthenticated user', function () {
-    $response = $this->get('/ordenes-medicas');
-    $response->assertStatus(302); // Redirige a la página de login
-    $response->assertRedirect('/login');
-});
-
-// Otros tests relacionados con la página de órdenes médicas pueden ir aquí
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['paciente_id', 'examenes']);
+    }
+}

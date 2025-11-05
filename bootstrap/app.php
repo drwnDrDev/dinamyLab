@@ -14,11 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
 
-        // 1. Configura el grupo de middleware 'api'
+        // 1. Configura el grupo de middleware 'api' para comportamiento STATEFUL (SPA)
         $middleware->api(prepend: [
-            // Este es el middleware clave de Sanctum para habilitar sesiones
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            // Los siguientes son a menudo necesarios para que la sesión funcione correctamente en API
             \Illuminate\Cookie\Middleware\EncryptCookies::class,
             \Illuminate\Session\Middleware\StartSession::class,
         ]);
