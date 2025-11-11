@@ -38,7 +38,7 @@ class OrdenController extends Controller
             ->get();
 
         if ($ordenes->isEmpty()) {
-            return response()->json(['message' => 'No hay órdenes médicas disponibles.'], 404);
+            return redirect()->route('ordenes.create')->with('error', 'lista de ordenes vacias');
         }
         return view('ordenes.index', compact('ordenes'));
     }
