@@ -1,9 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
+import axios from "axios";
 import FormPersona from './FormPersona';
 import DatosExamenes from './DatosExamenes';
 import DatosPersona from './DatosPersona';
 import DatosOrden from './DatosOrden';
+
+
+// Configuración global de Axios para que funcione con las sesiones de Laravel
+axios.defaults.withCredentials = true;
 
 const CrearOrdenComponent = () => {
     const initialFormState = {
@@ -21,6 +26,20 @@ const CrearOrdenComponent = () => {
         fecha_orden: new Date().toISOString().slice(0, 10), // Formato YYYY-MM-DD hh:mm:ss
     };
 
+        // 1. Obtener la cookie CSRF de Sanctum al montar el componente
+    useEffect(() => {
+        const getCsrfCookie = async () => {
+            try {
+                await axios.get('/sanctum/csrf-cookie');
+                console.log('CSRF cookie obtained');
+            } catch (error) {
+                console.error('Could not get CSRF cookie', error);
+            }
+        };
+        getCsrfCookie();
+    }, []);
+
+
     const [persona, setPersona] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -30,7 +49,6 @@ const CrearOrdenComponent = () => {
             return;
         }
 
-        console.log('🔄 useEffect triggered - Persona actualizada:', persona);
 
         setFormOrden(prev => {
             const newState = {
@@ -98,7 +116,8 @@ const CrearOrdenComponent = () => {
             }
 
             // Enviar los datos al backend
-            const response = await fetch('/ordenes-medicas/store', {
+            console.log(formOrden)
+            const response = await axios('/api/ordenes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,19 +133,19 @@ const CrearOrdenComponent = () => {
                 const result = await response.json();
                 const ordenId = result.data.id;
                 console.log('Respuesta del servidor:', result, 'ID de la orden:', ordenId);
-                
+
                 // Redirigir a la página de la nueva orden
                 window.location.href = `/ordenes-medicas/${ordenId}/ver`;
             }
 
             setFormOrden(initialFormState);
             setPersona(null);
-            
+
         } catch (err) {
                 setError(err);
         } finally {
             setLoading(false);
-            
+
         }
 
 
