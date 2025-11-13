@@ -34,7 +34,7 @@ class OrdenController extends Controller
     public function store(Request $request)
     {
 
-
+        
         $validated = $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'numero_orden' => 'required|integer',

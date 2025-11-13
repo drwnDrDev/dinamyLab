@@ -1,15 +1,18 @@
-import React, { use } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
 import { usePersonaReferencias } from "./hooks/usePersonaReferencias";
 import { useTablasRef } from "./hooks/useTablasRef";
 import SelectField from "./SelectField";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
+import axios from "axios";
+
+// Configuración global de Axios para que funcione con las sesiones de Laravel
+axios.defaults.withCredentials = true;
 
 const FormPersona = ({ persona, setPersona, perfil }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    // Estados para los datos del formulario
     const [formData, setFormData] = useState({
         id: null,
         perfil: '',
@@ -33,6 +36,19 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
     const { tiposDocumento, paises, municipios, epsList } = usePersonaReferencias();
     const { tiposAfiliacion } = useTablasRef();
 
+    // 1. Obtener la cookie CSRF de Sanctum al montar el componente
+    useEffect(() => {
+        const getCsrfCookie = async () => {
+            try {
+                await axios.get('/sanctum/csrf-cookie');
+                console.log('CSRF cookie obtained');
+            } catch (error) {
+                console.error('Could not get CSRF cookie', error);
+            }
+        };
+        getCsrfCookie();
+    }, []);
+
     const tipoDocConfig = tiposDocumento.find(doc => doc.cod_rips === formData.tipo_documento);
     const erroresValidacion = useValidacionNormativa(
         tipoDocConfig,
@@ -46,17 +62,18 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
             perfil: perfil || ''
         }));
     }, [perfil]);
-   
-    // Función para buscar persona por documento
+
+    // Función para buscar persona por documento (sin lógica de token)
     const buscarPersonaPorDocumento = async (numDoc) => {
         if (!numDoc.trim()) return;
 
         setLoading(true);
         try {
-            const response = await fetch(`/api/personas/buscar/${numDoc}`);
-            if (!response.ok) return null;
+            const response = await axios.get(`/api/personas/buscar/${numDoc}`);
 
-            const data = await response.json();
+            if (response.status !== 200) return null;
+
+            const data = response.data;
             if (data) {
                 console.log('✅ Persona encontrada:', data);
                 setPersonaExistente(data);
@@ -73,17 +90,13 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
         }
     };
 
-
-    // Manejador del evento blur para el número de documento
     const handleDocumentoBlur = async (e) => {
         const numeroDocumento = e.target.value.trim();
         if (!numeroDocumento) return;
 
         const usuario = await buscarPersonaPorDocumento(numeroDocumento);
         if (usuario && usuario.data) {
-
             const persona = usuario.data;
-
             setFormData(prev => ({
                 ...prev,
                 id: persona.id || null,
@@ -109,110 +122,94 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
-        setFormData(prev => {
-            const newFormData = {
-                ...prev,
-                [name]: value
-            };
-            return newFormData;
-        });
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
 
+    // handleSubmit (sin lógica de token, depende de la cookie de sesión)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
         try {
-            // Determinar si es una actualización o creación
-            console.log('Persona existente al enviar:', personaExistente);
             const esActualizacion = personaExistente !== null;
             const url = esActualizacion
                 ? `/api/personas/${personaExistente.data.id}`
                 : '/api/personas';
 
-            const method = esActualizacion ? 'PUT' : 'POST';
-
-            // Log pre-envío
-            console.log('📋 ENVIANDO FORMULARIO:', {
+            console.log('📋 ENVIANDO FORMULARIO (STATEFUL):', {
                 operacion: esActualizacion ? 'Actualización' : 'Nuevo Registro',
-                metodo: method,
                 url: url,
                 datos: formData
             });
 
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(formData)
+            const response = await axios({
+                method: esActualizacion ? 'PUT' : 'POST',
+                url: url,
+                data: formData,
             });
 
-            const resultado = await response.json();
-
-            if (!response.ok) {
-                // Si el servidor devuelve errores de validación
-                if (response.status === 422) {
-                    const errores = Object.values(resultado.errors || {}).flat().join('\n');
-                    throw new Error(`Errores de validación:\n${errores}`);
-                }
-                // Si es otro tipo de error
-                throw new Error(resultado.message || `Error al ${esActualizacion ? 'actualizar' : 'crear'} la persona`);
-            }
+            const resultado = response.data;
             console.log('✅ Operación exitosa:', resultado);
 
-            // Actualizar el estado de forma controlada
             const personaActualizada = resultado.data;
-            setPersonaExistente(null); // Limpiar el estado de persona existente
-            setPersona(personaActualizada); // Actualizar el estado global
+            setPersonaExistente(null);
+            setPersona(personaActualizada);
 
-            console.log('Persona actualizada en el componente padre:', personaActualizada);
             alert(`Persona ${esActualizacion ? 'actualizada' : 'creada'} exitosamente`);
 
-            // Opcional: limpiar el formulario después de crear
             if (!esActualizacion) {
                 setFormData({
+                    id: null,
                     perfil: '',
-                    tipo_documento: '',
+                    tipo_documento: 'CC',
                     numero_documento: '',
                     nombres: '',
                     apellidos: '',
                     fecha_nacimiento: '',
                     sexo: '',
-                    pais_nacimiento: '',
-                    municipio: '',
+                    pais_nacimiento: '170',
+                    municipio: '11001',
                     direccion: '',
                     telefono: '',
-                    zona: '',
-                    pais_residencia: '',
+                    zona: '02',
+                    pais_residencia: '170',
                     correo: '',
                     eps: '',
-                    tipo_afiliacion: '',
-                    parentesco: ''
+                    tipo_afiliacion: ''
                 });
                 setPersonaExistente(null);
             }
 
         } catch (err) {
-            console.error('❌ Error:', err);
-            console.log('Estado del formulario al momento del error:', formData);
-            setError(err.message);
-            alert(err.message);
+            console.error('❌ Error completo:', err);
+            console.error('Respuesta del servidor:', err.response?.data);
+
+            let mensajeError = 'Error al procesar la solicitud';
+
+            if (err.response?.status === 422) {
+                const errores = Object.values(err.response.data.errors || {}).flat().join('\n');
+                mensajeError = `Errores de validación:\n${errores}`;
+            } else if (err.response?.status === 401 || err.response?.status === 419) {
+                mensajeError = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
+                // Opcional: Redirigir al login después de un tiempo
+                // setTimeout(() => window.location.href = '/login', 2000);
+            } else if (err.response?.data?.message) {
+                mensajeError = err.response.data.message;
+            }
+
+            setError(mensajeError);
+            alert(mensajeError);
         } finally {
             setLoading(false);
         }
     };
 
-
     return (
-
-
         <form onSubmit={handleSubmit} className="max-w-screen-lg mx-auto">
-
             <div className="flex gap-4">
                 <h2 className="font-bold mb-4 text-xl text-titles">Nuevo registro de {perfil} </h2>
             </div>
@@ -225,8 +222,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
 
             <div className="inputs_container md:grid md:grid-cols-2 gap-8 w-full min-w-80 p-4">
                 <div className="flex flex-col gap-4 mb-4 md:m-0">
-                    {/* Tipo de documento */}
-
                     <SelectField
                         label="Tipo de Documento"
                         name="tipo_documento"
@@ -235,7 +230,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         codigo={true}
                         options={tiposDocumento.map(doc => ({ key: doc.id, codigo: doc.cod_rips, nombre: doc.nombre }))}
                     />
-
                     <div>
                         <label className="block font-medium text-sm text-text">
                             Número de Documento
@@ -271,7 +265,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
                         />
                     )}
-
                     <div>
                         <label className="block font-medium text-sm text-text">
                             Nombres
@@ -281,11 +274,9 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="nombres"
                             value={formData.nombres}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
                         />
                     </div>
-
                     <div>
                         <label className="block font-medium text-sm text-text">
                             Apellidos
@@ -295,8 +286,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="apellidos"
                             value={formData.apellidos}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
                         />
                     </div>
                     {perfil !== 'Pagador' && (
@@ -310,9 +300,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 name="fecha_nacimiento"
                                 value={formData.fecha_nacimiento}
                                 onChange={handleInputChange}
-                                className={erroresValidacion.fecha_nacimiento ? `h-9 w-full p-2 border-borders rounded-md focus:border-red-500 focus:ring-red-500` :
-                                    `h-9 w-full p-2 border-borders rounded-md focus:border-primary focus:ring-primary`
-                                }
+                                className={erroresValidacion.fecha_nacimiento ? `h-9 w-full p-2 border-borders rounded-md focus:border-red-500 focus:ring-red-500` : `h-9 w-full p-2 border-borders rounded-md focus:border-primary focus:ring-primary`}
                             />
                         </div>
                         {erroresValidacion.fecha_nacimiento && (
@@ -357,7 +345,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             />
                         </div>
                     )}
-
                     {perfil === 'Paciente' && (
                         <div>
                             <label className="block font-medium text-sm text-text">
@@ -368,8 +355,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 name="eps"
                                 value={formData.eps}
                                 onChange={handleInputChange}
-                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
                             />
                             <datalist id="eps_list">
                                 {epsList.map(e => (
@@ -379,7 +365,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         </div>
                     )}
                     {perfil === 'Paciente' && (
-
                         <SelectField
                             label="Tipo de Afiliación"
                             name="tipo_afiliacion"
@@ -389,12 +374,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             options={tiposAfiliacion.data}
                         />
                     )}
-
                 </div>
-
-
-                {/*INFORMACION DE CONTACTO*/}
-
                 <div className="flex flex-col gap-4 mb-4 md:m-0">
                     <div>
                         <h3 className="font-medium text-normal text-titles my-4">Información de contacto</h3>
@@ -434,8 +414,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="direccion"
                             value={formData.direccion}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
                         />
                     </div>
                     )}
@@ -448,8 +427,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="telefono"
                             value={formData.telefono}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
                         />
                     </div>
                     {perfil === 'Paciente' && (
@@ -462,8 +440,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="correo"
                             value={formData.correo}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
                         />
                     </div>
                     )}
@@ -477,7 +454,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
                     />
                     )}
-                   
                     {perfil === 'Paciente' && (
                     <SelectField
                         label="Municipio"
@@ -491,7 +467,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         }))}
                     />
                     )}
-                    
                     {perfil === 'Acompaniante' && (
                         <div>
                             <label className="block font-medium text-sm text-text">
@@ -502,8 +477,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 name="Parentesco"
                                 value={formData.parentesco}
                                 onChange={handleInputChange}
-                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
                             />
                             <datalist id="parentesco_list">
                                 <option value="Madre" />
@@ -517,8 +491,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                     )}
                 </div>
             </div>
-
-
             <div className="flex justify-end space-x-3">
                 <button
                     type="submit"

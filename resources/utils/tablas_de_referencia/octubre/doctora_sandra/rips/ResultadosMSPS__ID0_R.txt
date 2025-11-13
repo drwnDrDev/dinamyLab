@@ -1,0 +1,16 @@
+{
+  "NumFactura": "",
+  "CodigoUnicoValidacion": "No aplica a paquetes procesados en estado [RECHAZADO] o validaciones realizadas antes del envío al Ministerio de Salud y Protección Social",
+  "FechaRadicacion": "2025-11-04T18:57:55.0684163-05:00",
+  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\tablas_de_referencia\\octubre\\doctora_sandra\\rips",
+  "ResultadosValidacion": [
+    {
+      "Clase": "RECHAZADO",
+      "Codigo": "TOT003",
+      "Descripcion": "Hubo un error en la petición, por favor comuníquese con el administrador del sistema.",
+      "Observaciones": "The input does not contain any JSON tokens. Expected the input to start with a valid JSON token, when isFinalBlock is true. Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
+      "PathFuente": "",
+      "Fuente": "FevRips"
+    }
+  ]
+}
