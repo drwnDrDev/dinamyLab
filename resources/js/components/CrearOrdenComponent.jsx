@@ -1,11 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import FormPersona from './FormPersona';
 import DatosExamenes from './DatosExamenes';
 import DatosPersona from './DatosPersona';
 import DatosOrden from './DatosOrden';
+import useAxiosAuth from './hooks/useAxiosAuth';
+
+// Configuración global de Axios para que funcione con las sesiones de Laravel
+
 
 const CrearOrdenComponent = () => {
+    const { axiosInstance, csrfLoaded, error: csrfError } = useAxiosAuth();
     const initialFormState = {
         numero_orden: '',
         paciente_id: null,
@@ -30,7 +34,6 @@ const CrearOrdenComponent = () => {
             return;
         }
 
-        console.log('🔄 useEffect triggered - Persona actualizada:', persona);
 
         setFormOrden(prev => {
             const newState = {
@@ -80,59 +83,37 @@ const CrearOrdenComponent = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(false);
-        setError(null);
-        console.log('Enviando formulario de orden:', JSON.stringify(formOrden));
-        try {
-            // Validar que se haya seleccionado un paciente
-            if (!formOrden.paciente_id) {
-                setError('Por favor, seleccione un paciente.');
-                setLoading(false);
-                return;
-            }
-            // Validar que se haya seleccionado al menos un examen
-            if (formOrden.examenes.length === 0) {
-                setError('Por favor, seleccione al menos un examen.');
-                setLoading(false);
-                return;
-            }
-
-            // Enviar los datos al backend
-            const response = await fetch('/api/ordenes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'redirect': 'follow',
-                },
-                body: JSON.stringify(formOrden),
-            });
-
-
-
-            if (response) {
-                const result = await response.json();
-                const ordenId = result.data.id;
-                console.log('Respuesta del servidor:', result, 'ID de la orden:', ordenId);
-                
-                // Redirigir a la página de la nueva orden
-                window.location.href = `/ordenes-medicas/${ordenId}/ver`;
-            }
-
-            setFormOrden(initialFormState);
-            setPersona(null);
-            
-        } catch (err) {
-                setError(err);
-        } finally {
-            setLoading(false);
-            
+        
+        if (!csrfLoaded) {
+            setError('⏳ Autenticación en progreso...');
+            return;
         }
 
+        setLoading(true);
+        setError(null);
 
+        try {
+            if (!formOrden.paciente_id) {
+                setError('Por favor, seleccione un paciente.');
+                return;
+            }
+            if (formOrden.examenes.length === 0) {
+                setError('Por favor, seleccione al menos un examen.');
+                return;
+            }
 
+            const response = await axiosInstance.post('/api/ordenes', formOrden);
 
-    }
+            if (response?.data?.data?.id) {
+                window.location.href = `/ordenes-medicas/${response.data.data.id}/ver`;
+            }
+
+        } catch (err) {
+            setError(err.response?.data?.message || 'Error al crear la orden');
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     if (error) {

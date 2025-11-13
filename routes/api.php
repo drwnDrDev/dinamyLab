@@ -10,17 +10,22 @@ use App\Http\Controllers\Api\MunicipioController;
 use App\Http\Controllers\Api\FrontendDataController;
 use App\Http\Controllers\Api\ExamenesController;
 use App\Http\Controllers\Api\OrdenController;
-use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\Api\AfiliacionSaludController;
 use App\Http\Controllers\Api\ResultadosController;
-use App\Models\Factura;
+
 
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
+Route::middleware('auth:sanctum', 'api')->group(function () {
+    Route::get('cups', [CupsController::class, 'index']);
+    Route::get('cups/{codigo}', [CupsController::class, 'show']);
+    Route::get('cups/buscar/{codigo}', [CupsController::class, 'buscarPorCodigo']);
+    Route::get('cups/buscar', [CupsController::class, 'buscarPorNombre']);
 
-Route::get('cups', [CupsController::class, 'index']);
-Route::get('cups/{codigo}', [CupsController::class, 'show']);
-Route::get('cups/buscar/{codigo}', [CupsController::class, 'buscarPorCodigo']);
-Route::get('cups/buscar', [CupsController::class, 'buscarPorNombre']);
+    Route::post('cups', [CupsController::class, 'store']);
+    Route::put('cups/{id}', [CupsController::class, 'update']);
+    Route::put('cups/{id}/activar', [CupsController::class, 'activar']);
+    Route::delete('cups/{id}', [CupsController::class, 'destroy']);
+
 
 Route::post('cups', [CupsController::class, 'store']);
 Route::put('cups/{id}', [CupsController::class, 'update']);
@@ -51,8 +56,6 @@ Route::get('via-ingreso', [\App\Http\Controllers\Api\ViaIngresoController::class
 Route::get('via-ingreso/{codigo}', [\App\Http\Controllers\Api\ViaIngresoController::class, 'show']);
 Route::patch('via-ingreso/{codigo}/activar', [\App\Http\Controllers\Api\ViaIngresoController::class, 'activar'])->name('vias-ingreso.activar');
 
-
-
 Route::get('cie10', [CodigoDiagnosticoController::class, 'index']);
 Route::get('cie10/{id}', [CodigoDiagnosticoController::class, 'show']);
 Route::post('cie10', [CodigoDiagnosticoController::class, 'store']);
@@ -65,7 +68,7 @@ Route::get('personas', [PersonaController::class, 'index']);
 Route::get('personas/{id}', [PersonaController::class, 'show']);
 Route::post('personas', [PersonaController::class, 'store']);
 Route::put('personas/{id}', [PersonaController::class, 'update']);
-Route::get('personas/buscar/{numero_documento}', [PersonaController::class, 'buscar']);
+Route::get('personas/buscar/{numero_documento}', [\App\Http\Controllers\Api\PersonaController::class, 'buscar']);
 
 Route::get('examenes', [ExamenesController::class, 'index']);
 Route::get('examenes/{id}', [ExamenesController::class, 'show']);
@@ -90,9 +93,8 @@ Route::get('paises', [\App\Http\Controllers\Api\PaisController::class, 'index'])
 Route::get('orden/{id}', [OrdenController::class, 'show']);
 Route::post('ordenes', [OrdenController::class, 'store']);
 Route::patch('/ordenes-medicas/{orden}',[OrdenController::class,'add'])->name('ordenes.add');
-
 Route::post('resultados/{procedimiento}',[ResultadosController::class,'store']);
-
+});
 
 Route::get('user', function (Request $request) {
     return $request->user();
