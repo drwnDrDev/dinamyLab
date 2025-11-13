@@ -6,7 +6,6 @@ import DatosExamenes from './DatosExamenes';
 import DatosPersona from './DatosPersona';
 import DatosOrden from './DatosOrden';
 
-
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 axios.defaults.withCredentials = true;
 
@@ -124,15 +123,15 @@ const CrearOrdenComponent = () => {
                     'Accept': 'application/json',
                     'redirect': 'follow',
                 },
-                body: JSON.stringify(formOrden),
+                data: formOrden,
             });
 
-
+            console.log('Respuesta del servidor:', response.data.data);
 
             if (response) {
-                const result = await response.json();
-                const ordenId = result.data.id;
-                console.log('Respuesta del servidor:', result, 'ID de la orden:', ordenId);
+    
+                const ordenId = response.data?.data?.id;
+                
 
                 // Redirigir a la página de la nueva orden
                 window.location.href = `/ordenes-medicas/${ordenId}/ver`;
