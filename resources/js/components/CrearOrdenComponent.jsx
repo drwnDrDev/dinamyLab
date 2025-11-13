@@ -1,15 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
-import axios from "axios";
 import FormPersona from './FormPersona';
 import DatosExamenes from './DatosExamenes';
 import DatosPersona from './DatosPersona';
 import DatosOrden from './DatosOrden';
+import useAxiosAuth from './hooks/useAxiosAuth';
 
 // Configuración global de Axios para que funcione con las sesiones de Laravel
-axios.defaults.withCredentials = true;
+
 
 const CrearOrdenComponent = () => {
+    const { axiosInstance, csrfLoaded, error: csrfError } = useAxiosAuth();
     const initialFormState = {
         numero_orden: '',
         paciente_id: null,
@@ -24,20 +24,6 @@ const CrearOrdenComponent = () => {
         total: 0,
         fecha_orden: new Date().toISOString().slice(0, 10), // Formato YYYY-MM-DD hh:mm:ss
     };
-
-        // 1. Obtener la cookie CSRF de Sanctum al montar el componente
-    useEffect(() => {
-        const getCsrfCookie = async () => {
-            try {
-                await axios.get('/sanctum/csrf-cookie');
-                console.log('CSRF cookie obtained');
-            } catch (error) {
-                console.error('Could not get CSRF cookie', error);
-            }
-        };
-        getCsrfCookie();
-    }, []);
-
 
     const [persona, setPersona] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -97,60 +83,37 @@ const CrearOrdenComponent = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(false);
-        setError(null);
-        console.log('Enviando formulario de orden:', JSON.stringify(formOrden));
-        try {
-            // Validar que se haya seleccionado un paciente
-            if (!formOrden.paciente_id) {
-                setError('Por favor, seleccione un paciente.');
-                setLoading(false);
-                return;
-            }
-            // Validar que se haya seleccionado al menos un examen
-            if (formOrden.examenes.length === 0) {
-                setError('Por favor, seleccione al menos un examen.');
-                setLoading(false);
-                return;
-            }
-
-            // Enviar los datos al backend
-            console.log(formOrden)
-            const response = await axios('/api/ordenes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'redirect': 'follow',
-                },
-                data: formOrden,
-            });
-
-            console.log('Respuesta del servidor:', response.data.data);
-
-            if (response) {
-    
-                const ordenId = response.data?.data?.id;
-                
-
-                // Redirigir a la página de la nueva orden
-                window.location.href = `/ordenes-medicas/${ordenId}/ver`;
-            }
-
-            setFormOrden(initialFormState);
-            setPersona(null);
-
-        } catch (err) {
-                setError(err);
-        } finally {
-            setLoading(false);
-
+        
+        if (!csrfLoaded) {
+            setError('⏳ Autenticación en progreso...');
+            return;
         }
 
+        setLoading(true);
+        setError(null);
 
+        try {
+            if (!formOrden.paciente_id) {
+                setError('Por favor, seleccione un paciente.');
+                return;
+            }
+            if (formOrden.examenes.length === 0) {
+                setError('Por favor, seleccione al menos un examen.');
+                return;
+            }
 
+            const response = await axiosInstance.post('/api/ordenes', formOrden);
 
-    }
+            if (response?.data?.data?.id) {
+                window.location.href = `/ordenes-medicas/${response.data.data.id}/ver`;
+            }
+
+        } catch (err) {
+            setError(err.response?.data?.message || 'Error al crear la orden');
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     if (error) {
