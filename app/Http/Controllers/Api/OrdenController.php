@@ -34,8 +34,7 @@ class OrdenController extends Controller
     public function store(Request $request)
     {
 
-        return response()->json([$request], 201);
-
+        
         $validated = $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'numero_orden' => 'required|integer',
