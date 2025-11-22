@@ -27,10 +27,7 @@ Route::middleware('auth:sanctum', 'api')->group(function () {
     Route::delete('cups/{id}', [CupsController::class, 'destroy']);
 
 
-Route::post('cups', [CupsController::class, 'store']);
-Route::put('cups/{id}', [CupsController::class, 'update']);
-Route::put('cups/{id}/activar', [CupsController::class, 'activar']);
-Route::delete('cups/{id}', [CupsController::class, 'destroy']);
+
 
 Route::get('servicios-habilitados', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'index']);
 Route::get('servicios-habilitados/{codigo}', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'show']);

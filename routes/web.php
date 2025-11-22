@@ -57,8 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/examenes',[ExamenController::class,'index'])->name('examenes');
     Route::get('/examenes/{examen}',[ExamenController::class,'show'])->name('examenes.show');
 
-    Route::post('search',[SearchController::class,'search'])->name('search');
-    Route::get('search',[SearchController::class,'search'])->name('search');
+    Route::match(['get', 'post'], 'search', [SearchController::class, 'search'])->name('search');
 
     Route::get('/resultados/{procedimiento}/ver',[ResultadosController::class,'show'])->name('resultados.show');
 
@@ -109,9 +108,3 @@ Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () 
 });
 
 require __DIR__.'/auth.php';
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/personas', [PersonaController::class, 'store'])->name('personas.store');
-    Route::put('/personas/{id}', [PersonaController::class, 'update'])->name('personas.update');
-    Route::get('/personas/buscar/{numeroDocumento}', [PersonaController::class, 'buscar']);
-});
