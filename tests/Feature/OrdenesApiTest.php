@@ -20,11 +20,12 @@ class OrdenesApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Ejecutar seeders necesarios para las foreign keys
         $this->seed(\Database\Seeders\PaisSeeder::class);
         $this->seed(\Database\Seeders\TipoDocumentoSeeder::class);
-        
+        $this->seed(\Database\Seeders\TestDataSeeder::class);
+
         $this->user = User::factory()->create();
         $this->sede = Sede::factory()->create();
         session(['sede' => $this->sede]);
@@ -78,7 +79,7 @@ class OrdenesApiTest extends TestCase
                 ]
             ]);
 
-        $this->assertDatabaseHas('ordenes', [
+        $this->assertDatabaseHas('ordenes_medicas', [
             'numero' => 12345,
             'paciente_id' => $paciente->id,
             'total' => 200,
@@ -209,7 +210,7 @@ class OrdenesApiTest extends TestCase
 
         $orden = Orden::where('numero', 12345)->first();
         $this->assertNotNull($orden);
-        
+
         // Verificar que se crearon 3 procedimientos
         $this->assertDatabaseCount('procedimientos', 3);
         $this->assertDatabaseHas('procedimientos', [
@@ -253,7 +254,7 @@ class OrdenesApiTest extends TestCase
 
         $orden = Orden::where('numero', 12345)->first();
         $this->assertCount(2, $orden->examenes);
-        
+
         $this->assertTrue($orden->examenes->contains($examen1));
         $this->assertTrue($orden->examenes->contains($examen2));
     }
