@@ -9,7 +9,6 @@ class ServicioHabilitado extends Model
 {
     use IncrementaNivel;
     protected $table = 'servicios_habilitados';
-    public $timestamps = false;
     protected $fillable = [
         'codigo',
         'nombre',
@@ -21,6 +20,7 @@ class ServicioHabilitado extends Model
     protected $primaryKey = 'codigo';
     public $incrementing = false;
     protected $keyType = 'integer';
+    public $timestamps = false;
 
     protected static function booted()
     {
