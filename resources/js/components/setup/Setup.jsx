@@ -1,63 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import {
-    fetchServiciosHabilitados,
-    fetchViaIngreso,
-    fetchDiagnosticos,
-    fetchFinalidades,
-    fetchCausasExternas,
-    fetchTiposAtencion,
-    fetchTiposAfiliacion
-} from "../../api";
+import useAxiosAuth from '../hooks/useAxiosAuth';
 
 const Setup = () => {
+
+        const { axiosInstance, csrfLoaded, error: csrfError } = useAxiosAuth();
+
     // Estado principal
     const [categorias, setCategorias] = useState({
-        serviciosHabilitados: { nombre: 'Servicios Habilitados', clases: 'bg-blue-200 text-blue-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/servicios-habilitados', localStorageKey: 'servicios_habilitados_data' },
-        viasIngreso: { nombre: 'Vías de Ingreso', clases: 'bg-green-200 text-green-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/via-ingreso', localStorageKey: 'vias_ingreso_data' },
-        diagnosticos: { nombre: 'Diagnósticos', clases: 'bg-stone-200 text-stone-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/cie10', localStorageKey: 'default_cies_data' },
-        finalidades: { nombre: 'Finalidades', clases: 'bg-yellow-200 text-yellow-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/finalidades', localStorageKey: 'finalidad_consulta_data' },
-        causasExternas: { nombre: 'Causas Externas', clases: 'bg-purple-200 text-purple-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/causa-atencion', localStorageKey: 'causas_externas_data' },
-        tiposAtencion: { nombre: 'Modalidades de Atención', clases: 'bg-teal-200 text-teal-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/modalidades-atencion', localStorageKey: 'tipos_atencion_data' },
-        tiposAfiliacion: { nombre: 'Tipos de Afiliación', clases: 'bg-pink-200 text-pink-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/tipos-afiliacion', localStorageKey: 'tipos_afiliacion_data' },
+        serviciosHabilitados: { nombre: 'Servicios Habilitados', clases: 'bg-blue-200 text-blue-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/servicios-habilitados', localStorageKey: 'servicios_habilitados_data', endpoint: '/api/servicios-habilitados', dataKey: 'data' },
+        viasIngreso: { nombre: 'Vías de Ingreso', clases: 'bg-green-200 text-green-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/via-ingreso', localStorageKey: 'vias_ingreso_data', endpoint: '/api/via-ingreso', dataKey: 'data' },
+        diagnosticos: { nombre: 'Diagnósticos', clases: 'bg-stone-200 text-stone-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/cie10', localStorageKey: 'default_cies_data', endpoint: '/api/cie10', dataKey: 'data' },
+        finalidades: { nombre: 'Finalidades', clases: 'bg-yellow-200 text-yellow-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/finalidades', localStorageKey: 'finalidad_consulta_data', endpoint: '/api/finalidades', dataKey: 'data.finalidades' },
+        causasExternas: { nombre: 'Causas Externas', clases: 'bg-purple-200 text-purple-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/causa-atencion', localStorageKey: 'causas_externas_data', endpoint: '/api/causa-atencion', dataKey: 'data.causas_externas' },
+        tiposAtencion: { nombre: 'Modalidades de Atención', clases: 'bg-teal-200 text-teal-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/modalidades-atencion', localStorageKey: 'tipos_atencion_data', endpoint: '/api/modalidades-atencion', dataKey: 'data.modalidades_atencion' },
+        tiposAfiliacion: { nombre: 'Tipos de Afiliación', clases: 'bg-pink-200 text-pink-900', datos: [], visibles: [], activos: [], todos: [], activo: false, activeChange: 'api/tipos-afiliacion', localStorageKey: 'tipos_afiliacion_data', endpoint: '/api/tipos-afiliacion', dataKey: 'data' },
     });
 
     const [buscador, setBuscador] = useState('');
     const [filtro, setFiltro] = useState('todos'); // 'activos', 'inactivos', 'todos'
 
-    // Map de funciones para inicializar
-    const fetchers = {
-        serviciosHabilitados: fetchServiciosHabilitados,
-        viasIngreso: fetchViaIngreso,
-        diagnosticos: fetchDiagnosticos,
-        finalidades: fetchFinalidades,
-        causasExternas: fetchCausasExternas,
-        tiposAtencion: fetchTiposAtencion,
-        tiposAfiliacion: fetchTiposAfiliacion
+    // Función para obtener datos anidados
+    const getNestedData = (obj, path) => {
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj) || [];
     };
 
     // useEffect para la carga inicial de datos (solo una vez)
     useEffect(() => {
+        if (!csrfLoaded) return;
+
         const initialize = async () => {
             try {
-                const fetcherFns = Object.values(fetchers);
-                const keys = Object.keys(fetchers);
-                const results = await Promise.allSettled(fetcherFns.map(fn => fn()));
+                const keys = Object.keys(categorias);
+                const promises = keys.map(key =>
+                    axiosInstance.get(categorias[key].endpoint)
+                        .then(response => ({ key, data: getNestedData(response.data, categorias[key].dataKey) }))
+                        .catch(error => {
+                            console.error(`Error al cargar ${categorias[key].nombre}:`, error);
+                            return { key, data: [] };
+                        })
+                );
+
+                const results = await Promise.allSettled(promises);
 
                 setCategorias(prev => {
                     const updated = { ...prev };
-                    keys.forEach((key, i) => {
-                        if (results[i].status === 'fulfilled') {
-                            const fetchedData = results[i].value;
+                    results.forEach((result) => {
+                        if (result.status === 'fulfilled') {
+                            const { key, data } = result.value;
+                            const fetchedData = data;
                             updated[key].datos = fetchedData;
                             updated[key].todos = fetchedData;
                             updated[key].activos = fetchedData.filter(d => d.activo);
                             updated[key].visibles = fetchedData;
-                        } else {
-                            updated[key].datos = [];
-                            updated[key].todos = [];
-                            updated[key].activos = [];
-                            updated[key].visibles = [];
-                            console.error(`Error al cargar ${updated[key].nombre}`);
                         }
                     });
                     return updated;
@@ -65,9 +59,9 @@ const Setup = () => {
             } catch (error) {
                 console.error('Error al inicializar los datos:', error);
             }
-        }
+        };
         initialize();
-    }, []);
+    }, [csrfLoaded]);
     // Nuevo useEffect para filtrar cuando cambien filtro, buscador o la categoría activa
     useEffect(() => {
         const activeKey = Object.keys(categorias).find(key => categorias[key].activo);
@@ -132,15 +126,12 @@ const Setup = () => {
     const toggleActivarItem = async (item, key) => {
         const categoria = categorias[key];
         const url = `${window.location.origin}/${categoria.activeChange}/${item.codigo}/activar`;
-        
+
 
         try {
-            const response = await fetch(url, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' }
-            });
+            const response = await axiosInstance.patch(url);
+            if (response.status < 200 || response.status >= 300) throw new Error('Error en la respuesta del servidor');
 
-            if (!response.ok) throw new Error('Error en la respuesta del servidor');
 
 
             // actualizar localmente sin esperar refresh
