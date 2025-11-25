@@ -83,7 +83,7 @@ const CrearOrdenComponent = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!csrfLoaded) {
             setError('⏳ Autenticación en progreso...');
             return;
