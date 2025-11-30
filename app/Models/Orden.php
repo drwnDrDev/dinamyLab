@@ -13,7 +13,7 @@ class Orden extends Model
     protected $fillable = [
         'sede_id',
         'numero',
-        'paciente_id', // Asegúrate de incluirlo aquí
+        'paciente_id', 
         'observaciones',
         'terminada',
         'abono',
