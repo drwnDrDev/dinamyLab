@@ -1,15 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { fetchOrden } from '../api.js';
+import useAxiosAuth from './hooks/useAxiosAuth';
 import BuscarModelo from './BuscarModelo.jsx';
 
 
 export default function Ticket({ ordenId }) {
+    const { axiosInstance, csrfLoaded, error: csrfError } = useAxiosAuth();
     const [totalOrden, setTotalOrden] = useState(0);
     const [orden, setOrden] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [procedimientos, setProcedimientos] = useState([]);
+    const baseUrl = window.location.origin;
+
+    const fetchOrden = async (id) => {
+        try {
+
+            const res = await axiosInstance.get(`/api/orden/${id}`);
+            if (res.status === 200) {
+                console.log('✅ Orden obtenida:', res.data);
+                return res.data;
+            } else {
+                console.error('❌ Error al obtener la orden, estado:', res.status);
+                setError(`Error al obtener la orden, estado: ${res.status}`);
+                return null;
+            }
+        } catch (err) {
+            console.error('❌ Error al obtener la orden:', err);
+            setError('Error al obtener la orden');
+            return null;
+        }
+    };
 
 
     useEffect(() => {
