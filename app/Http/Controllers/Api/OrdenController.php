@@ -34,7 +34,7 @@ class OrdenController extends Controller
     public function store(Request $request)
     {
 
-        
+
         $validated = $request->validate([
             'paciente_id' => 'required|exists:personas,id',
             'numero_orden' => 'required|integer',
@@ -56,13 +56,15 @@ class OrdenController extends Controller
             return $examen['valor'] * $examen['cantidad'];
         });
 
-        $sede = session('sede') ?? Sede::first();
-        $usuario = Auth::user();
 
-        $ordenCreada =  DB::transaction(function () use ($sede, $usuario, $validated, $total) {
+        $usuario = Auth::user();
+        $sede = session('sede');
+
+
+        $ordenCreada =  DB::transaction(function () use ( $usuario, $validated, $total) {
             // Crear la orden médica
             $orden = Orden::create([
-                'sede_id' => $sede->id,
+                'sede_id' => $sede->id ?? 1,
                 'numero' => $validated['numero_orden'],
                 'user_id' => $usuario ? $usuario->id : 1,
                 'paciente_id' => $validated['paciente_id'],
@@ -91,7 +93,7 @@ class OrdenController extends Controller
                         'codigo_modalidad' => $validated[ 'modalidad']??'01',
                         'codigo_finalidad' => $validated['finalidad']??'15',
                         'codigo_via_ingreso' => $validated['via_ingreso']??'01',
-                        'sede_id' => $usuario ? $usuario->id : 1,
+                        'sede_id' => $sede->id ?? 1,
                         'fecha' => now(),
                         'estado' => Estado::PROCESO,
                         'created_at' => now(),
