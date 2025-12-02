@@ -4,37 +4,36 @@ import DatosExamenes from './DatosExamenes';
 import DatosPersona from './DatosPersona';
 import DatosOrden from './DatosOrden';
 import useAxiosAuth from './hooks/useAxiosAuth';
+import ordenDataDefault from './ordenDataDefault';
 
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 
 
-const CrearOrdenComponent = () => {
+const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
     const { axiosInstance, csrfLoaded, error: csrfError } = useAxiosAuth();
     const initialFormState = {
         numero_orden: '',
         paciente_id: null,
         examenes: [],
-        cod_servicio: null,
-        via_ingreso: '01',
+        cod_servicio: null, //Este codigo NO VA? este se obtiene del prestador ?
+        via_ingreso: '',
         cie_principal: null,
         cie_relacionado: null,
-        finalidad: '15',
-        modalidad: '01',
+        finalidad: '',
+        modalidad: '',
         abono: 0,
         total: 0,
-        fecha_orden: new Date().toISOString().slice(0, 10), // Formato YYYY-MM-DD hh:mm:ss
+        fecha_orden: new Date().toISOString().split('T')[0] + ' ' + new Date().toTimeString().slice(0, 5), // Formato YYYY-MM-DD HH:mm
     };
-
     const [persona, setPersona] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
+
     useEffect(() => {
         if (!persona) {
             return;
         }
-
-
         setFormOrden(prev => {
             const newState = {
                 ...prev,
@@ -44,6 +43,24 @@ const CrearOrdenComponent = () => {
             return newState;
         });
     }, [persona]);
+
+    useEffect(() => {
+        if (dataDefoult && Object.keys(dataDefoult).length > 0) {
+            const { cod_servicio, via_ingreso, cie_principal, cie_relacionado, finalidad, modalidad } = dataDefoult;
+            setFormOrden(prev => ({
+                ...prev,
+                cod_servicio: cod_servicio || prev.cod_servicio,
+                via_ingreso: via_ingreso || prev.via_ingreso,
+                cie_principal: cie_principal || prev.cie_principal,
+                cie_relacionado: cie_relacionado || prev.cie_relacionado,
+                finalidad: finalidad || prev.finalidad,
+                modalidad: modalidad || prev.modalidad,
+
+            }));
+        }}, []);
+
+    console.log('📝 Estado del formulario después de aplicar datos por defecto:', formOrden);
+
 
     // Handler para actualizar la persona
     const handlePersonaUpdate = (nuevaPersona) => {
@@ -132,7 +149,7 @@ const CrearOrdenComponent = () => {
             <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
                 {persona ? (
                     <>
-                        <DatosPersona persona={persona}/>
+                        <DatosPersona persona={persona} />
                         <div className="mt-4 flex justify-end">
                             <button
                                 onClick={() => setPersona(null)}
