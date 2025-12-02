@@ -11,23 +11,7 @@ const SelectField = ({
   error = null,
   codigo = false,
 }) => {
-  // Solo establecemos el valor por defecto una vez al montar el componente
-  React.useEffect(() => {
-    if (!value && Array.isArray(options) && options.length > 0 && onChange && !disabled) {
-      const defaultOption = options[0];
-      const event = {
-        target: {
-          name: name,
-          value: defaultOption.codigo
-        }
-      };
-      // Usamos setTimeout para evitar actualizaciones durante el render
-      setTimeout(() => {
-        onChange(event);
-      }, 0);
-    }
-  }, []); // Solo se ejecuta al montar el componente
-
+  
   return (
     <div>
       <label htmlFor={name} className="block font-medium text-sm text-text">
