@@ -15,7 +15,7 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
         numero_orden: '',
         paciente_id: null,
         examenes: [],
-        cod_servicio: null, //Este codigo NO VA? este se obtiene del prestador ?
+        cod_servicio: null,
         via_ingreso: '',
         cie_principal: null,
         cie_relacionado: null,

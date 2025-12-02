@@ -15,7 +15,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
             <div className="grid grid-cols-2 gap-4">
                 <SelectField
                     label="Modalidad de Atención"
-                    name="modalidad_atencion"
+                    name="modalidad"
                     value={formOrden.modalidad || ''}
                     codigo={true}
                     options={modalidades}
@@ -48,7 +48,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                 />
                 <SelectField
                     label="Finalidad de Consulta"
-                    name="finalidad_consulta"
+                    name="finalidad"
                     value={formOrden.finalidad || ''}
                     codigo={true}
                     options={finalidades}
