@@ -1,5 +1,5 @@
 const ordenDataDefault = {
-        cod_servicio: null,
+        cod_servicio: 706,
         via_ingreso: '01',
         cie_principal: null,    
         cie_relacionado: null,
