@@ -152,14 +152,14 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
 
     return (
         <div className="crear-orden-wrapper relative">
-            <div className="header mb-4 flex justify-between items-center max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
-                <h1 className="text-2xl font-bold text-titles">Crear Nueva Orden</h1>
+            <div className="header max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
+                <h1 className="text-2xl font-bold text-titles mb-4">Crear Nueva Orden</h1>
+                <label htmlFor="numero_orden" className='text-xl pr-4'>Numero de Orden: </label>
                 <input
                     type="number"
                     onChange={handleTablasRefUpdate}
                     name="numero_orden"
                     value={formOrden.numero_orden}
-                    placeholder="N° de Orden"
                     className= {`h-9 w-32 p-2 border-borders focus:border-primary focus:ring-primary rounded-md ${errors.numero_orden ? 'border-red-500' : ''}`}
                 />
                 {errors.numero_orden && (
@@ -212,7 +212,7 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
                 </section>
             )}
 
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end px-4 py-2 max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
                 <button
                     type="button"
                     onClick={handleSubmit}
