@@ -1,5 +1,7 @@
 <x-app-layout>
 
+{{-- Muy bonito y todo pero esto se ve en el navegador OJO --}}
+
 <script>
     window.appData = {
         sede: @json(session('sede')),
