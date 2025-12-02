@@ -5,6 +5,7 @@ import DatosPersona from './DatosPersona';
 import DatosOrden from './DatosOrden';
 import useAxiosAuth from './hooks/useAxiosAuth';
 import ordenDataDefault from './ordenDataDefault';
+import { useOrderValidation } from './hooks/useOrdenValidation';
 
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 
@@ -29,6 +30,7 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
+    const { validateField, validateForm, errors, clearError } = useOrderValidation();
 
     useEffect(() => {
         if (!persona) {
@@ -57,7 +59,8 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
                 modalidad: modalidad || prev.modalidad,
 
             }));
-        }}, []);
+        }
+    }, []);
 
     console.log('📝 Estado del formulario después de aplicar datos por defecto:', formOrden);
 
@@ -89,6 +92,7 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
             ...prev,
             [name]: value
         }));
+        clearError(name);
     }
 
     const handleValoresUpdate = (name, value) => {
@@ -96,6 +100,7 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
             ...prev,
             [name]: value
         }));
+        clearError(name);
     }
 
     const handleSubmit = async (e) => {
@@ -103,6 +108,14 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
 
         if (!csrfLoaded) {
             setError('⏳ Autenticación en progreso...');
+            return;
+        }
+
+        console.log('Validando orden:', formOrden);
+
+        if (!validateForm(formOrden)) {
+            console.log('Errores de validación:', errors);
+            alert('Por favor complete todos los campos obligatorios');
             return;
         }
 
@@ -141,9 +154,17 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
         <div className="crear-orden-wrapper relative">
             <div className="header mb-4 flex justify-between items-center max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
                 <h1 className="text-2xl font-bold text-titles">Crear Nueva Orden</h1>
-                <input type="number" onChange={handleTablasRefUpdate} name="numero_orden" value={formOrden.numero_orden} placeholder="N° de Orden" className="h-9 w-32 p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+                <input
+                    type="number"
+                    onChange={handleTablasRefUpdate}
+                    name="numero_orden"
+                    value={formOrden.numero_orden}
+                    placeholder="N° de Orden"
+                    className= {`h-9 w-32 p-2 border-borders focus:border-primary focus:ring-primary rounded-md ${errors.numero_orden ? 'border-red-500' : ''}`}
                 />
+                {errors.numero_orden && (
+                    <p className="mt-1 text-sm text-red-600">{errors.numero_orden}</p>
+                )}
 
             </div>
             <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
