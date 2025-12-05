@@ -123,6 +123,7 @@ export default function Ticket({ ordenId }) {
     <div className='print:hidden p-6'>
 
         <h1 className="text-2xl font-bold mb-4">Orden N° {orden?.numero}  </h1>
+        <h2>sede {orden?.sede_id} </h2>
         <p className="text-lg">Total de la Orden: ${totalOrden}</p>
         {loading && <p>Cargando...</p>}
         {error && <p className="text-red-500">Error: {error}</p>}

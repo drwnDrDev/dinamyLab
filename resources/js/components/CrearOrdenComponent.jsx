@@ -113,11 +113,11 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
 
         console.log('Validando orden:', formOrden);
 
-        if (!validateForm(formOrden)) {
-            console.log('Errores de validación:', errors);
-            alert('Por favor complete todos los campos obligatorios');
-            return;
-        }
+        // if (!validateForm(formOrden)) {
+        //     console.log('Errores de validación:', errors);
+        //     alert('Por favor complete todos los campos obligatorios');
+        //     return;
+        // }
 
         setLoading(true);
         setError(null);

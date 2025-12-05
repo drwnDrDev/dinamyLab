@@ -58,7 +58,7 @@ class OrdenController extends Controller
 
 
         $usuario = Auth::user();
-        $sede = session('sede');
+        $sede = $request->session()->get('sede');
 
 
         $ordenCreada =  DB::transaction(function () use ( $usuario, $validated, $total) {
