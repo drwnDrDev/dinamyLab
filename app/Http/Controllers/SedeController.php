@@ -59,13 +59,18 @@ class SedeController extends Controller
      * Choose a Sede for the user.
      */
     public function elegirSede(Sede $sede)
-    {       
+    {
             if (!$sede) {
                 return redirect()->back()->with('error', 'Sede no encontrada.');
             }
 
             session(['sede' => $sede]);
-            return redirect()->route('inicio')->with('success', 'Sede seleccionada correctamente.');
+
+            // Redirigir a la ruta deseada después de seleccionar la sede
+            if (route('dashboard')) {
+                return redirect()->route('dashboard')->with('success', 'Sede seleccionada correctamente.');
+            }
+            return redirect()->back()->with('success', 'Sede seleccionada correctamente.');
     }
 
     /**
