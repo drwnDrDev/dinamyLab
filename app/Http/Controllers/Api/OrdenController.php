@@ -56,12 +56,11 @@ class OrdenController extends Controller
             return $examen['valor'] * $examen['cantidad'];
         });
 
-
         $usuario = Auth::user();
         $sede = $request->session()->get('sede');
 
 
-        $ordenCreada =  DB::transaction(function () use ( $usuario, $validated, $total) {
+        $ordenCreada =  DB::transaction(function () use ( $usuario, $validated, $total, $sede) {
             // Crear la orden médica
             $orden = Orden::create([
                 'sede_id' => $sede->id ?? 1,
