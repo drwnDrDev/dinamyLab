@@ -61,7 +61,7 @@ class OrdenController extends Controller
         }else {
             $orden_numero = $orden_numero + 1; // Incrementar para la nueva orden
         }
-        return view('ordenes.create', compact('examenes', 'orden_numero'));
+        return view('ordenes.create', compact('examenes', 'orden_numero', 'persona'));
     }
 
     /**
