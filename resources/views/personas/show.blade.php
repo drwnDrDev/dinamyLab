@@ -22,8 +22,8 @@
 
                     <x-primary-button id="editar-button">Editar</x-primary-button>
 
-                <a href="{{route('facturas.create',$persona)}}">
-                    <x-secondary-button>Facturar</x-secondary-button>
+                <a href="{{route('ordenes.create',$persona)}}">
+                    <x-secondary-button>Nueva Orden</x-secondary-button>
                 </a>
                 <a href="{{route('resultados.historia',$persona)}}">
                     <x-secondary-button>Resultados</x-secondary-button>

@@ -26,7 +26,7 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
         total: 0,
         fecha_orden: new Date().toISOString().split('T')[0] + ' ' + new Date().toTimeString().slice(0, 5), // Formato YYYY-MM-DD HH:mm
     };
-    const [persona, setPersona] = useState(null);
+    const [persona, setPersona] = useState(paciente.paciente || null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
