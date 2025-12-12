@@ -32,10 +32,8 @@ class OrdenController extends Controller
         }
         $ordenes = Orden::with(['paciente'])
             ->where('sede_id', $sede->id)
-            ->where('terminada', null) // Solo mostrar órdenes que no están terminadas
-            ->where('created_at', '>=', now()->subDays(3)) // los ultimos 3 dias
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(6);
 
         if ($ordenes->isEmpty()) {
             return redirect()->route('ordenes.create')->with('error', 'lista de ordenes vacias');

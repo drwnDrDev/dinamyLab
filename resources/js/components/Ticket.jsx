@@ -143,7 +143,7 @@ export default function Ticket({ ordenId }) {
                 </thead>
                 <tbody>
                     {procedimientos.map((procedimiento) => (
-                        <tr key={procedimiento.id} className="hover:bg-gray-100 cursor-pointer">
+                        <tr key={procedimiento.id} onClick={() => window.location.href = `/procedimientos/${procedimiento.id}`} className="hover:bg-gray-100 cursor-pointer">
                             <td className="py-2 px-4 border-b border-gray-300">{procedimiento.examen.nombre}</td>
                             <td className="py-2 px-4 border-b border-gray-300">{procedimiento.estado}</td>
                             <td className="py-2 px-4 border-b border-gray-300"
