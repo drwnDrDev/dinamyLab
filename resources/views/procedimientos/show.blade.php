@@ -4,13 +4,11 @@
     </x-slot>
 <x-slot name="header">
             <h2 class="text-xl font-semibold">{{$procedimiento->orden->paciente->nombreCompleto()}}</h2>
-          <p> Edad: {{ $procedimiento->orden->paciente->edad()}} </p>  <h2 class="text-xl font-semibold">{{$procedimiento->orden->paciente->tipo_documento}} {{$procedimiento->orden->paciente->numero_documento}}</h2>
-            
+          <p> Edad: {{ $procedimiento->orden->paciente->edad()}} </p>  <h2 class="text-xl font-semibold">{{$procedimiento->orden->paciente->tipo_documento->cod_rips}} {{$procedimiento->orden->paciente->numero_documento}}</h2>
+
     </x-slot>
     <x-canva>
         <div class="flex justify-around">
- 
-
             <h2>Numero de orden <span class="font-semibold">{{$procedimiento->orden->numero}}</span></h2>
         </div>
         <div>

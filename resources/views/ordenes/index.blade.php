@@ -69,11 +69,15 @@
                         </td>
 
                     </tr>
+
+
                     @endforeach
 
                 </tbody>
+
             </table>
 
         </div>
+        {{ $ordenes->links() }}
     </x-canva>
 </x-app-layout>
