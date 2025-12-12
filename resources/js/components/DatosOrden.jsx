@@ -4,10 +4,9 @@ import SelectField from "./SelectField";
 import { useTablasRef } from './hooks/useTablasRef';
 import { useCieCups } from './hooks/useCieCups';
 
-const DatosOrden = ({ formOrden, onUpdate }) => {
-    const { modalidades, finalidades, viasIngreso, tiposAfiliacion, servicios } = useTablasRef();
-    const { cups, cie10 } = useCieCups();
-
+const DatosOrden = ({ formOrden, onUpdate, error }) => {
+    const { modalidades, finalidades, viasIngreso, servicios } = useTablasRef();
+    const { cie10 } = useCieCups();
 
     return (
         <section>
@@ -20,7 +19,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     codigo={true}
                     options={modalidades}
                     onChange={onUpdate}
-
+                    error={error?.modalidad}
                 />
                 <SelectField
                     label="Servicio Habilitado"
@@ -29,6 +28,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     codigo={true}
                     options={servicios}
                     onChange={onUpdate}
+                    error={error?.cod_servicio}
                 />
                 <SelectField
                     label="CIE Principal"
@@ -37,6 +37,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     codigo={true}
                     options={cie10}
                     onChange={onUpdate}
+                    error={error?.cie_principal}
                 />
                 <SelectField
                     label="CIE Relacionado"
@@ -45,6 +46,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     codigo={true}
                     options={cie10}
                     onChange={onUpdate}
+                    error={error?.cie_relacionado}
                 />
                 <SelectField
                     label="Finalidad de Consulta"
@@ -53,6 +55,7 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     codigo={true}
                     options={finalidades}
                     onChange={onUpdate}
+                    error={error?.finalidad}
                 />
 
                 <SelectField
@@ -62,12 +65,12 @@ const DatosOrden = ({ formOrden, onUpdate }) => {
                     codigo={true}
                     options={viasIngreso}
                     onChange={onUpdate}
+                    error={error?.via_ingreso}
                 />
 
             </div>
         </section>
     );
-
 }
 export default DatosOrden;
 

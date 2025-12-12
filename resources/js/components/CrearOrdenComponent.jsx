@@ -208,6 +208,7 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
                     <DatosOrden
                         formOrden={formOrden}
                         onUpdate={handleTablasRefUpdate}
+                        error={errors}
                     />
                 </section>
             )}
