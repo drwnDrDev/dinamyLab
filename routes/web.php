@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/ordenes-medicas',[OrdenController::class,'index'])->name('ordenes');
-    Route::get('/ordenes-medicas/create',[OrdenController::class,'create'])->name('ordenes.create');
+    Route::get('/ordenes-medicas/create/{persona?}',[OrdenController::class,'create'])->name('ordenes.create');
     Route::post('/ordenes-medicas/store',[OrdenController::class,'store'])->name('ordenes.store');
     Route::get('/ordenes-medicas/{orden}/edit',[OrdenController::class,'edit'])->name('ordenes.edit');
     Route::put('/ordenes-medicas/{orden}',[OrdenController::class,'update'])->name('ordenes.update');

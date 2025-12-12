@@ -44,7 +44,7 @@ class OrdenController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Persona $persona = null)
     {
 
         $sede = ElegirEmpresa::elegirSede();
