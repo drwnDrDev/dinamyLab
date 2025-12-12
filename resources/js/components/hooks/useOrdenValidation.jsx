@@ -20,46 +20,24 @@ const validationRules = {
     validate: (examenes) => {
       if (examenes.length === 0) return false;
       
-      const examenesValidos = examenes.every(examen => {
-        const nombreValido = examen.nombre && examen.nombre.trim().length > 0;
-        const precioValido = examen.precio > 0 && examen.precio <= 5000;
-        return nombreValido && precioValido;
-      });
-      
-      const dentroDeLimite = examenes.length <= 15;
-      const totalValido = examenes.reduce((sum, exam) => sum + exam.precio, 0) <= 10000;
-      
-      return examenesValidos && dentroDeLimite && totalValido;
+      return true;
     },
-    message: "Mínimo 1 examen, precios $1-$5000, máx 15 exámenes, total ≤ $10,000"
+    message: "Debe seleccionar al menos un examen"
   },
   
   cod_servicio: {
     required: true,
-    validate: (value) => /^[A-Z]{3}[0-9]{3}$/.test(value) && 
-                         (value.startsWith('SER') || value.startsWith('LAB')),
-    message: "Formato: SER001 o LAB123"
+    message: "Debe seleccionar un servicio válido"
   },
 
   via_ingreso: {
     required: true,
-    validate: (value) => ['01', '02', '03', '04', '05'].includes(value),
     message: "Debe seleccionar una vía de ingreso válida"
   },
   
   cie_principal: {
     required: true,
-    validate: (value) => /^[A-Z][0-9]{2}(\.[0-9])?$/.test(value),
-    message: "Formato CIE-10 inválido (ej: A01, B20.9)"
-  },
-
-  cie_relacionado: {
-    required: false,
-    validate: (value) => {
-      if (!value) return true; // No es obligatorio
-      return /^[A-Z][0-9]{2}(\.[0-9])?$/.test(value);
-    },
-    message: "Formato CIE-10 inválido (ej: A01, B20.9)"
+    message: "El diagnóstico principal es obligatorio",
   },
 
   finalidad: {
