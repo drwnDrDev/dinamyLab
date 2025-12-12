@@ -1,19 +1,15 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-text leading-tight print:hidden">
-           {{ __('Medical order') }}
-        </h2>
-    </x-slot>
+
 <x-canva>
 
-    <section class="hidden print:flex print:flex-wrap print:justify-between print:w-full print:mt-[-20px]">
+    <section class="hidden print:flex print:flex-wrap print:justify-between print:w-full">
         <div class="flex-col justify-center items-center gap-2">
-            <div class="flex">
+            <div class="flex justify-center items-center">
                 <figure class="w-20 h-20 p-1">
-                    <img class="aspect-square object-cover w-full h-full"
+                    <img class="aspect-square object-cover w-full h-full rounded-md"
                     src="{{ asset('storage/logos/'.$orden->sede->logo) }}" alt="{{$orden->sede->nombre }}">
                 </figure>
-                <div class="flex flex-col justify-center  ml-[-1px]">
+                <div class="flex flex-col justify-center">
                     <h2 class="font-semibold text-2xl">{{$orden->sede->empresa->nombre_comercial}}</h2>
                     <p class="font-light text-sm">{{$orden->sede->nombre}}</p>
                     <p class="font-semibold text-xs">NIT: {{$orden->sede->empresa->nit}}</p>
@@ -22,7 +18,7 @@
             <div class="px-4">
 
             <p class="font-medium text-xs">{{$orden->sede->direccion->direccion}}-{{$orden->sede->direccion->municipio->municipio}}</p>
-               <p class="font-light text-sm"> Telefono:
+               <p class="font-light text-sm"> Telefonos:
                 @php
                     $telefonos = $orden->sede->telefonos->slice(0, 2);
                 @endphp
@@ -37,9 +33,12 @@
 
         </div>
 
-            <div class="flex flex-col  gap-x-4 gap-y-0">
+            <div class="flex flex-col justify-center items-center gap-2 p-1 ">
+            <div class="flex flex-col text-center">
                 <span class="font-semibold">Fecha de atención </span>
-                <h3 class="mb-2">{{$orden->created_at->format('d-m-Y')}}</h3>
+                <h3 class="mb-2 text-centrer">{{$orden->created_at->translatedFormat('d \de F Y')}}</h3>
+            </div>
+
                <h3><strong>Órden Nº: </strong>
                 {{$orden->numero}}</h3>
 
@@ -47,8 +46,8 @@
 
         </section>
 
-    <section class="w-full border border-borders rounded-md p-3">
-            <div class="w-full flex flex-wrap">
+    <section class="w-full flex border border-borders rounded-md p-3">
+            <div class="w-1/2 flex flex-col gap-2">
                 <div class="w-full flex gap-2">
                 <span class="font-bold ">Paciente: </span>
                 <h3 class="text-md p-0 mb-0 ">{{$orden->paciente->nombreCompleto()}}</h3>
@@ -58,7 +57,8 @@
                     <h3>{{$orden->paciente->tipo_documento->cod_rips}}{{$orden->paciente->numero_documento}}</h3>
                 </div>
             </div>
-            <div class="w-full flex flex-wrap gap-2 print:hidden">
+
+            <div class="w-1/4 flex flex-wrap gap-2 print:hidden">
                     <div class="flex gap-2">
                         <span class="font-bold ">Sexo: </span>
                         <h3>{{$orden->paciente->sexo}} </h3>
@@ -69,7 +69,7 @@
                     </div>
                 </div>
 
-                    <div class="flex gap-2">
+                    <div class="w-1/4 flex flex-col gap-2">
                         <span class="font-bold ">Teléfono: </span>
                         <h3>
                             @if($orden->paciente->telefonos->count() > 0)
@@ -79,12 +79,13 @@
                             @endif
                         </h3>
                     </div>
-                     <x-primary-button type="button" class="mt-4 flex print:hidden" onclick="window.print()">
-                              {{ __('Print ticket') }}
-                     </x-primary-button>
 
 
         </section>
+                    <x-primary-button type="button" class="mt-4 flex print:hidden" onclick="window.print()">
+                              {{ __('Print ticket') }}
+                     </x-primary-button>
+
 
     <section class="container mx-auto print:!block" >
 
