@@ -10,7 +10,7 @@ import { useOrderValidation } from './hooks/useOrdenValidation';
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 
 
-const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
+const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) => {
     const { axiosInstance, csrfLoaded, error: csrfError } = useAxiosAuth();
     const initialFormState = {
         numero_orden: '',
@@ -31,6 +31,8 @@ const CrearOrdenComponent = ({ dataDefoult = ordenDataDefault } = {}) => {
     const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
     const { validateField, validateForm, errors, clearError } = useOrderValidation();
+
+    console.log('datos recibidos de paciente:', paciente);
 
     useEffect(() => {
         if (!persona) {
