@@ -8,7 +8,7 @@ const SelectField = ({
   onChange,
   required = false,
   disabled = false,
-  error = null,
+  error,
   codigo = false,
 }) => {
   
@@ -21,7 +21,7 @@ const SelectField = ({
       <select
         id={name}
         name={name}
-        className={`text-sm h-9 w-full p-1 border-borders focus:border-primary focus:ring-primary rounded-md uppercase ${error ? 'is-invalid' : ''}`}
+        className={`text-sm h-9 w-full p-1 border-borders focus:border-primary focus:ring-primary rounded-md uppercase ${error ? 'border-red-500' : ''}`}
         value={value ?? ''}
         onChange={onChange}
         disabled={disabled}
@@ -33,7 +33,7 @@ const SelectField = ({
           </option>
         ))}
       </select>
-      {error && <div className="invalid-feedback">{error}</div>}
+      {error && <div className="text-red-500">{error}</div>}
     </div>
   );
 };
