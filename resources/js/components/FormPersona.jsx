@@ -157,11 +157,12 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
 
             const personaActualizada = resultado.data;
             setPersonaExistente(null);
+            if (setPersona){
             setPersona(personaActualizada);
+            };
 
             alert(`Persona ${esActualizacion ? 'actualizada' : 'creada'} exitosamente`);
-
-            if (!esActualizacion) {
+            
                 setFormData({
                     id: null,
                     perfil: '',
@@ -182,7 +183,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                     tipo_afiliacion: ''
                 });
                 setPersonaExistente(null);
-            }
+            
 
         } catch (err) {
             console.error('❌ Error completo:', err);
