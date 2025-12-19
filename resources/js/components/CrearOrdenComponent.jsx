@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FormPersona from './FormPersona';
 import DatosExamenes from './DatosExamenes';
+import CompletedCheck from './CompletedCheck';
 import DatosPersona from './DatosPersona';
 import DatosOrden from './DatosOrden';
 import useAxiosAuth from './hooks/useAxiosAuth';
@@ -28,6 +29,7 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
     };
     const [persona, setPersona] = useState(paciente.paciente || null);
     const [loading, setLoading] = useState(false);
+    const [completeMessage, setCompleteMessage] = useState(false);
     const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
     const { validateField, validateForm, errors, clearError } = useOrderValidation();
@@ -105,6 +107,12 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
         clearError(name);
     }
 
+    const handleComplete = () => {
+        setTimeout(() => {
+            setCompleteMessage(true);
+        }, 3000);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -135,6 +143,8 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
             }
 
             const response = await axiosInstance.post('/api/ordenes', formOrden);
+            
+            handleComplete();
 
             if (response?.data?.data?.id) {
                 window.location.href = `/ordenes-medicas/${response.data.data.id}/ver`;
@@ -153,6 +163,9 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
     }
 
     return (
+        <>  
+        {completeMessage && <CompletedCheck message={completeMessage} />}
+        
         <div className="crear-orden-wrapper relative">
             <div className="header max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
                 <h1 className="text-2xl font-bold text-titles mb-4">Crear Nueva Orden</h1>
@@ -234,6 +247,7 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
             </div>
 
         </div>
+        </>
     );
 };
 
