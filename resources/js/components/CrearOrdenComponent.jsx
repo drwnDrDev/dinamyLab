@@ -143,8 +143,8 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
             }
 
             const response = await axiosInstance.post('/api/ordenes', formOrden);
-            
-            handleComplete();
+
+            setCompleteMessage(true);
 
             if (response?.data?.data?.id) {
                 window.location.href = `/ordenes-medicas/${response.data.data.id}/ver`;
@@ -163,9 +163,9 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
     }
 
     return (
-        <>  
-        {completeMessage && <CompletedCheck message={completeMessage} />}
-        
+        <>
+        {completeMessage && <CompletedCheck />}
+
         <div className="crear-orden-wrapper relative">
             <div className="header max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
                 <h1 className="text-2xl font-bold text-titles mb-4">Crear Nueva Orden</h1>
