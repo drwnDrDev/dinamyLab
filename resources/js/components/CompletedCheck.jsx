@@ -1,6 +1,6 @@
 import React from "react";
 
-export const CompletedCheck = () => {
+const CompletedCheck = () => {
 
     return (
         <div className="fixed inset-0 flex justify-center items-center h-full z-50 bg-white bg-opacity-90">
@@ -10,7 +10,7 @@ export const CompletedCheck = () => {
                 </svg>
                 <p className="mt-2 text-lg font-medium text-gray-800">Completado</p>
             </div>
-        </div>        
+        </div>
     );
 }
 export default CompletedCheck;
