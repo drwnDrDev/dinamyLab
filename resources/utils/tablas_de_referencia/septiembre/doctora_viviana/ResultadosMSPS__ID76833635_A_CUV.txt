@@ -1,9 +1,0 @@
-{
-  "ResultState": true,
-  "ProcesoId": 76833635,
-  "NumFactura": "0920251",
-  "CodigoUnicoValidacion": "e65bf6b46cfee59f61ce1a263e7873662d76aa9232912309a5169c50ae2fb6bf767f5e5a19c724901fab2aa6db8c7e13",
-  "FechaRadicacion": "2025-10-08T19:00:33.9087562-05:00",
-  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\tablas_de_referencia\\septiembre\\doctora_viviana",
-  "ResultadosValidacion": []
-}

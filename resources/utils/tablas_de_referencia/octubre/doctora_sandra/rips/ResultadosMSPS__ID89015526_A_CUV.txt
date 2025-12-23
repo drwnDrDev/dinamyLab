@@ -1,8 +1,0 @@
-{
-  "ResultState": true,
-  "ProcesoId": 89015526,
-  "NumFactura": "102025",
-  "CodigoUnicoValidacion": "edccaa3881c6cf307edb1a39f7e39986f73befc287e40df54d4f95a33830a566f0166daf9182a6d40880e4bd8d3464a0",
-  "FechaRadicacion": "2025-11-04T18:40:52.762387",
-  "ResultadosValidacion": []
-}

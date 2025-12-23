@@ -1,9 +1,0 @@
-{
-  "ResultState": true,
-  "ProcesoId": 89041450,
-  "NumFactura": "1020251",
-  "CodigoUnicoValidacion": "da66d297c56b9448cd7269b7904939dd3e7171f6f7028cd538be5765d06869136b3864a5462a930432bb1c31cc1cc224",
-  "FechaRadicacion": "2025-11-04T20:14:57.9117415-05:00",
-  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\tablas_de_referencia\\octubre\\doctora_sandra\\rips\\rips_octubre",
-  "ResultadosValidacion": []
-}

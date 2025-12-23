@@ -1,9 +1,0 @@
-{
-  "ResultState": true,
-  "ProcesoId": 50142387,
-  "NumFactura": "6794",
-  "CodigoUnicoValidacion": "b0345bbfe95b0195a17215a412f193d7840e9e08b5d83b610da8304844f31175859a8d796a94273632449ea987dcc282",
-  "FechaRadicacion": "2025-08-12T21:05:37.2698167-05:00",
-  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\prueba\\12082025",
-  "ResultadosValidacion": []
-}
