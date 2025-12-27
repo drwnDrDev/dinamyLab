@@ -173,6 +173,16 @@ class OrdenController extends Controller
         return response()->json(['message' => 'Procedimiento agregado a la orden correctamente.']);
     }
 
+    public function max_numero(Request $request)
+    {
+        $sede = $request->session()->get('sede');
+        $maxNumero = Orden::where('sede_id', $sede->id ?? 1)->max('numero');
+        return response()->json([
+            'max_numero' => $maxNumero ?? 0,
+            'next_numero' => ($maxNumero ?? 0) + 1,
+            'sesion_sede'=> isset($sede),
+    ]);
+    }
     /**
      * Remove the specified resource from storage.
      */
