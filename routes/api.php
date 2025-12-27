@@ -91,6 +91,7 @@ Route::get('orden/{id}', [OrdenController::class, 'show']);
 Route::post('ordenes', [OrdenController::class, 'store']);
 Route::patch('/ordenes-medicas/{orden}',[OrdenController::class,'add'])->name('ordenes.add');
 Route::post('resultados/{procedimiento}',[ResultadosController::class,'store']);
+Route::get('ordenes/max-numero', [OrdenController::class, 'max_numero']);
 });
 
 Route::get('user', function (Request $request) {
