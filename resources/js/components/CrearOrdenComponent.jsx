@@ -33,7 +33,7 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
 
         fetchNextNumero();
     }, [axiosInstance]);
-    
+
 
     const initialFormState = {
         numero_orden: next_numero || '',
@@ -71,6 +71,16 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
             return newState;
         });
     }, [persona]);
+
+    useEffect(() => {
+        if (next_numero !== null) {
+            setFormOrden(prev => ({
+                ...prev,
+                numero_orden: next_numero
+            }));
+            console.log('✅ numero_orden actualizado en el formulario:', next_numero);
+        }
+    }, [next_numero]);
 
     useEffect(() => {
         if (dataDefoult && Object.keys(dataDefoult).length > 0) {
