@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import useAxiosAuth from './hooks/useAxiosAuth';
-import BuscarModelo from './BuscarModelo.jsx';
 
 
 export default function Ticket({ ordenId }) {
@@ -181,10 +180,7 @@ export default function Ticket({ ordenId }) {
                 </tbody>
             </table>
         )}
-        <div className="mt-4">
-            <button className="bg-blue-500 text-white px-4 py-2 rounded">Imprimir Ticket</button>
-        </div>
-        <BuscarModelo />
+        
 </div>
 );
 }
