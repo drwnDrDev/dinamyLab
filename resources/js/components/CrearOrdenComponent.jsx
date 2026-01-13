@@ -107,12 +107,6 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
         clearError(name);
     }
 
-    const handleComplete = () => {
-        setTimeout(() => {
-            setCompleteMessage(true);
-        }, 3000);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
