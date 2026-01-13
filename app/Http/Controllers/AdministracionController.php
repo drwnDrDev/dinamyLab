@@ -62,7 +62,7 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-    $filePath = base_path('resources/utils/tablas_de_referencia/noviembre/doctora_pilar/bitacora_noviembre.csv');
+    $filePath = base_path('resources/utils/tablas/diciembre/doctora_sandra/diciembre.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
@@ -102,11 +102,11 @@ $listaProcedimientos = array_map(function($line) {
         "numDocumentoIdentificacion" => $data[1],
         "fechaNacimiento" => $data[5],
         "sexo" => $data[6],
-        "fechaProcedimiento" =>implode(" ",[$data[15],$data[16]]),
+        "fechaProcedimiento" => $data[15],
         "factura" =>null,
         "CUP" => null,
-        "CIE10" => "Z017",
-
+        "CIE10" => $data[13],
+        "paisOrigen" => $data[2]=="VENEZUELA" ?"862":"170",
         "CupProcedimiento" => $data[12]
     );
 }, $recordsToInsert);
@@ -129,7 +129,7 @@ foreach ($listaProcedimientos as $procedimiento) {
             "codMunicipioResidencia" => "11001",
             "codZonaTerritorialResidencia" => "02",
             "incapacidad" => "NO",
-            "codPaisOrigen" => "170",
+            "codPaisOrigen" => $procedimiento['paisOrigen'],
             "consecutivo" => count($usuariosMap) + 1,
             "servicios" => array(
                // "consultas" => array(),
@@ -165,18 +165,18 @@ foreach ($listaProcedimientos as $procedimiento) {
     // );
 
     $usuariosMap[$key]['servicios']['procedimientos'][] = array(
-                    "codPrestador" => "110013629101",
+                    "codPrestador" => "110010219801",
                     "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'],
                     "idMIPRES" => "",
                     "numAutorizacion" => $procedimiento['factura'],
                     "codProcedimiento" => $procedimiento['CupProcedimiento'],
                     "viaIngresoServicioSalud" => "01",//demanda expontanea
                     "modalidadGrupoServicioTecSal" => "01", //Intramural
-                    "grupoServicios" => "02",//01 consulta externa 02 APOYO DIAGNOSTICO Y COMPLEMENTACION TERAPEUTICA
-                    "codServicio" => 706,
+                    "grupoServicios" => "01",//01 consulta externa 02 APOYO DIAGNOSTICO Y COMPLEMENTACION TERAPEUTICA
+                    "codServicio" => 334,//odontologia general
                     "finalidadTecnologiaSalud" => "16",
                     "tipoDocumentoIdentificacion" => "CC",
-                    "numDocumentoIdentificacion" => "51712439",
+                    "numDocumentoIdentificacion" => "63362234",
                     "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
                     "codDiagnosticoRelacionado" => null,
                     "codComplicacion" => null,
@@ -196,10 +196,10 @@ foreach ($listaProcedimientos as $procedimiento) {
 //descargar el archivo JSON
 if (!empty($usuarios)) {
     $json = json_encode(array(
-           "numDocumentoIdObligado"=> "51712439",
+           "numDocumentoIdObligado"=> "63362234",
             "numFactura"=> null,
             "tipoNota"=> "RS",
-            "numNota"=> "112025",
+            "numNota"=> "122025",
         "usuarios" => $usuarios
     ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     $fileName = 'usuarios.json';
@@ -228,7 +228,7 @@ $usuarios = array_map(function($procedimiento) {
         "servicios" => array(
             "procedimientos" => array(
                 array(
-                    "codPrestador" => "110010822701",
+                    "codPrestador" => "110010219801",
                     "fechaInicioAtencion" => $procedimiento['fecha_procedimiento'],
                     "idMIPRES" => null,
                     "numAutorizacion" => null,
@@ -239,7 +239,7 @@ $usuarios = array_map(function($procedimiento) {
                     "codServicio" => 328,
                     "finalidadTecnologiaSalud" => "15",
                     "tipoDocumentoIdentificacion" => "CC",
-                    "numDocumentoIdentificacion" => "51934571",
+                    "numDocumentoIdentificacion" => "63362234",
                     "codDiagnosticoPrincipal" => "Z017",
                     "codDiagnosticoRelacionado" => null,
                     "codComplicacion" => null,
