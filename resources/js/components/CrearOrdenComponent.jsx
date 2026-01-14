@@ -13,8 +13,30 @@ import { useOrderValidation } from './hooks/useOrdenValidation';
 
 const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) => {
     const { axiosInstance, csrfLoaded, error: csrfError } = useAxiosAuth();
+    const [next_numero, setNextNumero] = useState(null);
+
+    // Obtener el siguiente número de orden al cargar el componente
+    useEffect(() => {
+        const fetchNextNumero = async () => {
+            try {
+                const response = await axiosInstance.get('/api/ordenes/max-numero');
+                if (response.status === 200) {
+                    setNextNumero(response.data.next_numero);
+                    console.log('✅ Siguiente número de orden obtenido:', response.data.next_numero);
+                } else {
+                    console.error('❌ Error al obtener el siguiente número de orden, estado:', response.status);
+                }
+            } catch (error) {
+                console.error('❌ Error al obtener el siguiente número de orden:', error);
+            }
+        };
+
+        fetchNextNumero();
+    }, [axiosInstance]);
+
+
     const initialFormState = {
-        numero_orden: '',
+        numero_orden: next_numero || '',
         paciente_id: null,
         examenes: [],
         cod_servicio: null,
@@ -49,6 +71,16 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
             return newState;
         });
     }, [persona]);
+
+    useEffect(() => {
+        if (next_numero !== null) {
+            setFormOrden(prev => ({
+                ...prev,
+                numero_orden: next_numero
+            }));
+            console.log('✅ numero_orden actualizado en el formulario:', next_numero);
+        }
+    }, [next_numero]);
 
     useEffect(() => {
         if (dataDefoult && Object.keys(dataDefoult).length > 0) {
