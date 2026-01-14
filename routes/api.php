@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CodigoDiagnosticoController;
 use App\Http\Controllers\Api\CupsController;
 use App\Http\Controllers\Api\PersonaController;
+use App\Http\Controllers\Api\ListaPersonasController;
+use App\Http\Controllers\Api\PreRegistroCitaController;
 use App\Http\Controllers\Api\MunicipioController;
 use App\Http\Controllers\Api\FrontendDataController;
 use App\Http\Controllers\Api\ExamenesController;
@@ -15,6 +17,13 @@ use App\Http\Controllers\Api\ResultadosController;
 
 
 Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
+
+// ============================================
+// PRE-REGISTRO DE CITAS (PÚBLICO - Sin Auth)
+// ============================================
+Route::post('citas/pre-registrar', [PreRegistroCitaController::class, 'preRegistrar']);
+Route::post('citas/pre-registrar-lista', [PreRegistroCitaController::class, 'preRegistrarLista']);
+Route::get('citas/consultar/{codigo}', [PreRegistroCitaController::class, 'consultar']);
 Route::middleware('auth:sanctum', 'api')->group(function () {
     Route::get('cups', [CupsController::class, 'index']);
     Route::get('cups/{codigo}', [CupsController::class, 'show']);
@@ -66,6 +75,7 @@ Route::get('personas/{id}', [PersonaController::class, 'show']);
 Route::post('personas', [PersonaController::class, 'store']);
 Route::put('personas/{id}', [PersonaController::class, 'update']);
 Route::get('personas/buscar/{numero_documento}', [\App\Http\Controllers\Api\PersonaController::class, 'buscar']);
+Route::post('personas/parsear-lista', [ListaPersonasController::class, 'parsearLista']);
 
 Route::get('examenes', [ExamenesController::class, 'index']);
 Route::get('examenes/{id}', [ExamenesController::class, 'show']);
@@ -92,6 +102,14 @@ Route::post('ordenes', [OrdenController::class, 'store']);
 Route::patch('/ordenes-medicas/{orden}',[OrdenController::class,'add'])->name('ordenes.add');
 Route::post('resultados/{procedimiento}',[ResultadosController::class,'store']);
 Route::get('ordenes/max-numero', [OrdenController::class, 'max_numero']);
+
+// ============================================
+// RECEPCIÓN - GESTIÓN DE PRE-REGISTROS (Con Auth)
+// ============================================
+Route::get('recepcion/pre-registros/pendientes', [PreRegistroCitaController::class, 'listarPendientes']);
+Route::get('recepcion/pre-registros/buscar', [PreRegistroCitaController::class, 'buscarEnRecepcion']);
+Route::put('recepcion/pre-registros/{id}/confirmar', [PreRegistroCitaController::class, 'confirmarYCompletar']);
+Route::put('recepcion/pre-registros/{id}/cancelar', [PreRegistroCitaController::class, 'cancelar']);
 });
 
 Route::get('user', function (Request $request) {

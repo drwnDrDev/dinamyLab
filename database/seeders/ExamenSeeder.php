@@ -132,9 +132,222 @@ class ExamenSeeder extends Seeder
 
         };
 
+        // ========================================
+        // EXÁMENES CONSOLIDADOS DE SEEDERS INDIVIDUALES
+        // ========================================
 
+        // 1. Hemograma Completo
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Cuadro Hemático'],
+            [
+                'nombre' => 'Cuadro Hemático',
+                'cup' => '902207',
+                'valor' => '18000.00',
+                'descripcion' => 'Este examen evalúa los componentes de la sangre, incluyendo glóbulos rojos, glóbulos blancos y plaquetas.',
+                'nombre_alternativo' => 'Hemograma',
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"hematocrito","resultado":{"tipo":"number","nombre":"hto"},"unidades":"%","referencia":{"adultos":{"salida":"42-52","minimo":42,"maximo":52},"menores":{"salida":"35-44","minimo":35,"maximo":44}}},
+            {"parametro":"hemoglobina","resultado":{"tipo":"number","nombre":"hb"},"unidades":"g%","referencia":{"adultos":{"salida":"13.5-16.5","minimo":13.5,"maximo":16.5},"menores":{"salida":"11.0-13.5","minimo":11,"maximo":13.5}}},
+            {"parametro":"recuento de leucocitos","resultado":{"tipo":"number","nombre":"leu"},"unidades":"leu/mm³","referencia":{"adultos":{"salida":"5000-10000","minimo":5000,"maximo":10000},"menores":{"salida":"7000-13000","minimo":7000,"maximo":13000}}},
+            {"grupo":"recuento diferencial","parametro":"neutrofilos","resultado":{"tipo":"number","nombre":"neutrofilos"},"unidades":"%","referencia":{"adultos":{"salida":"52-67","minimo":52,"maximo":67},"menores":{"salida":"35-60","minimo":35,"maximo":60}}},
+            {"grupo":"recuento diferencial","parametro":"linfocitos","resultado":{"tipo":"number","nombre":"linfocitos"},"unidades":"%","referencia":{"adultos":{"salida":"27-42","minimo":27,"maximo":42},"menores":{"salida":"25-50","minimo":25,"maximo":50}}},
+            {"grupo":"recuento diferencial","parametro":"eosinofilos","resultado":{"tipo":"number","nombre":"eosinofilos"},"unidades":"%","referencia":{"adultos":{"salida":"0-3","maximo":3}}},
+            {"grupo":"recuento diferencial","parametro":"monocitos","resultado":{"tipo":"number","nombre":"monocitos"},"unidades":"%","referencia":{"adultos":{"salida":"3-7","minimo":3,"maximo":7}}},
+            {"grupo":"recuento diferencial","parametro":"celulas inmaduras","resultado":{"tipo":"number","nombre":"inmaduras"},"unidades":"%"},
+            {"parametro":"recuento de plaquetas","resultado":{"tipo":"number","nombre":"rto_plaquetas"},"unidades":"plaq/mm³","referencia":{"adultos":{"salida":"150000-450000","minimo":150000,"maximo":450000}}},
+            {"parametro":"vsg","resultado":{"tipo":"number","nombre":"vsg"},"unidades":"mm/h","referencia":{"adultos":{"salida":"0-22","minimo":0,"maximo":22}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion","items":["muestra contaminda, se solicita nueva muestra"]}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
 
-// Aquí puedes agregar más exámenes si es necesario
+        // 2. Frotis de secreción uretral
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Frotis de secreción uretral'],
+            [
+                'nombre' => 'Frotis de secreción uretral',
+                'cup' => '901107',
+                'valor' => '18000.00',
+                'descripcion' => 'técnica de tinción bacteriana que diferencia las bacterias en dos grupos principales: grampositivas y gramnegativas, según la estructura de sus paredes celulares',
+                'nombre_alternativo' => 'Coloración de Gram',
+                'sexo_aplicable' => 'M',
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Coloración de gram","resultado":{"tipo":"datalist","nombre":"gram_a","items":["cocos Gram positivos aislados escasos","negativo para diplococos gram Negativos intra y extra celulares"]}},
+            {"parametro":"reacción leucocitaria","resultado":{"tipo":"list","nombre":"r_leuc","items":["escasa","moderada","aumentada"]}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+        // 3. Uroanalisis
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Uroanalisis'],
+            [
+                'nombre' => 'Uroanalisis',
+                'cup' => '907106',
+                'valor' => '18000.00',
+                'descripcion' => 'Ayuda a identificar infecciones del tracto urinario, enfermedades renales, diabetes, y otras condiciones metabólicas.',
+                'nombre_alternativo' => 'Parcial de orina',
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"grupo":"examen fisico-quimico","parametro":"color","resultado":{"tipo":"list","nombre":"color","items":["hidrico","amarillo","ambar","amarillo intenso","rojo"]}},
+            {"grupo":"examen fisico-quimico","parametro":"aspecto","resultado":{"tipo":"list","nombre":"aspecto","items":["lig turbio","turbio","limpido"]}},
+            {"grupo":"examen fisico-quimico","parametro":"densidad","resultado":{"tipo":"number","nombre":"densidad"},"unidades":"g/dL"},
+            {"grupo":"examen fisico-quimico","parametro":"pH","resultado":{"tipo":"number","nombre":"ph"}},
+            {"grupo":"examen fisico-quimico","parametro":"glucosa","resultado":{"tipo":"text","default":"negativo","nombre":"glucosa"},"unidades":"mg/dL"},
+            {"grupo":"examen fisico-quimico","parametro":"cetonas","resultado":{"tipo":"text","default":"negativo","nombre":"cetonas"},"unidades":"mg/dL"},
+            {"grupo":"examen fisico-quimico","parametro":"leucocito esterasa","resultado":{"tipo":"select","items":["positivo","negativo"],"nombre":"leucocito"}},
+            {"grupo":"examen fisico-quimico","parametro":"proteinas","resultado":{"tipo":"text","default":"negativo","nombre":"proteinas"},"unidades":"mg/dL"},
+            {"grupo":"examen fisico-quimico","parametro":"pigmentos biliares","resultado":{"tipo":"text","default":"negativo","nombre":"pigmentos"},"unidades":"mg/dL"},
+            {"grupo":"examen fisico-quimico","parametro":"hemoglobina","resultado":{"tipo":"text","default":"negativo","nombre":"hemoglobina"}},
+            {"grupo":"examen fisico-quimico","parametro":"nitritos","resultado":{"tipo":"select","items":["positivo","negativo"],"nombre":"nitritos"}},
+            {"grupo":"examen fisico-quimico","parametro":"urobilinogeno","resultado":{"tipo":"text","default":"normal","nombre":"urobilinogeno"},"unidades":"mg/dL"},
+            {"grupo":"examen microscopico","parametro":"cel epiteliales","resultado":{"tipo":"text","nombre":"epiteliales"},"unidades":"x campo"},
+            {"grupo":"examen microscopico","parametro":"leucocitos","resultado":{"tipo":"text","nombre":"leucocitos"},"unidades":"x campo"},
+            {"grupo":"examen microscopico","parametro":"hematies","resultado":{"tipo":"text","nombre":"hematies"},"unidades":"x campo"},
+            {"grupo":"examen microscopico","parametro":"bacterias","resultado":{"tipo":"text","nombre":"bacterias"}},
+            {"grupo":"examen microscopico","parametro":"moco","resultado":{"tipo":"text","nombre":"moco"}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+        // 4. Glicemia
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Glicemia'],
+            [
+                'nombre' => 'Glicemia',
+                'cup' => '903841',
+                'valor' => '18000.00',
+                'descripcion' => 'concentración de glucosa libre en la sangre, ​​ suero o plasma sanguíneo',
+                'nombre_alternativo' => 'glucosa en la sangre',
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"glicemia","subtitulo":"Método enzimático","resultado":{"tipo":"number","nombre":"glicemia"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-100","minimo":70,"maximo":100}}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+        // 5. Triglicéridos
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Triglicéridos'],
+            [
+                'nombre' => 'Triglicéridos',
+                'cup' => '903868',
+                'valor' => '18000.00',
+                'descripcion' => 'cantidad de triglicéridos(son un tipo de grasa) en la sangre',
+                'nombre_alternativo' => 'lípidos',
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Triglicéridos","subtitulo":"Método enzimático","resultado":{"tipo":"number","nombre":"trigliceridos"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"Hasta 150","maximo":150}}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+        // 6. Colesterol Total
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Colesterol Total'],
+            [
+                'nombre' => 'Colesterol Total',
+                'cup' => '903818',
+                'valor' => '18000.00',
+                'descripcion' => 'Cantidad total de colesterol en la sangre. Incluye ambos tipos: El colesterol de lipoproteína de baja densidad y el colesterol de lipoproteína de alta densidad ,suero o plasma sanguíneo',
+                'nombre_alternativo' => 'colesterol en la sangre',
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Colesterol total","subtitulo":"Método enzimático","resultado":{"tipo":"number","nombre":"col_total"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"Hasta 200","maximo":200}}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+        // 7. Colesterol HDL
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Colesterol HDL'],
+            [
+                'nombre' => 'Colesterol HDL',
+                'cup' => '903815',
+                'valor' => '18000.00',
+                'descripcion' => 'se le llama colesterol "bueno" porque transporta el colesterol de otras partes de su cuerpo a su hígado. Su hígado luego elimina el colesterol de su cuerpo,El HDL desempeña un papel crucial en la prevención de la aterosclerosis, una enfermedad que estrecha y endurece las arterias, aumentando el riesgo de ataques cardíacos y accidentes cerebrovasculares',
+                'nombre_alternativo' => 'lipoproteínas de alta densidad',
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Colesterol HDL","subtitulo":"Método enzimático","resultado":{"tipo":"number","nombre":"col_hdl"},"unidades":"mg/dL","referencia":{"hombres":{"salida":"Optimo mayor a 55","minimo":55},"mujeres":{"salida":"Optimo mayor a 65","minimo":65}}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+        // 8. Colesterol LDL
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Colesterol LDL'],
+            [
+                'nombre' => 'Colesterol LDL',
+                'cup' => '903816',
+                'valor' => '18000.00',
+                'descripcion' => 'se le llama colesterol "malo" porque un nivel alto de LDL lleva a una acumulación de colesterol en las arterias',
+                'nombre_alternativo' => 'lipoproteínas de baja densidad',
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Colesterol LDL","subtitulo":"Método enzimático","resultado":{"tipo":"number","nombre":"col_ldl"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"Hasta 100","minimo":0,"maximo":100}}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+        // 9. Ácido Úrico
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Ácido Úrico'],
+            [
+                'nombre' => 'Ácido Úrico',
+                'cup' => '903801',
+                'valor' => '18000.00',
+                'descripcion' => 'mide la cantidad de ácido úrico en una muestra de sangre u orina. El ácido úrico es un producto de desecho que se forma cuando el cuerpo descompone purinas, que son sustancias que se encuentran en ciertos alimentos y bebidas. Un nivel elevado de ácido úrico puede indicar problemas de salud como gota o enfermedad renal.',
+                'nombre_alternativo' => null,
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Ácido úrico","resultado":{"nombre":"acido_urico","tipo":"number"},"unidades":"mg/dL","referencia":{"hombres":{"salida":"2.5 - 7.0","minimo":2.5,"maximo":7.0},"mujeres":{"salida":"1.5 - 6.0","minimo":1.5,"maximo":6.0}}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+        // ========================================
+        // EXÁMENES ADICIONALES (Ya existentes)
+        // ========================================
         $examens = array(
 //   array('parametros' => '[{"parametro": "Grupo sanguíneo", "resultado": {"tipo": "select", "nombre": "gs", "items": ["A", "B", "AB", "O"]}}, {"parametro": "RH", "resultado": {"tipo": "select", "nombre": "rh", "items": ["positivo", "negativo"]}}]','nombre_examen' => 'Hemoclasificación','nombre_alternativo' => 'RH','descripcion' => 'permite determinar los grupos sanguíneos en el sistema ABO y el factor RH','CUP' => '911017','valor' => '10000.00'),
 //   array('parametros' => '[{"parametro": "resultado", "resultado": {"tipo": "select", "nombre": "resultado", "items": ["positivo", "negativo"]}}, {"parametro": "FUR", "resultado": {"tipo": "date", "nombre": "fur"}}]','nombre_examen' => 'Prueba de embarazo','nombre_alternativo' => 'Test de embarazo en sangre o en orina','descripcion' => 'prueba de sangre cuantitativa mide la cantidad exacta de GCH en la sangre, y una prueba de sangre cualitativa de GCH le da un simple sí o no respuesta a si usted está embarazada o no','CUP' => '904508','valor' => '16000.00'),
