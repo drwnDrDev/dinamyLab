@@ -40,7 +40,7 @@
 
                     @endisset
 
-                {{ $slot }}
+                {{ $slot ?? null }}
             </main>
     </body>
 </html>
