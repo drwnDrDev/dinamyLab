@@ -8,8 +8,28 @@ import TestComponent from './components/TestComponent';
 import '../css/app.css';
 import DropdownComponent from './components/DropdownComponent';
 import Typewriter from './components/guest/Typewriter';
+import RegistroCitaAnonimo from './components/citas/RegistroCitaAnonimo';
 
 // Renderizado condicional basado en la presencia de elementos en el DOM
+
+// Componente de Registro de Citas
+if (document.getElementById('registro-cita-root')) {
+    const element = document.getElementById('registro-cita-root');
+    const sedes = JSON.parse(element.getAttribute('data-sedes') || '[]');
+    const modalidades = JSON.parse(element.getAttribute('data-modalidades') || '[]');
+    const csrfToken = element.getAttribute('data-csrf');
+    const actionUrl = element.getAttribute('data-action');
+
+    const root = createRoot(element);
+    root.render(
+        <RegistroCitaAnonimo
+            sedes={sedes}
+            modalidades={modalidades}
+            csrfToken={csrfToken}
+            actionUrl={actionUrl}
+        />
+    );
+}
 
 
 

@@ -1,0 +1,78 @@
+<?php
+
+return [
+    'components' => [
+        'form' => [
+            'button' => 'Registrar Cita',
+            'label' => 'Formulario de Registro de Cita',
+        ],
+        'modal' => [
+            'close' => 'Cerrar',
+        ],
+    ],
+    'citas' => [
+        'registro' => [
+            'titulo' => 'Registrar Nueva Cita',
+            'descripcion' => 'Complete el formulario para agendar su cita. No requiere autenticación.',
+            'seccion_personal' => 'Datos Personales',
+            'seccion_cita' => 'Información de la Cita',
+            'nombre' => 'Nombres Completos',
+            'tipo_documento' => 'Tipo de Documento',
+            'numero_documento' => 'Número de Documento',
+            'telefono' => 'Teléfono de Contacto',
+            'email' => 'Correo Electrónico',
+            'fecha_deseada' => 'Fecha Deseada',
+            'hora_deseada' => 'Hora Deseada',
+            'sede' => 'Sede (Opcional)',
+            'modalidad' => 'Modalidad de Atención (Opcional)',
+            'motivo' => 'Motivo de la Cita',
+            'observaciones' => 'Observaciones Adicionales',
+            'exitoso' => 'Cita registrada correctamente',
+            'error' => 'Error al registrar la cita',
+        ],
+        'listado' => [
+            'titulo' => 'Pre-Registros de Citas',
+            'filtros' => 'Filtros',
+            'estado' => 'Estado',
+            'fecha_desde' => 'Desde',
+            'fecha_hasta' => 'Hasta',
+            'buscar' => 'Buscar',
+            'limpiar' => 'Limpiar Filtros',
+            'columnas' => [
+                'nombre' => 'Nombre',
+                'documento' => 'Documento',
+                'email' => 'Email',
+                'telefono' => 'Teléfono',
+                'fecha_deseada' => 'Fecha Deseada',
+                'estado' => 'Estado',
+                'acciones' => 'Acciones',
+            ],
+            'ver_detalles' => 'Ver Detalles',
+            'editar' => 'Editar',
+            'cancelar' => 'Cancelar',
+        ],
+        'detalle' => [
+            'titulo' => 'Detalles Pre-Registro',
+            'info_personal' => 'Información Personal',
+            'info_cita' => 'Información de la Cita',
+            'info_sistema' => 'Información del Sistema',
+            'actualizar_estado' => 'Actualizar Estado',
+            'confirmado' => 'Confirmada',
+            'pendiente' => 'Pendiente',
+            'procesada' => 'Procesada',
+            'cancelada' => 'Cancelada',
+        ],
+        'confirmacion' => [
+            'titulo' => 'Confirmar Cita',
+            'codigo_confirmacion' => 'Código de Confirmación',
+            'confirmar' => 'Confirmar Cita',
+            'datos_registrados' => 'Datos Registrados',
+        ],
+        'exito' => [
+            'titulo' => '¡Cita Confirmada!',
+            'mensaje' => 'Tu cita ha sido registrada y confirmada exitosamente',
+            'datos_confirmacion' => 'Los detalles de tu cita han sido enviados a tu correo electrónico',
+            'volver_inicio' => 'Volver al Inicio',
+        ],
+    ],
+];
