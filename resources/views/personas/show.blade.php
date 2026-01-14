@@ -29,7 +29,6 @@
                     <x-secondary-button>Resultados</x-secondary-button>
                 </a>
             </div>
-
         </div>
 
         <div class="flex border-b border-borders">
