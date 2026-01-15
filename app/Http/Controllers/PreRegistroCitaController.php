@@ -14,8 +14,8 @@ class PreRegistroCitaController extends Controller
      */
     public function create()
     {
-        $sedes = Sede::where('activa', true)->get(['id', 'nombre', 'ciudad']);
-        $modalidades = ModalidadAtencion::where('activo', true)->get(['id', 'nombre']);
+        $sedes = Sede::all(['id', 'nombre']);
+        $modalidades = ModalidadAtencion::all(['codigo', 'nombre']);
 
         return view('citas.registro-anonimo', [
             'sedes' => $sedes,

@@ -1,6 +1,9 @@
-@extends('layouts.app')
+<x-app-layout>
 
-@section('content')
+<x-slot:title>
+    Detalle de Cita
+</x-slot:title>
+
 <div id="detalle-cita-root"
      data-pre-registro="{{ json_encode($preRegistro) }}"
      data-csrf="{{ csrf_token() }}"
@@ -8,4 +11,6 @@
      data-url-cancelar="{{ route('citas.cancelar', $preRegistro->id) }}"
      data-url-listado="{{ route('citas.index') }}">
 </div>
-@endsection
+
+
+</x-app-layout>
