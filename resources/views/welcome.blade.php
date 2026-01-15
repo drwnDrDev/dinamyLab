@@ -21,17 +21,24 @@
     </head>
     <body class="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-background via-blue-50 to-cyan-100 p-4 dark:from-slate-900 dark:via-slate-900 dark:to-black">
 
-        <div class="w-full max-w-md">
-                <div class="mb-8 flex flex-col items-center text-center">
+        <div class="mx-auto flex flex-col w-full md:w-1/3 ">
+            <div class="mb-8 flex flex-col w-full items-center text-center">
                     <div class="mb-4 flex items-center justify-center gap-3">
                         <x-application-logo class="w-10 h-10" />
                         <h1 class="w-full  font-headline text-5xl font-bold tracking-tighter text-primary">LissApp</h1>
-
                     </div>
                      <p class="mt-2 max-w-md h-16 leading-normal">
                             <span id="typewriter" text="{{__('Your trusted partner in clinical laboratory management')}}" class="text-lg text-slate-500 font-semibold"></span>
                     </p>
-                </div>
+            </div>
+            <div>
+                <h2>Agendar una cita</h2>
+                <a href="{{route('citas.create')}}" class="mt-8 bg-blue-600 text-white p-2 border-spacing-2 border-blue-950 rounded-md">{{__('New date')}}</a>
+             </div>
+        </div>
+
+        <div class="w-full max-w-md md:w-1/2">
+
                 <div class="rounded-lg border bg-white text-card-foreground shadow-2xl">
                     <div class="flex flex-col space-y-1.5 p-6 text-center">
                         <h1 class="font-medium text-2xl">{{__("Let's get started")}}</h1>
@@ -86,8 +93,53 @@
                         </div>
 
                 </div>
-                <p class="mt-6 px-8 text-center text-sm text-slate-500">By logging in, you agree to our<!-- --> <a href="#" class="underline underline-offset-4 transition-colors hover:text-primary">Terms of Service</a>.</p>
+                <p class="mt-6 px-8 text-center text-sm text-slate-500">
+                    {{__('By logging in, you agree to our')}}
+                    <button onclick="document.getElementById('termsModal').showModal()" class="ml-1 underline underline-offset-4 transition-colors hover:text-primary">{{__('Terms of Service')}}</button>.
+                    {{__('and')}}
+                    <button onclick="document.getElementById('privacyModal').showModal()" class="ml-1 underline underline-offset-4 transition-colors hover:text-primary">{{__('Privacy Policy')}}</button>.
+                </p>
 
+                <!-- Terms of Service Modal -->
+                <dialog id="termsModal" class="rounded-lg backdrop:bg-black/50">
+                    <div class="w-full max-w-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-medium">{{__('Terms of Service')}}</h2>
+                            <button onclick="document.getElementById('termsModal').close()" class="rounded-sm opacity-70 hover:opacity-100">✕</button>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto text-sm text-slate-700 space-y-4 mb-6">
+                            <p>{{__('Términos y Condiciones de Uso')}}</p>
+                            <p>{{__('Al acceder y utilizar esta aplicación, usted acepta cumplir con estos términos y condiciones. Si no está de acuerdo con alguna parte de estos términos, no debe utilizar la aplicación.')}}</p>
+                            <p>{{__('1. Uso de la Plataforma: Esta aplicación está diseñada para la gestión de citas clínicas. El usuario se compromete a utilizar la plataforma únicamente para fines legales y de acuerdo con estos términos.')}}</p>
+                            <p>{{__('2. Responsabilidad del Usuario: El usuario es responsable de mantener la confidencialidad de sus credenciales de acceso y de todas las actividades que ocurran bajo su cuenta.')}}</p>
+                            <p>{{__('3. Limitación de Responsabilidad: No seremos responsables por daños directos, indirectos o consecuentes derivados del uso de esta aplicación.')}}</p>
+                        </div>
+                        <div class="flex justify-end gap-3">
+                            <button onclick="document.getElementById('termsModal').close()" class="px-4 py-2 rounded-md border border-slate-300 hover:bg-slate-100">{{__('Close')}}</button>
+                        </div>
+                    </div>
+                </dialog>
+
+                <!-- Privacy Policy Modal -->
+                <dialog id="privacyModal" class="rounded-lg backdrop:bg-black/50">
+                    <div class="w-full max-w-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-medium">{{__('Privacy Policy')}}</h2>
+                            <button onclick="document.getElementById('privacyModal').close()" class="rounded-sm opacity-70 hover:opacity-100">✕</button>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto text-sm text-slate-700 space-y-4 mb-6">
+                            <p>{{__('Política de Privacidad')}}</p>
+                            <p>{{__('Estamos comprometidos con la protección de su privacidad. Esta política describe cómo recopilamos, utilizamos y protegemos su información personal.')}}</p>
+                            <p>{{__('1. Recopilación de Información: Recopilamos información que usted proporciona directamente, como nombre, email y datos de contacto necesarios para la gestión de citas.')}}</p>
+                            <p>{{__('2. Uso de Información: Utilizamos su información para proporcionar, mantener y mejorar nuestros servicios, y para comunicarnos con usted.')}}</p>
+                            <p>{{__('3. Protección de Datos: Implementamos medidas de seguridad técnicas y administrativas para proteger su información personal contra acceso no autorizado.')}}</p>
+                            <p>{{__('4. Derechos del Usuario: Usted tiene derecho a acceder, corregir o eliminar su información personal contactándonos directamente.')}}</p>
+                        </div>
+                        <div class="flex justify-end gap-3">
+                            <button onclick="document.getElementById('privacyModal').close()" class="px-4 py-2 rounded-md border border-slate-300 hover:bg-slate-100">{{__('Close')}}</button>
+                        </div>
+                    </div>
+                </dialog>
 
         </div>
 
