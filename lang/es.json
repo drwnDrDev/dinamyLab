@@ -17,6 +17,7 @@
     "Agree": "Aceptar",
     "Already Reported": "Ya Reportado",
     "Already registered?": "¿Ya se registró?",
+    "and": "y",
     "Are you sure you want to delete your account?": "¿Está seguro que desea eliminar su cuenta?",
     "Archive": "Archivar",
     "Assign": "Asignar",
@@ -185,6 +186,8 @@
     "Preview": "Previsualizar",
     "Price": "Precio",
     "Print": "Imprimir",
+    "Privacy Policy": "Política de privacidad",
+    "Profile Password": "Contraseña de perfil",
     "Processing": "Procesando",
     "Procedure": "Procedimiento",
     "Procedures": "Procedimientos",
@@ -291,5 +294,8 @@
     "results": "resultados",
     "to": "al",
     "Your trusted partner in clinical laboratory management": "Su socio de confianza en la gestión de laboratorios clínicos",
-    "Enter your credentials to access your account":"Para acceder ingresa tus credenciales"
+    "Enter your credentials to access your account":"Para acceder ingresa tus credenciales",
+    "By logging in, you agree to our": "Al iniciar sesión, usted acepta nuestros",
+    "Terms of Service": "Términos de servicio",
+    "New date":"nueva cita"
 }
