@@ -19,25 +19,32 @@
             </style>
         @endif
     </head>
-    <body class="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-background via-blue-50 to-cyan-100 p-4 dark:from-slate-900 dark:via-slate-900 dark:to-black">
+    <body class="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-4 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 antialiased">
 
-        <div class="mx-auto flex flex-col w-full md:w-1/3 ">
-            <div class="mb-8 flex flex-col w-full items-center text-center">
-                    <div class="mb-4 flex items-center justify-center gap-3">
-                        <x-application-logo class="w-10 h-10" />
-                        <h1 class="w-full  font-headline text-5xl font-bold tracking-tighter text-primary">LissApp</h1>
+        <div class="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 max-w-7xl">
+            <!-- Hero Section -->
+            <section class="flex flex-col justify-center items-center lg:items-start text-center lg:text-left space-y-6">
+                <header class="space-y-4">
+                    <div class="flex items-center justify-center lg:justify-start gap-3">
+                        <x-application-logo class="w-12 h-12 lg:w-16 lg:h-16" />
+                        <h1 class="text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white">LissApp</h1>
                     </div>
-                     <p class="mt-2 max-w-md h-16 leading-normal">
-                            <span id="typewriter" text="{{__('Your trusted partner in clinical laboratory management')}}" class="text-lg text-slate-500 font-semibold"></span>
+                    <p class="text-lg lg:text-xl text-slate-600 dark:text-slate-300 max-w-md min-h-[4rem]">
+                        <span id="typewriter" text="{{__('Your trusted partner in clinical laboratory management')}}" class="font-medium"></span>
                     </p>
-            </div>
-            <div>
-                <h2>Agendar una cita</h2>
-                <a href="{{route('citas.create')}}" class="mt-8 bg-blue-600 text-white p-2 border-spacing-2 border-blue-950 rounded-md">{{__('New date')}}</a>
-             </div>
-        </div>
+                </header>
 
-        <div class="w-full max-w-md md:w-1/2">
+                <div class="w-full max-w-md space-y-4 p-6 bg-white/50 dark:bg-slate-800/50 rounded-xl backdrop-blur-sm border border-slate-200 dark:border-slate-700">
+                    <h2 class="text-2xl font-semibold text-slate-900 dark:text-white">{{__('Schedule an Appointment')}}</h2>
+                    <p class="text-slate-600 dark:text-slate-400">{{__('Book your clinical laboratory appointment quickly and easily')}}</p>
+                    <a href="{{route('citas.create')}}" class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg">
+                        {{__('New date')}}
+                    </a>
+                </div>
+            </section>
+
+            <!-- Login Section -->
+            <section class="flex items-center justify-center">
 
                 <div class="rounded-lg border bg-white text-card-foreground shadow-2xl">
                     <div class="flex flex-col space-y-1.5 p-6 text-center">
@@ -52,39 +59,60 @@
 
                                     <!-- Email Address -->
                                     <div class="space-y-2">
-                                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="email">{{__('Email')}}</label>
-                                        <input id="email" class="flex h-10 w-full rounded-md border border-borders bg-[#e5f5fb] px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
+                                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="email">{{__('Email')}}</label>
+                                        <input
+                                            id="email"
+                                            class="w-full h-11 px-4 py-2 text-sm rounded-lg border border-slate-300 bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500 dark:focus:ring-blue-400"
+                                            type="email"
+                                            name="email"
+                                            :value="old('email')"
+                                            required
+                                            autofocus
+                                            autocomplete="username"
+                                            placeholder="tu@email.com"
+                                        >
                                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                                     </div>
 
                                     <!-- Password -->
                                     <div class="space-y-2">
-                                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="password">{{__('Password')}}</label>
-
-                                        <input id="password" class="flex h-10 w-full rounded-md border border-borders bg-[#e5f5fb] px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                                                        type="password"
-                                                        name="password"
-                                                        required autocomplete="current-password" />
-
+                                        <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="password">{{__('Password')}}</label>
+                                        <input
+                                            id="password"
+                                            class="w-full h-11 px-4 py-2 text-sm rounded-lg border border-slate-300 bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500 dark:focus:ring-blue-400"
+                                            type="password"
+                                            name="password"
+                                            required
+                                            autocomplete="current-password"
+                                            placeholder="••••••••"
+                                        />
                                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                                     </div>
 
                                     <!-- Remember Me -->
-                                    <div class="block mt-4">
-                                        <label for="remember_me" class="inline-flex items-center dark:text-cyan-100">
-                                            <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                                            <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                                    <div class="flex items-center">
+                                        <label for="remember_me" class="flex items-center cursor-pointer">
+                                            <input
+                                                id="remember_me"
+                                                type="checkbox"
+                                                class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:checked:bg-blue-500"
+                                                name="remember"
+                                            >
+                                            <span class="ml-2 text-sm text-slate-600 dark:text-slate-400">{{ __('Remember me') }}</span>
                                         </label>
                                     </div>
 
-                                    <div class="flex items-center justify-end mt-4">
+                                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
                                         @if (Route::has('password.request'))
-                                            <a class="underline text-sm dark:text-cyan-200 text-slate-500 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                                            <a
+                                                class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors duration-200"
+                                                href="{{ route('password.request') }}"
+                                            >
                                                 {{ __('Forgot your password?') }}
                                             </a>
                                         @endif
 
-                                        <x-primary-button class="ms-3 dark:bg-blue-400">
+                                        <x-primary-button class="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors duration-200">
                                             {{ __('Log in') }}
                                         </x-primary-button>
                                     </div>
@@ -92,42 +120,74 @@
                             </div>
                         </div>
 
-                </div>
-                <p class="mt-6 px-8 text-center text-sm text-slate-500">
-                    {{__('By logging in, you agree to our')}}
-                    <button onclick="document.getElementById('termsModal').showModal()" class="ml-1 underline underline-offset-4 transition-colors hover:text-primary">{{__('Terms of Service')}}</button>.
-                    {{__('and')}}
-                    <button onclick="document.getElementById('privacyModal').showModal()" class="ml-1 underline underline-offset-4 transition-colors hover:text-primary">{{__('Privacy Policy')}}</button>.
-                </p>
+                    </div>
 
+                    <footer class="mt-6 p-6 pt-0 text-center text-xs text-slate-600 dark:text-slate-400">
+                        {{__('By logging in, you agree to our')}}
+                        <button
+                            onclick="document.getElementById('termsModal').showModal()"
+                            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-2 transition-colors duration-200 font-medium"
+                        >
+                            {{__('Terms of Service')}}
+                        </button>
+                        {{__('and')}}
+                        <button
+                            onclick="document.getElementById('privacyModal').showModal()"
+                            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-2 transition-colors duration-200 font-medium"
+                        >
+                            {{__('Privacy Policy')}}
+                        </button>
+                    </footer>
+                </div>
+            </section>
+
+        </div>
+        <footer class="mt-6 p-6 pt-0 text-center text-xs text-slate-600 dark:text-slate-400">
                 <!-- Terms of Service Modal -->
-                <dialog id="termsModal" class="rounded-lg backdrop:bg-black/50">
-                    <div class="w-full max-w-2xl p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg font-medium">{{__('Terms of Service')}}</h2>
-                            <button onclick="document.getElementById('termsModal').close()" class="rounded-sm opacity-70 hover:opacity-100">✕</button>
-                        </div>
-                        <div class="max-h-96 overflow-y-auto text-sm text-slate-700 space-y-4 mb-6">
+                <dialog id="termsModal" class="max-w-2xl w-full p-0 rounded-2xl shadow-2xl backdrop:bg-black/70 backdrop:backdrop-blur-sm">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl">
+                        <header class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+                            <h2 class="text-xl font-semibold text-slate-900 dark:text-white">{{__('Terms of Service')}}</h2>
+                            <button
+                                onclick="document.getElementById('termsModal').close()"
+                                class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-200 dark:hover:bg-slate-800 transition-colors duration-200"
+                                aria-label="Close"
+                            >
+                                ✕
+                            </button>
+                        </header>
+                        <div class="p-6 max-h-96 overflow-y-auto text-sm text-slate-700 dark:text-slate-300 space-y-4">
                             <p>{{__('Términos y Condiciones de Uso')}}</p>
                             <p>{{__('Al acceder y utilizar esta aplicación, usted acepta cumplir con estos términos y condiciones. Si no está de acuerdo con alguna parte de estos términos, no debe utilizar la aplicación.')}}</p>
                             <p>{{__('1. Uso de la Plataforma: Esta aplicación está diseñada para la gestión de citas clínicas. El usuario se compromete a utilizar la plataforma únicamente para fines legales y de acuerdo con estos términos.')}}</p>
                             <p>{{__('2. Responsabilidad del Usuario: El usuario es responsable de mantener la confidencialidad de sus credenciales de acceso y de todas las actividades que ocurran bajo su cuenta.')}}</p>
                             <p>{{__('3. Limitación de Responsabilidad: No seremos responsables por daños directos, indirectos o consecuentes derivados del uso de esta aplicación.')}}</p>
                         </div>
-                        <div class="flex justify-end gap-3">
-                            <button onclick="document.getElementById('termsModal').close()" class="px-4 py-2 rounded-md border border-slate-300 hover:bg-slate-100">{{__('Close')}}</button>
-                        </div>
+                        <footer class="flex justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-800">
+                            <button
+                                onclick="document.getElementById('termsModal').close()"
+                                class="px-5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200 font-medium"
+                            >
+                                {{__('Close')}}
+                            </button>
+                        </footer>
                     </div>
                 </dialog>
 
                 <!-- Privacy Policy Modal -->
-                <dialog id="privacyModal" class="rounded-lg backdrop:bg-black/50">
-                    <div class="w-full max-w-2xl p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg font-medium">{{__('Privacy Policy')}}</h2>
-                            <button onclick="document.getElementById('privacyModal').close()" class="rounded-sm opacity-70 hover:opacity-100">✕</button>
-                        </div>
-                        <div class="max-h-96 overflow-y-auto text-sm text-slate-700 space-y-4 mb-6">
+                <dialog id="privacyModal" class="max-w-2xl w-full p-0 rounded-2xl shadow-2xl backdrop:bg-black/70 backdrop:backdrop-blur-sm">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl">
+                        <header class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+                            <h2 class="text-xl font-semibold text-slate-900 dark:text-white">{{__('Privacy Policy')}}</h2>
+                            <button
+                                onclick="document.getElementById('privacyModal').close()"
+                                class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-200 dark:hover:bg-slate-800 transition-colors duration-200"
+                                aria-label="Close"
+                            >
+                                ✕
+                            </button>
+                        </header>
+                        <div class="p-6 max-h-96 overflow-y-auto text-sm text-slate-700 dark:text-slate-300 space-y-4">
                             <p>{{__('Política de Privacidad')}}</p>
                             <p>{{__('Estamos comprometidos con la protección de su privacidad. Esta política describe cómo recopilamos, utilizamos y protegemos su información personal.')}}</p>
                             <p>{{__('1. Recopilación de Información: Recopilamos información que usted proporciona directamente, como nombre, email y datos de contacto necesarios para la gestión de citas.')}}</p>
@@ -135,16 +195,18 @@
                             <p>{{__('3. Protección de Datos: Implementamos medidas de seguridad técnicas y administrativas para proteger su información personal contra acceso no autorizado.')}}</p>
                             <p>{{__('4. Derechos del Usuario: Usted tiene derecho a acceder, corregir o eliminar su información personal contactándonos directamente.')}}</p>
                         </div>
-                        <div class="flex justify-end gap-3">
-                            <button onclick="document.getElementById('privacyModal').close()" class="px-4 py-2 rounded-md border border-slate-300 hover:bg-slate-100">{{__('Close')}}</button>
-                        </div>
+                        <footer class="flex justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-800">
+                            <button
+                                onclick="document.getElementById('privacyModal').close()"
+                                class="px-5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200 font-medium"
+                            >
+                                {{__('Close')}}
+                            </button>
+                        </footer>
                     </div>
                 </dialog>
+        </footer>
 
-        </div>
-
-        @if (Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
-        @endif
+        @vite(['resources/js/components/guest/Typewriter.jsx'])
     </body>
 </html>

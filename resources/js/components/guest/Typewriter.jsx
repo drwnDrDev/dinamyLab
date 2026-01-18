@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 
-const Typewriter = ({ text, typingSpeed = 100 }) => {
+const Typewriter = memo(({ text, typingSpeed = 50 }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -10,11 +10,14 @@ const Typewriter = ({ text, typingSpeed = 100 }) => {
         setDisplayedText((prevText) => prevText + text[currentIndex]);
         setCurrentIndex((prevIndex) => prevIndex + 1);
       }, typingSpeed);
+
       return () => clearTimeout(timeout);
     }
   }, [currentIndex, text, typingSpeed]);
 
-  return <span>{displayedText}</span>;
-};
+  return <span className="inline-block">{displayedText}</span>;
+});
+
+Typewriter.displayName = 'Typewriter';
 
 export default Typewriter;
