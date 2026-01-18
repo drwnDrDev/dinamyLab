@@ -8,6 +8,7 @@ use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\PersonaController;
+use App\Http\Controllers\PreRegistroCitaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProcedimientoController;
 use App\Http\Controllers\ResultadosController;
@@ -23,6 +24,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Rutas públicas de registro de citas (sin autenticación requerida)
+Route::get('/citas/registrar', [PreRegistroCitaController::class, 'create'])->name('citas.create');
+Route::post('/citas/registrar', [PreRegistroCitaController::class, 'store'])->name('citas.store');
+Route::get('/citas/confirmacion/{codigo}', [PreRegistroCitaController::class, 'confirmacion'])->name('citas.confirmacion');
+Route::post('/citas/confirmar/{codigo}', [PreRegistroCitaController::class, 'confirmar'])->name('citas.confirmar');
+Route::get('/citas/exito', [PreRegistroCitaController::class, 'exito'])->name('citas.exito');
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard',[EmpleadoController::class, 'select'])->name('dashboard');
     Route::get('/inicio',[EmpleadoController::class, 'dashboard'])->name('inicio');
@@ -34,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/ordenes-medicas',[OrdenController::class,'index'])->name('ordenes');
-    Route::get('/ordenes-medicas/create',[OrdenController::class,'create'])->name('ordenes.create');
+    Route::get('/ordenes-medicas/create/{persona?}',[OrdenController::class,'create'])->name('ordenes.create');
     Route::post('/ordenes-medicas/store',[OrdenController::class,'store'])->name('ordenes.store');
     Route::get('/ordenes-medicas/{orden}/edit',[OrdenController::class,'edit'])->name('ordenes.edit');
     Route::put('/ordenes-medicas/{orden}',[OrdenController::class,'update'])->name('ordenes.update');
@@ -57,8 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/examenes',[ExamenController::class,'index'])->name('examenes');
     Route::get('/examenes/{examen}',[ExamenController::class,'show'])->name('examenes.show');
 
-    Route::post('search',[SearchController::class,'search'])->name('search');
-    Route::get('search',[SearchController::class,'search'])->name('search');
+    Route::match(['get', 'post'], 'search', [SearchController::class, 'search'])->name('search');
 
     Route::get('/resultados/{procedimiento}/ver',[ResultadosController::class,'show'])->name('resultados.show');
 
@@ -68,6 +75,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('administracion/sede/{sede}',[SedeController::class,'elegirSede'])->name('elegir.sede');
 
+    // Rutas de gestión de pre-registros de citas (solo autenticados)
+    Route::get('/citas', [PreRegistroCitaController::class, 'index'])->name('citas.index');
+    Route::get('/citas/{preRegistro}', [PreRegistroCitaController::class, 'show'])->name('citas.show');
+    Route::put('/citas/{preRegistro}/estado', [PreRegistroCitaController::class, 'updateEstado'])->name('citas.updateEstado');
+    Route::delete('/citas/{preRegistro}/cancelar', [PreRegistroCitaController::class, 'cancelar'])->name('citas.cancelar');
+    Route::match(['get', 'post'], '/citas/filtrar', [PreRegistroCitaController::class, 'filtrar'])->name('citas.filtrar');
 });
 
 Route::middleware('auth','verified','can:ver_facturas')->group(function () {
@@ -109,9 +122,3 @@ Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () 
 });
 
 require __DIR__.'/auth.php';
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/personas', [PersonaController::class, 'store'])->name('personas.store');
-    Route::put('/personas/{id}', [PersonaController::class, 'update'])->name('personas.update');
-    Route::get('/personas/buscar/{numeroDocumento}', [PersonaController::class, 'buscar']);
-});

@@ -59,7 +59,7 @@ class SedeController extends Controller
      * Choose a Sede for the user.
      */
     public function elegirSede(Sede $sede)
-    {       
+    {
             if (!$sede) {
                 return redirect()->back()->with('error', 'Sede no encontrada.');
             }

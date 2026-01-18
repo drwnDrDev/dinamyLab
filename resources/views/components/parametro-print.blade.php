@@ -7,7 +7,7 @@
             <div class="uppercase max-w-80"><label>{{$item['nombre']}}</label>
             <span class="block font-light print:!text-[0.6rem] text-titles">{{$item['metodo']}}</span>
             </div>
-            <div class="flex flex-row-reverse">
+            <div class="flex flex-row-reverse capitalize font-semibold">
                 <p id="{{$item['id']}}">{{$item['resultado']}}</p>
             @if (!$item['es_normal'])
                     <span class="font-bold pr-4">

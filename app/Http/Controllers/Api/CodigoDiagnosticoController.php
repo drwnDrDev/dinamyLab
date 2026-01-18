@@ -13,7 +13,7 @@ class CodigoDiagnosticoController extends Controller
 {
     public function index()
     {
-        $codigoDiagnostico = CodigoDiagnostico::all();
+        $codigoDiagnostico = CodigoDiagnostico::orderBy('nivel', 'DESC')->get();
         if($codigoDiagnostico->isEmpty()) {
             return response()->json([
                 'message' => 'No se encontraron códigos de diagnóstico',

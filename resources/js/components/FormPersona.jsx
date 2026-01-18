@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { usePersonaReferencias } from "./hooks/usePersonaReferencias";
 import { useTablasRef } from "./hooks/useTablasRef";
 import SelectField from "./SelectField";
+import Loader from "./Loader";
+import CompletedCheck from "./CompletedCheck";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
 import axios from "axios";
 
@@ -62,6 +64,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
             perfil: perfil || ''
         }));
     }, [perfil]);
+
 
     // Función para buscar persona por documento (sin lógica de token)
     const buscarPersonaPorDocumento = async (numDoc) => {
@@ -157,11 +160,12 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
 
             const personaActualizada = resultado.data;
             setPersonaExistente(null);
+            if (setPersona){
             setPersona(personaActualizada);
+            };
 
-            alert(`Persona ${esActualizacion ? 'actualizada' : 'creada'} exitosamente`);
-
-            if (!esActualizacion) {
+            alert(esActualizacion ? 'Persona actualizada exitosamente' : 'Persona creada exitosamente');
+            
                 setFormData({
                     id: null,
                     perfil: '',
@@ -182,7 +186,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                     tipo_afiliacion: ''
                 });
                 setPersonaExistente(null);
-            }
+            
 
         } catch (err) {
             console.error('❌ Error completo:', err);
@@ -209,6 +213,9 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
     };
 
     return (
+        <>
+        {loading && <Loader />}
+
         <form onSubmit={handleSubmit} className="max-w-screen-lg mx-auto">
             <div className="flex gap-4">
                 <h2 className="font-bold mb-4 text-xl text-titles">Nuevo registro de {perfil} </h2>
@@ -508,6 +515,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 </button>
             </div>
         </form>
+        </>
     );
 };
 

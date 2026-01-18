@@ -1,14 +1,6 @@
 <x-app-layout>
+    
+    <article id="react-crear-orden" data-persona='@json($persona)'></article>
 
-<script>
-    window.appData = {
-        sede: @json(session('sede')),
-        user: @json(auth()->user()),
-        permisos: @json(auth()->user()->getAllPermissions()->pluck('name'))
-    };
-</script>
-
-    <article id="react-crear-orden"></article>
-
-    @vite(['resources/js/react-app.jsx'])
+    @vite(['resources/js/appOrden.jsx'])
 </x-app-layout>
