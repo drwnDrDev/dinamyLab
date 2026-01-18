@@ -14,9 +14,9 @@ export default defineConfig({
                 'resources/js/crearOrdenes.js',
                 'resources/js/obtenerStaticos.js',
                 'resources/js/crearPersona.js',
-      
-                'resources/js/react-app.jsx',
                 'resources/js/app.jsx',
+                'resources/js/components/guest/Typewriter.jsx'
+
             ],
             refresh: true,
 
