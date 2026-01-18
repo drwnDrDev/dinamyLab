@@ -65,15 +65,19 @@
                             <button
                                     class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
                                     <span class="truncate">{{ $orden->terminada==null ? 'Pendiente':'Completada' }}</span>
-                                </button>
+                            </button>
                         </td>
 
                     </tr>
+
+
                     @endforeach
 
                 </tbody>
+
             </table>
 
         </div>
+        {{ $ordenes->links() }}
     </x-canva>
 </x-app-layout>

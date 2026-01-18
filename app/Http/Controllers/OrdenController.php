@@ -32,10 +32,8 @@ class OrdenController extends Controller
         }
         $ordenes = Orden::with(['paciente'])
             ->where('sede_id', $sede->id)
-            ->where('terminada', null) // Solo mostrar órdenes que no están terminadas
-            ->where('created_at', '>=', now()->subDays(3)) // los ultimos 3 dias
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(6);
 
         if ($ordenes->isEmpty()) {
             return redirect()->route('ordenes.create')->with('error', 'lista de ordenes vacias');
@@ -46,7 +44,7 @@ class OrdenController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Persona $persona = null)
     {
 
         $sede = ElegirEmpresa::elegirSede();
@@ -63,7 +61,7 @@ class OrdenController extends Controller
         }else {
             $orden_numero = $orden_numero + 1; // Incrementar para la nueva orden
         }
-        return view('ordenes.create', compact('examenes', 'orden_numero'));
+        return view('ordenes.create', compact('examenes', 'orden_numero', 'persona'));
     }
 
     /**

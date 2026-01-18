@@ -19,7 +19,7 @@
             </ul>
 
         @endif
-    <x-formPersona perfil="Paciente"/>
+    <article id="react-create-persona"></article>
     <div class="mt-4">
         <label class="inline-flex items-center">
             <input id="guardarOtro" type="checkbox" class="form-checkbox text-indigo-600">
@@ -27,5 +27,5 @@
         </label>
 
     </x-canva>
- @vite('resources/js/crearPersona.js')
+ @vite('resources/js/appPersona.jsx')
 </x-app-layout>

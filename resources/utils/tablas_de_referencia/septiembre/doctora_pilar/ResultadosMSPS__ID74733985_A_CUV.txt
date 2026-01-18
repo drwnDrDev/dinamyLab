@@ -1,9 +1,0 @@
-{
-  "ResultState": true,
-  "ProcesoId": 74733985,
-  "NumFactura": "92025",
-  "CodigoUnicoValidacion": "4e3bee31f756cc8611d85edf7e018b4d34cb6bd7623206c3941ebe7808c96401744dfc019371c2f289fcb9b5b8f1b78c",
-  "FechaRadicacion": "2025-10-04T16:45:55.5490668-05:00",
-  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\tablas_de_referencia\\septiembre\\doctora_pilar",
-  "ResultadosValidacion": []
-}

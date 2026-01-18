@@ -1,40 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import FormPersona from './FormPersona';
 import DatosExamenes from './DatosExamenes';
+import CompletedCheck from './CompletedCheck';
 import DatosPersona from './DatosPersona';
 import DatosOrden from './DatosOrden';
 import useAxiosAuth from './hooks/useAxiosAuth';
+import ordenDataDefault from './ordenDataDefault';
+import { useOrderValidation } from './hooks/useOrdenValidation';
 
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 
 
-const CrearOrdenComponent = () => {
+const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) => {
     const { axiosInstance, csrfLoaded, error: csrfError } = useAxiosAuth();
+    const [next_numero, setNextNumero] = useState(null);
+
+    // Obtener el siguiente número de orden al cargar el componente
+    useEffect(() => {
+        const fetchNextNumero = async () => {
+            try {
+                const response = await axiosInstance.get('/api/ordenes/max-numero');
+                if (response.status === 200) {
+                    setNextNumero(response.data.next_numero);
+                    console.log('✅ Siguiente número de orden obtenido:', response.data.next_numero);
+                } else {
+                    console.error('❌ Error al obtener el siguiente número de orden, estado:', response.status);
+                }
+            } catch (error) {
+                console.error('❌ Error al obtener el siguiente número de orden:', error);
+            }
+        };
+
+        fetchNextNumero();
+    }, [axiosInstance]);
+
+
     const initialFormState = {
-        numero_orden: '',
+        numero_orden: next_numero || '',
         paciente_id: null,
         examenes: [],
         cod_servicio: null,
-        via_ingreso: '01',
+        via_ingreso: '',
         cie_principal: null,
         cie_relacionado: null,
-        finalidad: '15',
-        modalidad: '01',
+        finalidad: '',
+        modalidad: '',
         abono: 0,
         total: 0,
-        fecha_orden: new Date().toISOString().slice(0, 10), // Formato YYYY-MM-DD hh:mm:ss
+        fecha_orden: new Date().toISOString().split('T')[0] + ' ' + new Date().toTimeString().slice(0, 5), // Formato YYYY-MM-DD HH:mm
     };
-
-    const [persona, setPersona] = useState(null);
+    const [persona, setPersona] = useState(paciente.paciente || null);
     const [loading, setLoading] = useState(false);
+    const [completeMessage, setCompleteMessage] = useState(false);
     const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
+    const { validateField, validateForm, errors, clearError } = useOrderValidation();
+
+    console.log('datos recibidos de paciente:', paciente);
+
     useEffect(() => {
         if (!persona) {
             return;
         }
-
-
         setFormOrden(prev => {
             const newState = {
                 ...prev,
@@ -44,6 +71,35 @@ const CrearOrdenComponent = () => {
             return newState;
         });
     }, [persona]);
+
+    useEffect(() => {
+        if (next_numero !== null) {
+            setFormOrden(prev => ({
+                ...prev,
+                numero_orden: next_numero
+            }));
+            console.log('✅ numero_orden actualizado en el formulario:', next_numero);
+        }
+    }, [next_numero]);
+
+    useEffect(() => {
+        if (dataDefoult && Object.keys(dataDefoult).length > 0) {
+            const { cod_servicio, via_ingreso, cie_principal, cie_relacionado, finalidad, modalidad } = dataDefoult;
+            setFormOrden(prev => ({
+                ...prev,
+                cod_servicio: cod_servicio || prev.cod_servicio,
+                via_ingreso: via_ingreso || prev.via_ingreso,
+                cie_principal: cie_principal || prev.cie_principal,
+                cie_relacionado: cie_relacionado || prev.cie_relacionado,
+                finalidad: finalidad || prev.finalidad,
+                modalidad: modalidad || prev.modalidad,
+
+            }));
+        }
+    }, []);
+
+    console.log('📝 Estado del formulario después de aplicar datos por defecto:', formOrden);
+
 
     // Handler para actualizar la persona
     const handlePersonaUpdate = (nuevaPersona) => {
@@ -72,6 +128,7 @@ const CrearOrdenComponent = () => {
             ...prev,
             [name]: value
         }));
+        clearError(name);
     }
 
     const handleValoresUpdate = (name, value) => {
@@ -79,6 +136,7 @@ const CrearOrdenComponent = () => {
             ...prev,
             [name]: value
         }));
+        clearError(name);
     }
 
     const handleSubmit = async (e) => {
@@ -86,6 +144,14 @@ const CrearOrdenComponent = () => {
 
         if (!csrfLoaded) {
             setError('⏳ Autenticación en progreso...');
+            return;
+        }
+
+        console.log('Validando orden:', formOrden);
+
+        if (!validateForm(formOrden)) {
+            console.log('Errores de validación:', errors);
+            alert('Por favor complete todos los campos obligatorios');
             return;
         }
 
@@ -104,6 +170,8 @@ const CrearOrdenComponent = () => {
 
             const response = await axiosInstance.post('/api/ordenes', formOrden);
 
+            setCompleteMessage(true);
+
             if (response?.data?.data?.id) {
                 window.location.href = `/ordenes-medicas/${response.data.data.id}/ver`;
             }
@@ -121,18 +189,29 @@ const CrearOrdenComponent = () => {
     }
 
     return (
+        <>
+        {completeMessage && <CompletedCheck />}
+
         <div className="crear-orden-wrapper relative">
-            <div className="header mb-4 flex justify-between items-center max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
-                <h1 className="text-2xl font-bold text-titles">Crear Nueva Orden</h1>
-                <input type="number" onChange={handleTablasRefUpdate} name="numero_orden" value={formOrden.numero_orden} placeholder="N° de Orden" className="h-9 w-32 p-2 border-borders focus:border-primary focus:ring-primary
-                                rounded-md"
+            <div className="header max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
+                <h1 className="text-2xl font-bold text-titles mb-4">Crear Nueva Orden</h1>
+                <label htmlFor="numero_orden" className='text-xl pr-4'>Numero de Orden: </label>
+                <input
+                    type="number"
+                    onChange={handleTablasRefUpdate}
+                    name="numero_orden"
+                    value={formOrden.numero_orden}
+                    className= {`h-9 w-32 p-2 border-borders focus:border-primary focus:ring-primary rounded-md ${errors.numero_orden ? 'border-red-500' : ''}`}
                 />
+                {errors.numero_orden && (
+                    <p className="mt-1 text-sm text-red-600">{errors.numero_orden}</p>
+                )}
 
             </div>
             <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
                 {persona ? (
                     <>
-                        <DatosPersona persona={persona}/>
+                        <DatosPersona persona={persona} />
                         <div className="mt-4 flex justify-end">
                             <button
                                 onClick={() => setPersona(null)}
@@ -170,11 +249,12 @@ const CrearOrdenComponent = () => {
                     <DatosOrden
                         formOrden={formOrden}
                         onUpdate={handleTablasRefUpdate}
+                        error={errors}
                     />
                 </section>
             )}
 
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end px-4 py-2 max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
                 <button
                     type="button"
                     onClick={handleSubmit}
@@ -193,6 +273,7 @@ const CrearOrdenComponent = () => {
             </div>
 
         </div>
+        </>
     );
 };
 

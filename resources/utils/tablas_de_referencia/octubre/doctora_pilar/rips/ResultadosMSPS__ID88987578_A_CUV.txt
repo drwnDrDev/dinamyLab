@@ -1,9 +1,0 @@
-{
-  "ResultState": true,
-  "ProcesoId": 88987578,
-  "NumFactura": "102025",
-  "CodigoUnicoValidacion": "cf586cf01e61abf8f06916d552cd9bd0d1996308358b6940c408e704bc6da3e3ca461cc6fc2b753299312f5fff683d5e",
-  "FechaRadicacion": "2025-11-04T17:21:58.6277922-05:00",
-  "RutaArchivos": "D:\\Desarrollo\\htdocs\\dinamyLab\\resources\\utils\\tablas_de_referencia\\octubre\\doctora_pilar\\rips",
-  "ResultadosValidacion": []
-}

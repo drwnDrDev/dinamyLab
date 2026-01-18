@@ -87,20 +87,12 @@ class DatabaseSeeder extends Seeder
             TipoDocumentoSeeder::class,
             MunicipioSeeder::class,
             EmpresaSeeder::class,
-            ExamenSeeder::class,
-            HemogramaCompletoSeeder::class,
-            FrotisUretraSeeder::class,
-            UroanalisisSeeder::class,
-            GlucosaSeeder::class,
-            TrigliceridosSeeder::class,
-            ColesterolTotalSeeder::class,
-            ColesterolHDLSeeder::class,
-            ColesterolLDLSeeder::class,
-            AcidoUricoSeeder::class,
+            ExamenSeeder::class, // Ahora contiene todos los exámenes consolidados
             ViaIngresoSeeder::class,
             CausaExternaSeeder::class,
             MediosDePagoSeeder::class,
             DefaultOptionSeeder::class,
+            SetupSeeder::class, // Activa y configura códigos CIE específicos
         ]);
 
     }

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import useAxiosAuth from './hooks/useAxiosAuth';
-import BuscarModelo from './BuscarModelo.jsx';
 
 
 export default function Ticket({ ordenId }) {
@@ -123,6 +122,7 @@ export default function Ticket({ ordenId }) {
     <div className='print:hidden p-6'>
 
         <h1 className="text-2xl font-bold mb-4">Orden N° {orden?.numero}  </h1>
+        <h2>sede {orden?.sede_id} </h2>
         <p className="text-lg">Total de la Orden: ${totalOrden}</p>
         {loading && <p>Cargando...</p>}
         {error && <p className="text-red-500">Error: {error}</p>}
@@ -142,7 +142,7 @@ export default function Ticket({ ordenId }) {
                 </thead>
                 <tbody>
                     {procedimientos.map((procedimiento) => (
-                        <tr key={procedimiento.id} className="hover:bg-gray-100 cursor-pointer">
+                        <tr key={procedimiento.id} onClick={() => window.location.href = `/procedimientos/${procedimiento.id}`} className="hover:bg-gray-100 cursor-pointer">
                             <td className="py-2 px-4 border-b border-gray-300">{procedimiento.examen.nombre}</td>
                             <td className="py-2 px-4 border-b border-gray-300">{procedimiento.estado}</td>
                             <td className="py-2 px-4 border-b border-gray-300"
@@ -180,10 +180,7 @@ export default function Ticket({ ordenId }) {
                 </tbody>
             </table>
         )}
-        <div className="mt-4">
-            <button className="bg-blue-500 text-white px-4 py-2 rounded">Imprimir Ticket</button>
-        </div>
-        <BuscarModelo />
+        
 </div>
 );
 }

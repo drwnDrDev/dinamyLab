@@ -36,12 +36,16 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
 
 
   // Calcular el total general
-  const total = examenes.reduce((sum, ex) => {
-    const cantidad = ex.cantidad || 1;
-    const valor = parseValor(ex.valor);
-    const sub = (cantidad * valor) - (descuentoActive ? descuento : 0);
-    return sub > 0 ? sum + sub : sum; // Evitar que el subtotal sea negativo
-  }, 0);
+  const total = (() => {
+    const subtotal = examenes.reduce((sum, ex) => {
+      const cantidad = ex.cantidad || 1;
+      const valor = parseValor(ex.valor);
+      return sum + (cantidad * valor);
+    }, 0);
+
+    const descuentoAplicado = descuentoActive ? descuento : 0;
+    return subtotal - descuentoAplicado;
+  })();
 
   const saldo = abonoActive ? total - abono : total;
 
@@ -55,7 +59,7 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
     // Actualizar los valores en el componente padre
     onChangeValores('total', total);
     onChangeValores('abono', abonoActive ? abono : 0);
-  }, [total, abono, descuento, saldo, abonoActive, descuentoActive]);  
+  }, [total, abono, descuento, saldo, abonoActive, descuentoActive]);
 
   return (
     <div className="overflow-x-auto">
@@ -83,8 +87,8 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
                 <td className="px-4 py-2">{ex.cup || 'N/A'}</td>
                 <td className="px-4 py-2">{ex.nombre || 'Sin nombre'}</td>
                 <td className="p-2">
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     min="1"
                     value={ex.cantidad || 1}
                     onChange={(e) => onCantidadChange(idx, parseInt(e.target.value) || 1)}
@@ -98,11 +102,11 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
                   ${((ex.cantidad || 1) * parseValor(ex.valor)).toFixed(2)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  <button 
+                  <button
                     onClick={() => onRemove(idx)}
                     className="text-red-500 hover:text-red-700"
                   >
-                    🗑️
+                    ❌
                   </button>
                 </td>
               </tr>
@@ -111,31 +115,31 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
         </tbody>
         <tfoot>
           {abonoActive && (
-          <tr className="border-t-2 border-gray-200 font-semibold">
-            <td colSpan="4" className="px-4 py-3 text-right">Abono:</td>
-            <td className="px-4 py-3 text-right">
-              <input type="number" onChange={handleAbonoChange}/>
-            </td>
-            <td></td>
-          </tr>
+            <tr className={`border-t-2 border-gray-200 font-semibold ${abono > total ? 'text-red-600' : ''}`}>
+              <td colSpan="4" className="px-4 py-3 text-right">Abono:</td>
+              <td className="px-4 py-3 text-right">
+                <input type="number" onChange={handleAbonoChange} />
+              </td>
+              <td></td>
+            </tr>
           )}
           {abonoActive && (
-          <tr className="border-t-2 border-gray-200 font-semibold">
-            <td colSpan="4" className="px-4 py-3 text-right">Saldo:</td>
-            <td className="px-4 py-3 text-right">${saldo.toFixed(2)}</td>
-            <td></td>
-          </tr>
+            <tr className="border-t-2 border-gray-200 font-semibold">
+              <td colSpan="4" className="px-4 py-3 text-right">Saldo:</td>
+              <td className="px-4 py-3 text-right">${saldo.toFixed(2)}</td>
+              <td></td>
+            </tr>
           )}
           {descuentoActive && (
-          <tr className="border-t-2 border-gray-200 font-semibold">
-            <td colSpan="4" className="px-4 py-3 text-right">Descuento:</td>
-            <td className="px-4 py-3 text-right">
-              <input type="number" onChange={handleDescuentoChange}/>
-            </td>
-            <td></td>
-          </tr>
+            <tr className="border-t-2 border-gray-200 font-semibold">
+              <td colSpan="4" className="px-4 py-3 text-right">Descuento:</td>
+              <td className="px-4 py-3 text-right">
+                <input type="number" onChange={handleDescuentoChange} />
+              </td>
+              <td></td>
+            </tr>
           )}
-          <tr className="border-t-2 border-gray-200 font-semibold">
+          <tr className={`border-t-2 border-gray-200 font-semibold ${descuentoActive && descuento > total ? 'text-red-600' : ''}`}>
             <td colSpan="4" className="px-4 py-3 text-right">Total:</td>
             <td className="px-4 py-3 text-right">${total.toFixed(2)}</td>
             <td></td>
@@ -144,8 +148,8 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
         </tfoot>
       </table>
       <div>
-        <button onClick={()=>setDescuentoActive(!descuentoActive)}>Descuento</button>
-        <button onClick={()=>setAbonoActive(!abonoActive)}>Abono</button>
+        <button onClick={() => setDescuentoActive(!descuentoActive)}>Descuento</button>
+        <button onClick={() => setAbonoActive(!abonoActive)}>Abono</button>
       </div>
 
     </div>

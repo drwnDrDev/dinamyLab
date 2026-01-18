@@ -129,11 +129,31 @@ class EscogerReferencia
             ->orderBy('posicion')
             ->get();
 
+        // dd($resultadosP,$proc->examen->parametros()->with('valoresReferencia')->orderBy('posicion')->get());
         if ($resultadosP->isEmpty()) {
             Log::info('No se encontraron resultados para el procedimiento.', ['procedimiento_id' => $proc->id]);
             return ['info' => 'No se encontraron resultados para este procedimiento.'];
         }
-        foreach ($resultadosP as $resultado) {
+        foreach ($proc->examen->parametros()->with('valoresReferencia')->orderBy('posicion')->get() as $parametroBase) {
+            $resultado = $resultadosP->firstWhere('parametro_id', $parametroBase->id);
+           
+           
+            if (!$resultado) {
+                
+            $parametros[] = [
+                'id'        => $parametroBase->id,
+                'nombre'    => $parametroBase->nombre,
+                'grupo'     => $parametroBase->grupo,
+                'posicion' =>  $parametroBase->posicion,
+                'es_normal' => $isNormal,
+                'tipo_dato' => $parametroBase->tipo_dato,
+                'resultado' => null,
+                'metodo'    => $parametroBase->metodo,
+                'unidades'  => $parametroBase->unidades,
+                'referencia'=> optional($referencia)->salida,
+            ];
+            continue;
+            }
             $referencia = self::estableceReferencia($datosDemograficos, $resultado->parametro);
             $isNormal = true;
             if ($referencia) {
