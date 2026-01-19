@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/caja/ingresos',[AdministracionController::class,'rips'])->name('rips');
     Route::get('/examenes',[ExamenController::class,'index'])->name('examenes');
     Route::get('/examenes/{examen}',[ExamenController::class,'show'])->name('examenes.show');
+    Route::get('/examenes/{examen}/lote',[ExamenController::class,'lote'])->name('examenes.lote');
 
     Route::match(['get', 'post'], 'search', [SearchController::class, 'search'])->name('search');
 

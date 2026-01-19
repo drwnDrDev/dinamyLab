@@ -37,9 +37,17 @@ class ExamenController extends Controller
      * Display the specified resource.
      */
     public function show(Examen $examen)
-    { 
+    {
 
         return view('examenes.show', compact('examen'));
+    }
+
+    /**
+     * Show batch processing view for exam
+     */
+    public function lote(Examen $examen)
+    {
+        return view('examenes.lote', compact('examen'));
     }
 
     /**

@@ -2,20 +2,25 @@
 
 <x-slot name="header">
 <div class="max-screen mx-auto">
-  <div class="flex items-center justify-center gap-1 mb-0">
-    <h2 class="text-xl font-semibold">{{ $examen->nombre }}</h2> 
-    <h3 class="text-lg font-light text-gray-700 mt-0">({{ $examen->nombre_alternativo }})</h3>
-</div> 
+  <div class="flex items-center justify-between gap-1 mb-0">
+    <div class="flex items-center gap-1">
+      <h2 class="text-xl font-semibold">{{ $examen->nombre }}</h2>
+      <h3 class="text-lg font-light text-gray-700 mt-0">({{ $examen->nombre_alternativo }})</h3>
+    </div>
+    <a href="{{ route('examenes.lote', $examen) }}" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">
+      Procesar Lotes
+    </a>
+  </div>
 <div class="flex items-center justify-center gap-2 ">
     <h3 class="text-lg font-light text-gray-700">CUP-{{ $examen->cup }}</h3>
     <h3  class="text-lg font-light text-green-700">${{ $examen->valor }} COP</h3>
-</div> 
+</div>
     <p class="max-w-11/12 p-4">{{ ucfirst($examen->descripcion) }}</p>
 
 </div>
 </x-slot>
 <x-canva>
-    
+
 
 <section>
     @foreach($examen->parametros as $parametro)
@@ -27,12 +32,12 @@
        @endif
     @if($examen->parametros->count() > 2)
         <p class="text-gray-600">Posición: {{ $parametro->posicion }}</p>
-       
+
     @endif
     @if ($parametro->metodo && $parametro->metodo !== '')
          <p class="text-gray-600">Método: {{ $parametro->metodo }}</p>
     @endif
-        
+
         @if($parametro->valoresReferencia && $parametro->valoresReferencia->count() > 0)
             <h4 class="mt-2 font-semibold">Valores de referencia</h4>
             <table class="min-w-full border border-gray-400">
@@ -70,7 +75,7 @@
 
     </div>
     @endforeach
-        
+
 </section>
 
 </x-canva>

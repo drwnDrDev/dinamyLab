@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Examen;
+use App\Models\Procedimiento;
 use Illuminate\Http\Request;
 
 class ExamenesController extends Controller
@@ -44,5 +45,43 @@ class ExamenesController extends Controller
                 "examen" => []
             ]
         ]);
+    }
+
+    /**
+     * Obtener procedimientos pendientes para un examen específico
+     */
+    public function obtenerProcedimientosPendientes($examenId)
+    {
+        try {
+            $procedimientos = Procedimiento::where('examen_id', $examenId)
+                ->where('estado', 'en proceso')
+                ->with([
+                    'orden.paciente',
+                    'examen'
+                ])
+                ->get()
+                ->map(function ($proc) {
+                    return [
+                        'id' => $proc->id,
+                        'orden_id' => $proc->orden_id,
+                        'paciente_nombre' => $proc->orden->paciente->nombreCompleto() ?? 'N/A',
+                        'paciente_documento' => $proc->orden->paciente->numero_documento ?? 'N/A',
+                        'fecha' => $proc->fecha ? $proc->fecha->format('Y-m-d H:i') : 'N/A',
+                        'estado' => $proc->estado,
+                        'enviar' => true, // Por defecto, marcar para enviar
+                        'procedimiento' => $proc
+                    ];
+                });
+
+            return response()->json([
+                'message' => 'Procedimientos pendientes obtenidos',
+                'procedimientos' => $procedimientos
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener procedimientos: ' . $e->getMessage(),
+                'procedimientos' => []
+            ], 500);
+        }
     }
 }
