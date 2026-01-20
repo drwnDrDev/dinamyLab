@@ -19,11 +19,11 @@
             </style>
         @endif
     </head>
-    <body class="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-4 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 antialiased">
+    <body class="flex flex-col min-h-screen w-full items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-4 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 antialiased">
 
-        <div class="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 max-w-7xl">
+        <main class="container mx-auto flex flex-col lg:flex-row items-center justify-center gap-1">
             <!-- Hero Section -->
-            <section class="flex flex-col justify-center items-center lg:items-start text-center lg:text-left space-y-6">
+            <section class="flex flex-col w-full md:w-1/3 justify-center items-center lg:items-start text-center lg:text-left space-y-6">
                 <header class="space-y-4">
                     <div class="flex items-center justify-center lg:justify-start gap-3">
                         <x-application-logo class="w-12 h-12 lg:w-16 lg:h-16" />
@@ -44,7 +44,7 @@
             </section>
 
             <!-- Login Section -->
-            <section class="flex items-center justify-center">
+    <section class="flex items-center w-full md:w-1/2 justify-center">
 
                 <div class="rounded-lg border bg-white text-card-foreground shadow-2xl">
                     <div class="flex flex-col space-y-1.5 p-6 text-center">
@@ -119,10 +119,12 @@
                                 </form>
                             </div>
                         </div>
+                </div>
 
-                    </div>
 
-                    <footer class="mt-6 p-6 pt-0 text-center text-xs text-slate-600 dark:text-slate-400">
+                </div>
+        </section>
+        <footer class="mt-6 p-6 pt-0 text-center text-xs bg-yellow-400 text-slate-600 dark:text-slate-400">
                         {{__('By logging in, you agree to our')}}
                         <button
                             onclick="document.getElementById('termsModal').showModal()"
@@ -137,12 +139,12 @@
                         >
                             {{__('Privacy Policy')}}
                         </button>
-                    </footer>
-                </div>
-            </section>
 
-        </div>
-        <footer class="mt-6 p-6 pt-0 text-center text-xs text-slate-600 dark:text-slate-400">
+
+
+        </main>
+
+        <div class="w-full mt-6 p-6 pt-0 text-center text-xs text-slate-600 dark:text-slate-400">
                 <!-- Terms of Service Modal -->
                 <dialog id="termsModal" class="max-w-2xl w-full p-0 rounded-2xl shadow-2xl backdrop:bg-black/70 backdrop:backdrop-blur-sm">
                     <div class="bg-white dark:bg-slate-900 rounded-2xl">
@@ -205,7 +207,7 @@
                         </footer>
                     </div>
                 </dialog>
-        </footer>
+            </div>
 
         @vite(['resources/js/components/guest/Typewriter.jsx'])
     </body>
