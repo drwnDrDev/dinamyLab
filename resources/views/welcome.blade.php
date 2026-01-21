@@ -124,7 +124,8 @@
 
                 </div>
         </section>
-        <footer class="mt-6 p-6 pt-0 text-center text-xs bg-yellow-400 text-slate-600 dark:text-slate-400">
+        </main>
+        <footer class="mt-6 p-6 pt-0 text-center text-xs text-slate-600 dark:text-slate-400">
                         {{__('By logging in, you agree to our')}}
                         <button
                             onclick="document.getElementById('termsModal').showModal()"
@@ -142,9 +143,9 @@
 
 
 
-        </main>
 
-        <div class="w-full mt-6 p-6 pt-0 text-center text-xs text-slate-600 dark:text-slate-400">
+
+        <div class="w-full mt-6 p-6 pt-0 text-center text-xs  text-slate-600 dark:text-slate-400">
                 <!-- Terms of Service Modal -->
                 <dialog id="termsModal" class="max-w-2xl w-full p-0 rounded-2xl shadow-2xl backdrop:bg-black/70 backdrop:backdrop-blur-sm">
                     <div class="bg-white dark:bg-slate-900 rounded-2xl">
@@ -208,6 +209,7 @@
                     </div>
                 </dialog>
             </div>
+        </footer>
 
         @vite(['resources/js/components/guest/Typewriter.jsx'])
     </body>
