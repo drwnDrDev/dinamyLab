@@ -1,1 +1,0 @@
-SELECT u.tID,u.numero_doc,u.sexo,u.fecha_nacimiento, p.fecha_procedimiento,p.factura,p.created_at,e.CUP,e.valor_examen FROM `procedimientos` p INNER JOIN personas u on u.id = p.persona_id INNER JOIN examens e on e.id = p.examen_id WHERE `fecha_procedimiento` BETWEEN '2025-07-01' and '2025-07-31' and `prestador_id` =1;
