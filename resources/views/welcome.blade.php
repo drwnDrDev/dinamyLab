@@ -126,7 +126,7 @@
         </section>
         </main>
         <footer class="mt-6 p-6 pt-0 text-center text-xs text-slate-600 dark:text-slate-400">
-                        {{__('By logging in, you agree to our')}}
+                        {{__('Review our privacy policies')}}
                         <button
                             onclick="document.getElementById('termsModal').showModal()"
                             class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-2 transition-colors duration-200 font-medium"
@@ -160,11 +160,11 @@
                             </button>
                         </header>
                         <div class="p-6 max-h-96 overflow-y-auto text-sm text-slate-700 dark:text-slate-300 space-y-4">
-                            <p>{{__('Términos y Condiciones de Uso')}}</p>
-                            <p>{{__('Al acceder y utilizar esta aplicación, usted acepta cumplir con estos términos y condiciones. Si no está de acuerdo con alguna parte de estos términos, no debe utilizar la aplicación.')}}</p>
-                            <p>{{__('1. Uso de la Plataforma: Esta aplicación está diseñada para la gestión de citas clínicas. El usuario se compromete a utilizar la plataforma únicamente para fines legales y de acuerdo con estos términos.')}}</p>
-                            <p>{{__('2. Responsabilidad del Usuario: El usuario es responsable de mantener la confidencialidad de sus credenciales de acceso y de todas las actividades que ocurran bajo su cuenta.')}}</p>
-                            <p>{{__('3. Limitación de Responsabilidad: No seremos responsables por daños directos, indirectos o consecuentes derivados del uso de esta aplicación.')}}</p>
+
+                            <p>{{__('Terms and Conditions of Use')}}</p>
+                            <p>{{__('1. Use of the Platform: This application is designed for managing clinical appointments. The user commits to using the platform solely for legal purposes and in accordance with these terms.')}}</p>
+                            <p>{{__('2. User Responsibility: The user is responsible for maintaining the confidentiality of their access credentials and all activities occurring under their account.')}}</p>
+                            <p>{{__('3. Limitation of Liability: We will not be liable for direct, indirect, or consequential damages arising from the use of this application.')}}</p>
                         </div>
                         <footer class="flex justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-800">
                             <button
