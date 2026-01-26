@@ -50,7 +50,7 @@
             </div>
         </section>
 
-        <div class="py-4" id="historia">
+        <div class="py-2">
             <div class="flex overflow-hidden rounded-xl border border-borders">
                 <table class="flex-1">
                     <thead>
@@ -80,59 +80,43 @@
             </div>
         </div>
 
-        <section class="mx-auto print:!block bg-white">
-            <div class="grid grid-cols-6 border border-borders rounded-md">
-                <p>Examen</p>
-                <p class="col-span-2 text-end pr-2">Cantidad</p>
-                <p class="text-end">Valor</p>
-                <p class="col-span-2 text-end pr-2">Total</p>
-            </div>
-            <div class="grid grid-cols-6 border border-borders rounded-md">
-                @foreach ($orden->examenes as $examen)
-                <p class="col-span-2">{{$examen->nombre}}</p>
-                <p class="text-end px-2">{{$examen->pivot->cantidad}}</p>
-                <p class="text-end">{{number_format($examen->valor)}}</p>
-                <p class="col-span-2 text-end px-2">{{number_format($examen->valor*$examen->pivot->cantidad, 2)}}</p>
-                @endforeach
-            </div>
-            <div class="grid grid-cols-5 justify-between items-center p-2 gap-2">
-                <p class="text-end col-span-3">Subtotal</p>
-                <p class="text-end col-span-2">{{number_format($orden->total,2)}}</p>
-                @if ($orden->descuento && $orden->descuento > 0)
-                <p class="col-span-3 text-end">Descuento </p>
-                <p class="text-end col-span-2">${{$orden->descuento ?? 0}}</p>
-                @endif
+        <div class="flex w-full gap-2 py-2">
+            <div class="p-4 w-full overflow-hidden rounded-xl border border-borders">
+                <p class="font-semibold">Observaciones:</p>
+                <p class="font-light">{{ $orden->observaciones }}hola como estas</p>
 
-                @if($orden->total != $orden->abono)
-                <p class="col-span-3 text-end">Saldo</p>
-                <p class="text-end col-span-2">{{$orden->total - $orden->abono}}</p>
-                @endif
-                <p class="col-span-3 font-semibold text-end">Total</p>
-                <p class="font-semibold text-end col-span-2">${{ number_format(($orden->total - $orden->descuento), 2) }} COP</p>
-                <p class="text-black/75 col-span-5 text-end">**IVA**: $0 (Exento según Art. 476 ET) </p>
             </div>
-
-        </section>
+            <div class="p-4 flex justify-center gap-2 items-center w-full overflow-hidden rounded-xl border border-borders">
+                <div class="flex flex-col justify-center items-end">
+                    <p class="font-semibold">Abono Total:</p>
+                    <p class="font-semibold"0>Saldo:</p>
+                    <p class="font-semibold text-2xl">Total:</p>
+                </div>
+                <div class="flex flex-col">
+                    <p class="font-semibold">${{ number_format($orden->total - $orden->descuento, 2) }}</p>
+                    <p class="font-semibold">${{ number_format($orden->total - $orden->descuento - $orden->abono, 2) }}</p>
+                    <p class="font-semibold text-2xl">${{ number_format($orden->total, 2) }}</p>
+                </div>
+            </div>
+        </div>
 
     </x-canva>
-
-    <section class="Ticket hidden print:flex print:flex-wrap print:justify-between print:w-full print:bg-white">
-        <div class="flex-col justify-center items-center gap-2">
+    <section class="Ticket hidden text-xs px-2 py-6 m-auto print:flex print:flex-wrap print:justify-between print:w-[80mm] print:bg-white">
+        <div class="w-full flex-col justify-center items-center gap-2 mb-4">
             <div class="flex justify-center items-center">
                 <figure class="w-20 h-20 p-1">
                     <img class="aspect-square object-cover w-full h-full rounded-md"
                         src="{{ asset('storage/logos/'.$orden->sede->logo) }}" alt="{{$orden->sede->nombre }}">
                 </figure>
                 <div class="flex flex-col justify-center">
-                    <h2 class="font-semibold text-2xl">{{$orden->sede->empresa->nombre_comercial}}</h2>
-                    <p class="font-light text-sm">{{$orden->sede->nombre}}</p>
-                    <p class="font-semibold text-xs">NIT: {{$orden->sede->empresa->nit}}</p>
+                    <h2 class="font-semibold text-xl">{{$orden->sede->empresa->nombre_comercial}}</h2>
+                    <p class="font-light">{{$orden->sede->nombre}}</p>
+                    <p class="font-semibold">NIT: {{$orden->sede->empresa->nit}}</p>
                 </div>
             </div>
-            <div class="px-4">
-
-                <p class="font-medium text-xs">{{$orden->sede->direccion->direccion}}-{{$orden->sede->direccion->municipio->municipio}}</p>
-                <p class="font-light text-sm"> Telefonos:
+            <div class="px-4 text-center">
+                <p class="font-medium">{{$orden->sede->direccion->direccion}}</p>
+                <p class="font-light"> Tels:
                     @php
                     $telefonos = $orden->sede->telefonos->slice(0, 2);
                     @endphp
@@ -143,50 +127,101 @@
                         @endif
                         @endforeach
                 </p>
+                <p>
+                    {{$orden->sede->direccion->municipio->municipio}}
+                </p>
             </div>
         </div>
 
-        <div class="flex flex-col justify-center items-center gap-2 p-1 ">
-            <div class="flex flex-col text-center">
-                <span class="font-semibold">Fecha de atención </span>
-                <h3 class="mb-2 text-centrer">{{$orden->created_at->translatedFormat('d \de F Y')}}</h3>
+        <div class="flex w-full justify-between items-center gap-2">
+            <div>
+                <h3><span class="font-normal">Fecha: </span>
+                    {{$orden->created_at->translatedFormat('d/m/Y')}}
+                </h3>
             </div>
 
-            <h3><strong>Órden Nº: </strong>
-                {{$orden->numero}}
-            </h3>
-
+            <div class="">
+                <h3><span class="font-semibold">Órden Nº: </span>
+                    {{$orden->numero}}
+                </h3>
+            </div>
+        </div>
+        <div>
+            <p class="font-light"><span class="font-normal">Paciente: </span>
+                {{$orden->paciente->nombreCompleto()}}
+            </p>
+            <p class="font-light"><span class="font-normal">Identificación: </span>
+                {{$orden->paciente->tipo_documento->cod_rips}}{{$orden->paciente->numero_documento}}
+            </p>
+            <p class="font-light"><span class="font-normal">Tels: </span>
+                @if($orden->paciente->telefonos->isEmpty())
+                Sin Registro
+                @else
+                @foreach($orden->paciente->telefonos as $telefono)
+                <span>{{ $telefono->numero}}</span>
+                @endforeach
+                @endif
+            </p>
+            <br>
         </div>
         <div>
             <table>
                 <thead>
                     <tr class="border-t border-text">
-                        <th class="px-1 py-1 text-left text-text w-40 text-sm font-medium leading-normal">Examen</th>
-                        <th class="px-1 py-1 text-left text-text w-32 text-sm font-medium leading-normal">Cantidad</th>
-                        <th class="px-1 py-1 text-left text-text w-60 text-sm font-medium leading-normal">Valor</th>
-                        <th class="px-1 py-1 text-left text-text w-60 text-sm font-medium leading-normal">Total</th>
+                        <th class="p1 text-left text-text w-60 text-sm font-normal leading-normal">Examen</th>
+                        <th class="p1 text-left text-text w-16 text-sm font-normal leading-normal">Cant.</th>
+                        <th class="p1 text-left text-text w-40 text-sm font-normal leading-normal">Vlr</th>
+                        <th class="p1 text-left text-text w-40 text-sm font-normal leading-normal">Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($orden->examenes as $examen)
-                    <tr class="border-t border-borders">
-                        <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
+                    <tr>
+                        <td class="content-start p1 w-60 text-xs font-light leading-normal">
                             {{ $examen->nombre }}
                         </td>
-                        <td class="content-start px-4 py-2 w-32 text-titles text-sm font-normal leading-normal">
+                        <td class="content-start p1 w-16 text-xs font-light leading-normal">
                             {{ $examen->pivot->cantidad }}
                         </td>
-                        <td class="content-start px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
+                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
                             {{ number_format($examen->valor) }}
                         </td>
-                        <td class="content-start px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
+                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
                             {{ number_format($examen->valor*$examen->pivot->cantidad, 2) }}
                         </td>
                     </tr>
                     @endforeach
+                    @if ($orden->descuento && $orden->descuento > 0)
+                    <tr>
+                        <td colspan="3" class="text-end font-semibold p-1 pl-4">Descuento</td>
+                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
+                            ${{ number_format($orden->descuento, 2) }}
+                        </td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <td colspan="3" class="text-end font-semibold p-1 pl-4">Abono</td>
+                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
+                            ${{ number_format($orden->abono, 2) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-end font-semibold p-1 pl-4">Saldo</td>
+                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
+                            ${{ number_format(($orden->total - $orden->descuento - $orden->abono), 2) }}
+                        </td>
+                    </tr>
+                    <tr class="border-t border-text">
+                        <td colspan="3" class="text-end font-semibold p-1 pl-4">Total</td>
+                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
+                            ${{ number_format(($orden->total - $orden->descuento), 2) }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+        <div class="w-full flex flex-col justify-center items-center mt-4">
+            <p class="text-center uppercase">Este es un recibo de una orden de examenes. No es valido como factura.</p>
+            <p class="text-center">¡Presenta este recibo para reclamar los resultados!</p>
     </section>
-
 </x-app-layout>
