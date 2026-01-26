@@ -81,14 +81,22 @@
         </div>
 
         <div class="flex w-full gap-2 py-2">
-            <div class="flex w-full overflow-hidden rounded-xl border border-borders">
-                Abono: ${{ number_format($orden->abono, 2) }}
+            <div class="p-4 w-full overflow-hidden rounded-xl border border-borders">
+                <p class="font-semibold">Observaciones:</p>
+                <p class="font-light">{{ $orden->observaciones }}hola como estas</p>
 
             </div>
-            <div class="flex flex-col justify-center items-center w-full overflow-hidden rounded-xl border border-borders">
-                <p>Abono Total: ${{ number_format($orden->total - $orden->descuento, 2) }}</p> 
-                <p>Saldo: ${{ number_format($orden->total - $orden->descuento - $orden->abono, 2) }}</p>
-                <p>Total: ${{ number_format($orden->total, 2) }}</p>
+            <div class="p-4 flex justify-center gap-2 items-center w-full overflow-hidden rounded-xl border border-borders">
+                <div class="flex flex-col justify-center items-end">
+                    <p class="font-semibold">Abono Total:</p>
+                    <p class="font-semibold"0>Saldo:</p>
+                    <p class="font-semibold text-2xl">Total:</p>
+                </div>
+                <div class="flex flex-col">
+                    <p class="font-semibold">${{ number_format($orden->total - $orden->descuento, 2) }}</p>
+                    <p class="font-semibold">${{ number_format($orden->total - $orden->descuento - $orden->abono, 2) }}</p>
+                    <p class="font-semibold text-2xl">${{ number_format($orden->total, 2) }}</p>
+                </div>
             </div>
         </div>
 
