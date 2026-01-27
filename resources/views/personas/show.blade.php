@@ -49,7 +49,18 @@
             <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Sexo</p>
                 <p class=" font-normal leading-normal" id="sexo">
-                    {{$persona->sexo==='M' ? 'Masculino':'Femenino'}}
+                    @switch($persona->sexo)
+                        @case('M')
+                            Masculino
+                            @break
+
+                        @case('F')
+                            Femenino
+                            @break
+
+                        @default
+                            Intesexual
+                    @endswitch
                 </p>
             </div>
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
@@ -72,12 +83,12 @@
     @isset($persona->direccion)
         <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
             <p class="text-titles  font-normal leading-normal">Muncipio</p>
-            <p class=" font-normal leading-normal">{{ $persona->direccion->municipio->municipio }}-{{ $persona->direccion->municipio->departamento }}</p>
+            <p class=" font-normal leading-normal">{{ $persona->direccion->municipio->municipio ?? 'Sin Municipio' }}-{{ $persona->direccion->municipio->departamento ?? 'Sin Departamento' }}</p>
         </div>
 
         <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">
             <p class="text-titles  font-normal leading-normal">Dirección</p>
-            <p class=" font-normal leading-normal">{{ $persona->direccion->direccion}}</p>
+            <p class=" font-normal leading-normal">{{ $persona->direccion->direccion ?? 'Sin Dirección' }}</p>
         </div>
     @else
     <form method="POST" id="direccion-form" class="max-w-md">
