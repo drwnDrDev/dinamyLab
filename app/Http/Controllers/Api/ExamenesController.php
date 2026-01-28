@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Estado;
 use App\Http\Controllers\Controller;
 use App\Models\Examen;
 use App\Models\Procedimiento;
@@ -54,7 +55,7 @@ class ExamenesController extends Controller
     {
         try {
             $procedimientos = Procedimiento::where('examen_id', $examenId)
-                ->where('estado', 'en proceso')
+                ->where('estado', Estado::PROCESO)
                 ->with([
                     'orden.paciente',
                     'examen'

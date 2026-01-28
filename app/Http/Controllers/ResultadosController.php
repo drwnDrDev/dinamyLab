@@ -94,6 +94,38 @@ class ResultadosController extends Controller
         $procedimiento->save();
         return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados guardados correctamente.');
     }
+    public function edit(Procedimiento $procedimiento)
+    {
+
+        // Carga el procedimiento con sus relaciones necesarias
+        $procedimiento->load(['orden.paciente', 'resultado', 'sede']);
+
+        // Verifica si el procedimiento ya tiene resultados
+        if ($procedimiento->resultado->isEmpty()) {
+            return redirect()->route('resultados.create', $procedimiento)
+                ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
+        }
+        $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+        return view('resultados.edit', compact('procedimiento', 'parametros'));
+    }
+    public function update(Request $request, Procedimiento $procedimiento)
+    {
+        // Validar unicidad de (procedimiento_id, parametro_id) antes de guardar
+        $input = collect($request->except(['_token', 'submit']));
+        $duplicates = [];
+        foreach ($input->keys() as $paramId) {
+            if (is_numeric($paramId) && !$procedimiento->resultado()->where('parametro_id', $paramId)->exists()) {
+                $duplicates[] = $paramId;
+            }
+        }
+        if (!empty($duplicates)) {
+            return redirect()->back()
+                ->with('warning', 'No existen resultados previos para los parámetros: ' . implode(', ', $duplicates));
+        }
+        EscogerReferencia::actualizaResultado($request->except(['_token', 'submit']), $procedimiento);
+        return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados actualizados correctamente.');
+    }
+
     public function historia(Persona $persona)
     {
         $ordenes = Orden::where('paciente_id', $persona->id)

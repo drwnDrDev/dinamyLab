@@ -114,6 +114,27 @@ class EscogerReferencia
     }
 
     /**
+     * Actualiza resultados para un procedimiento.
+     */
+    public static function actualizaResultado(array $formData, Procedimiento $proc): void
+    {
+        foreach ($formData as $parametroId => $valorResultado) {
+            $resultado = Resultado::where('procedimiento_id', $proc->id)
+                ->where('parametro_id', $parametroId)
+                ->first();
+            if (!$resultado) {
+                Log::warning('Resultado no encontrado para actualización.', [
+                    'procedimiento_id' => $proc->id,
+                    'parametro_id' => $parametroId
+                ]);
+                continue; // Skip if result not found
+            }
+            $resultado->resultado = $valorResultado;
+            $resultado->save();
+        }
+    }
+
+    /**
      * Obtiene los resultados de un procedimiento.
      */
     public static function obtenerResultados(Procedimiento $proc): array
@@ -136,10 +157,10 @@ class EscogerReferencia
         }
         foreach ($proc->examen->parametros()->with('valoresReferencia')->orderBy('posicion')->get() as $parametroBase) {
             $resultado = $resultadosP->firstWhere('parametro_id', $parametroBase->id);
-           
-           
+
+
             if (!$resultado) {
-                
+
             $parametros[] = [
                 'id'        => $parametroBase->id,
                 'nombre'    => $parametroBase->nombre,
