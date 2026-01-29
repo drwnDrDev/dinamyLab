@@ -98,7 +98,7 @@ class ResultadosController extends Controller
     {
 
         // Carga el procedimiento con sus relaciones necesarias
-        $procedimiento->load(['orden.paciente', 'resultado', 'sede']);
+        $procedimiento->load(['orden.paciente', 'resultado', 'sede', 'examen.parametros.opciones']);
 
         // Verifica si el procedimiento ya tiene resultados
         if ($procedimiento->resultado->isEmpty()) {
@@ -106,6 +106,8 @@ class ResultadosController extends Controller
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
         $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+
+        dd($procedimiento);
         return view('resultados.edit', compact('procedimiento', 'parametros'));
     }
     public function update(Request $request, Procedimiento $procedimiento)
