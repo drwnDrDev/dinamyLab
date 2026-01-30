@@ -14,7 +14,7 @@
 
             @break
             @case ('number')
-         
+
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
             <div class="text-end"><input type="number" step="0.005" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
@@ -32,10 +32,10 @@
             @case ('select')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><select name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" class="w-full p-2 pr-10 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><select name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" class="w-full p-2 uppercase pr-10 border-borders focus:border-primary focus:ring-primary
             rounded-md">
                     @foreach ($parametro['opciones'] as $opcion)
-                    <option value="{{$opcion}}" class="active:bg-titles">{{$opcion}}</option>
+                    <option value="{{$opcion}}" class="active:bg-titles uppercase">{{$opcion}}</option>
                     @endforeach
                 </select></div>
             <div><p>{{$parametro['unidades']}}</p></div>

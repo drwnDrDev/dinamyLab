@@ -220,6 +220,7 @@ class EscogerReferencia
                 'metodo'    => $resultado->parametro->metodo,
                 'unidades'  => $resultado->parametro->unidades,
                 'referencia'=> optional($referencia)->salida,
+                'opciones'  => $resultado->parametro->opciones->pluck('valor')->all()
             ];
         }
 
