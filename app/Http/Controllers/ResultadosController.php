@@ -105,9 +105,11 @@ class ResultadosController extends Controller
             return redirect()->route('resultados.create', $procedimiento)
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
-        $parametros = EscogerReferencia::obtenerResultados($procedimiento);
 
-        dd($procedimiento);
+        // Combina parámetros del examen con resultados en una sola colección
+        $parametros = collect(EscogerReferencia::obtenerResultados($procedimiento));
+        
+
         return view('resultados.edit', compact('procedimiento', 'parametros'));
     }
     public function update(Request $request, Procedimiento $procedimiento)
