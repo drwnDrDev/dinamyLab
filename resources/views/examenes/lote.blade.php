@@ -69,17 +69,15 @@
                 <!-- Tabla de parámetros -->
                 <div class="overflow-x-auto mb-6">
                     <table class="w-full border-collapse">
-                        <thead>
+                        <thead id="parametrosTableHead">
                             <tr class="bg-gray-100 border-b-2 border-borders">
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Persona
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Posición</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Unidades</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Resultado</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Valor Referencia</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Paciente</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Orden #</th>
+                                <!-- Parámetros se agregarán dinámicamente -->
                             </tr>
                         </thead>
                         <tbody id="parametrosTableBody">
-                            <!-- Se llenará dinámicamente con los parámetros del examen -->
+                            <!-- Se llenará dinámicamente con los parámetros del examen por procedimiento -->
                         </tbody>
                     </table>
                 </div>
@@ -245,27 +243,40 @@
 
         // Renderizar tabla de parámetros
         function renderizarParametros() {
+            const thead = document.getElementById('parametrosTableHead');
             const tbody = document.getElementById('parametrosTableBody');
 
-            tbody.innerHTML = parametros.map((param, index) => {
-                const valoresRef = param.valores_referencia || [];
-                const textoValoresRef = valoresRef.length > 0
-                    ? valoresRef.map(v => `${v.minimo}-${v.maximo} ${v.unidades}`).join(', ')
-                    : 'N/A';
+            // Actualizar encabezado con parámetros
+            const paramHeaders = parametros.map(param => `
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">${param.nombre} (${param.unidades || ''})</th>
+            `).join('');
+
+            thead.innerHTML = `
+                <tr class="bg-gray-100 border-b-2 border-borders">
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Paciente</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Orden #</th>
+                    ${paramHeaders}
+                </tr>
+            `;
+
+            // Renderizar filas por procedimiento seleccionado
+            tbody.innerHTML = Array.from(procedimientosSeleccionados).map(procedimientoId => {
+                const proc = procedimientosDisponibles.find(p => p.id === procedimientoId);
+                const paramInputs = parametros.map(param => `
+                    <td class="px-4 py-3">
+                        <input type="text"
+                               name="resultados[${procedimientoId}][${param.id}]"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="${param.nombre}"
+                               required>
+                    </td>
+                `).join('');
 
                 return `
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="px-4 py-3 text-sm font-semibold text-gray-800">${param.nombre}</td>
-                        <td class="px-4 py-3 text-sm text-gray-600">${param.posicion || 'N/A'}</td>
-                        <td class="px-4 py-3 text-sm text-gray-600">${param.unidades || ''}</td>
-                        <td class="px-4 py-3">
-                            <input type="text"
-                                   name="resultados[${param.id}]"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="${param.nombre}"
-                                   required>
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-600">${textoValoresRef}</td>
+                        <td class="px-4 py-3 text-sm font-semibold text-gray-800">${proc.paciente_nombre}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${proc.orden_id}</td>
+                        ${paramInputs}
                     </tr>
                 `;
             }).join('');
@@ -291,19 +302,32 @@
             }
 
             const formData = new FormData(this);
-            const resultados = {};
+            const resultadosPorProcedimiento = {};
 
-            // Recolectar resultados del formulario
-            parametros.forEach(param => {
-                const valor = formData.get(`resultados[${param.id}]`);
-                if (valor) {
-                    resultados[param.id] = valor;
-                }
+            // Recolectar resultados por procedimiento
+            Array.from(procedimientosSeleccionados).forEach(procedimientoId => {
+                resultadosPorProcedimiento[procedimientoId] = {};
+                parametros.forEach(param => {
+                    const valor = formData.get(`resultados[${procedimientoId}][${param.id}]`);
+                    if (valor && valor.trim() !== '') {
+                        resultadosPorProcedimiento[procedimientoId][param.id] = valor.trim();
+                    }
+                });
             });
+
+            // Validar que todos los procedimientos tengan resultados
+            const procedimientosSinResultados = Object.keys(resultadosPorProcedimiento).filter(id =>
+                Object.keys(resultadosPorProcedimiento[id]).length === 0
+            );
+
+            if (procedimientosSinResultados.length > 0) {
+                alert('Debe ingresar resultados para todos los parámetros de cada procedimiento seleccionado');
+                return;
+            }
 
             try {
                 // Enviar para cada procedimiento seleccionado
-                const promesas = Array.from(procedimientosSeleccionados).map(procedimientoId => {
+                const promesas = Object.entries(resultadosPorProcedimiento).map(([procedimientoId, resultados]) => {
                     return fetch(`/resultados/${procedimientoId}/store`, {
                         method: 'POST',
                         headers: {
