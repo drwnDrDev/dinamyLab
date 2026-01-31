@@ -1,0 +1,100 @@
+{
+  "_index-B9ygI19o.js": {
+    "file": "assets/index-B9ygI19o.js",
+    "name": "index"
+  },
+  "_index-C2KC86Ta.js": {
+    "file": "assets/index-C2KC86Ta.js",
+    "name": "index"
+  },
+  "_manejadorEventos-COZSVYWs.js": {
+    "file": "assets/manejadorEventos-COZSVYWs.js",
+    "name": "manejadorEventos",
+    "imports": [
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-bGv_tmHQ.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css",
+      "app.css"
+    ]
+  },
+  "resources/css/rips-cargador.png": {
+    "file": "assets/rips-cargador-DoL-Xzn1.png",
+    "src": "resources/css/rips-cargador.png"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-l0sNRNKZ.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/app.jsx": {
+    "file": "assets/app-CH4jU9KM.js",
+    "name": "app",
+    "src": "resources/js/app.jsx",
+    "isEntry": true,
+    "imports": [
+      "_index-C2KC86Ta.js",
+      "_index-B9ygI19o.js"
+    ],
+    "css": [
+      "assets/app-bGv_tmHQ.css"
+    ],
+    "assets": [
+      "assets/rips-cargador-DoL-Xzn1.png"
+    ]
+  },
+  "resources/js/buscarPersona.js": {
+    "file": "assets/buscarPersona-Bar_teVD.js",
+    "name": "buscarPersona",
+    "src": "resources/js/buscarPersona.js",
+    "isEntry": true
+  },
+  "resources/js/components/guest/Typewriter.jsx": {
+    "file": "assets/Typewriter-DMl4pWwa.js",
+    "name": "Typewriter",
+    "src": "resources/js/components/guest/Typewriter.jsx",
+    "isEntry": true,
+    "imports": [
+      "_index-C2KC86Ta.js"
+    ]
+  },
+  "resources/js/crearOrdenes.js": {
+    "file": "assets/crearOrdenes-Dpuaiq7E.js",
+    "name": "crearOrdenes",
+    "src": "resources/js/crearOrdenes.js",
+    "isEntry": true
+  },
+  "resources/js/crearPersona.js": {
+    "file": "assets/crearPersona-DVd9Xovs.js",
+    "name": "crearPersona",
+    "src": "resources/js/crearPersona.js",
+    "isEntry": true,
+    "imports": [
+      "_manejadorEventos-COZSVYWs.js",
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "resources/js/main.js": {
+    "file": "assets/main-BOIdc0TS.js",
+    "name": "main",
+    "src": "resources/js/main.js",
+    "isEntry": true,
+    "imports": [
+      "_manejadorEventos-COZSVYWs.js",
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "resources/js/obtenerStaticos.js": {
+    "file": "assets/obtenerStaticos-Dfa6TH3C.js",
+    "name": "obtenerStaticos",
+    "src": "resources/js/obtenerStaticos.js",
+    "isEntry": true
+  }
+}
