@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
         $prestador = User::factory()->create([
             'name' => 'Claudia Patricia Buitrago',
             'email' => 'cpbuitrago69@yahoo.com',
-            'password' => Hash::make('DinamycodeDC'),
+            'password' => Hash::make('Danielito2006'),
         ]);
          $coordinador = User::factory()->create([
             'name' => 'Juan Perez',
@@ -37,6 +37,12 @@ class DatabaseSeeder extends Seeder
             'name' => 'Pedro Perez',
             'email' => 'info@dinamycode.com',
             'password' => Hash::make('DinamycodeDC'),
+        ]);
+
+        $usuarioSanPablo = User::factory()->create([
+            'name' => 'Pilar Rocha',
+            'email' => 'pilar_rocha@dinamycode.com',
+            'password' => Hash::make('SanPabloL7'),
         ]);
 
         Role::create(['name' => 'admin']);

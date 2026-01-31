@@ -48,7 +48,7 @@ class SetupSeeder extends Seeder
                 // Activarlo y asignar nivel 10
                 $diagnostico->update([
                     'activo' => true,
-                    'nivel' => 10
+                    'nivel' => 3
                 ]);
 
                 echo "✓ Activado: {$diagnostico->codigo} - {$diagnostico->descripcion}\n";

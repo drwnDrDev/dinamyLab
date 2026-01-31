@@ -15,6 +15,8 @@ class EmpresaSeeder extends Seeder
     public function run(): void
     {
 
+
+
     $persona = Persona::create([
             'primer_nombre'=>'Claudia',
             'segundo_nombre'=>'Patricia',
@@ -62,9 +64,28 @@ class EmpresaSeeder extends Seeder
             'nombre_comercial'=>'Biotek',
 
         ]);
+        $sanPablo = \App\Models\Empresa::create([
+            'nit'=>'51712439-7',
+            'razon_social'=>'Laboratorio San Pablo',
+            'nombre_comercial'=>'Laboratorio San Pablo',
+        ]);
+
 
         $empresa->telefonos()->create([
             'numero'=>'3207001403'
+        ]);
+
+        $empresa->direccion()->create([
+            'municipio_id'=>'11001',
+            'direccion'=>'Diagonal 69 C sur # 78 C 36'
+        ]);
+
+        $sanPablo->telefonos()->create([
+            'numero'=>'3124112971'
+        ]);
+        $sanPablo->direccion()->create([
+            'municipio_id'=>'11001',
+            'direccion'=>'Cl. 66 Sur #78L - 25 Local 3, Bosa, Bogotá D.C.'
         ]);
 
 
@@ -101,6 +122,14 @@ class EmpresaSeeder extends Seeder
             'direccion'=>'Tv 78L Nº 69C 10 sur'
         ]);
 
+        $sedeSanPablo = \App\Models\Sede::create([
+            'nombre'=>'Laboratorio San Pablo Bosa',
+            'codigo_prestador'=>'110013629101',
+            'logo'=>'sanpablo_logo.png',
+            'empresa_id'=>$sanPablo->id,
+
+        ]);
+
         $empleado = \App\Models\Empleado::create([
             'cargo'=>'Bacteriologa',
             'firma'=>'firma_claudia.png',
@@ -111,9 +140,25 @@ class EmpresaSeeder extends Seeder
             'empresa_id'=>1,
 
         ]);
+
+
         $empleado->telefonos()->create([
             'numero'=>'3207001403'
         ]);
+
+        $empeladoSanPablo = \App\Models\Empleado::create([
+            'cargo'=>'Bacteriologa',
+           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
+            'numero_documento'=>'51712439',
+            'fecha_nacimiento'=>'1963-05-20',
+            'user_id'=>5,
+            'empresa_id'=>$sanPablo->id,
+
+        ]);
+        $empeladoSanPablo->telefonos()->create([
+            'numero'=>'3124112971'
+        ]);
+
 
         $admon= \App\Models\Empleado::create([
             'cargo'=>'Administrador',
@@ -194,6 +239,7 @@ class EmpresaSeeder extends Seeder
         $empleado->sedes()->attach([$sede->id, $sede2->id]);
         $empleado3->sedes()->attach($sede2->id);
         $admon->sedes()->attach([$sede2->id, $sede->id]);
+        $empeladoSanPablo->sedes()->attach($sedeSanPablo->id);
 
 
     }
