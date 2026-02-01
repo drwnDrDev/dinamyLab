@@ -24,6 +24,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/link-storage', function () {
+    Artisan::call('storage:link');
+    return '¡El enlace simbólico ha sido creado!';
+});
+
 // Rutas públicas de registro de citas (sin autenticación requerida)
 Route::get('/citas/registrar', [PreRegistroCitaController::class, 'create'])->name('citas.create');
 Route::post('/citas/registrar', [PreRegistroCitaController::class, 'store'])->name('citas.store');
