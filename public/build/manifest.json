@@ -1,4 +1,19 @@
 {
+  "_FormPersona-CheX1k1s.js": {
+    "file": "assets/FormPersona-CheX1k1s.js",
+    "name": "FormPersona",
+    "imports": [
+      "_index-C2KC86Ta.js",
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "_client-DCM6oUEP.js": {
+    "file": "assets/client-DCM6oUEP.js",
+    "name": "client",
+    "imports": [
+      "_index-C2KC86Ta.js"
+    ]
+  },
   "_index-B9ygI19o.js": {
     "file": "assets/index-B9ygI19o.js",
     "name": "index"
@@ -14,8 +29,8 @@
       "_index-B9ygI19o.js"
     ]
   },
-  "_useAxiosAuth-pfDa2iXj.js": {
-    "file": "assets/useAxiosAuth-pfDa2iXj.js",
+  "_useAxiosAuth-JGr_IZ3E.js": {
+    "file": "assets/useAxiosAuth-JGr_IZ3E.js",
     "name": "useAxiosAuth",
     "imports": [
       "_index-C2KC86Ta.js",
@@ -43,13 +58,14 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-Cz_M8O5S.js",
+    "file": "assets/app-CT7uju4j.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
     "imports": [
       "_index-C2KC86Ta.js",
-      "_useAxiosAuth-pfDa2iXj.js",
+      "_client-DCM6oUEP.js",
+      "_useAxiosAuth-JGr_IZ3E.js",
       "_index-B9ygI19o.js"
     ],
     "css": [
@@ -60,13 +76,27 @@
     ]
   },
   "resources/js/appOrden.jsx": {
-    "file": "assets/appOrden-FkHA64i-.js",
+    "file": "assets/appOrden-dpjJjbY2.js",
     "name": "appOrden",
     "src": "resources/js/appOrden.jsx",
     "isEntry": true,
     "imports": [
       "_index-C2KC86Ta.js",
-      "_useAxiosAuth-pfDa2iXj.js",
+      "_client-DCM6oUEP.js",
+      "_FormPersona-CheX1k1s.js",
+      "_index-B9ygI19o.js",
+      "_useAxiosAuth-JGr_IZ3E.js"
+    ]
+  },
+  "resources/js/appPersona.jsx": {
+    "file": "assets/appPersona-D9c9nyaP.js",
+    "name": "appPersona",
+    "src": "resources/js/appPersona.jsx",
+    "isEntry": true,
+    "imports": [
+      "_index-C2KC86Ta.js",
+      "_client-DCM6oUEP.js",
+      "_FormPersona-CheX1k1s.js",
       "_index-B9ygI19o.js"
     ]
   },
