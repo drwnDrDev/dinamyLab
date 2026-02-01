@@ -197,5 +197,4 @@
             </div>
         </section>
     </x-canva>
-   @vite('resources/js/showPersona.js')
 </x-app-layout>

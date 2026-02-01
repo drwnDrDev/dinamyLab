@@ -1,9 +1,11 @@
 # Laravel Lang: Actions
 
-![laravel lang actions](https://preview.dragon-code.pro/laravel-lang/action-names.svg?brand=laravel&mode=dark)
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://banners.beyondco.de/Actions.png?theme=dark&pattern=topography&style=style_2&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg&packageManager=composer+require+--dev&packageName=laravel-lang%2Factions&description=by+Laravel+Lang&md=1&showWatermark=1">
+    <img src="https://banners.beyondco.de/Actions.png?theme=light&pattern=topography&style=style_2&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg&packageManager=composer+require+--dev&packageName=laravel-lang%2Factions&description=by+Laravel+Lang&md=1&showWatermark=1" alt="Actions">
+</picture>
 
 [![Stable Version][badge_stable]][link_packagist]
-[![Unstable Version][badge_unstable]][link_packagist]
 [![Total Downloads][badge_downloads]][link_packagist]
 [![Github Workflow Status][badge_build]][link_build]
 [![License][badge_license]][link_license]
@@ -32,8 +34,6 @@ This package is licensed under the [MIT License](https://laravel-lang.com/licens
 [badge_license]:        https://img.shields.io/packagist/l/laravel-lang/actions.svg?style=flat-square
 
 [badge_stable]:         https://img.shields.io/github/v/release/laravel-lang/actions?label=stable&style=flat-square
-
-[badge_unstable]:       https://img.shields.io/badge/unstable-dev--main-orange?style=flat-square
 
 [link_build]:           https://github.com/laravel-lang/actions/actions
 

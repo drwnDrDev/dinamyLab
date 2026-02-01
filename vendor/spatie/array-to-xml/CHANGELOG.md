@@ -2,6 +2,43 @@
 
 All notable changes to `array-to-xml` will be documented in this file
 
+## 3.4.3 - 2025-11-27
+
+### What's Changed
+
+* Allow _value content to be numeric by @dimitri-koenig in https://github.com/spatie/array-to-xml/pull/248
+* Replace strpos with str_starts_with by @dimitri-koenig in https://github.com/spatie/array-to-xml/pull/247
+
+**Full Changelog**: https://github.com/spatie/array-to-xml/compare/3.4.2...3.4.3
+
+## 3.4.2 - 2025-11-26
+
+### What's Changed
+
+* Extend comments feature for multiple comments by @dimitri-koenig in https://github.com/spatie/array-to-xml/pull/246
+* Bump actions/checkout from 4 to 6 by @dependabot[bot] in https://github.com/spatie/array-to-xml/pull/245
+* Bump stefanzweifel/git-auto-commit-action from 5 to 7 by @dependabot[bot] in https://github.com/spatie/array-to-xml/pull/243
+
+**Full Changelog**: https://github.com/spatie/array-to-xml/compare/3.4.1...3.4.2
+
+## 3.4.1 - 2025-11-12
+
+### What's Changed
+
+* Replace array access with foreach value by @xHeaven in https://github.com/spatie/array-to-xml/pull/236
+* Bump dependabot/fetch-metadata from 2.2.0 to 2.3.0 by @dependabot[bot] in https://github.com/spatie/array-to-xml/pull/237
+* Bump dependabot/fetch-metadata from 2.3.0 to 2.4.0 by @dependabot[bot] in https://github.com/spatie/array-to-xml/pull/239
+* Update issue template by @AlexVanderbist in https://github.com/spatie/array-to-xml/pull/242
+* Add comment feature by @dimitri-koenig in https://github.com/spatie/array-to-xml/pull/244
+
+### New Contributors
+
+* @xHeaven made their first contribution in https://github.com/spatie/array-to-xml/pull/236
+* @AlexVanderbist made their first contribution in https://github.com/spatie/array-to-xml/pull/242
+* @dimitri-koenig made their first contribution in https://github.com/spatie/array-to-xml/pull/244
+
+**Full Changelog**: https://github.com/spatie/array-to-xml/compare/3.4.0...3.4.1
+
 ## 3.4.0 - 2024-12-16
 
 ### What's Changed
