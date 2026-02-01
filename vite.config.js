@@ -15,6 +15,7 @@ export default defineConfig({
                 'resources/js/obtenerStaticos.js',
                 'resources/js/crearPersona.js',
                 'resources/js/app.jsx',
+                'resources/js/react-app.jsx',
                 'resources/js/components/guest/Typewriter.jsx'
 
             ],
