@@ -14,6 +14,14 @@
       "_index-B9ygI19o.js"
     ]
   },
+  "_useAxiosAuth-pfDa2iXj.js": {
+    "file": "assets/useAxiosAuth-pfDa2iXj.js",
+    "name": "useAxiosAuth",
+    "imports": [
+      "_index-C2KC86Ta.js",
+      "_index-B9ygI19o.js"
+    ]
+  },
   "resources/css/app.css": {
     "file": "assets/app-bGv_tmHQ.css",
     "src": "resources/css/app.css",
@@ -35,12 +43,13 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-CH4jU9KM.js",
+    "file": "assets/app-Cz_M8O5S.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
     "imports": [
       "_index-C2KC86Ta.js",
+      "_useAxiosAuth-pfDa2iXj.js",
       "_index-B9ygI19o.js"
     ],
     "css": [
@@ -48,6 +57,17 @@
     ],
     "assets": [
       "assets/rips-cargador-DoL-Xzn1.png"
+    ]
+  },
+  "resources/js/appOrden.jsx": {
+    "file": "assets/appOrden-FkHA64i-.js",
+    "name": "appOrden",
+    "src": "resources/js/appOrden.jsx",
+    "isEntry": true,
+    "imports": [
+      "_index-C2KC86Ta.js",
+      "_useAxiosAuth-pfDa2iXj.js",
+      "_index-B9ygI19o.js"
     ]
   },
   "resources/js/buscarPersona.js": {
