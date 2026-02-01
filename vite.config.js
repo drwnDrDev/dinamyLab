@@ -16,6 +16,7 @@ export default defineConfig({
                 'resources/js/crearPersona.js',
                 'resources/js/app.jsx',
                 'resources/js/appOrden.jsx',
+                'resources/js/appPersona.jsx',
                 'resources/js/components/guest/Typewriter.jsx'
 
             ],
