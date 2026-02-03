@@ -38,11 +38,12 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-Bw0Wx8We.css",
+    "file": "assets/app-C2rgpyHu.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
     "names": [
+      "app.css",
       "app.css"
     ]
   },
@@ -57,7 +58,7 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-BaN0inZz.js",
+    "file": "assets/app-DYLx3g5m.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -65,11 +66,10 @@
       "_index-C2KC86Ta.js",
       "_client-DCM6oUEP.js",
       "_useAxiosAuth-JGr_IZ3E.js",
-      "_index-B9ygI19o.js",
-      "resources/js/components/guest/Typewriter.jsx"
+      "_index-B9ygI19o.js"
     ],
     "css": [
-      "assets/app-Bw0Wx8We.css"
+      "assets/app-C2rgpyHu.css"
     ],
     "assets": [
       "assets/rips-cargador-DoL-Xzn1.png"
@@ -107,7 +107,7 @@
     "isEntry": true
   },
   "resources/js/components/guest/Typewriter.jsx": {
-    "file": "assets/Typewriter-DpIIvn7w.js",
+    "file": "assets/Typewriter-DMl4pWwa.js",
     "name": "Typewriter",
     "src": "resources/js/components/guest/Typewriter.jsx",
     "isEntry": true,
