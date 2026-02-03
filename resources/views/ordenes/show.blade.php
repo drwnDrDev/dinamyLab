@@ -65,7 +65,7 @@
                         @foreach ($orden->procedimientos as $procedimiento)
 
                         <tr class="border-t border-borders hover:bg-secondary">
-                            <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->fecha->format('d-m-Y') }}</span></td>
+                            <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->fecha }}</span></td>
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->id }}</span></td>
                             <td class="px-3 py-4"><span class="w-60">{{ $procedimiento->examen->nombre }}</span></td>
                             <td class="px-3 py-4">
