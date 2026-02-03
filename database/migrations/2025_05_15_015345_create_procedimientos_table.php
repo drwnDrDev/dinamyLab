@@ -27,7 +27,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('facturas')
                 ->onDelete('cascade');
-            $table->date('fecha');
+            $table->timestamp('fecha');
             $table->foreignId('sede_id')
                 ->constrained('sedes')
                 ->onDelete('cascade');
