@@ -24,9 +24,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/link-storage', function () {
-    Artisan::call('storage:link');
-    return '¡El enlace simbólico ha sido creado!';
+Route::get('/migracion', function () {
+    Artisan::call('migrate:fresh --seed');
+    return '¡La migración ha sido ejecutada con éxito!';
 });
 
 // Rutas públicas de registro de citas (sin autenticación requerida)
