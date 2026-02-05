@@ -72,7 +72,13 @@ class ResultadosController extends Controller
     public function store(Request $request, Procedimiento $procedimiento)
     {
         // Validar unicidad de (procedimiento_id, parametro_id) antes de guardar
-        $input = collect($request->except(['_token', 'submit']));
+        $input = collect($request->except(['_token', 'submit', 'resultados']));
+
+        // Si viene la estructura 'resultados' (para procesamiento por lotes), usar esa
+        if ($request->has('resultados')) {
+            $input = collect($request->input('resultados'));
+        }
+
         $duplicates = [];
 
         foreach ($input->keys() as $paramId) {
@@ -82,16 +88,32 @@ class ResultadosController extends Controller
         }
 
         if (!empty($duplicates)) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ya existen resultados para los parámetros: ' . implode(', ', $duplicates)
+                ], 422);
+            }
             return redirect()->back()
                 ->with('warning', 'Ya existen resultados para los parámetros: ' . implode(', ', $duplicates));
         }
 
-        EscogerReferencia::guardaResultado($request->except(['_token', 'submit']), $procedimiento);
+        EscogerReferencia::guardaResultado($input->toArray(), $procedimiento);
 
         $procedimiento->estado = Estado::TERMINADO; // Cambia el estado del procedimiento a 'terminado'
         $procedimiento->fecha = now(); // Actualiza la fecha del procedimiento
         $procedimiento->empleado_id = auth()->user()->empleado->id; // Asigna el empleado que guarda los resultados
         $procedimiento->save();
+
+        // Si es una petición JSON (AJAX), devolver JSON
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Resultados guardados correctamente.',
+                'procedimiento_id' => $procedimiento->id
+            ], 200);
+        }
+
         return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados guardados correctamente.');
     }
     public function edit(Procedimiento $procedimiento)
@@ -108,7 +130,7 @@ class ResultadosController extends Controller
 
         // Combina parámetros del examen con resultados en una sola colección
         $parametros = collect(EscogerReferencia::obtenerResultados($procedimiento));
-        
+
 
         return view('resultados.edit', compact('procedimiento', 'parametros'));
     }
