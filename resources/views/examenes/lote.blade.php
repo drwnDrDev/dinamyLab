@@ -327,8 +327,8 @@
 
             try {
                 // Enviar para cada procedimiento seleccionado
-                const promesas = Object.entries(resultadosPorProcedimiento).map(([procedimientoId, resultados]) => {
-                    return fetch(`/resultados/${procedimientoId}/store`, {
+                const promesas = Object.entries(resultadosPorProcedimiento).map(async ([procedimientoId, resultados]) => {
+                    const response = await fetch(`/resultados/${procedimientoId}/store`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -339,16 +339,40 @@
                             resultados: resultados
                         })
                     });
+
+                    const data = await response.json();
+
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        procedimientoId: procedimientoId,
+                        data: data
+                    };
                 });
 
                 const respuestas = await Promise.all(promesas);
 
-                if (respuestas.every(r => r.ok)) {
-                    alert('✓ Resultados guardados exitosamente para ' + procedimientosSeleccionados.size + ' procedimientos');
+                // Verificar resultados
+                const exitosas = respuestas.filter(r => r.ok);
+                const fallidas = respuestas.filter(r => !r.ok);
+
+                if (fallidas.length === 0) {
+                    alert('✓ Resultados guardados exitosamente para ' + exitosas.length + ' procedimiento(s)');
                     limpiarFormulario();
                     cargarProcedimientosPendientes();
                 } else {
-                    alert('⚠ Hubo un error al guardar algunos resultados');
+                    const mensajesError = fallidas.map(r =>
+                        `Procedimiento ${r.procedimientoId}: ${r.data.message || 'Error desconocido'}`
+                    ).join('\n');
+
+                    alert(`⚠ ${exitosas.length} procedimiento(s) guardado(s) exitosamente.\n` +
+                          `${fallidas.length} procedimiento(s) con error:\n\n${mensajesError}`);
+
+                    // Recargar solo si hubo algunas exitosas
+                    if (exitosas.length > 0) {
+                        limpiarFormulario();
+                        cargarProcedimientosPendientes();
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
