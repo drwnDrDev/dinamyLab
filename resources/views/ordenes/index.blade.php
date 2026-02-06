@@ -11,14 +11,14 @@
     </x-slot>
     <x-canva>
 
-        <section class="flex flex-wrap items-center justify-between mb-4">
-            <h2 class="font-semibold text-xl text-text leading-tight">Órdenes recientes</h2>
+        <section class="flex flex-wrap items-center justify-between mb-4 dark:text-slate-50 dark:bg-slate-950 p-4 rounded-xl">
+            <h2 class="font-semibold text-xl text-text leading-tight dark:text-yellow-100">Órdenes recientes</h2>
 
             <div class="py-3 w-1/2 mx-auto">
                 <label class="flex flex-col min-w-40 h-12 w-full">
                     <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
                         <div
-                            class="text-titles flex border-none bg-secondary items-center justify-center pl-4 rounded-l-xl border-r-0"
+                            class="text-titles flex border-none bg-secondary dark:bg-gray-700 dark:text-blue-50 items-center justify-center pl-4 rounded-l-xl border-r-0"
                             data-icon="MagnifyingGlass"
                             data-size="24px"
                             data-weight="regular">

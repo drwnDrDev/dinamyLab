@@ -20,13 +20,12 @@ export default {
                 ubuntuBold: ['Ubuntu', 'sans-serif', 'system-ui', 'bold'],
             },
             colors: {
-                text: '#0d191c',
-                background: '#f8fbfc',
+                text: 'rgb(13, 25, 28)',
+                background: 'rgb(248, 251, 252)',
                 primary: '#0eb4d1',
-                secondary: '#e7f2f3',
-                titles: '#4b8f9b',
-                borders: '#cfe4e8'
-
+                secondary: 'rgb(231, 242, 243)',
+                titles: 'rgb(75, 143, 155)',
+                borders: 'rgb(207, 228, 232)',
             },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -34,7 +33,6 @@ export default {
                     'conic-gradient(from 180deg at center, var(--tw-gradient-stops))',
                 'rips-cargador': "url('./rips-cargador.png')",
             },
-
         },
     },
     plugins: [forms],

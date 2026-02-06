@@ -20,7 +20,7 @@
                     </a>
                 </div>
                 <div>
-                    <span class="text-2xl font-bold text-text">{{ session('sede')?->nombre ?? 'Lissapp' }}</span>
+                    <span class="text-2xl font-bold text-text dark:text-white">{{ session('sede')?->nombre ?? 'Lissapp' }}</span>
                 </div>
             </div>
 
@@ -31,7 +31,7 @@
                     <label class="flex flex-col min-w-40 h-12 w-full">
                         <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
                             <div
-                                class="text-titles flex border-none bg-secondary items-center justify-center pl-4 rounded-l-xl border-r-0"
+                                class="text-titles dark:text-cyan-400 flex border-none bg-secondary dark:bg-slate-700 items-center justify-center pl-4 rounded-l-xl border-r-0"
                                 data-icon="MagnifyingGlass"
                                 data-size="24px"
                                 data-weight="regular">
@@ -45,16 +45,16 @@
                                 name="search"
                                 type="text"
                                 id="search"
-                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" />
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text dark:text-white focus:outline-0 focus:ring-0 border-none bg-secondary dark:bg-slate-700 focus:border-none h-full placeholder:text-titles dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" />
                         </div>
                     </label>
                 </form>
 
             </div>
 
-
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center">
+            <div class="hidden sm:flex sm:items-center gap-4">
+
                 <div    id="dropdownComponent"
                         class="relative z-10"
                         data-nombre="{{ Auth::user()->name }}"
