@@ -10,8 +10,8 @@
                 Nuevo Paciente
             </a>
         </div>
- 
-        <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
+
+        <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background dark:bg-slate-950 dark:text-slate-50">
             <table class="flex-1">
                 <thead>
 

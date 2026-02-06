@@ -11,13 +11,13 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     </head>
-    <body class="font-sans antialiased bg-background">
+    <body class="font-sans antialiased bg-background dark:bg-slate-950 dark:text-white">
         @include('layouts.header')
 
             @include('layouts.navigation')
 
             <!-- Page Content -->
-            <main class="m-auto mt-16 pl-14 w-full h-full min-h-[calc(100vh-65px)] overflow-y-auto bg-gradient-to-br from-background via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-900 dark:to-black print:!p-0 print:!m-0 print:!bg-white">
+            <main class="m-auto mt-16 pl-14 w-full h-full min-h-[calc(100vh-65px)] overflow-y-auto bg-gradient-to-br from-background via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-950 print:!p-0 print:!m-0 print:!bg-white">
 
                     @if (session('success') || session('error'))
                         @if (session('success'))
