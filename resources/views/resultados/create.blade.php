@@ -6,6 +6,10 @@
     </x-slot>
     <x-canva>
 
+        <header class="flex items-center gap-4">
+             <h1 class="text-2xl text-blue-500 dark:text-blue-100">{{ $procedimiento->examen->nombre }} - {{ $procedimiento->orden->paciente->nombreCompleto() }}</h1>
+             <h2>Numero de orden :{{$procedimiento->orden->numero}} Numero de procedimiento: {{$procedimiento->id}}</h2>
+        </header>
 
         <section class="grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
             <div class="col-span-2 flex gap-2">
@@ -22,12 +26,16 @@
                 <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->edad()}}</h3>
             </div>
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
-                <span class="font-normal ">Fecha de atención: </span>
-                <h3 class="text-titles font-light">{{$procedimiento->orden->created_at->format('d-m-Y')}}</h3>
-                <span>Fecha de Nacimiento: </span>
-                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->fecha_nacimiento->format('d-m-Y')}}</h3>
-                <span class="font-normal ">Órden Nº: </span>
-                <h3 class="text-titles font-light">{{$procedimiento->orden->numero}}</h3>
+                <div>
+                    <label class="font-normal" for="fecha_procedimiento">Fecha de atención: </label>
+                    <input type="datetime-local" name="fecha_procedimiento" id="fecha_procedimiento" class="w-full border border-gray-300 rounded-md p-2" value="{{ $procedimiento->created_at->format('Y-m-d\TH:i') }}" valor="{{$procedimiento->orden->created_at->format('d-m-Y HH:MM')}}" >
+                </div>
+                <div>
+                    <label for="contacto_emergencia">Acompañante</label>
+                    <input type="text" name="contacto_emergencia" id="contacto_emergencia" class="w-full border border-gray-300 rounded-md p-2" value="{{ $procedimiento->orden->contacto_emergencia }}" >
+
+                </div>
+
 
             </div>
         </section>
@@ -44,7 +52,7 @@
             @csrf
             @php
             $lastGroup = null;
-            
+
             @endphp
 
             @foreach ($parametros as $parametro)
