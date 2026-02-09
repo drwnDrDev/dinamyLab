@@ -46,7 +46,7 @@
                                 d="M136,88a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v8A8,8,0,0,1,136,88Zm32.49-16.49a8.06,8.06,0,0,1-5.66-2.34l-5.66-5.66a8.06,8.06,0,1,1,11.32-11.32l5.66,5.66a8.06,8.06,0,0,1-5.66,13.66ZM88.49 104.49a8 8 0 01-11.32 11.32l-5.66-5.66a8 8 0 0111.32-11.32l5.66 5.66A7.94 7.94 0 0188.49 104.49ZM128 144a8 8 0 01-8 8H112a8 8 0 010-16h8A8 8 0 01128 144Zm64-16a8 8 0 01-16 0V120a8 8 0 0116 0v8Z"></path>
                         </svg>
                         Crear examen
-                    </a>    
+                    </a>
 
                 </div>
                 </div>
@@ -64,8 +64,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($examenes as $examen)
-                                <tr class="border-b border-borders">
+        @foreach ($examenes as $examen)
+
+              @switch($examen->sexo_aplicable)
+                    @case('M')
+                        @php $bg = 'bg-blue-100'; @endphp
+                        @break
+                    @case('F')
+                        @php $bg = 'bg-pink-100'; @endphp
+                        @break
+                    @default
+                        @php $bg = 'bg-yellow-100'; @endphp
+                @endswitch
+
+                                <tr class="border-b border-borders {{ $bg }}">
                                     <td class="px-4 py-2">{{ $examen->cup }}</td>
                                     <td class="px-4 py-2">{{ $examen->nombre }}</td>
                                     <td class="px-4 py-2">{{ $examen->descripcion }}</td>
