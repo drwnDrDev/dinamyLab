@@ -71,7 +71,11 @@ class ResultadosController extends Controller
     }
     public function store(Request $request, Procedimiento $procedimiento)
     {
-        // Validar unicidad de (procedimiento_id, parametro_id) antes de guardar
+
+    $procedimiento->fecha = $request->input('fecha_procedimiento', now()); // Actualiza la fecha del procedimiento con la fecha enviada o la fecha actual
+    $procedimiento->save();
+ 
+    // Validar unicidad de (procedimiento_id, parametro_id) antes de guardar
         $input = collect($request->except(['_token', 'submit', 'resultados']));
 
         // Si viene la estructura 'resultados' (para procesamiento por lotes), usar esa

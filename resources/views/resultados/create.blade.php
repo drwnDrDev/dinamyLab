@@ -10,7 +10,7 @@
              <h1 class="text-2xl text-blue-500 dark:text-blue-100">{{ $procedimiento->examen->nombre }} - {{ $procedimiento->orden->paciente->nombreCompleto() }}</h1>
              <h2>Numero de orden :{{$procedimiento->orden->numero}} Numero de procedimiento: {{$procedimiento->id}}</h2>
         </header>
-
+  <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
         <section class="grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
             <div class="col-span-2 flex gap-2">
                 <span class="font-normal ">Paciente: </span>
@@ -48,7 +48,7 @@
             <h2 class="text-lg font-bold">U. Medida</h2>
             <h2 class="text-lg font-bold">Valor de Referencia</h2>
         </div>
-        <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
+
             @csrf
             @php
             $lastGroup = null;
