@@ -12,11 +12,38 @@
     </a>
   </div>
 <div class="flex items-center justify-center gap-2 ">
+    <div class="flex flex-col w-full md:w-2/5 items-center gap-4">
     <h3 class="text-lg font-light text-gray-700">CUP-{{ $examen->cup }}</h3>
-    <h3  class="text-lg font-light text-green-700">${{ $examen->valor }} COP</h3>
+    <h3 class="text-lg font-light text-green-700">${{ $examen->valor }} COP </h3>
+    </div>
+    <div class="flex flex-col w-full md:w-2/5 items-center gap-4">
+
+    @if($examen->activo)
+        <span class="px-2 py-1 bg-green-200 text-green-800 rounded">Activo</span>
+    @else
+        <span class="px-2 py-1 bg-red-200 text-red-800 rounded">Inactivo</span>
+    @endif
+
+    @switch ($examen->sexo_aplicable)
+        @case('M')
+            <span class="px-2 py-1 bg-blue-200 text-blue-800 rounded">Solo Masculino</span>
+            @break
+        @case('F')
+            <span class="px-2 py-1 bg-pink-200 text-pink-800 rounded">Solo Femenino</span>
+            @break
+        @default
+            <span class="px-2 py-1 bg-gray-200 text-gray-800 rounded">Ambos Sexos</span>
+    @endswitch
+
+    @if($examen->categoria)
+        <span class="px-2 py-1 bg-gray-200 text-gray-800 rounded">{{ $examen->categoria->nombre }}</span>
+    @endif
+    </div>
+
+
+
 </div>
     <p class="max-w-11/12 p-4">{{ ucfirst($examen->descripcion) }}</p>
-
 </div>
 </x-slot>
 <x-canva>
