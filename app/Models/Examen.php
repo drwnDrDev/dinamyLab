@@ -14,7 +14,10 @@ class Examen extends Model
         'cup',
         'valor',
         'desripcion',
-        'nombre_alternativo'
+        'nombre_alternativo',
+        'sexo_aplicable',
+        'activo',
+        'nivel'
     ];
 
 
