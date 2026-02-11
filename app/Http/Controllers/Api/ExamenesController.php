@@ -85,4 +85,16 @@ class ExamenesController extends Controller
             ], 500);
         }
     }
+
+    public function updateValor(Request $request, string $id)
+    {
+        $examen = Examen::findOrFail($id);
+        $examen->valor = $request->input('valor');
+        $examen->save();
+
+        return response()->json([
+            'message' => 'Examen actualizado',
+            'data' => 201
+        ]);
+    }
 }
