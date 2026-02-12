@@ -9,7 +9,7 @@ function ExamenDetail({ examen }) {
     const [ sexoAplicable, setSexoAplicable] = React.useState(examen.sexo_aplicable || null);
     const [ isActve, setIsActive] = React.useState(examen.activo);
     const [ nombreAlternativo, setNombreAlternativo] = React.useState(examen.nombre_alternativo || "");
-
+    const [ isEditingNombreAlternativo, setIsEditingNombreAlternativo] = React.useState(false);
     const opciones_sexo = ["F", "M", "A"];
 
     const handleSexoCarrusel = () => {
@@ -98,20 +98,57 @@ function ExamenDetail({ examen }) {
     };
 
     const handleNombreAlternativoChange = (e) => {
+        const nuevoNombre = e.target.value;
 
-        
+         axios.post(`/api/examenes/${examen.id}/update`, { nombre_alternativo: nuevoNombre })
+            .then(response => {
+                if (response.data.success) {
+                    setNombreAlternativo(response.data.data.examen.nombre_alternativo);
+                } else {
+                    alert("Error al actualizar el nombre alternativo");
+                }
+            })
+            .catch(error => {
+                console.error("Error en la solicitud:", error);
+                alert("Ocurrió un error al actualizar el nombre alternativo");
+            });
 
-        setNombreAlternativo(e.target.value);
+            setNombreAlternativo(e.target.value);
+
     };
 
   return (
     <>
 
       <section>
+
         <div className="flex items-center justify-center gap-2">
           <div className="flex flex-col w-full md:w-2/5 items-center gap-4">
-            <h3 className="text-lg font-light text-gray-700">
-              CUP-{examen.cup}
+
+            <h3 className="w-full">
+                {isEditingNombreAlternativo ? (
+                    <>
+                    <label htmlFor="nombre_alternativo"></label>
+                    <input
+                        type="text"
+                        id="nombre_alternativo"
+                        value={nombreAlternativo}
+                        onChange={handleNombreAlternativoChange}
+                        className="border border-gray-300 rounded px-2 py-1 text-sm"
+                    />
+                    <button
+                        onClick={() => setIsEditingNombreAlternativo(false)}
+                        className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-sm"
+                    >
+                        Guardar
+                    </button>
+                     </>
+                ) : (
+                 <div className="cursor-pointer flex flex-col" onClick={() => setIsEditingNombreAlternativo(true)}>
+                <span className="bg-gray-200 text-balance">Nombre alternativo: </span>    {examen.nombre_alternativo || "Sin nombre alternativo"}
+                 </div>
+                 )
+                }
             </h3>
             <h3 className="text-lg font-light text-green-700">
                 {isEditingValor ? (
@@ -130,7 +167,7 @@ function ExamenDetail({ examen }) {
                     </button>
                      </>
                 ) : (
-                 <span> {nuevoValor}</span>
+                 <span>Valor: {nuevoValor}</span>
                  )
                 }
               <span
