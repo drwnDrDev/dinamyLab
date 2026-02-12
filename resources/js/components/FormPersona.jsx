@@ -298,7 +298,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                     </div>
                     {perfil !== 'Pagador' && (
                     <div>
-                        <div className="w-full pb-2 flex gap-2 items-center">
+                        <div className="w-full pb-2 flex gap-1 items-center">
                             <label className="block font-medium text-sm text-text">
                                 Fecha de Nacimiento
                             </label>
@@ -320,7 +320,8 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                     {perfil === 'Paciente' && (
                         <div className="w-full pb-2 flex gap-2 items-center">
                             <span className="font-semibold">Sexo</span>
-                            <label htmlFor="sexo_femenino" className="inline-flex items-center">F</label>
+                            <div className="p-2 border border-borders rounded-md flex gap-2 items-center">
+                            <label htmlFor="sexo_femenino" className="cursor-pointer inline-flex items-center">F</label>
                             <input
                                 type="radio"
                                 id="sexo_femenino"
@@ -330,7 +331,9 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 onChange={handleInputChange}
                                 className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
                             />
-                            <label htmlFor="sexo_masculino" className="inline-flex items-center">M</label>
+                            </div>
+                            <div className="p-2 border border-borders rounded-md flex gap-2 items-center">
+                            <label htmlFor="sexo_masculino" className="inline-flex items-center cursor-pointer">M</label>
                             <input
                                 type="radio"
                                 id="sexo_masculino"
@@ -340,7 +343,9 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 onChange={handleInputChange}
                                 className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
                             />
-                            <label htmlFor="sexo_otro" className="inline-flex items-center">Intersexual</label>
+                            </div>
+                            <div className="p-2 border border-borders rounded-md flex gap-2 items-center">
+                            <label htmlFor="sexo_otro" className="inline-flex items-center cursor-pointer">Intersexual</label>
                             <input
                                 type="radio"
                                 id="sexo_otro"
@@ -350,6 +355,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 onChange={handleInputChange}
                                 className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
                             />
+                            </div>
                         </div>
                     )}
                     {perfil === 'Paciente' && (
