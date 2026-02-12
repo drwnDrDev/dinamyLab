@@ -1,0 +1,106 @@
+<?php
+
+/*
+ * This file is part of the "dragon-code/support" project.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author Andrey Helldar <helldar@dragon-code.pro>
+ *
+ * @copyright 2024 Andrey Helldar
+ *
+ * @license MIT
+ *
+ * @see https://github.com/TheDragonCode/support
+ */
+
+declare(strict_types=1);
+
+namespace Tests\Unit\Instances\Instance;
+
+use DragonCode\Support\Facades\Instances\Instance;
+use Tests\Fixtures\Concerns\Barable;
+use Tests\Fixtures\Concerns\Foable;
+use Tests\Fixtures\Concerns\NestedClass;
+use Tests\Fixtures\Concerns\NestedLevel2;
+use Tests\Fixtures\Concerns\NestedLevel3;
+use Tests\Fixtures\Concerns\NestedLevel4;
+use Tests\Fixtures\Contracts\Contract;
+use Tests\Fixtures\Instances\Bam;
+use Tests\Fixtures\Instances\Bar;
+use Tests\Fixtures\Instances\Bat;
+use Tests\Fixtures\Instances\Foo;
+use Tests\TestCase;
+
+class OfTest extends TestCase
+{
+    public function testOf()
+    {
+        // Foo
+        $this->assertTrue(Instance::of(Foo::class, Foo::class));
+        $this->assertFalse(Instance::of(Foo::class, Bar::class));
+        $this->assertTrue(Instance::of(Foo::class, Contract::class));
+        $this->assertTrue(Instance::of(Foo::class, Foable::class));
+
+        $this->assertTrue(Instance::of(new Foo(), Foo::class));
+        $this->assertFalse(Instance::of(new Foo(), Bar::class));
+        $this->assertTrue(Instance::of(new Foo(), Contract::class));
+        $this->assertTrue(Instance::of(new Foo(), Foable::class));
+
+        // Bar
+        $this->assertTrue(Instance::of(Bar::class, Bar::class));
+        $this->assertFalse(Instance::of(Bar::class, Foo::class));
+        $this->assertFalse(Instance::of(Bar::class, Contract::class));
+        $this->assertFalse(Instance::of(Bar::class, Foable::class));
+
+        $this->assertTrue(Instance::of(new Bar(), Bar::class));
+        $this->assertFalse(Instance::of(new Bar(), Foo::class));
+        $this->assertFalse(Instance::of(new Bar(), Contract::class));
+        $this->assertFalse(Instance::of(new Bar(), Foable::class));
+
+        // Baz
+        $this->assertTrue(Instance::of(Bam::class, Bat::class));
+        $this->assertTrue(Instance::of(Bam::class, Contract::class));
+        $this->assertTrue(Instance::of(new Bam(), Bat::class));
+        $this->assertTrue(Instance::of(new Bam(), Contract::class));
+        $this->assertTrue(Instance::of(new Bam(), Foable::class));
+    }
+
+    public function testOfClass()
+    {
+        $this->assertTrue(Instance::of(Bam::class, Bat::class));
+        $this->assertTrue(Instance::of(Bam::class, Foable::class));
+        $this->assertTrue(Instance::of(Bam::class, Contract::class));
+
+        $this->assertFalse(Instance::of(Bam::class, Barable::class));
+    }
+
+    public function testOfTrait()
+    {
+        $this->assertTrue(Instance::of(Foable::class, Foable::class));
+        $this->assertTrue(Instance::of(NestedClass::class, NestedLevel2::class));
+        $this->assertTrue(Instance::of(NestedClass::class, NestedLevel3::class));
+        $this->assertTrue(Instance::of(NestedClass::class, NestedLevel4::class));
+
+        $this->assertFalse(Instance::of(Foable::class, Bat::class));
+        $this->assertFalse(Instance::of(Foable::class, Barable::class));
+        $this->assertFalse(Instance::of(Foable::class, Contract::class));
+    }
+
+    public function testOfInterface()
+    {
+        $this->assertTrue(Instance::of(Contract::class, Contract::class));
+
+        $this->assertFalse(Instance::of(Contract::class, Bat::class));
+        $this->assertFalse(Instance::of(Contract::class, Foable::class));
+        $this->assertFalse(Instance::of(Contract::class, Barable::class));
+    }
+
+    public function testManyChecks()
+    {
+        $this->assertFalse(Instance::of(Foo::class, [Bat::class, Bar::class]));
+
+        $this->assertTrue(Instance::of(Foo::class, [Bat::class, Bar::class, Contract::class]));
+    }
+}

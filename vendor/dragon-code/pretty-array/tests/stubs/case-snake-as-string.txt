@@ -1,0 +1,17 @@
+[
+    'foo' => 1,
+    'bar' => 2,
+    'baz' => 3,
+    'qwe_rty' => 'qaz',
+    'baq' => [
+        '0' => 'qwe',
+        '1' => 'rty',
+        'asd' => 'zxc',
+    ],
+    'asd_fgh' => [
+        'foo_bar_baz' => 'qwe',
+        '2' => 'rty',
+        'qaw_sed' => 'zxc',
+    ],
+    '2' => 'iop',
+]

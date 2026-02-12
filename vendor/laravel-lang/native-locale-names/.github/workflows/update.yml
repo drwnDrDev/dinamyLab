@@ -1,0 +1,55 @@
+name: update
+
+on:
+    push:
+        branches:
+            - main
+
+permissions: write-all
+
+jobs:
+    update:
+        runs-on: ${{ secrets.RUNNER_NAME }}
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v4
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    extensions: curl, mbstring, zip, pcntl, pdo, pdo_sqlite, iconv, json
+                    coverage: none
+
+            -   name: Git setup
+                if: success()
+                run: |
+                    git config --local user.email "action@github.com"
+                    git config --local user.name "GitHub Action"
+
+            -   name: Install dependencies
+                run: composer update --prefer-stable --prefer-dist --no-progress --no-interaction
+
+            -   name: Update data
+                id: data
+                if: success()
+                run: |
+                    IS_DIRTY=1
+
+                    composer collect
+
+                    { git add . && git commit -a -m "📦 Data updated"; } || IS_DIRTY=0
+
+                    echo "is_dirty=${IS_DIRTY}" >> "$GITHUB_OUTPUT"
+
+            -   name: Fix the code style
+                uses: TheDragonCode/codestyler@v5
+                with:
+                    github_token: ${{ secrets.COMPOSER_TOKEN }}
+                    fix: true
+
+            -   name: Push changes
+                uses: ad-m/github-push-action@master
+                if: success() && steps.data.outputs.is_dirty == 1
+                with:
+                    github_token: ${{ secrets.COMPOSER_TOKEN }}
