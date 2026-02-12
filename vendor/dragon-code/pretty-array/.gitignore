@@ -1,0 +1,12 @@
+.idea/
+build/
+vendor/
+
+tests/files/source.php.*.php
+
+*.bak
+*.cache
+*.clover
+*.orig
+
+*.lock
