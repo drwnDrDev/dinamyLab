@@ -48,6 +48,26 @@ class ExamenesController extends Controller
         ]);
     }
 
+    public function update(Request $request, $id)
+    {
+        $examen = Examen::find($id);
+        if (!$examen) {
+            return response()->json([
+                'message' => 'Examen no encontrado',
+                'data' => null
+            ], 404);
+        }
+    $examen->update($request->except('_token', '_method','submit'));
+        return response()->json([
+            'message' => 'Examen actualizado',
+            'success' => true,
+            'data' => [
+                "examen" => $examen
+            ]
+        ]);
+    }
+
+
     /**
      * Obtener procedimientos pendientes para un examen específico
      */

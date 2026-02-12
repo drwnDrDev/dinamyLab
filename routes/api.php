@@ -79,6 +79,7 @@ Route::post('personas/parsear-lista', [ListaPersonasController::class, 'parsearL
 
 Route::get('examenes', [ExamenesController::class, 'index']);
 Route::get('examenes/{id}', [ExamenesController::class, 'show']);
+Route::post('examenes/{id}/update', [ExamenesController::class, 'update']);
 Route::get('procedimientos/examen/{examenId}/pendientes', [ExamenesController::class, 'obtenerProcedimientosPendientes']);
 
 Route::get('municipios', [MunicipioController::class, 'index']);
