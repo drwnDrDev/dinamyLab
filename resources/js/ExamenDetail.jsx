@@ -19,7 +19,7 @@ function ExamenDetail({ examen }) {
         setSexoAplicable(nuevoSexo);
 
         // Enviar al servidor
-        axios.post(`/api/examenes/${examen.id}/update`, { sexo_aplicable: nuevoSexo })
+        axios.patch(`/api/examenes/${examen.id}/update`, { sexo_aplicable: nuevoSexo })
             .then(response => {
                 if (!response.data.success) {
                     alert("Error al actualizar el sexo aplicable");
@@ -46,7 +46,7 @@ function ExamenDetail({ examen }) {
     };
 
     const examenValorInputToggle = () => {
-        axios.post(`/api/examenes/${examen.id}/update`, { valor: nuevoValor })
+        axios.patch(`/api/examenes/${examen.id}/update`, { valor: nuevoValor })
             .then(response => {
                 if (response.data.success) {
                     setNuevoValor(response.data.data.examen.valor);
@@ -69,7 +69,7 @@ function ExamenDetail({ examen }) {
         const nuevoEstado = !isActve;
         setIsActive(nuevoEstado);
 
-        axios.post(`/api/examenes/${examen.id}/update`, { activo: nuevoEstado })
+        axios.patch(`/api/examenes/${examen.id}/update`, { activo: nuevoEstado })
             .then(response => {
                 if (!response.data.success) {
                     alert("Error al actualizar el estado");
@@ -100,7 +100,7 @@ function ExamenDetail({ examen }) {
     const handleNombreAlternativoChange = (e) => {
         const nuevoNombre = e.target.value;
 
-         axios.post(`/api/examenes/${examen.id}/update`, { nombre_alternativo: nuevoNombre })
+         axios.patch(`/api/examenes/${examen.id}/update`, { nombre_alternativo: nuevoNombre })
             .then(response => {
                 if (response.data.success) {
                     setNombreAlternativo(response.data.data.examen.nombre_alternativo);
