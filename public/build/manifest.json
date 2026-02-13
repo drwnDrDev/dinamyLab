@@ -38,18 +38,28 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-C9AbAMA5.css",
+    "file": "assets/app-CeNZxMoq.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
     "names": [
-      "app.css",
       "app.css"
     ]
   },
   "resources/css/rips-cargador.png": {
     "file": "assets/rips-cargador-DoL-Xzn1.png",
     "src": "resources/css/rips-cargador.png"
+  },
+  "resources/js/ExamenDetail.jsx": {
+    "file": "assets/ExamenDetail-Mk7mv04H.js",
+    "name": "ExamenDetail",
+    "src": "resources/js/ExamenDetail.jsx",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js",
+      "_index-C2KC86Ta.js",
+      "_client-DCM6oUEP.js"
+    ]
   },
   "resources/js/app.js": {
     "file": "assets/app-l0sNRNKZ.js",
@@ -58,7 +68,7 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-DGUIDWpw.js",
+    "file": "assets/app-aDCqHHHE.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -66,10 +76,11 @@
       "_index-C2KC86Ta.js",
       "_client-DCM6oUEP.js",
       "_useAxiosAuth-JGr_IZ3E.js",
-      "_index-B9ygI19o.js"
+      "_index-B9ygI19o.js",
+      "resources/js/components/guest/Typewriter.jsx"
     ],
     "css": [
-      "assets/app-C9AbAMA5.css"
+      "assets/app-CeNZxMoq.css"
     ],
     "assets": [
       "assets/rips-cargador-DoL-Xzn1.png"
@@ -107,7 +118,7 @@
     "isEntry": true
   },
   "resources/js/components/guest/Typewriter.jsx": {
-    "file": "assets/Typewriter-DMl4pWwa.js",
+    "file": "assets/Typewriter-DpIIvn7w.js",
     "name": "Typewriter",
     "src": "resources/js/components/guest/Typewriter.jsx",
     "isEntry": true,
