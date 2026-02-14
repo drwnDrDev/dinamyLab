@@ -17,7 +17,8 @@ return new class extends Migration
             ->constrained('tipo_documentos');
             $table->string('numero_documento')->unique();
             $table->string('razon_social');
-            $table->decimal('descuento', 4, 2)->default(0);
+            $table->string('numero_contrato')->nullable();
+            $table->string('modalidad_pago', 42)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
