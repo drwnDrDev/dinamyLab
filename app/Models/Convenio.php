@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Convenio extends Model
 {
+
    protected $fillable = [
     'tipo_documento_id',
     'numero_documento',
     'razon_social',
-    'descuento'
+    'numero_contrato',
+    'modalidad_pago',
+    'empresa_id',
     ];
     /**
      * Relación con el modelo Contacto.
