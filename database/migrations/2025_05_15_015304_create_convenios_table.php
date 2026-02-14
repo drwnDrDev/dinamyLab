@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('tipo_documento_id')
             ->constrained('tipo_documentos');
+            $table->foreignId('empresa_id')
+            ->constrained('empresas');
             $table->string('numero_documento')->unique();
             $table->string('razon_social');
             $table->string('numero_contrato')->nullable();
