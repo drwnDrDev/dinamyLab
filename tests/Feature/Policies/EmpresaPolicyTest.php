@@ -75,7 +75,7 @@ class EmpresaPolicyTest extends TestCase
     {
         $empresa = Empresa::factory()->create();
         $sede = Sede::factory()->create(['empresa_id' => $empresa->id]);
-        
+
         // Usuario sin empleado asociado
         $user = User::factory()->create();
 
@@ -142,7 +142,7 @@ class EmpresaPolicyTest extends TestCase
     {
         $empresa1 = Empresa::factory()->create();
         $empresa2 = Empresa::factory()->create();
-        
+
         $user = User::factory()->create();
         $empleado = Empleado::factory()->create([
             'user_id' => $user->id,
@@ -163,13 +163,13 @@ class EmpresaPolicyTest extends TestCase
     {
         $empresa1 = Empresa::factory()->create();
         $empresa2 = Empresa::factory()->create();
-        
+
         $admin = User::factory()->create();
         $empleado = Empleado::factory()->create([
             'user_id' => $admin->id,
             'empresa_id' => $empresa1->id
         ]);
-        
+
         // Asignar rol de admin
         $admin->assignRole('admin');
 

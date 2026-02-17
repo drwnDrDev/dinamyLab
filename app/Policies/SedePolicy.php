@@ -37,7 +37,7 @@ class SedePolicy
     public function create(User $user): bool
     {
         // Debe pertenecer a una empresa y tener el permiso
-        return $this->getUserEmpresaId($user) !== null 
+        return $this->getUserEmpresaId($user) !== null
             && ($user->hasRole('admin') || $user->can('crear_sedes'));
     }
 
