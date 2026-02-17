@@ -12,12 +12,12 @@ class EscogerPrecioExamen
 {
     /**
      * Obtiene el precio inteligente de un examen según convenio y sede.
-     * 
+     *
      * Orden de prioridad:
      * 1. Tarifa específica por convenio + sede
      * 2. Tarifa por sede (sin convenio)
      * 3. Precio base del examen (examen->valor)
-     * 
+     *
      * @param Examen $examen
      * @param Convenio $convenio
      * @param Sede $sede
@@ -94,7 +94,7 @@ class EscogerPrecioExamen
 
     /**
      * Busca una tarifa específica para un examen en una sede que esté vinculada al convenio.
-     * 
+     *
      * @param Examen $examen
      * @param Convenio $convenio
      * @param Sede $sede
@@ -114,7 +114,7 @@ class EscogerPrecioExamen
 
     /**
      * Busca una tarifa para un examen en una sede (sin validar convenio).
-     * 
+     *
      * @param Examen $examen
      * @param Sede $sede
      * @return Tarifa|null
@@ -131,7 +131,7 @@ class EscogerPrecioExamen
     /**
      * Obtiene el precio final de un examen (alias para compatibilidad).
      * Retorna solo el valor numérico.
-     * 
+     *
      * @param Examen $examen
      * @param Convenio $convenio
      * @param Sede $sede

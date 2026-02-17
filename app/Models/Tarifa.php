@@ -33,7 +33,7 @@ class Tarifa extends Model
 
     /**
      * Verifica si esta tarifa está vinculada a un convenio específico.
-     * 
+     *
      * @param Convenio $convenio
      * @return bool
      */
