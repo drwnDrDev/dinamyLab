@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empresa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EmpresaController extends Controller
 {
@@ -34,9 +35,21 @@ class EmpresaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Empresa $empresa)
+    public function show()
     {
-        //
+
+    if(!Auth::user()->hasRole('admin')){
+        abort(403, 'No autorizado');
+    }
+    $empleado = Auth::user()->empleado;
+    if (!$empleado) {
+        abort(403, 'No autorizado');
+    }
+
+        $empresa = $empleado->empresa;
+     
+
+        return view('empresa.show', compact('empresa'));
     }
 
     /**

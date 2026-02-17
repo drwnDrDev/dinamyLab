@@ -39,6 +39,9 @@ class User extends Authenticatable
         return $this->hasOne(Empleado::class);
     }
 
+
+
+
     /**
      * Get the attributes that should be cast.
      *

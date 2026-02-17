@@ -13,7 +13,7 @@ class Orden extends Model
     protected $fillable = [
         'sede_id',
         'numero',
-        'paciente_id', 
+        'paciente_id',
         'observaciones',
         'terminada',
         'abono',
@@ -51,6 +51,15 @@ class Orden extends Model
     public function sede()
     {
         return $this->belongsTo(Sede::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function observaciones()
+    {
+        return $this->morphMany(Observacion::class, 'observable');
     }
 
     protected $table = 'ordenes_medicas';
