@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Empresa;
 use App\Models\PreRegistroCita;
+use App\Models\Sede;
+use App\Policies\EmpresaPolicy;
 use App\Policies\PreRegistroCitaPolicy;
+use App\Policies\SedePolicy;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -16,6 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     protected $policies = [
         PreRegistroCita::class => PreRegistroCitaPolicy::class,
+        Empresa::class => EmpresaPolicy::class,
+        Sede::class => SedePolicy::class,
     ];
 
     /**
