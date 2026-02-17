@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
 
         $empleado->assignRole('agente');
         $admin->assignRole('admin');
-
+        $usuarioSanPablo->assignRole('prestador');
         $prestador->assignRole('prestador');
         $coordinador->assignRole('contable');
 
