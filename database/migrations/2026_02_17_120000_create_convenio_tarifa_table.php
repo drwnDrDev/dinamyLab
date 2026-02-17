@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tarifas', function (Blueprint $table) {
+        Schema::create('convenio_tarifa', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(App\Models\Sede::class)
-                ->constrained('sedes')
+            $table->foreignId('convenio_id')
+                ->constrained('convenios')
                 ->onDelete('cascade');
-            $table->morphs('tarifable'); // Polymorphic relation
-            $table->decimal('precio', 8, 2);
+            $table->foreignId('tarifa_id')
+                ->constrained('tarifas')
+                ->onDelete('cascade');
             $table->timestamps();
+
+            $table->unique(['convenio_id', 'tarifa_id']);
         });
     }
 
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tarifas');
+        Schema::dropIfExists('convenio_tarifa');
     }
 };

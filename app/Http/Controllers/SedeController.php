@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sede;
+use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Http\Request;
 
 class SedeController extends Controller
@@ -36,7 +37,8 @@ class SedeController extends Controller
      */
     public function show(Sede $sede)
     {
-        //
+  
+        return view('sedes.show', compact('sede'));
     }
 
     /**
