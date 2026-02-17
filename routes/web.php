@@ -113,7 +113,10 @@ Route::middleware('auth','verified','can:ver_facturas')->group(function () {
 });
 
 Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () {
-
+    Route::get('admin/empresa',[App\Http\Controllers\EmpresaController::class,'show'])->name('empresa.show');
+    Route::get('/admin/dashboard',[App\Http\Controllers\EmpleadoController::class,'dashboard'])->name('admin.dashboard');
+    Route::resource('/admin/empleados', EmpleadoController::class)->except(['index']);
+    Route::resource('/admin/sedes', SedeController::class)->except(['index']);
     Route::get('/cups',[CodigoCupController::class,'index'])->name('cups.index');
     Route::post('/cups/buscar',[CodigoCupController::class,'search'])->name('cups.search');
     Route::get('/cups/{codigoCup}',[CodigoCupController::class,'show'])->name('cups.show');

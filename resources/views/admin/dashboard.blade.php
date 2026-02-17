@@ -2,12 +2,16 @@
 
     <x-slot name="header">
         <nav>
+
+            <x-primary-button class="bg-red-300" href="{{route('empresa.show')}}">Empresa</x-primary-button>
             <x-primary-button class="bg-red-300" href="{{route('convenios.index')}}">Convenios</x-primary-button>
             <x-primary-button class="bg-green-300" href="{{route('examenes')}}">Examenes</x-primary-button>
             <x-primary-button class="bg-violet-300" href="{{route('facturas')}}">Facturar</x-primary-button>
 
         </nav>
     </x-slot>
+
+
 
         Procedimientos Pendientes:
         <div class="flex flex-col gap-1 overflow-hidden shadow-sm sm:rounded-lg">

@@ -34,6 +34,14 @@ class Empresa extends Model
     {
         return $this->morphMany(RedSocial::class, 'redable');
     }
+    public function sedes()
+    {
+        return $this->hasMany(Sede::class);
+    }
+    public function empleados()
+    {
+        return $this->hasMany(Empleado::class);
+    }
 
 
 }

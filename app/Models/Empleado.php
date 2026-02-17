@@ -58,4 +58,9 @@ class Empleado extends Model
     {
         return $this->hasMany(AfiliacionSalud::class);
     }
+
+    public function is_admin()
+    {
+        return $this->user->hasRole('admin');
+    }
 }

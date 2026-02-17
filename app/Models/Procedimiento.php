@@ -88,6 +88,10 @@ class Procedimiento extends Model
     {
         return $query->whereNull('resultados');
     }
+    public function observaciones()
+    {
+        return $this->morphMany(Observacion::class, 'observable');
+    }
     protected $casts = [
         'fecha' => 'datetime',
     ];

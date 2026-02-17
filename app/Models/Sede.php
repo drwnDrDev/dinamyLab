@@ -17,7 +17,6 @@ class Sede extends Model
         'codigo_prestador',
         'logo',
         'empresa_id',
-
     ];
 
     public function empresa()

@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('observacions', function (Blueprint $table) {
+        Schema::create('observaciones', function (Blueprint $table) {
             $table->id();
+            $table->morphs('observable');
+            $table->text('observacion');
             $table->timestamps();
         });
     }
