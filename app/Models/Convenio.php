@@ -36,4 +36,12 @@ class Convenio extends Model
         return $this->morphMany(Factura::class, 'pagador');
     }
 
+    /**
+     * Relación con tarifas (precios específicos por examen y sede).
+     */
+    public function tarifas()
+    {
+        return $this->belongsToMany(Tarifa::class, 'convenio_tarifa');
+    }
+
 }
