@@ -28,7 +28,7 @@ class EmpresaPolicy
     {
         // Verificar que el usuario pertenezca a la empresa
         $userEmpresaId = $this->getUserEmpresaId($user);
-        
+
         return $userEmpresaId && $userEmpresaId === $empresa->id;
     }
 

@@ -26,6 +26,9 @@
                     <div class="mt-4 flex flex-col gap-2">
                         <header class="bg-slate-600 dark:bg-slate-800 dark:text-blue-50">Sedes</header>
                         @foreach ($empresa->sedes as $sede)
+                            @can('update', $sede)
+                                <a href="#">Editar</a>
+                            @endcan
                             <a href=""> {{ $sede->nombre }} - {{ $sede->direccion->direccion }}</a>
                         @endforeach
 
