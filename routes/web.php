@@ -18,6 +18,7 @@ use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\ParametroController;
 use App\Http\Controllers\SedeController;
 use App\Models\Resultado;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

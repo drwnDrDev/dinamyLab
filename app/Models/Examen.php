@@ -52,6 +52,11 @@ class Examen extends Model
         return $this->belongsTo(CodigoCup::class, 'cup', 'codigo');
     }
 
+    public function tarifas()
+    {
+        return $this->morphMany(Tarifa::class, 'tarifable');
+    }
+
     protected $table = 'examenes';
     public function casts()
     {
