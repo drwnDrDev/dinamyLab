@@ -36,13 +36,25 @@ class Sede extends Model
         return $this->hasMany(Factura::class);
     }
     public function telefonos(){
-        return $this->morphMany(Telefono::class, 'telefonoable');
+        if($this->morphMany(Telefono::class, 'telefonoable')->exists()){
+            return $this->morphMany(Telefono::class, 'telefonoable');
+        }
+        return $this->empresa->telefonos();
+
     }
     public function emails(){
-        return $this->morphMany(CorreoElectronico::class, 'emailable');
+        if($this->morphMany(CorreoElectronico::class, 'emailable')->exists()){
+            return $this->morphMany(CorreoElectronico::class, 'emailable');
+        }
+        return $this->empresa->emails();
+
     }
     public function direccion(){
-        return $this->morphOne(Direccion::class, 'direccionable');
+        if($this->morphOne(Direccion::class, 'direccionable')->exists()){
+            return $this->morphOne(Direccion::class, 'direccionable');
+        }
+        return $this->empresa->direccion();
+
     }
 
 

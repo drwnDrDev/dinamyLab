@@ -99,16 +99,18 @@ class ProcedimientoController extends Controller
 
     public function reportes(Request $request){
 
+        $sedes = $request->user()->empleado->sedes;
+
         $startDate = $request->input('fecha_inicio', now()->startOfMonth()->toDateString());
         $endDate = $request->input('fecha_fin', now()->endOfMonth()->toDateString());
         $procedimientos = Procedimiento::with(['examen'])
             ->where('fecha', '>=', $startDate)
             ->where('fecha', '<=', $endDate)
+            ->whereIn('sede_id', $sedes->pluck('id'))
             ->selectRaw('examen_id, COUNT(*) as total_procedimientos')
             ->groupBy('examen_id')
             ->orderByDesc('total_procedimientos')
             ->get();
-        $sedes = $request->user()->empleado->sedes;
         return view('procedimientos.rips', compact('procedimientos', 'sedes','startDate', 'endDate'));
     }
 
