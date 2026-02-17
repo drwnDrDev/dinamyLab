@@ -123,7 +123,7 @@ class ExamenesController extends Controller
 
     /**
      * Obtiene el precio inteligente de un examen según convenio y sede.
-     * 
+     *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
