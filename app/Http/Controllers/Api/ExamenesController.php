@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Estado;
 use App\Http\Controllers\Controller;
+use App\Models\Convenio;
 use App\Models\Examen;
 use App\Models\Procedimiento;
+use App\Models\Sede;
+use App\Services\EscogerPrecioExamen;
 use Illuminate\Http\Request;
 
 class ExamenesController extends Controller
@@ -116,5 +119,59 @@ class ExamenesController extends Controller
             'message' => 'Examen actualizado',
             'data' => 201
         ]);
+    }
+
+    /**
+     * Obtiene el precio inteligente de un examen según convenio y sede.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function obtenerPrecio(Request $request)
+    {
+        // Validar parámetros
+        $validated = $request->validate([
+            'examen_id' => 'required|integer|exists:examenes,id',
+            'convenio_id' => 'required|integer|exists:convenios,id',
+            'sede_id' => 'required|integer|exists:sedes,id',
+        ]);
+
+        try {
+            // Cargar modelos
+            $examen = Examen::findOrFail($validated['examen_id']);
+            $convenio = Convenio::findOrFail($validated['convenio_id']);
+            $sede = Sede::findOrFail($validated['sede_id']);
+
+            // Obtener precio inteligente
+            $resultado = EscogerPrecioExamen::obtener($examen, $convenio, $sede);
+
+            return response()->json([
+                'message' => 'Precio obtenido exitosamente',
+                'data' => [
+                    'examen_id' => $examen->id,
+                    'examen_nombre' => $examen->nombre,
+                    'valor_base' => (float) $examen->valor,
+                    'precio_final' => $resultado['precio'],
+                    'tipo_tarifa' => $resultado['tipo_tarifa'],
+                    'tarifa_id' => $resultado['tarifa_id'],
+                    'convenio_id' => $convenio->id,
+                    'convenio_nombre' => $convenio->razon_social,
+                    'sede_id' => $sede->id,
+                    'sede_nombre' => $sede->nombre,
+                ]
+            ], 200);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Modelo no encontrado',
+                'error' => $e->getMessage()
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener el precio',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
