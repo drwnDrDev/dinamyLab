@@ -22,9 +22,28 @@
     <section>
         <header>
                 <h2 class="text-lg font-medium text-gray-900">
+                    {{ __('Profesionales disponibles en esta sede') }}
+                </h2>
+
+                @foreach ($sede->empleados as $empleado)
+                    <p>{{ $empleado->user->name }} - {{ $empleado->cargo }}</p>
+                @endforeach
+        </header>
+    </section>
+    <section>
+        <header>
+                <h2 class="text-lg font-medium text-gray-900">
                     {{ __('Exámenes disponibles en esta sede') }}
                 </h2>
-                
+                <form class="grid grid-cols-2 justify-center">
+                @foreach ($examenes as $examen)
+                <div class="grid grid-cols-2 gap-2 px-4">
+                    <label>{{ $examen->nombre }}</label>
+                    <input type="number" name="precio_{{ $examen->id }}" placeholder="Precio" value="{{$examen->valor}}">
+                </div>
+                @endforeach
+                </form>
+
         </header>
     </section>
 </x-canva>
