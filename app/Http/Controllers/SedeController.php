@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Examen;
 use App\Models\Sede;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Http\Request;
@@ -37,8 +38,11 @@ class SedeController extends Controller
      */
     public function show(Sede $sede)
     {
-  
-        return view('sedes.show', compact('sede'));
+
+        $examenes = Examen::all();
+        
+        return view('sedes.show', compact('sede', 'examenes'));
+
     }
 
     /**
