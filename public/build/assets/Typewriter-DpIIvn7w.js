@@ -1,1 +1,0 @@
-import{r as e,R as m}from"./index-C2KC86Ta.js";const u=e.memo(({text:t,typingSpeed:a=50})=>{const[n,o]=e.useState(""),[r,c]=e.useState(0);return e.useEffect(()=>{if(r<t.length){const i=setTimeout(()=>{o(s=>s+t[r]),c(s=>s+1)},a);return()=>clearTimeout(i)}},[r,t,a]),m.createElement("span",{className:"inline-block"},n)});u.displayName="Typewriter";export{u as T};
