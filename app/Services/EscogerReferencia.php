@@ -33,16 +33,17 @@ class EscogerReferencia
      */
     public static function estableceReferencia(array $datosDemograficos, Parametro $parametro): ?ValorReferencia
     {
-        $referencias = $parametro->valoresReferencia ?? collect();
+        $referencias = $parametro->valoresReferencia;
 
         if ($referencias->isEmpty()) return null;
         if ($referencias->count() === 1) return $referencias->first();
-//esto está mal, el match devuelve el primer elemento que coincida, no el último
+
+        // Filtrar acumulativamente según criterios demográficos disponibles
         foreach (['etario', 'sexo'] as $clave) {
             $valor = $datosDemograficos[$clave] ?? null;
             if ($valor) {
-                $match = $referencias->firstWhere('demografia', $valor);
-                if ($match) return $match;
+                $referencias = $referencias->where('demografia', $valor);
+                if ($referencias->count() === 1) return $referencias->first();
             }
         }
 
