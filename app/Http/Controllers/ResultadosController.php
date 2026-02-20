@@ -42,6 +42,8 @@ class ResultadosController extends Controller
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
         $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+
+        dd($parametros);
         return view('resultados.show', compact('procedimiento', 'parametros'));
     }
     public function create(Procedimiento $procedimiento)
@@ -74,7 +76,7 @@ class ResultadosController extends Controller
 
     $procedimiento->fecha = $request->input('fecha_procedimiento', now()); // Actualiza la fecha del procedimiento con la fecha enviada o la fecha actual
     $procedimiento->save();
- 
+
     // Validar unicidad de (procedimiento_id, parametro_id) antes de guardar
         $input = collect($request->except(['_token', 'submit', 'resultados']));
 
