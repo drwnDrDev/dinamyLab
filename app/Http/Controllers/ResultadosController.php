@@ -43,7 +43,6 @@ class ResultadosController extends Controller
         }
         $parametros = EscogerReferencia::obtenerResultados($procedimiento);
 
-        dd($parametros);
         return view('resultados.show', compact('procedimiento', 'parametros'));
     }
     public function create(Procedimiento $procedimiento)
