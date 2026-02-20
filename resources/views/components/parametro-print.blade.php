@@ -17,7 +17,7 @@
 
             </div>
             <div><p class="font-light">{{$item['unidades']}}</p></div>
-            <div><p class="font-light">{{$item['referencia']}}</p></div>
+            <div><p class="font-light">{{$item['referencia']?? null}}</p></div>
 
     </div>
     @else

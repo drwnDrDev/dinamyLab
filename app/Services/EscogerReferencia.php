@@ -172,7 +172,7 @@ class EscogerReferencia
                 'resultado' => null,
                 'metodo'    => $parametroBase->metodo,
                 'unidades'  => $parametroBase->unidades,
-                'referencia'=> optional($referencia)->salida,
+                //'referencia'=> optional($referencia)->salida ?? null,
             ];
             continue;
             }
