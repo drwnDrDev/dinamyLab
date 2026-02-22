@@ -126,13 +126,12 @@
         </div>
          <div class="mt-4 flex justify-between items-center border-b border-borders">
             <div>
-                <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] p-4 border-b-4 border-teal-500">Empleados</h2>
+                <h2 class="text-2xl font-bold leading-tight tracking-[-0.015em] p-4 border-b-4 border-teal-500">Convenios</h2>
             </div>
             <div>
                 <x-primary-button id="editar-button" class="bg-teal-500">Nuevo Convenio</x-primary-button>
             </div>
         </div>
-        
 
     </x-canva>
 
