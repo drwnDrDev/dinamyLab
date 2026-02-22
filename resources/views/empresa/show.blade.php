@@ -86,7 +86,7 @@
                 </div>
                 <div class="">
                     @can('update', $sede)
-                    <a href="{{ route('sedes.edit', $sede) }}">
+                    <a href="{{ route('sedes.show', $sede) }}">
                         <x-secondary-button class=" border border-teal-500">Administrar</x-secondary-button>
                     </a>
                     @endcan
