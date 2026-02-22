@@ -12,11 +12,15 @@
                 <div class="h2 pb-4 border-b border-slate-200">
                     <h2 class="font-bold text-2xl">Ordenes Medicas</h2>
                 </div>
+                @foreach ($procedimientosByExamen as $examen)
                 <div class="flex gap-2 py-4">
                     <div class="icono">*</div>
-                    <div class="h3">En proceso</div>
-                    <div class="text-2xl font-bold">15</div>
+                    <div class="h3">Por tipo de Examen</div>
+                    <div class="text-2xl font-bold">{{$examen['examen']}}</div>
+                    <div class="text-2xl font-bold">{{$examen['count']}}</div>    
                 </div>
+                @endforeach
+
                 <div class="flex gap-2 py-4">
                     <div class="icono">*</div>
                     <div class="h3">Sin resultados</div>
@@ -35,17 +39,16 @@
                 <div class="flex gap-2 py-4">
                     <div class="icono">*</div>
                     <div class="h3">En proceso</div>
-                    <div class="text-2xl font-bold">15</div>
+                    <div class="text-2xl font-bold">
+                        @foreach ($procedimientosByEstado as $estado)
+                            {{ $estado['estado'] }}: {{ $estado['count'] }}
+                        @endforeach
+                    </div>
                 </div>
                 <div class="flex gap-2 py-4">
                     <div class="icono">*</div>
-                    <div class="h3">Sin resultados</div>
-                    <div class="text-2xl font-bold">15</div>
-                </div>
-                <div class="flex gap-2 py-4">
-                    <div class="icono">*</div>
-                    <div class="h3">Por Facturar</div>
-                    <div class="text-2xl font-bold">15</div>
+                    <div class="h3">Pacientes</div>
+                    <div class="text-2xl font-bold">{{$pacientesHoy}}</div>
                 </div>
             </div>
 

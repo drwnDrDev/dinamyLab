@@ -68,19 +68,22 @@ class EmpleadoController extends Controller
     {
         $usuario = auth()->user();
         $empleado= Empleado::where('user_id',$usuario->id)->first();
+        $procedimientos = \App\Models\Procedimiento::all();
+            $procedimientosByExamen = $procedimientos->groupBy('examen_id')->map(function ($group) {
+                return [
+                    'examen' => $group->first()->examen->nombre,
+                    'count' => $group->count(),
+                ];
+            });
+        $procedimientosByEstado = $procedimientos->groupBy('estado')->map(function ($group) {
+            return [
+                'estado' => $group->first()->estado,
+                'count' => $group->count(),
+            ];
+        });
+        $pacientesHoy = $procedimientos->where('fecha', now()->toDateString())->groupBy('persona_id')->count();
 
-
-     
-        if(!$usuario->hasRole('admin') && !$usuario->hasRole('prestador') && !$usuario->hasRole('coordinador') && !$empleado) {
-            return view('paciente.dashboard');
-        }
-        if ($usuario->hasRole('admin')) {
-
-            $pendientes = \App\Models\Procedimiento::where('estado', 'pendiente')->get();
-
-            return view('admin.dashboard',compact('pendientes'));
-        }
-        return view('dashboard',compact('empleado'));
+        return view('dashboard',compact('empleado','procedimientos','procedimientosByExamen','procedimientosByEstado','pacientesHoy'));
     }
 
     public function select()
