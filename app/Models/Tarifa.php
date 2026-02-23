@@ -10,7 +10,6 @@ class Tarifa extends Model
         'precio',
         'tarifable_id',
         'tarifable_type',
-        'sede_id'
     ];
 
     public function tarifable()
@@ -20,7 +19,20 @@ class Tarifa extends Model
 
     public function sede()
     {
-        return $this->belongsTo(Sede::class);
+        return $this->belongsTo(Sede::class,'sede_tarifa','tarifa_id','sede_id');
+    }
+
+    public function examen()
+    {
+        return $this->morphsTo(Examen::class, 'tarifable');
+    }
+    public function servicio()
+    {
+        return $this->morphsTo(Servicio::class, 'tarifable');
+    }
+    public function producto()
+    {
+        return $this->morphsTo(Producto::class, 'tarifable');
     }
 
     /**
@@ -28,7 +40,7 @@ class Tarifa extends Model
      */
     public function convenios()
     {
-        return $this->belongsToMany(Convenio::class, 'convenio_tarifa');
+        return $this->belongsToMany(Convenio::class, 'convenio_tarifa', 'tarifa_id', 'convenio_id');
     }
 
     /**

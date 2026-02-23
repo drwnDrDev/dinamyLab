@@ -15,7 +15,7 @@ class Categoria extends Model
     protected $fillable = [
         'nombre',
         'descripcion',
-        'empresa_id'
+        'examen_id',
     ];
     /**
      * The table associated with the model.

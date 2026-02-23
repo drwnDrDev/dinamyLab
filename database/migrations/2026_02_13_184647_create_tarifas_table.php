@@ -13,9 +13,6 @@ return new class extends Migration
     {
         Schema::create('tarifas', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(App\Models\Sede::class)
-                ->constrained('sedes')
-                ->onDelete('cascade');
             $table->morphs('tarifable'); // Polymorphic relation
             $table->decimal('precio', 8, 2);
             $table->timestamps();

@@ -20,7 +20,6 @@ return new class extends Migration
                 ->constrained('tarifas')
                 ->onDelete('cascade');
             $table->timestamps();
-
             $table->unique(['convenio_id', 'tarifa_id']);
         });
     }

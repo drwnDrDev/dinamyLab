@@ -57,6 +57,12 @@ class Examen extends Model
         return $this->morphMany(Tarifa::class, 'tarifable');
     }
 
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
+
+
     protected $table = 'examenes';
     public function casts()
     {
