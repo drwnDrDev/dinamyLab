@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('convenio_tarifa', function (Blueprint $table) {
+        Schema::create('sede_tarifa', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('convenio_id')
-                ->constrained('convenios')
+            $table->foreignId('sede_id')
+                ->constrained('sedes')
                 ->onDelete('cascade');
             $table->foreignId('tarifa_id')
                 ->constrained('tarifas')
                 ->onDelete('cascade');
+
             $table->timestamps();
-            $table->unique(['convenio_id', 'tarifa_id']);
+            $table->unique(['sede_id', 'tarifa_id']);
         });
     }
 
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('convenio_tarifa');
+        Schema::dropIfExists('sede_tarifa');
     }
 };

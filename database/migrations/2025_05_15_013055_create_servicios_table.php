@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tarifas', function (Blueprint $table) {
+        Schema::create('servicios', function (Blueprint $table) {
             $table->id();
-            $table->morphs('tarifable'); // Polymorphic relation
-            $table->decimal('precio', 8, 2);
+            $table->string('descripcion');
+            $table->string('categoria', 10)->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tarifas');
+        Schema::dropIfExists('servicios');
     }
 };
