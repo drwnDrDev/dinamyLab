@@ -17,6 +17,20 @@
                     <form action="{{ route('convenios.store') }}" method="POST" id="formConvenio" class="w-full max-w-screen mx-auto">
                         @csrf
 
+                        <div class="mb-4">
+                            <x-input-label for="tipo_documento_id" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Documento:</x-input-label>
+                            <select name="tipo_documento" id="tipo_documento" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                                @foreach($documentos as $documento)
+                                    <option value="{{ $documento->cod_dian}}" @selected($documento->cod_dian === '91')>{{ $documento->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <x-input-label for="numero_documento" class="block text-gray-700 text-sm font-bold mb-2">Número de Documento:</x-input-label>
+                            <input type="text" name="numero_documento" id="numero_documento" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <x-input-error :messages="$errors->get('numero_documento')" class="mt-2" />
+                        </div>
+
                         <div class="mb-4 max-w-screen-sm">
                             <x-input-label for="razon_social">Razón Social:</x-input-label>
                             <x-text-input type="text" name="razon_social" id="razon_social" required />
@@ -24,11 +38,6 @@
                         </div>
 
 
-                        <div class="mb-4">
-                            <x-input-label for="nit" class="block text-gray-700 text-sm font-bold mb-2">NIT:</x-input-label>
-                            <input type="text" name="nit" id="nit" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                            <x-input-error :messages="$errors->get('nit')" class="mt-2" />
-                        </div>
 
                         <hr class="my-8 border-1 border-borders">
 
@@ -49,7 +58,7 @@
                                 <x-text-input id="municipioBusqueda" />
                                 <div class="w-full absolute flex-col-reverse bottom-10 bg-background border border-borders max-h-60 overflow-y-auto z-10 hidden rounded-md shadow-lg" id="opciones"></div>
                                 <select name="municipio" id="municipio" class="hidden">
-                                    <option value="11007">Bosa</option>
+                                    <option value="11001">Bogotá</option>
                                 </select>
                             </div>
                             <div class="w-full pb-2 md:col-span-2">

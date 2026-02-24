@@ -12,7 +12,6 @@ class Convenio extends Model
     'numero_documento',
     'razon_social',
     'numero_contrato',
-    'modalidad_pago',
     'empresa_id',
     ];
     /**

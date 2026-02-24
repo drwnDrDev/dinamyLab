@@ -32,6 +32,11 @@ class TipoDocumento extends Model
             return static::where('cod_rips', $codigo)->value('id');
         }
 
+        public static function idPorCodigoDian(string $codigo): int
+        {
+            return static::where('cod_dian', $codigo)->value('id');
+        }
+
     /**
      * Obtiene el regex de validación por el código RIPS.
      * @param string $codigo

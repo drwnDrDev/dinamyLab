@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Convenio;
+use App\Models\TipoDocumento;
 use App\Services\GuardarContacto;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
@@ -25,8 +26,10 @@ class ConvenioController extends Controller
      */
     public function create()
     {
-    
-       return view('convenios.create');
+
+        $documentos = TipoDocumento::where('es_pagador', true)->get();
+
+       return view('convenios.create', compact('documentos'));
     }
 
     /**
@@ -36,27 +39,26 @@ class ConvenioController extends Controller
     {
 
 
-        // Validar los datos del formulario
         $validatos =  $request->validate([
             'razon_social' => 'required|string|max:255',
-            'nit' => 'required|string|max:255|unique:convenios,numero_documento',
-            'telefono' => 'nullable|string|size:10',
-            'direccion' => 'nullable|string|max:255',
-            'municipio' => 'nullable|exists:municipios,id',
-            'correo' => 'nullable|email|max:255',
-            'redes' => 'nullable|array',
-            'redes.*' => 'nullable|string|max:255',
+            'numero_documento' => 'required|string|max:255|unique:convenios',
+
         ]);
+
+
 
 
         // Crear el convenio con los datos del contacto
-      $convenio =  Convenio::create( [
+         $convenio =  Convenio::create( [
+            'empresa_id' => session('sede')->empresa_id,
             'razon_social' => $request->razon_social,
-            'numero_documento' => $request->nit,
-            'tipo_documento_id' => 6,
+            'numero_documento' => $request->numero_documento,
+            'tipo_documento_id' => TipoDocumento::idPorCodigoDian($request->tipo_documento), // Asumiendo que el código RIPS para NIT es '31'
 
         ]);
-        $contactoDatos = GuardarContacto::guardarContacto($validatos, $convenio);
+        $contactoDatos = GuardarContacto::guardarContacto($request->all(), $convenio);
+
+
         return redirect()->route('convenios.index')->with('success', 'Convenio creado exitosamente.');
     }
 
