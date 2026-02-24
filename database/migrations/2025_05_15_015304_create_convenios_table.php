@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('numero_documento')->unique();
             $table->string('razon_social');
             $table->string('numero_contrato')->nullable();
-            $table->string('modalidad_pago', 42)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
