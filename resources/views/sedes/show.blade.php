@@ -33,18 +33,17 @@
     <section>
         <header>
                 <h2 class="text-lg font-medium text-gray-900">
-                    {{ __('Exámenes disponibles en esta sede') }}
+                    {{ __('Exams available at this location') }}
                 </h2>
-                <form class="grid grid-cols-2 justify-center">
-                @foreach ($examenes as $examen)
-                <div class="grid grid-cols-2 gap-2 px-4">
-                    <label>{{ $examen->nombre }}</label>
-                    <input type="number" name="precio_{{ $examen->id }}" placeholder="Precio" value="{{$examen->valor}}">
-                </div>
-                @endforeach
-                </form>
-
         </header>
+
+                <div
+                    id="tarifas-examenes-root"
+                    data-sede-id="{{ $sede->id }}"
+                    class="mt-4"
+                ></div>
+
+
     </section>
 </x-canva>
 </x-app-layout>

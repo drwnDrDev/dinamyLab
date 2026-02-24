@@ -93,12 +93,9 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth','verified','can:ver_facturas')->group(function () {
     Route::get('/convenios',[ConvenioController::class,'index'])->name('convenios.index');
-    Route::get('/convenios/create',[ConvenioController::class,'create'])->name('convenios.create');
-    Route::post('/convenios/store',[ConvenioController::class,'store'])->name('convenios.store');
-    Route::get('/convenios/{convenio}',[ConvenioController::class,'show'])->name('convenios.show');
-    Route::get('/convenios/{convenio}/edit',[ConvenioController::class,'edit'])->name('convenios.edit');
-    Route::put('/convenios/{convenio}',[ConvenioController::class,'update'])->name('convenios.update');
-    Route::delete('/convenios/{convenio}',[ConvenioController::class,'destroy'])->name('convenios.destroy');
+    Route::get('/convenios/{convenio}',[ConvenioController::class,'show'])
+        ->whereNumber('convenio')
+        ->name('convenios.show');
     Route::get('/facturas',[FacturaController::class,'index'])->name('facturas');
     Route::get('/facturas/create/{persona}',[FacturaController::class,'create'])->name('facturas.create');
     Route::post('/facturas/store',[FacturaController::class,'store'])->name('facturas.store');
@@ -110,7 +107,6 @@ Route::middleware('auth','verified','can:ver_facturas')->group(function () {
     Route::get('/facturas/resoluciones/{resolucion}/edit',[ResolucionController::class,'edit'])->name('resoluciones.edit');
     Route::put('/facturas/resoluciones/{resolucion}',[ResolucionController::class,'update'])->name('resoluciones.update');
     Route::delete('/facturas/resoluciones/{resolucion}',[ResolucionController::class,'destroy'])->name('resoluciones.destroy');
-
 });
 
 Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () {
@@ -129,7 +125,11 @@ Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () 
     Route::get('/personas/{persona}/edit',[PersonaController::class,'edit'])->name('personas.edit');
     Route::put('/personas/{persona}',[PersonaController::class,'update'])->name('personas.update');
     Route::delete('/ordenes-medicas/{orden}',[OrdenController::class,'destroy'])->name('ordenes.destroy');
-
+    Route::get('/convenios/create',[ConvenioController::class,'create'])->name('convenios.create');
+    Route::post('/convenios/store',[ConvenioController::class,'store'])->name('convenios.store');
+    Route::get('/convenios/{convenio}/edit',[ConvenioController::class,'edit'])->name('convenios.edit');
+    Route::put('/convenios/{convenio}',[ConvenioController::class,'update'])->name('convenios.update');
+    Route::delete('/convenios/{convenio}',[ConvenioController::class,'destroy'])->name('convenios.destroy');
 });
 
 require __DIR__.'/auth.php';
