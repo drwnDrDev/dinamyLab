@@ -9,6 +9,7 @@ import '../css/app.css';
 import DropdownComponent from './components/DropdownComponent';
 import Typewriter from './components/guest/Typewriter';
 import RegistroCitaAnonimo from './components/citas/RegistroCitaAnonimo';
+import TarifasExamenesSede from './components/TarifasExamenesSede';
 
 // Renderizado condicional basado en la presencia de elementos en el DOM
 
@@ -63,6 +64,13 @@ if (document.getElementById('testComponent')) {
 if (document.getElementById('root')) {
     const root = createRoot(document.getElementById('root'));
     root.render(<Setup />);
+}
+
+if (document.getElementById('tarifas-examenes-root')) {
+    const element = document.getElementById('tarifas-examenes-root');
+    const sedeId = parseInt(element.getAttribute('data-sede-id') || '0', 10);
+    const root = createRoot(element);
+    root.render(<TarifasExamenesSede sedeId={sedeId} />);
 }
 
 //

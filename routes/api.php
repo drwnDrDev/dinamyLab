@@ -105,6 +105,10 @@ Route::patch('/ordenes-medicas/{orden}',[OrdenController::class,'add'])->name('o
 Route::post('resultados/{procedimiento}',[ResultadosController::class,'store']);
 Route::get('ordenes/max-numero', [OrdenController::class, 'max_numero']);
 
+Route::resources([
+    'tarifas' => \App\Http\Controllers\Api\TarifaController::class,
+]);
+
 // ============================================
 // RECEPCIÓN - GESTIÓN DE PRE-REGISTROS (Con Auth)
 // ============================================
