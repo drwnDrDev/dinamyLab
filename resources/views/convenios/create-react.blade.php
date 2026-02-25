@@ -11,15 +11,8 @@
     </x-slot>
 
     <x-canva>
-        {{-- Script embebido para pasar datos del backend a React --}}
-        <script type="application/json" id="documentos-data">
-            @json($documentos)
-        </script>
-
-        {{-- Contenedor donde React montará el componente --}}
         <div id="convenio-form-root"></div>
     </x-canva>
 
-    {{-- Script que importa el componente React --}}
     @vite(['resources/js/convenioCreate.jsx'])
 </x-app-layout>
