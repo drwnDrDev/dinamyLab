@@ -18,7 +18,8 @@ export default defineConfig({
                 'resources/js/appOrden.jsx',
                 'resources/js/appPersona.jsx',
                 'resources/js/ExamenDetail.jsx',
-                'resources/js/components/guest/Typewriter.jsx'
+                'resources/js/components/guest/Typewriter.jsx',
+                'resources/js/convenioCreate.jsx'
 
             ],
             refresh: true,
