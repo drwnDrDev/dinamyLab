@@ -8,6 +8,8 @@ export default function AutocompleteInput({
   placeholder = "",
   allowCustom = true,
   minLengthToShow = 1,
+  displayKey = null, // Propiedad del objeto a mostrar (null si suggestions es array de strings)
+  valueKey = null,   // Propiedad del objeto a devolver como valor (null usa displayKey o el string completo)
 }) {
   const [inputValue, setInputValue] = useState(value ?? "");
   const [filtered, setFiltered] = useState([]);
@@ -17,6 +19,19 @@ export default function AutocompleteInput({
   const listIdRef = useRef(`ac-list-${Math.random().toString(36).slice(2, 9)}`);
 
   useEffect(() => setInputValue(value ?? ""), [value]);
+
+  // Función helper para obtener el texto a mostrar de un item
+  const getDisplayText = (item) => {
+    if (!item) return "";
+    return displayKey ? (item[displayKey] ?? "") : String(item);
+  };
+
+  // Función helper para obtener el valor de un item
+  const getItemValue = (item) => {
+    if (!item) return "";
+    if (valueKey) return item[valueKey] ?? "";
+    return getDisplayText(item);
+  };
 
   // close on outside click
   useEffect(() => {
@@ -35,9 +50,10 @@ export default function AutocompleteInput({
     const text = inputValue ?? "";
     if (text.length >= minLengthToShow) {
       const lower = text.toLowerCase();
-      const result = suggestions.filter((s) =>
-        s.toLowerCase().includes(lower)
-      );
+      const result = suggestions.filter((s) => {
+        const displayText = getDisplayText(s);
+        return displayText.toLowerCase().includes(lower);
+      });
       setFiltered(result);
       setIsOpen(result.length > 0);
       setHighlighted(result.length > 0 ? 0 : -1);
@@ -54,9 +70,11 @@ export default function AutocompleteInput({
     onChange?.(text);
   }
 
-  function selectValue(val) {
-    setInputValue(val);
-    onChange?.(val);
+  function selectValue(item) {
+    const displayText = getDisplayText(item);
+    const itemValue = getItemValue(item);
+    setInputValue(displayText);
+    onChange?.(itemValue);
     setIsOpen(false);
     setHighlighted(-1);
   }
@@ -134,10 +152,11 @@ export default function AutocompleteInput({
         >
           {filtered.map((item, idx) => {
             const isHighlighted = idx === highlighted;
+            const displayText = getDisplayText(item);
             return (
               <li
                 id={`${listIdRef.current}-item-${idx}`}
-                key={item + "|" + idx}
+                key={displayText + "|" + idx}
                 role="option"
                 aria-selected={isHighlighted}
                 onClick={() => selectValue(item)}
@@ -150,7 +169,7 @@ export default function AutocompleteInput({
                   borderBottom: "1px solid #eee",
                 }}
               >
-                {item}
+                {displayText}
               </li>
             );
           })}

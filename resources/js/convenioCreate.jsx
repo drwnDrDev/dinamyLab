@@ -1,19 +1,14 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import ConvenioForm from './components/ConvenioForm';
-import { inicializarPaisesLocalStorage } from './utils/paisesLocalStorage';
 
-// Inicializar países en localStorage si no existen
-inicializarPaisesLocalStorage();
 
-// Obtener documentos que se pasarán como prop (simulados aquí, pero pueden venir del backend)
-const documentosDefault = [
-  { cod_dian: '91', nombre: 'NIT' },
-  { cod_dian: '11', nombre: 'Cédula de Ciudadanía' },
-  { cod_dian: '12', nombre: 'Cédula de Extranjería' },
-  { cod_dian: '21', nombre: 'Tarjeta de Identidad' },
-  { cod_dian: '22', nombre: 'Documento de Identificación Personal' },
-];
+const documentosDefault = localStorage.getItem('documentos_pagador_data')  ? JSON.parse(localStorage.getItem('documentos_pagador_data'))
+  : [];
+
+const municipiosDefault = localStorage.getItem('municipios_data') ? JSON.parse(localStorage.getItem('municipios_data')) : [];
+const paisesDefault = localStorage.getItem('paises_data') ? JSON.parse(localStorage.getItem('paises_data')) : [];
+
 
 // Obtener el contenedor del DOM donde se montará el componente
 const rootElement = document.getElementById('convenio-form-root');

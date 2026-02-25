@@ -8,7 +8,7 @@ export default function ConvenioForm({ documentos = [], onSubmit = null }) {
     razon_social: '',
     telefono: '',
     correo: '',
-    municipio: '11001',
+    municipio: '',
     direccion: '',
     pais: '',
     redes: {
@@ -25,11 +25,11 @@ export default function ConvenioForm({ documentos = [], onSubmit = null }) {
   });
 
   const [paises, setPaises] = useState([]);
-  const [paisesEn, setPaisesEn] = useState('es');
+  const [municipios, setMunicipios] = useState([]);
 
-  // Cargar países del localStorage al montar el componente
+  // Cargar países y municipios del localStorage al montar el componente
   useEffect(() => {
-    const paisesLocal = localStorage.getItem('paises');
+    const paisesLocal = localStorage.getItem('paises_data');
     if (paisesLocal) {
       try {
         const paisesData = JSON.parse(paisesLocal);
@@ -37,6 +37,17 @@ export default function ConvenioForm({ documentos = [], onSubmit = null }) {
       } catch (error) {
         console.error('Error al parsear países del localStorage:', error);
         setPaises([]);
+      }
+    }
+
+    const municipiosLocal = localStorage.getItem('municipios_data');
+    if (municipiosLocal) {
+      try {
+        const municipiosData = JSON.parse(municipiosLocal);
+        setMunicipios(municipiosData);
+      } catch (error) {
+        console.error('Error al parsear municipios del localStorage:', error);
+        setMunicipios([]);
       }
     }
   }, []);
@@ -71,12 +82,20 @@ export default function ConvenioForm({ documentos = [], onSubmit = null }) {
     }));
   };
 
-  // Obtener lista de países para el autocomplete
-  const paisesFiltr = paises
-    .filter((p) => p.toLowerCase().includes(formData.pais.toLowerCase()))
-    .slice(0, 10); // Limitar a 10 resultados
+  // Manejar cambio en el campo Municipio con autocomplete
+  const handleMunicipioChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      municipio: value,
+    }));
+  };
 
-  // Manejar envío del formulario
+//   // Obtener lista de países para el autocomplete
+//   const paisesFiltr = paises
+//     .filter((p) => p.toLowerCase().includes(formData.pais.toLowerCase()))
+//     .slice(0, 10); // Limitar a 10 resultados
+
+//   // Manejar envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -150,7 +169,7 @@ export default function ConvenioForm({ documentos = [], onSubmit = null }) {
                 required
               >
                 {documentos.map((doc) => (
-                  <option key={doc.cod_dian} value={doc.cod_dian}>
+                  <option key={doc.id} value={doc.cod_dian}>
                     {doc.nombre}
                   </option>
                 ))}
@@ -243,12 +262,15 @@ export default function ConvenioForm({ documentos = [], onSubmit = null }) {
                 >
                   Ciudad
                 </label>
-                <input
-                  type="text"
-                  id="municipio"
+                <AutocompleteInput
                   value={formData.municipio}
-                  readOnly
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
+                  onChange={handleMunicipioChange}
+                  suggestions={municipios}
+                  placeholder="Empieza a escribir (mínimo 3 letras)..."
+                  minLengthToShow={3}
+                  allowCustom={true}
+                  displayKey="municipio"
+                  valueKey="codigo"
                 />
               </div>
               <div className="w-full pb-2 md:col-span-2">
@@ -284,6 +306,7 @@ export default function ConvenioForm({ documentos = [], onSubmit = null }) {
                 placeholder="Empieza a escribir (mínimo 3 letras)..."
                 minLengthToShow={3}
                 allowCustom={true}
+                displayKey="nombre"
               />
             </div>
 
