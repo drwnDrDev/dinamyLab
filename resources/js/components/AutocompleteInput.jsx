@@ -1,5 +1,5 @@
 // ...existing code...
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useId } from "react";
 
 export default function AutocompleteInput({
   value,
@@ -16,7 +16,8 @@ export default function AutocompleteInput({
   const [isOpen, setIsOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(-1);
   const containerRef = useRef(null);
-  const listIdRef = useRef(`ac-list-${Math.random().toString(36).slice(2, 9)}`);
+  const uniqueId = useId();
+  const listId = `ac-list-${uniqueId}`;
 
   useEffect(() => setInputValue(value ?? ""), [value]);
 
@@ -118,10 +119,10 @@ export default function AutocompleteInput({
         type="text"
         role="combobox"
         aria-expanded={isOpen}
-        aria-controls={listIdRef.current}
+        aria-controls={listId}
         aria-autocomplete="list"
         aria-activedescendant={
-          highlighted >= 0 ? `${listIdRef.current}-item-${highlighted}` : undefined
+          highlighted >= 0 ? `${listId}-item-${highlighted}` : undefined
         }
         value={inputValue}
         onChange={handleInputChange}
@@ -134,7 +135,7 @@ export default function AutocompleteInput({
 
       {isOpen && (
         <ul
-          id={listIdRef.current}
+          id={listId}
           role="listbox"
           style={{
             position: "absolute",
@@ -155,7 +156,7 @@ export default function AutocompleteInput({
             const displayText = getDisplayText(item);
             return (
               <li
-                id={`${listIdRef.current}-item-${idx}`}
+                id={`${listId}-item-${idx}`}
                 key={displayText + "|" + idx}
                 role="option"
                 aria-selected={isHighlighted}
