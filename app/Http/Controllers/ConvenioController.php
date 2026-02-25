@@ -29,7 +29,7 @@ class ConvenioController extends Controller
 
         $documentos = TipoDocumento::where('es_pagador', true)->get();
 
-       return view('convenios.create', compact('documentos'));
+       return view('convenios.create-react', compact('documentos'));
     }
 
     /**
