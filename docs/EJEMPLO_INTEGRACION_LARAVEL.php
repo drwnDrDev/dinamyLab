@@ -2,7 +2,7 @@
 
 /**
  * EJEMPLOS DE INTEGRACIÓN DEL COMPONENTE REACT DE CONVENIOS
- * 
+ *
  * Este archivo muestra cómo integrar el componente React de convenios
  * en tu aplicación Laravel.
  */
@@ -25,13 +25,13 @@ class ConvenioController extends Controller
     {
         // Obtener los tipos de documento disponibles
         $documentos = TipoDocumento::all();
-        
+
         // O si prefieres pasar documentos específicos
         // $documentos = [
         //     (object)['cod_dian' => '91', 'nombre' => 'NIT'],
         //     (object)['cod_dian' => '11', 'nombre' => 'Cédula de Ciudadanía'],
         // ];
-        
+
         return view('convenios.create-react', [
             'documentos' => $documentos,
         ]);
@@ -86,16 +86,16 @@ class PaisController extends Controller
 {
     /**
      * Obtener lista de países para el autocomplete
-     * 
+     *
      * GET /api/paises
-     * 
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
         // Opción 1: Desde una tabla en la base de datos
         // $paises = Pais::pluck('nombre')->toArray();
-        
+
         // Opción 2: Desde una lista fija
         $paises = [
             'Colombia',
@@ -174,7 +174,7 @@ class PaisController extends Controller
 
     /**
      * Buscar países por término
-     * 
+     *
      * GET /api/paises/buscar?q=colom
      */
     public function buscar(Request $request): JsonResponse
@@ -252,11 +252,11 @@ class PaisSeeder extends Seeder
    php artisan migrate
    php artisan db:seed --class=PaisSeeder
 
-2. El componente React busca en localStorage por defecto, pero se puede 
+2. El componente React busca en localStorage por defecto, pero se puede
    modificar para cargar desde una API:
-   
+
    En ConvenioForm.jsx, modifica el useEffect así:
-   
+
    useEffect(() => {
      fetch('/api/paises')
        .then(res => res.json())
