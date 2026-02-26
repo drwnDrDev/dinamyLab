@@ -67,30 +67,32 @@ class EmpleadoController extends Controller
     public function dashboard()
     {
         $usuario = auth()->user();
-        $empleado= Empleado::where('user_id',$usuario->id)->first();
+        $empleado = Empleado::where('user_id', $usuario->id)->first();
+        $ordenes = \App\Models\Orden::all();
         $procedimientos = \App\Models\Procedimiento::all();
-            $procedimientosByExamen = $procedimientos->groupBy('examen_id')->map(function ($group) {
-                return [
-                    'examen' => $group->first()->examen->nombre,
-                    'count' => $group->count(),
-                ];
-            });
-        $procedimientosByEstado = $procedimientos->groupBy('estado')->map(function ($group) {
+        $procedimientosByExamen = $procedimientos->groupBy('examen_id')->map(function ($group) {
+            return [
+                'examen' => $group->first()->examen->nombre,
+                'count' => $group->count(),
+            ];
+        })->sortByDesc('count')->values();
+
+        $procedimientosByEstado = $procedimientos->where('estado', 'en proceso')->groupBy('estado')->map(function ($group) {
             return [
                 'estado' => $group->first()->estado,
                 'count' => $group->count(),
             ];
         });
-        $pacientesHoy = $procedimientos->where('fecha', now()->toDateString())->groupBy('persona_id')->count();
-
-        return view('dashboard',compact('empleado','procedimientos','procedimientosByExamen','procedimientosByEstado','pacientesHoy'));
+        $pacientesHoy = $procedimientos->count();
+        // dd($procedimientos);
+        return view('dashboard', compact('empleado', 'procedimientos', 'procedimientosByExamen', 'procedimientosByEstado', 'pacientesHoy', 'ordenes'));
     }
 
     public function select()
     {
         $usuario = auth()->user();
-        $empleado= Empleado::where('user_id',$usuario->id)->first();
-        
+        $empleado = Empleado::where('user_id', $usuario->id)->first();
+
         return view('sedes.select', compact('empleado'));
     }
 }
