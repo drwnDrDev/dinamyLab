@@ -50,6 +50,9 @@ class DatabaseSeeder extends Seeder
         Role::create(['name' => 'prestador']);
         Role::create(['name' => 'paciente']);
         Role::create(['name' => 'contable']);
+
+
+        
         Permission::create(['name' => 'ver_resultado']);
         Permission::create(['name' => 'crear_persona']);
         Permission::create(['name' => 'editar_persona']);

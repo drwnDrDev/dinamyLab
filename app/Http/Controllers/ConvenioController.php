@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Convenio;
 use App\Models\TipoDocumento;
+use App\Policies\EmpresaPolicy;
 use App\Services\GuardarContacto;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 
 class ConvenioController extends Controller
@@ -17,7 +17,7 @@ class ConvenioController extends Controller
     {
 
         return view('convenios.index', [
-            'convenios' => Convenio::with('contacto')->get(),
+            'convenios' => Convenio::where('empresa_id', auth()->user()->empleado->empresa_id)->get(),
         ]);
     }
 
@@ -26,6 +26,7 @@ class ConvenioController extends Controller
      */
     public function create()
     {
+
 
         $documentos = TipoDocumento::where('es_pagador', true)->get();
 
@@ -37,16 +38,11 @@ class ConvenioController extends Controller
      */
     public function store(Request $request)
     {
-
-
         $validatos =  $request->validate([
             'razon_social' => 'required|string|max:255',
             'numero_documento' => 'required|string|max:255|unique:convenios',
 
         ]);
-
-
-
 
         // Crear el convenio con los datos del contacto
          $convenio =  Convenio::create( [
@@ -69,8 +65,10 @@ class ConvenioController extends Controller
     {
 
         // Cargar el contacto relacionado con el convenio
+
+        $this->authorize('view', $convenio);
         return view('convenios.show', [
-            'convenio' => $convenio->load('contacto'),
+            'convenio' => $convenio,
         ]);
     }
 
