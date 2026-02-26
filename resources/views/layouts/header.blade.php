@@ -58,7 +58,8 @@
                 <div    id="dropdownComponent"
                         class="relative z-10"
                         data-nombre="{{ Auth::user()->name }}"
-                        data-profile-url="{{ route('profile.edit') }}">
+                        data-profile-url="{{ route('profile.edit') }}"
+                        data-sedes="{{ json_encode(Auth::user()->empleado->sedes->map(function($sede) { return ['id' => $sede->id, 'nombre' => $sede->nombre, 'logo' => $sede->logo, 'url' => route('elegir.sede', $sede->id)]; })->values()->all()) }}">
                 </div>
             </div>
 

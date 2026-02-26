@@ -48,11 +48,12 @@
             {{ __('Reportes') }}
         </x-nav-link>
 
-        @can('ver_empresa')
-        <x-nav-link :href="route('dashboard')" icono="admin" :active="request()->routeIs('administracion*')">
+        
+        @if(auth()->user()?->hasRole('admin'))
+        <x-nav-link :href="route('empresa.show')" icono="admin" :active="request()->routeIs('empresa.show*')">
             {{ __('Adminstration') }}
         </x-nav-link>
-        @endcan
+        @endif
 
 
     </div>
