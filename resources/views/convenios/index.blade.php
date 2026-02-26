@@ -59,7 +59,7 @@
               {{ $convenio->nit }}
             </td>
             <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
-              {{ $convenio->contacto->telefono }}
+              {{ $convenio->contacto ? $convenio->contacto->telefono : 'No disponible' }}
             </td>
             <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
               <a href="{{ route('convenios.show', $convenio->id) }}" class="text-blue-500 hover:underline">Ver Detalles</a>
