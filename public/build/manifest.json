@@ -38,7 +38,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-BgvZyBbB.css",
+    "file": "assets/app-DAn8vwhD.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -69,7 +69,7 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-CXUE1HQ3.js",
+    "file": "assets/app-B6n4BwJa.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -80,7 +80,7 @@
       "_index-B9ygI19o.js"
     ],
     "css": [
-      "assets/app-BgvZyBbB.css"
+      "assets/app-DAn8vwhD.css"
     ],
     "assets": [
       "assets/rips-cargador-DoL-Xzn1.png"
@@ -124,6 +124,16 @@
     "isEntry": true,
     "imports": [
       "_index-C2KC86Ta.js"
+    ]
+  },
+  "resources/js/convenioCreate.jsx": {
+    "file": "assets/convenioCreate-BhhRvI3V.js",
+    "name": "convenioCreate",
+    "src": "resources/js/convenioCreate.jsx",
+    "isEntry": true,
+    "imports": [
+      "_index-C2KC86Ta.js",
+      "_client-DCM6oUEP.js"
     ]
   },
   "resources/js/crearOrdenes.js": {
