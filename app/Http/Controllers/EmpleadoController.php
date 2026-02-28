@@ -66,10 +66,12 @@ class EmpleadoController extends Controller
 
     public function dashboard()
     {
+        $sede = session('sede');
         $usuario = auth()->user();
         $empleado = Empleado::where('user_id', $usuario->id)->first();
         $ordenes = \App\Models\Orden::all();
-        $procedimientos = \App\Models\Procedimiento::all();
+        $procedimientos = $usuario->hasRole('administrador') ? \App\Models\Procedimiento::all() :  \App\Models\Procedimiento::where('sede_id', $sede->id)->get();
+
         $procedimientosByExamen = $procedimientos->groupBy('examen_id')->map(function ($group) {
             return [
                 'examen' => $group->first()->examen->nombre,
