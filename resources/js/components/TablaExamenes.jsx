@@ -95,71 +95,85 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
             );
           })}
         </tbody>
-        <tfoot>
+      </table>
+
+      {/* Panel de resumen financiero — separado visualmente de la tabla */}
+      <div className="mt-4 flex items-start justify-between gap-6 bg-secondary rounded-lg p-4">
+
+        {/* Columna izquierda: controles */}
+        <div className="flex flex-col gap-2">
+          <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">Ajustes</p>
+          <button type="button" onClick={() => setDescuentoActive(!descuentoActive)} className={chipClass(descuentoActive)}>
+            Descuento
+          </button>
+          <button type="button" onClick={() => setAbonoActive(!abonoActive)} className={chipClass(abonoActive)}>
+            Abono
+          </button>
+        </div>
+
+        {/* Columna derecha: resumen de valores */}
+        <div className="flex flex-col gap-2 min-w-[220px]">
+
+          {/* Subtotal */}
+          <div className="flex items-center justify-between gap-8">
+            <span className="text-sm text-gray-500">Subtotal</span>
+            <span className="text-sm text-text tabular-nums">{formatCOP(subtotal)}</span>
+          </div>
+
+          {/* Descuento (solo si activo) */}
           {descuentoActive && (
-            <tr className="border-t border-borders">
-              <td colSpan="4" className="px-4 py-2 text-right text-gray-600">Descuento:</td>
-              <td className="px-4 py-2 text-right">
+            <div className="flex items-center justify-between gap-8">
+              <span className="text-sm text-gray-500">Descuento</span>
+              <input
+                type="number"
+                min="0"
+                placeholder="0"
+                onChange={(e) => setDescuento(parseFloat(e.target.value) || 0)}
+                className={`w-28 px-2 py-1 border rounded-md text-right text-sm bg-white focus:outline-none focus:ring-1 ${
+                  descuentoExcede ? 'border-red-400 focus:ring-red-400' : 'border-borders focus:ring-primary'
+                }`}
+              />
+            </div>
+          )}
+
+          {/* Separador */}
+          <div className="border-t border-borders/60 my-0.5" />
+
+          {/* Total — elemento dominante */}
+          <div className="flex items-center justify-between gap-8">
+            <span className="text-base font-semibold text-titles">Total</span>
+            <span className={`text-2xl font-bold tabular-nums ${descuentoExcede ? 'text-red-500' : 'text-titles'}`}>
+              {formatCOP(total)}
+            </span>
+          </div>
+
+          {/* Abono y Saldo (solo si activo) */}
+          {abonoActive && (
+            <>
+              <div className="border-t border-borders/60 my-0.5" />
+              <div className="flex items-center justify-between gap-8">
+                <label htmlFor="input-abono" className="text-sm text-gray-500 cursor-pointer">Abono</label>
                 <input
+                  id="input-abono"
                   type="number"
                   min="0"
                   placeholder="0"
-                  onChange={(e) => setDescuento(parseFloat(e.target.value) || 0)}
-                  className={`w-28 px-2 py-1 border rounded-md text-right text-sm focus:outline-none focus:ring-1 ${
-                    descuentoExcede ? 'border-red-400 focus:ring-red-400' : 'border-borders focus:ring-primary'
+                  onChange={(e) => setAbono(parseFloat(e.target.value) || 0)}
+                  className={`w-28 px-2 py-1 border rounded-md text-right text-sm bg-white focus:outline-none focus:ring-1 ${
+                    abonoExcede ? 'border-red-400 focus:ring-red-400' : 'border-borders focus:ring-primary'
                   }`}
                 />
-              </td>
-              <td></td>
-            </tr>
-          )}
-          <tr className="border-t-2 border-borders font-semibold">
-            <td colSpan="4" className="px-4 py-3 text-right text-titles">Total:</td>
-            <td className={`px-4 py-3 text-right text-base ${descuentoExcede ? 'text-red-600' : 'text-titles'}`}>
-              {formatCOP(total)}
-            </td>
-            <td></td>
-          </tr>
-          {abonoActive && (
-            <>
-              <tr className="border-t border-borders">
-                <td colSpan="4" className="px-4 py-2 text-right text-gray-600">
-                  <label htmlFor="input-abono" className="cursor-pointer">Abono:</label>
-                </td>
-                <td className="px-4 py-2 text-right">
-                  <input
-                    id="input-abono"
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    onChange={(e) => setAbono(parseFloat(e.target.value) || 0)}
-                    className={`w-28 px-2 py-1 border rounded-md text-right text-sm focus:outline-none focus:ring-1 ${
-                      abonoExcede ? 'border-red-400 focus:ring-red-400' : 'border-borders focus:ring-primary'
-                    }`}
-                  />
-                </td>
-                <td></td>
-              </tr>
-              <tr className="border-t border-borders">
-                <td colSpan="4" className="px-4 py-2 text-right text-gray-600">Saldo:</td>
-                <td className={`px-4 py-2 text-right font-semibold ${abonoExcede ? 'text-red-600' : 'text-text'}`}>
+              </div>
+              <div className="flex items-center justify-between gap-8">
+                <span className="text-sm text-gray-500">Saldo</span>
+                <span className={`text-sm font-semibold tabular-nums ${abonoExcede ? 'text-red-500' : 'text-text'}`}>
                   {formatCOP(saldo)}
-                </td>
-                <td></td>
-              </tr>
+                </span>
+              </div>
             </>
           )}
-        </tfoot>
-      </table>
 
-      {/* Controles de descuento y abono */}
-      <div className="flex gap-2 mt-3 pt-3 border-t border-borders">
-        <button type="button" onClick={() => setDescuentoActive(!descuentoActive)} className={chipClass(descuentoActive)}>
-          Descuento
-        </button>
-        <button type="button" onClick={() => setAbonoActive(!abonoActive)} className={chipClass(abonoActive)}>
-          Abono
-        </button>
+        </div>
       </div>
     </div>
   );
