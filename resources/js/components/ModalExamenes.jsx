@@ -24,7 +24,7 @@ const ModalExamenes = ({ disponibles, onAgregar, examenesActuales, onClose, sexo
         <div className="max-h-[60vh] overflow-y-auto">
           <ul className="divide-y divide-borders">
             {disponiblesFiltrados.map(ex => (
-              <li key={ex.id} className="flex items-center justify-between py-1.5 px-1 hover:bg-gray-50">
+              <li key={ex.id} className="flex items-center justify-between py-1.5 px-2 hover:bg-gray-50">
                 <div className="flex items-center gap-2 text-sm min-w-0">
                   <span className="text-gray-400 font-mono text-xs shrink-0">{ex.cup}</span>
                   <span className="text-text truncate">{ex.nombre}</span>

@@ -11,12 +11,12 @@ import axios from "axios";
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 axios.defaults.withCredentials = true;
 
-// Clase base para inputs de texto
+// Clase base para inputs de texto — usa ring (box-shadow) para evitar el borde nativo del navegador
 const inputClass = (hasError = false) =>
-    `h-9 w-full px-3 text-sm text-text bg-white border rounded-md focus:outline-none transition-colors ${
+    `h-9 w-full px-3 text-sm text-text bg-white rounded-md border-0 focus:outline-none transition-colors ${
         hasError
-            ? 'border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-500'
-            : 'border-borders focus:border-primary focus:ring-1 focus:ring-primary'
+            ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
+            : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'
     }`;
 
 const FormPersona = ({ persona, setPersona, perfil }) => {

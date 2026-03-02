@@ -33,7 +33,7 @@ const DatosPersona = ({ persona }) => {
         <section className="print_paciente py-2 w-full">
             <a
                 href={`/personas/${persona.id}`}
-                className="group inline-flex items-center gap-1 mb-2"
+                className="group inline-flex items-center gap-1 mb-2 capitalize"
             >
                 <h3 className="text-base font-bold text-titles group-hover:text-primary transition-colors">
                     {nombreCompleto || 'Sin nombre'}
