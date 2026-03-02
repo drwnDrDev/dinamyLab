@@ -44,9 +44,8 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
         const getCsrfCookie = async () => {
             try {
                 await axios.get('/sanctum/csrf-cookie');
-                console.log('CSRF cookie obtained');
             } catch (error) {
-                console.error('Could not get CSRF cookie', error);
+                // Sin acción requerida — el request fallará y mostrará el error al usuario
             }
         };
         getCsrfCookie();
@@ -79,14 +78,12 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
 
             const data = response.data;
             if (data) {
-                console.log('✅ Persona encontrada:', data);
                 setPersonaExistente(data);
                 return data;
             }
             setPersonaExistente(null);
             return null;
         } catch (err) {
-            console.log('❌ Error al buscar persona:', err);
             setPersonaExistente(null);
             return null;
         } finally {
@@ -144,12 +141,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 ? `/api/personas/${personaExistente.data.id}`
                 : '/api/personas';
 
-            console.log('📋 ENVIANDO FORMULARIO (STATEFUL):', {
-                operacion: esActualizacion ? 'Actualización' : 'Nuevo Registro',
-                url: url,
-                datos: formData
-            });
-
             const response = await axios({
                 method: esActualizacion ? 'PUT' : 'POST',
                 url: url,
@@ -157,8 +148,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
             });
 
             const resultado = response.data;
-            console.log('✅ Operación exitosa:', resultado);
-
             const personaActualizada = resultado.data;
             setPersonaExistente(null);
             if (setPersona){
@@ -191,9 +180,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
             
 
         } catch (err) {
-            console.error('❌ Error completo:', err);
-            console.error('Respuesta del servidor:', err.response?.data);
-
             let mensajeError = 'Error al procesar la solicitud';
 
             if (err.response?.status === 422) {
@@ -527,7 +513,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-titles focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                    className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-titles focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
                 >
                     {loading ? (
                         <>
