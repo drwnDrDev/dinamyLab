@@ -11,6 +11,14 @@ import axios from "axios";
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 axios.defaults.withCredentials = true;
 
+// Clase base para inputs de texto
+const inputClass = (hasError = false) =>
+    `h-9 w-full px-3 text-sm text-text bg-white border rounded-md focus:outline-none transition-colors ${
+        hasError
+            ? 'border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-500'
+            : 'border-borders focus:border-primary focus:ring-1 focus:ring-primary'
+    }`;
+
 const FormPersona = ({ persona, setPersona, perfil }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -156,34 +164,33 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
             const resultado = response.data;
             const personaActualizada = resultado.data;
             setPersonaExistente(null);
-            if (setPersona){
-            setPersona(personaActualizada);
-            };
+            if (setPersona) {
+                setPersona(personaActualizada);
+            }
 
             setSuccessMessage(esActualizacion ? 'Persona actualizada exitosamente.' : 'Paciente registrado exitosamente.');
             setError(null);
 
-                setFormData({
-                    id: null,
-                    perfil: '',
-                    tipo_documento: 'CC',
-                    numero_documento: '',
-                    nombres: '',
-                    apellidos: '',
-                    fecha_nacimiento: '',
-                    sexo: '',
-                    pais_nacimiento: '170',
-                    municipio: '11001',
-                    direccion: '',
-                    telefono: '',
-                    zona: '02',
-                    pais_residencia: '170',
-                    correo: '',
-                    eps: '',
-                    tipo_afiliacion: ''
-                });
-                setPersonaExistente(null);
-
+            setFormData({
+                id: null,
+                perfil: '',
+                tipo_documento: 'CC',
+                numero_documento: '',
+                nombres: '',
+                apellidos: '',
+                fecha_nacimiento: '',
+                sexo: '',
+                pais_nacimiento: '170',
+                municipio: '11001',
+                direccion: '',
+                telefono: '',
+                zona: '02',
+                pais_residencia: '170',
+                correo: '',
+                eps: '',
+                tipo_afiliacion: ''
+            });
+            setPersonaExistente(null);
 
         } catch (err) {
             if (err.response?.status === 422) {
@@ -248,7 +255,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         options={tiposDocumento.map(doc => ({ key: doc.id, codigo: doc.cod_rips, nombre: doc.nombre }))}
                     />
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Número de Documento
                         </label>
                         <div className="relative">
@@ -258,11 +265,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 value={formData.numero_documento}
                                 onChange={handleInputChange}
                                 onBlur={handleDocumentoBlur}
-                                className={`h-9 w-full p-2 border-borders rounded-md ${
-                                    erroresValidacion.numero_documento || fe('numero_documento')
-                                        ? 'focus:border-red-500 focus:ring-red-500'
-                                        : 'focus:border-primary focus:ring-primary'
-                                }`}
+                                className={inputClass(erroresValidacion.numero_documento || fe('numero_documento'))}
                             />
                             {loading && (
                                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
@@ -289,7 +292,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         />
                     )}
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Nombres
                         </label>
                         <input
@@ -297,14 +300,12 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="nombres"
                             value={formData.nombres}
                             onChange={handleInputChange}
-                            className={`h-9 w-full p-2 border-borders rounded-md ${
-                                fe('nombres') ? 'focus:border-red-500 focus:ring-red-500' : 'focus:border-primary focus:ring-primary'
-                            }`}
+                            className={inputClass(fe('nombres'))}
                         />
                         {fe('nombres') && <p className="text-sm text-red-500 mt-1">{fe('nombres')}</p>}
                     </div>
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Apellidos
                         </label>
                         <input
@@ -312,15 +313,13 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="apellidos"
                             value={formData.apellidos}
                             onChange={handleInputChange}
-                            className={`h-9 w-full p-2 border-borders rounded-md ${
-                                fe('apellidos') ? 'focus:border-red-500 focus:ring-red-500' : 'focus:border-primary focus:ring-primary'
-                            }`}
+                            className={inputClass(fe('apellidos'))}
                         />
                         {fe('apellidos') && <p className="text-sm text-red-500 mt-1">{fe('apellidos')}</p>}
                     </div>
                     {perfil !== 'Pagador' && (
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Fecha de Nacimiento
                         </label>
                         <input
@@ -328,11 +327,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="fecha_nacimiento"
                             value={formData.fecha_nacimiento}
                             onChange={handleInputChange}
-                            className={`h-9 w-full p-2 border-borders rounded-md ${
-                                erroresValidacion.fecha_nacimiento || fe('fecha_nacimiento')
-                                    ? 'focus:border-red-500 focus:ring-red-500'
-                                    : 'focus:border-primary focus:ring-primary'
-                            }`}
+                            className={inputClass(erroresValidacion.fecha_nacimiento || fe('fecha_nacimiento'))}
                         />
                         {erroresValidacion.fecha_nacimiento && (
                             <p className="text-sm text-red-500 mt-1">{erroresValidacion.fecha_nacimiento}</p>
@@ -354,7 +349,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                         value="F"
                                         checked={formData.sexo === 'F'}
                                         onChange={handleInputChange}
-                                        className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
+                                        className="h-4 w-4 accent-primary"
                                     />
                                     Femenino
                                 </label>
@@ -366,7 +361,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                         value="M"
                                         checked={formData.sexo === 'M'}
                                         onChange={handleInputChange}
-                                        className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
+                                        className="h-4 w-4 accent-primary"
                                     />
                                     Masculino
                                 </label>
@@ -378,7 +373,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                         value="I"
                                         checked={formData.sexo === 'I'}
                                         onChange={handleInputChange}
-                                        className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
+                                        className="h-4 w-4 accent-primary"
                                     />
                                     Intersexual
                                 </label>
@@ -388,7 +383,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                     )}
                     {perfil === 'Paciente' && (
                         <div>
-                            <label className="block font-medium text-sm text-text">
+                            <label className="block font-medium text-sm text-text mb-1">
                                 EPS
                             </label>
                             <input
@@ -396,9 +391,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 name="eps"
                                 value={formData.eps}
                                 onChange={handleInputChange}
-                                className={`h-9 w-full p-2 border-borders rounded-md ${
-                                    fe('eps') ? 'focus:border-red-500 focus:ring-red-500' : 'focus:border-primary focus:ring-primary'
-                                }`}
+                                className={inputClass(fe('eps'))}
                             />
                             <datalist id="eps_list">
                                 {epsList.map(e => (
@@ -436,7 +429,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                     value="02"
                                     checked={formData.zona === '02'}
                                     onChange={handleInputChange}
-                                    className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
+                                    className="h-4 w-4 accent-primary"
                                 />
                                 Urbana
                             </label>
@@ -448,7 +441,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                     value="01"
                                     checked={formData.zona === '01'}
                                     onChange={handleInputChange}
-                                    className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
+                                    className="h-4 w-4 accent-primary"
                                 />
                                 Rural
                             </label>
@@ -457,7 +450,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                     )}
                     {perfil === 'Paciente' && (
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Dirección
                         </label>
                         <input
@@ -465,15 +458,13 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="direccion"
                             value={formData.direccion}
                             onChange={handleInputChange}
-                            className={`h-9 w-full p-2 border-borders rounded-md ${
-                                fe('direccion') ? 'focus:border-red-500 focus:ring-red-500' : 'focus:border-primary focus:ring-primary'
-                            }`}
+                            className={inputClass(fe('direccion'))}
                         />
                         {fe('direccion') && <p className="text-sm text-red-500 mt-1">{fe('direccion')}</p>}
                     </div>
                     )}
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Teléfono
                         </label>
                         <input
@@ -481,15 +472,13 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="telefono"
                             value={formData.telefono}
                             onChange={handleInputChange}
-                            className={`h-9 w-full p-2 border-borders rounded-md ${
-                                fe('telefono') ? 'focus:border-red-500 focus:ring-red-500' : 'focus:border-primary focus:ring-primary'
-                            }`}
+                            className={inputClass(fe('telefono'))}
                         />
                         {fe('telefono') && <p className="text-sm text-red-500 mt-1">{fe('telefono')}</p>}
                     </div>
                     {perfil === 'Paciente' && (
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Email
                         </label>
                         <input
@@ -497,9 +486,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="correo"
                             value={formData.correo}
                             onChange={handleInputChange}
-                            className={`h-9 w-full p-2 border-borders rounded-md ${
-                                fe('correo') ? 'focus:border-red-500 focus:ring-red-500' : 'focus:border-primary focus:ring-primary'
-                            }`}
+                            className={inputClass(fe('correo'))}
                         />
                         {fe('correo') && <p className="text-sm text-red-500 mt-1">{fe('correo')}</p>}
                     </div>
@@ -531,7 +518,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                     )}
                     {perfil === 'Acompaniante' && (
                         <div>
-                            <label className="block font-medium text-sm text-text">
+                            <label className="block font-medium text-sm text-text mb-1">
                                 Parentesco
                             </label>
                             <input
@@ -539,7 +526,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 name="Parentesco"
                                 value={formData.parentesco}
                                 onChange={handleInputChange}
-                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
+                                className={inputClass(false)}
                             />
                             <datalist id="parentesco_list">
                                 <option value="Madre" />
