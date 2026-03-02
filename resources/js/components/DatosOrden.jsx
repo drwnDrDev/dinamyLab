@@ -10,7 +10,12 @@ const DatosOrden = ({ formOrden, onUpdate, error }) => {
 
     return (
         <section>
-            <h2>Datos de la Orden</h2>
+            <div className="mb-4">
+                <h2 className="text-lg font-semibold text-titles">Datos clínicos de la orden</h2>
+                <p className="text-sm text-gray-500 mt-0.5">
+                    Información requerida para el reporte RIPS.
+                </p>
+            </div>
             <div className="grid grid-cols-2 gap-4">
                 <SelectField
                     label="Modalidad de Atención"
@@ -57,7 +62,6 @@ const DatosOrden = ({ formOrden, onUpdate, error }) => {
                     onChange={onUpdate}
                     error={error?.finalidad}
                 />
-
                 <SelectField
                     label="Vía de Ingreso"
                     name="via_ingreso"
@@ -67,7 +71,6 @@ const DatosOrden = ({ formOrden, onUpdate, error }) => {
                     onChange={onUpdate}
                     error={error?.via_ingreso}
                 />
-
             </div>
         </section>
     );
