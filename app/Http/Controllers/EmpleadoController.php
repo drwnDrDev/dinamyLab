@@ -85,8 +85,8 @@ class EmpleadoController extends Controller
                 'count' => $group->count(),
             ];
         });
-        $pacientesHoy = $procedimientos->count();
-        // dd($procedimientos);
+        $pacientesHoy = $procedimientos->unique('persona_id')->count();
+
         return view('dashboard', compact('empleado', 'procedimientos', 'procedimientosByExamen', 'procedimientosByEstado', 'pacientesHoy', 'ordenes'));
     }
 
