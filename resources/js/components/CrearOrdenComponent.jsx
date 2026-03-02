@@ -4,36 +4,31 @@ import DatosExamenes from './DatosExamenes';
 import CompletedCheck from './CompletedCheck';
 import DatosPersona from './DatosPersona';
 import DatosOrden from './DatosOrden';
+import StepperOrden from './StepperOrden';
 import useAxiosAuth from './hooks/useAxiosAuth';
 import ordenDataDefault from './ordenDataDefault';
 import { useOrderValidation } from './hooks/useOrdenValidation';
 
-// Configuración global de Axios para que funcione con las sesiones de Laravel
+const formatCOP = (value) =>
+    new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 
-
-const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) => {
-    const { axiosInstance, csrfLoaded, error: csrfError } = useAxiosAuth();
+const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
+    const { axiosInstance, csrfLoaded } = useAxiosAuth();
     const [next_numero, setNextNumero] = useState(null);
 
-    // Obtener el siguiente número de orden al cargar el componente
     useEffect(() => {
         const fetchNextNumero = async () => {
             try {
                 const response = await axiosInstance.get('/api/ordenes/max-numero');
                 if (response.status === 200) {
                     setNextNumero(response.data.next_numero);
-                    console.log('✅ Siguiente número de orden obtenido:', response.data.next_numero);
-                } else {
-                    console.error('❌ Error al obtener el siguiente número de orden, estado:', response.status);
                 }
             } catch (error) {
-                console.error('❌ Error al obtener el siguiente número de orden:', error);
+                console.error('Error al obtener el siguiente número de orden:', error);
             }
         };
-
         fetchNextNumero();
     }, [axiosInstance]);
-
 
     const initialFormState = {
         numero_orden: next_numero || '',
@@ -47,38 +42,26 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
         modalidad: '',
         abono: 0,
         total: 0,
-        fecha_orden: new Date().toISOString().split('T')[0] + ' ' + new Date().toTimeString().slice(0, 5), // Formato YYYY-MM-DD HH:mm
+        fecha_orden: new Date().toISOString().split('T')[0] + ' ' + new Date().toTimeString().slice(0, 5),
     };
-    const [persona, setPersona] = useState(paciente.paciente || null);
+
+    const [persona, setPersona] = useState(paciente || null);
     const [loading, setLoading] = useState(false);
     const [completeMessage, setCompleteMessage] = useState(false);
     const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
-    const { validateField, validateForm, errors, clearError } = useOrderValidation();
-
-    console.log('datos recibidos de paciente:', paciente);
+    const [currentStep, setCurrentStep] = useState(1);
+    const [stepError, setStepError] = useState(null);
+    const { validateForm, errors, clearError } = useOrderValidation();
 
     useEffect(() => {
-        if (!persona) {
-            return;
-        }
-        setFormOrden(prev => {
-            const newState = {
-                ...prev,
-                paciente_id: persona.id || null
-            };
-            console.log('📝 Estado del formulario actualizado:', newState);
-            return newState;
-        });
+        if (!persona) return;
+        setFormOrden(prev => ({ ...prev, paciente_id: persona.id || null }));
     }, [persona]);
 
     useEffect(() => {
         if (next_numero !== null) {
-            setFormOrden(prev => ({
-                ...prev,
-                numero_orden: next_numero
-            }));
-            console.log('✅ numero_orden actualizado en el formulario:', next_numero);
+            setFormOrden(prev => ({ ...prev, numero_orden: next_numero }));
         }
     }, [next_numero]);
 
@@ -93,65 +76,70 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
                 cie_relacionado: cie_relacionado || prev.cie_relacionado,
                 finalidad: finalidad || prev.finalidad,
                 modalidad: modalidad || prev.modalidad,
-
             }));
         }
     }, []);
 
-    console.log('📝 Estado del formulario después de aplicar datos por defecto:', formOrden);
-
-
-    // Handler para actualizar la persona
     const handlePersonaUpdate = (nuevaPersona) => {
-        console.log('🔄 Actualizando persona:', nuevaPersona);
-        // Validamos que nuevaPersona no sea null y tenga los datos necesarios
-        if (!nuevaPersona) {
-            console.error('Error: nuevaPersona es null o undefined');
-            return;
-        }
-
-        // Si nuevaPersona tiene la propiedad data, extraemos solo los datos
+        if (!nuevaPersona) return;
         const datosPersona = nuevaPersona?.data || nuevaPersona;
-
-        // Validamos que tengamos los datos mínimos necesarios
-        if (!datosPersona.id) {
-            console.error('Error: La persona no tiene ID');
-            return;
-        }
-
+        if (!datosPersona.id) return;
         setPersona(datosPersona);
+        setStepError(null);
     };
 
     const handleTablasRefUpdate = (e) => {
         const { name, value } = e.target;
-        setFormOrden((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormOrden(prev => ({ ...prev, [name]: value }));
         clearError(name);
-    }
+    };
 
     const handleValoresUpdate = (name, value) => {
-        setFormOrden((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormOrden(prev => ({ ...prev, [name]: value }));
         clearError(name);
-    }
+    };
+
+    const getStepError = (step) => {
+        switch (step) {
+            case 1:
+                return !persona ? 'Debe seleccionar o registrar un paciente para continuar.' : null;
+            case 2:
+                return formOrden.examenes.length === 0 ? 'Debe agregar al menos un examen para continuar.' : null;
+            case 3: {
+                const campos = ['modalidad', 'cod_servicio', 'cie_principal', 'finalidad', 'via_ingreso'];
+                const faltantes = campos.filter(c => !formOrden[c]);
+                return faltantes.length > 0 ? 'Complete todos los campos obligatorios para continuar.' : null;
+            }
+            default:
+                return null;
+        }
+    };
+
+    const handleNext = () => {
+        const err = getStepError(currentStep);
+        if (err) {
+            setStepError(err);
+            return;
+        }
+        setStepError(null);
+        setCurrentStep(prev => Math.min(prev + 1, 4));
+    };
+
+    const handlePrev = () => {
+        setStepError(null);
+        setCurrentStep(prev => Math.max(prev - 1, 1));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!csrfLoaded) {
-            setError('⏳ Autenticación en progreso...');
+            setError('Autenticación en progreso, intente de nuevo.');
             return;
         }
 
-        console.log('Validando orden:', formOrden);
-
         if (!validateForm(formOrden)) {
-            console.log('Errores de validación:', errors);
-            alert('Por favor complete todos los campos obligatorios');
+            setStepError('Por favor complete todos los campos obligatorios.');
             return;
         }
 
@@ -159,120 +147,224 @@ const CrearOrdenComponent = ( paciente,{ dataDefoult = ordenDataDefault } = {}) 
         setError(null);
 
         try {
-            if (!formOrden.paciente_id) {
-                setError('Por favor, seleccione un paciente.');
-                return;
-            }
-            if (formOrden.examenes.length === 0) {
-                setError('Por favor, seleccione al menos un examen.');
-                return;
-            }
-
             const response = await axiosInstance.post('/api/ordenes', formOrden);
-
             setCompleteMessage(true);
-
             if (response?.data?.data?.id) {
                 window.location.href = `/ordenes-medicas/${response.data.data.id}/ver`;
             }
-
         } catch (err) {
-            setError(err.response?.data?.message || 'Error al crear la orden');
+            setError(err.response?.data?.message || 'Error al crear la orden. Intente nuevamente.');
         } finally {
             setLoading(false);
         }
     };
 
-
-    if (error) {
-        return <div className="text-red-600">Error: {error}</div>;
-    }
+    const stepTitles = {
+        1: 'Paciente',
+        2: 'Exámenes',
+        3: 'Datos de la Orden',
+        4: 'Resumen y Confirmación',
+    };
 
     return (
         <>
-        {completeMessage && <CompletedCheck />}
+            {completeMessage && <CompletedCheck />}
 
-        <div className="crear-orden-wrapper relative">
-            <div className="header max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
-                <h1 className="text-2xl font-bold text-titles mb-4">Crear Nueva Orden</h1>
-                <label htmlFor="numero_orden" className='text-xl pr-4'>Numero de Orden: </label>
-                <input
-                    type="number"
-                    onChange={handleTablasRefUpdate}
-                    name="numero_orden"
-                    value={formOrden.numero_orden}
-                    className= {`h-9 w-32 p-2 border-borders focus:border-primary focus:ring-primary rounded-md ${errors.numero_orden ? 'border-red-500' : ''}`}
-                />
-                {errors.numero_orden && (
-                    <p className="mt-1 text-sm text-red-600">{errors.numero_orden}</p>
-                )}
+            <div
+                className="crear-orden-wrapper max-w-3xl mx-auto px-4 py-6"
+                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+            >
 
-            </div>
-            <section className="paciente_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
-                {persona ? (
-                    <>
-                        <DatosPersona persona={persona} />
-                        <div className="mt-4 flex justify-end">
-                            <button
-                                onClick={() => setPersona(null)}
-                                className="px-4 py-2 text-sm text-gray-600 hover:text-primary"
-                            >
-                                Cambiar paciente
-                            </button>
+                {/* Barra de progreso */}
+                <StepperOrden currentStep={currentStep} />
+
+                {/* Tarjeta principal */}
+                <div className="bg-background rounded-xl border border-secondary shadow-sm overflow-hidden">
+
+                    {/* Header de la tarjeta */}
+                    <div className="px-6 py-4 border-b border-secondary bg-white flex items-center justify-between">
+                        <div>
+                            <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">
+                                Paso {currentStep} de 4
+                            </p>
+                            <h1 className="text-xl font-bold text-titles mt-0.5">
+                                {stepTitles[currentStep]}
+                            </h1>
                         </div>
-                    </>
-                ) : (
-                    <FormPersona
-                        persona={persona}
-                        setPersona={handlePersonaUpdate}
-                        perfil="Paciente"
-                    />
-                )}
-            </section>
-            {persona && (
-                <section className="examenes_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
-                    <DatosExamenes
-                        formExamenes={formOrden.examenes}
-                        onUpdate={(nuevosExamenes) =>
-                            setFormOrden((prev) => ({
-                                ...prev,
-                                examenes: nuevosExamenes,
-                            }))
-                        }
-                        persona={persona}
-                        onChangeValores={handleValoresUpdate}
-                    />
-                </section>
-            )}
-            {formOrden.examenes.length > 0 && (
-                <section className="resumen_container max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8 bg-background rounded-xl border border-secondary shadow-md mb-4">
-                    <DatosOrden
-                        formOrden={formOrden}
-                        onUpdate={handleTablasRefUpdate}
-                        error={errors}
-                    />
-                </section>
-            )}
+                        {/* Número de orden */}
+                        <div className="flex items-center gap-2">
+                            <label htmlFor="numero_orden" className="text-sm text-gray-500 font-medium">
+                                Orden N°
+                            </label>
+                            <input
+                                type="number"
+                                id="numero_orden"
+                                onChange={handleTablasRefUpdate}
+                                name="numero_orden"
+                                value={formOrden.numero_orden}
+                                className={`h-9 w-24 px-2 text-sm text-center font-semibold text-titles bg-white rounded-md border-0 focus:outline-none transition-colors ${
+                                    errors.numero_orden
+                                        ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
+                                        : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'
+                                }`}
+                            />
+                        </div>
+                    </div>
 
-            <div className="flex justify-end px-4 py-2 max-w-5xl mx-2 lg:mx-auto sm:p-2 md:p-4 lg:p-8">
-                <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={loading}
-                    className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-titles focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-                >
-                    {loading ? (
-                        <>
-                            <div className="animate-spin mr-2 h-4 w-4 border-b-2 border-white rounded-full"></div>
-                            {loading ? 'Actualizando...' : 'Guardando...'}
-                        </>
-                    ) : (
-                        'Nueva Orden'
-                    )}
-                </button>
+                    {/* Contenido del paso */}
+                    <div className="px-6 py-5">
+
+                        {/* Banner de error de paso (validación) */}
+                        {stepError && (
+                            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-md text-sm flex items-start gap-2">
+                                <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                                </svg>
+                                {stepError}
+                            </div>
+                        )}
+
+                        {/* Banner de error de API */}
+                        {error && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-start gap-2">
+                                <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                {error}
+                            </div>
+                        )}
+
+                        {/* PASO 1: Paciente */}
+                        {currentStep === 1 && (
+                            persona ? (
+                                <>
+                                    <DatosPersona persona={persona} />
+                                    <div className="mt-4 flex justify-end">
+                                        <button
+                                            type="button"
+                                            onClick={() => setPersona(null)}
+                                            className="text-sm text-gray-500 hover:text-titles underline"
+                                        >
+                                            Cambiar paciente
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <FormPersona
+                                    persona={null}
+                                    setPersona={handlePersonaUpdate}
+                                    perfil="Paciente"
+                                />
+                            )
+                        )}
+
+                        {/* PASO 2: Exámenes */}
+                        {currentStep === 2 && (
+                            <DatosExamenes
+                                formExamenes={formOrden.examenes}
+                                onUpdate={(nuevosExamenes) =>
+                                    setFormOrden(prev => ({ ...prev, examenes: nuevosExamenes }))
+                                }
+                                persona={persona}
+                                onChangeValores={handleValoresUpdate}
+                            />
+                        )}
+
+                        {/* PASO 3: Datos de la Orden */}
+                        {currentStep === 3 && (
+                            <DatosOrden
+                                formOrden={formOrden}
+                                onUpdate={handleTablasRefUpdate}
+                                error={errors}
+                            />
+                        )}
+
+                        {/* PASO 4: Resumen */}
+                        {currentStep === 4 && (
+                            <div className="space-y-4">
+                                <div className="p-4 bg-white border border-secondary rounded-lg">
+                                    <h3 className="text-sm font-semibold text-titles mb-2">Paciente</h3>
+                                    <DatosPersona persona={persona} />
+                                </div>
+                                <div className="p-4 bg-white border border-secondary rounded-lg">
+                                    <h3 className="text-sm font-semibold text-titles mb-2">
+                                        Exámenes ({formOrden.examenes.length})
+                                    </h3>
+                                    <ul className="text-sm text-text space-y-1">
+                                        {formOrden.examenes.map((ex, i) => (
+                                            <li key={i} className="flex justify-between">
+                                                <span>{ex.nombre}</span>
+                                                <span className="text-gray-500">×{ex.cantidad || 1}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className="p-4 bg-white border border-secondary rounded-lg">
+                                    <h3 className="text-sm font-semibold text-titles mb-2">Total a cobrar</h3>
+                                    <p className="text-2xl font-bold text-titles">
+                                        {formatCOP(formOrden.total)}
+                                    </p>
+                                    {formOrden.abono > 0 && (
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            Abono: {formatCOP(formOrden.abono)}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Footer de navegación */}
+                    <div className="px-6 py-4 border-t border-secondary bg-white flex items-center justify-between">
+                        <button
+                            type="button"
+                            onClick={handlePrev}
+                            disabled={currentStep === 1}
+                            className="inline-flex items-center gap-2 px-4 py-2 border border-borders text-titles bg-white rounded-md text-sm font-medium hover:bg-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                            </svg>
+                            Anterior
+                        </button>
+
+                        {currentStep < 4 ? (
+                            <button
+                                type="button"
+                                onClick={handleNext}
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-titles transition-colors"
+                            >
+                                Siguiente
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={handleSubmit}
+                                disabled={loading}
+                                className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-titles transition-colors disabled:opacity-50"
+                            >
+                                {loading ? (
+                                    <>
+                                        <div className="animate-spin h-4 w-4 border-b-2 border-white rounded-full"></div>
+                                        Creando orden...
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Crear Orden
+                                    </>
+                                )}
+                            </button>
+                        )}
+                    </div>
+
+                </div>
             </div>
-
-        </div>
         </>
     );
 };

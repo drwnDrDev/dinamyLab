@@ -52,7 +52,7 @@ const validationRules = {
 
   abono: {
     required: false,
-    validate: (value) => value <= total,
+    validate: (value, formData) => !formData || value <= (formData.total || 0),
     message: "El abono no puede exceder el total"
   },
   
@@ -66,17 +66,18 @@ const validationRules = {
 export function useOrderValidation() {
   const [errors, setErrors] = useState({});
 
-  const validateField = (fieldName, value) => {
+  const validateField = (fieldName, value, formData = {}) => {
     const rule = validationRules[fieldName];
     if (!rule) return true;
-    
     if (rule.required) {
       if (rule.validate) {
-        return rule.validate(value);
+        return rule.validate(value, formData);
       }
       return value !== null && value !== '' && value !== undefined;
     }
-    
+    if (!rule.required && rule.validate) {
+      return rule.validate(value, formData);
+    }
     return true;
   };
 
@@ -88,7 +89,7 @@ export function useOrderValidation() {
       const value = formData[fieldName];
       const rule = validationRules[fieldName];
       
-      if (!validateField(fieldName, value)) {
+      if (!validateField(fieldName, value, formData)) {
         newErrors[fieldName] = rule.message;
         isValid = false;
       }

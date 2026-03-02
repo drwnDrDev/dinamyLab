@@ -11,10 +11,20 @@ import axios from "axios";
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 axios.defaults.withCredentials = true;
 
+// Clase base para inputs de texto — usa ring (box-shadow) para evitar el borde nativo del navegador
+const inputClass = (hasError = false) =>
+    `h-9 w-full px-3 text-sm text-text bg-white rounded-md border-0 focus:outline-none transition-colors ${
+        hasError
+            ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
+            : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'
+    }`;
+
 const FormPersona = ({ persona, setPersona, perfil }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [fieldErrors, setFieldErrors] = useState({});
+    const [successMessage, setSuccessMessage] = useState(null);
     const [formData, setFormData] = useState({
         id: null,
         perfil: '',
@@ -43,9 +53,8 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
         const getCsrfCookie = async () => {
             try {
                 await axios.get('/sanctum/csrf-cookie');
-                console.log('CSRF cookie obtained');
             } catch (error) {
-                console.error('Could not get CSRF cookie', error);
+                // Sin acción requerida — el request fallará y mostrará el error al usuario
             }
         };
         getCsrfCookie();
@@ -78,14 +87,12 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
 
             const data = response.data;
             if (data) {
-                console.log('✅ Persona encontrada:', data);
                 setPersonaExistente(data);
                 return data;
             }
             setPersonaExistente(null);
             return null;
         } catch (err) {
-            console.log('❌ Error al buscar persona:', err);
             setPersonaExistente(null);
             return null;
         } finally {
@@ -129,6 +136,10 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
             ...prev,
             [name]: value
         }));
+        // Limpiar error del campo al modificarlo
+        if (fieldErrors[name]) {
+            setFieldErrors(prev => ({ ...prev, [name]: undefined }));
+        }
     };
 
     // handleSubmit (sin lógica de token, depende de la cookie de sesión)
@@ -136,18 +147,13 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setFieldErrors({});
 
         try {
             const esActualizacion = personaExistente !== null;
             const url = esActualizacion
                 ? `/api/personas/${personaExistente.data.id}`
                 : '/api/personas';
-
-            console.log('📋 ENVIANDO FORMULARIO (STATEFUL):', {
-                operacion: esActualizacion ? 'Actualización' : 'Nuevo Registro',
-                url: url,
-                datos: formData
-            });
 
             const response = await axios({
                 method: esActualizacion ? 'PUT' : 'POST',
@@ -156,65 +162,76 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
             });
 
             const resultado = response.data;
-            console.log('✅ Operación exitosa:', resultado);
-
             const personaActualizada = resultado.data;
             setPersonaExistente(null);
-            if (setPersona){
-            setPersona(personaActualizada);
-            };
-
-            alert(esActualizacion ? 'Persona actualizada exitosamente' : 'Persona creada exitosamente');
-            
-                setFormData({
-                    id: null,
-                    perfil: '',
-                    tipo_documento: 'CC',
-                    numero_documento: '',
-                    nombres: '',
-                    apellidos: '',
-                    fecha_nacimiento: '',
-                    sexo: '',
-                    pais_nacimiento: '170',
-                    municipio: '11001',
-                    direccion: '',
-                    telefono: '',
-                    zona: '02',
-                    pais_residencia: '170',
-                    correo: '',
-                    eps: '',
-                    tipo_afiliacion: ''
-                });
-                setPersonaExistente(null);
-            
-
-        } catch (err) {
-            console.error('❌ Error completo:', err);
-            console.error('Respuesta del servidor:', err.response?.data);
-
-            let mensajeError = 'Error al procesar la solicitud';
-
-            if (err.response?.status === 422) {
-                const errores = Object.values(err.response.data.errors || {}).flat().join('\n');
-                mensajeError = `Errores de validación:\n${errores}`;
-            } else if (err.response?.status === 401 || err.response?.status === 419) {
-                mensajeError = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
-                // Opcional: Redirigir al login después de un tiempo
-                // setTimeout(() => window.location.href = '/login', 2000);
-            } else if (err.response?.data?.message) {
-                mensajeError = err.response.data.message;
+            if (setPersona) {
+                setPersona(personaActualizada);
             }
 
-            setError(mensajeError);
-            alert(mensajeError);
+            setSuccessMessage(esActualizacion ? 'Persona actualizada exitosamente.' : 'Paciente registrado exitosamente.');
+            setError(null);
+
+            setFormData({
+                id: null,
+                perfil: '',
+                tipo_documento: 'CC',
+                numero_documento: '',
+                nombres: '',
+                apellidos: '',
+                fecha_nacimiento: '',
+                sexo: '',
+                pais_nacimiento: '170',
+                municipio: '11001',
+                direccion: '',
+                telefono: '',
+                zona: '02',
+                pais_residencia: '170',
+                correo: '',
+                eps: '',
+                tipo_afiliacion: ''
+            });
+            setPersonaExistente(null);
+
+        } catch (err) {
+            if (err.response?.status === 422) {
+                setFieldErrors(err.response.data.errors || {});
+                setError('Por favor corrija los errores en el formulario.');
+            } else if (err.response?.status === 401 || err.response?.status === 419) {
+                setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+            } else if (err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else {
+                setError('Error al procesar la solicitud');
+            }
         } finally {
             setLoading(false);
         }
     };
 
+    // Helper para mostrar el primer error de un campo
+    const fe = (name) => fieldErrors[name]?.[0];
+
     return (
         <>
         {loading && <Loader />}
+
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm flex items-start gap-2">
+            <svg className="w-4 h-4 mt-0.5 shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            {successMessage}
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-start gap-2">
+            <svg className="w-4 h-4 mt-0.5 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="max-w-screen-lg mx-auto">
             <div className="flex gap-4">
@@ -238,7 +255,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         options={tiposDocumento.map(doc => ({ key: doc.id, codigo: doc.cod_rips, nombre: doc.nombre }))}
                     />
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Número de Documento
                         </label>
                         <div className="relative">
@@ -248,19 +265,20 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 value={formData.numero_documento}
                                 onChange={handleInputChange}
                                 onBlur={handleDocumentoBlur}
-                                className={erroresValidacion.numero_documento ? `h-9 w-full p-2 border-borders focus:border-red-500 focus:ring-red-500 rounded-md` : `h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md`}
+                                className={inputClass(erroresValidacion.numero_documento || fe('numero_documento'))}
                             />
                             {loading && (
                                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
                                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
                                 </div>
                             )}
-                            {erroresValidacion.numero_documento && (
-                                <div className="text-sm text-red-500 mt-1">
-                                    {erroresValidacion.numero_documento}
-                                </div>
-                            )}
                         </div>
+                        {erroresValidacion.numero_documento && (
+                            <p className="text-sm text-red-500 mt-1">{erroresValidacion.numero_documento}</p>
+                        )}
+                        {fe('numero_documento') && (
+                            <p className="text-sm text-red-500 mt-1">{fe('numero_documento')}</p>
+                        )}
                     </div>
                     {perfil === 'Paciente' && (
                         <SelectField
@@ -270,10 +288,11 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             onChange={handleInputChange}
                             codigo={false}
                             options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
+                            error={fe('pais_nacimiento')}
                         />
                     )}
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Nombres
                         </label>
                         <input
@@ -281,11 +300,12 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="nombres"
                             value={formData.nombres}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
+                            className={inputClass(fe('nombres'))}
                         />
+                        {fe('nombres') && <p className="text-sm text-red-500 mt-1">{fe('nombres')}</p>}
                     </div>
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Apellidos
                         </label>
                         <input
@@ -293,74 +313,77 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="apellidos"
                             value={formData.apellidos}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
+                            className={inputClass(fe('apellidos'))}
                         />
+                        {fe('apellidos') && <p className="text-sm text-red-500 mt-1">{fe('apellidos')}</p>}
                     </div>
                     {perfil !== 'Pagador' && (
                     <div>
-                        <div className="w-full pb-2 flex gap-1 items-center">
-                            <label className="block font-medium text-sm text-text">
-                                Fecha de Nacimiento
-                            </label>
-                            <input
-                                type="date"
-                                name="fecha_nacimiento"
-                                value={formData.fecha_nacimiento}
-                                onChange={handleInputChange}
-                                className={erroresValidacion.fecha_nacimiento ? `h-9 w-full p-2 border-borders rounded-md focus:border-red-500 focus:ring-red-500` : `h-9 w-full p-2 border-borders rounded-md focus:border-primary focus:ring-primary`}
-                            />
-                        </div>
+                        <label className="block font-medium text-sm text-text mb-1">
+                            Fecha de Nacimiento
+                        </label>
+                        <input
+                            type="date"
+                            name="fecha_nacimiento"
+                            value={formData.fecha_nacimiento}
+                            onChange={handleInputChange}
+                            className={inputClass(erroresValidacion.fecha_nacimiento || fe('fecha_nacimiento'))}
+                        />
                         {erroresValidacion.fecha_nacimiento && (
-                            <div className="text-sm text-red-500 mt-1">
-                                {erroresValidacion.fecha_nacimiento}
-                            </div>
+                            <p className="text-sm text-red-500 mt-1">{erroresValidacion.fecha_nacimiento}</p>
+                        )}
+                        {fe('fecha_nacimiento') && (
+                            <p className="text-sm text-red-500 mt-1">{fe('fecha_nacimiento')}</p>
                         )}
                     </div>
                     )}
                     {perfil === 'Paciente' && (
-                        <div className="w-full pb-2 flex gap-2 items-center">
-                            <span className="font-semibold">Sexo</span>
-                            <div className="p-2 border border-borders rounded-md flex gap-2 items-center">
-                            <label htmlFor="sexo_femenino" className="cursor-pointer inline-flex items-center">F</label>
-                            <input
-                                type="radio"
-                                id="sexo_femenino"
-                                name="sexo"
-                                value="F"
-                                checked={formData.sexo === 'F'}
-                                onChange={handleInputChange}
-                                className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
-                            />
+                        <div>
+                            <label className="block font-medium text-sm text-text mb-1">Sexo</label>
+                            <div className="flex gap-4 items-center">
+                                <label htmlFor="sexo_femenino" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
+                                    <input
+                                        type="radio"
+                                        id="sexo_femenino"
+                                        name="sexo"
+                                        value="F"
+                                        checked={formData.sexo === 'F'}
+                                        onChange={handleInputChange}
+                                        className="h-4 w-4 accent-primary"
+                                    />
+                                    Femenino
+                                </label>
+                                <label htmlFor="sexo_masculino" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
+                                    <input
+                                        type="radio"
+                                        id="sexo_masculino"
+                                        name="sexo"
+                                        value="M"
+                                        checked={formData.sexo === 'M'}
+                                        onChange={handleInputChange}
+                                        className="h-4 w-4 accent-primary"
+                                    />
+                                    Masculino
+                                </label>
+                                <label htmlFor="sexo_otro" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
+                                    <input
+                                        type="radio"
+                                        id="sexo_otro"
+                                        name="sexo"
+                                        value="I"
+                                        checked={formData.sexo === 'I'}
+                                        onChange={handleInputChange}
+                                        className="h-4 w-4 accent-primary"
+                                    />
+                                    Intersexual
+                                </label>
                             </div>
-                            <div className="p-2 border border-borders rounded-md flex gap-2 items-center">
-                            <label htmlFor="sexo_masculino" className="inline-flex items-center cursor-pointer">M</label>
-                            <input
-                                type="radio"
-                                id="sexo_masculino"
-                                name="sexo"
-                                value="M"
-                                checked={formData.sexo === 'M'}
-                                onChange={handleInputChange}
-                                className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
-                            />
-                            </div>
-                            <div className="p-2 border border-borders rounded-md flex gap-2 items-center">
-                            <label htmlFor="sexo_otro" className="inline-flex items-center cursor-pointer">Intersexual</label>
-                            <input
-                                type="radio"
-                                id="sexo_otro"
-                                name="sexo"
-                                value="I"
-                                checked={formData.sexo === 'I'}
-                                onChange={handleInputChange}
-                                className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
-                            />
-                            </div>
+                            {fe('sexo') && <p className="text-sm text-red-500 mt-1">{fe('sexo')}</p>}
                         </div>
                     )}
                     {perfil === 'Paciente' && (
                         <div>
-                            <label className="block font-medium text-sm text-text">
+                            <label className="block font-medium text-sm text-text mb-1">
                                 EPS
                             </label>
                             <input
@@ -368,13 +391,14 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 name="eps"
                                 value={formData.eps}
                                 onChange={handleInputChange}
-                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
+                                className={inputClass(fe('eps'))}
                             />
                             <datalist id="eps_list">
                                 {epsList.map(e => (
                                     <option key={e.id} value={e.nombre} />
                                 ))}
                             </datalist>
+                            {fe('eps') && <p className="text-sm text-red-500 mt-1">{fe('eps')}</p>}
                         </div>
                     )}
                     {perfil === 'Paciente' && (
@@ -385,6 +409,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             onChange={handleInputChange}
                             codigo={true}
                             options={tiposAfiliacion.data}
+                            error={fe('tipo_afiliacion')}
                         />
                     )}
                 </div>
@@ -393,33 +418,39 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         <h3 className="font-medium text-normal text-titles my-4">Información de contacto</h3>
                     </div>
                     {perfil === 'Paciente' && (
-                    <div className="w-full pb-2 flex gap-2 items-center">
-                        <span className="font-semibold">Zona de Residencia</span>
-                        <label htmlFor="zona_urbana" className="inline-flex items-center">Urbana</label>
-                        <input
-                            type="radio"
-                            id="zona_urbana"
-                            name="zona"
-                            value="02"
-                            checked={formData.zona === '02'}
-                            onChange={handleInputChange}
-                            className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
-                        />
-                        <label htmlFor="zona_rural" className="inline-flex items-center">Rural</label>
-                        <input
-                            type="radio"
-                            id="zona_rural"
-                            name="zona"
-                            value="01"
-                            checked={formData.zona === '01'}
-                            onChange={handleInputChange}
-                            className="h-4 w-4 border-borders focus:border-primary focus:ring-primary checked:bg-primary"
-                        />
+                    <div>
+                        <label className="block font-medium text-sm text-text mb-1">Zona de Residencia</label>
+                        <div className="flex gap-4 items-center">
+                            <label htmlFor="zona_urbana" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
+                                <input
+                                    type="radio"
+                                    id="zona_urbana"
+                                    name="zona"
+                                    value="02"
+                                    checked={formData.zona === '02'}
+                                    onChange={handleInputChange}
+                                    className="h-4 w-4 accent-primary"
+                                />
+                                Urbana
+                            </label>
+                            <label htmlFor="zona_rural" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
+                                <input
+                                    type="radio"
+                                    id="zona_rural"
+                                    name="zona"
+                                    value="01"
+                                    checked={formData.zona === '01'}
+                                    onChange={handleInputChange}
+                                    className="h-4 w-4 accent-primary"
+                                />
+                                Rural
+                            </label>
+                        </div>
                     </div>
                     )}
                     {perfil === 'Paciente' && (
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Dirección
                         </label>
                         <input
@@ -427,12 +458,13 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="direccion"
                             value={formData.direccion}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
+                            className={inputClass(fe('direccion'))}
                         />
+                        {fe('direccion') && <p className="text-sm text-red-500 mt-1">{fe('direccion')}</p>}
                     </div>
                     )}
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Teléfono
                         </label>
                         <input
@@ -440,12 +472,13 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="telefono"
                             value={formData.telefono}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
+                            className={inputClass(fe('telefono'))}
                         />
+                        {fe('telefono') && <p className="text-sm text-red-500 mt-1">{fe('telefono')}</p>}
                     </div>
                     {perfil === 'Paciente' && (
                     <div>
-                        <label className="block font-medium text-sm text-text">
+                        <label className="block font-medium text-sm text-text mb-1">
                             Email
                         </label>
                         <input
@@ -453,8 +486,9 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             name="correo"
                             value={formData.correo}
                             onChange={handleInputChange}
-                            className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
+                            className={inputClass(fe('correo'))}
                         />
+                        {fe('correo') && <p className="text-sm text-red-500 mt-1">{fe('correo')}</p>}
                     </div>
                     )}
                     {perfil === 'Paciente' && (
@@ -465,6 +499,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         onChange={handleInputChange}
                         codigo={false}
                         options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
+                        error={fe('pais_residencia')}
                     />
                     )}
                     {perfil === 'Paciente' && (
@@ -478,11 +513,12 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             codigo: mun.codigo,
                             nombre: `${mun.municipio} - ${mun.departamento}`
                         }))}
+                        error={fe('municipio')}
                     />
                     )}
                     {perfil === 'Acompaniante' && (
                         <div>
-                            <label className="block font-medium text-sm text-text">
+                            <label className="block font-medium text-sm text-text mb-1">
                                 Parentesco
                             </label>
                             <input
@@ -490,7 +526,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 name="Parentesco"
                                 value={formData.parentesco}
                                 onChange={handleInputChange}
-                                className="h-9 w-full p-2 border-borders focus:border-primary focus:ring-primary rounded-md"
+                                className={inputClass(false)}
                             />
                             <datalist id="parentesco_list">
                                 <option value="Madre" />
@@ -508,7 +544,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-titles focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                    className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-titles focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
                 >
                     {loading ? (
                         <>
