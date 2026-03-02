@@ -11,13 +11,9 @@ class DashboardController extends Controller
     {
         $sede = $request->session()->get('sede');
         $usuario = Auth()->user();
-
-
-
         $empleado = \App\Models\Empleado::where('user_id', $usuario->id)->first();
         $ordenes = \App\Models\Orden::all();
         $procedimientos = $usuario->hasRole('administrador') ? \App\Models\Procedimiento::all() :  \App\Models\Procedimiento::where('sede_id', $sede->id)->get();
-
         $procedimientosByExamen = $procedimientos->groupBy('examen_id')->map(function ($group) {
             return [
                 'examen' => $group->first()->examen->nombre,
@@ -35,6 +31,7 @@ class DashboardController extends Controller
 
         return response()->json([
             'ordenes' => $ordenes,
+            'empleado' => $empleado,
             'procedimientosByExamen' => $procedimientosByExamen,
             'procedimientosByEstado' => $procedimientosByEstado,
             'pacientesHoy' => $pacientesHoy
