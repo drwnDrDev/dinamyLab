@@ -16,42 +16,39 @@ const ModalExamenes = ({ disponibles, onAgregar, examenesActuales, onClose, sexo
     }
   }, [sexoPaciente, disponibles]);
 
-  console.log('ModalExamenes - Exámenes "disponibles":', disponibles);
-
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="modal border border-secondary shadow-lg p-4 bg-white rounded-lg w-full max-w-2xl">
-        <h3 className="text-xl font-semibold mb-4">Seleccionar Exámenes</h3>
-        
+        <h3 className="text-lg font-semibold mb-3">Seleccionar Exámenes</h3>
+
         <div className="max-h-[60vh] overflow-y-auto">
-          <ul className="space-y-2">
+          <ul className="divide-y divide-borders">
             {disponiblesFiltrados.map(ex => (
-              <li key={ex.id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
-                <div>
-                  <span className="mr-2">{ex.cup}</span>
-                  <span className="mr-2">{ex.nombre}</span>
-                  <span>${ex.valor}</span>
+              <li key={ex.id} className="flex items-center justify-between py-1.5 px-2 hover:bg-gray-50">
+                <div className="flex items-center gap-2 text-sm min-w-0">
+                  <span className="text-gray-400 font-mono text-xs shrink-0">{ex.cup}</span>
+                  <span className="text-text truncate">{ex.nombre}</span>
                 </div>
-                <button 
-                  disabled={yaAgregados.has(ex.id)} 
+                <button
+                  disabled={yaAgregados.has(ex.id)}
                   onClick={() => onAgregar(ex)}
-                  className={`px-3 py-1 rounded ${
-                    yaAgregados.has(ex.id) 
-                      ? 'bg-gray-200 text-gray-500' 
-                      : 'bg-primary text-white'
+                  className={`text-xs px-2.5 py-1 rounded shrink-0 ml-3 ${
+                    yaAgregados.has(ex.id)
+                      ? 'bg-gray-100 text-gray-400 cursor-default'
+                      : 'bg-primary text-white hover:bg-titles'
                   }`}
                 >
-                  {yaAgregados.has(ex.id) ? "Agregado" : "Agregar"}
+                  {yaAgregados.has(ex.id) ? 'Agregado' : 'Agregar'}
                 </button>
               </li>
             ))}
           </ul>
         </div>
-        
-        <div className="mt-4 flex justify-end">
-          <button 
+
+        <div className="mt-3 flex justify-end">
+          <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
           >
             Cerrar
           </button>
