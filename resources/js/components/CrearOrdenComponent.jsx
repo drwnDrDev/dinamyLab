@@ -170,7 +170,10 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
         <>
             {completeMessage && <CompletedCheck />}
 
-            <div className="crear-orden-wrapper max-w-3xl mx-auto px-4 py-6">
+            <div
+                className="crear-orden-wrapper max-w-3xl mx-auto px-4 py-6"
+                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+            >
 
                 {/* Barra de progreso */}
                 <StepperOrden currentStep={currentStep} />
@@ -199,8 +202,10 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                                 onChange={handleTablasRefUpdate}
                                 name="numero_orden"
                                 value={formOrden.numero_orden}
-                                className={`h-9 w-24 px-2 text-sm text-center font-semibold text-titles bg-white border rounded-md focus:outline-none focus:ring-1 focus:border-primary focus:ring-primary transition-colors ${
-                                    errors.numero_orden ? 'border-red-400' : 'border-borders'
+                                className={`h-9 w-24 px-2 text-sm text-center font-semibold text-titles bg-white rounded-md border-0 focus:outline-none transition-colors ${
+                                    errors.numero_orden
+                                        ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
+                                        : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'
                                 }`}
                             />
                         </div>
