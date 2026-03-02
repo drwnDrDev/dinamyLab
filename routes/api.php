@@ -109,6 +109,8 @@ Route::resources([
     'tarifas' => \App\Http\Controllers\Api\TarifaController::class,
 ]);
 
+Route::get('dashboard-data', [\App\Http\Controllers\Api\DashboardController::class, 'index']);
+
 // ============================================
 // RECEPCIÓN - GESTIÓN DE PRE-REGISTROS (Con Auth)
 // ============================================
