@@ -82,12 +82,6 @@ class EmpleadoController extends Controller
             ];
         })->sortByDesc('count')->values();
 
-        $procedimientosByEstado = $procedimientos->groupBy('estado')->map(function ($group) {
-            return [
-                'estado' => $group->first()->estado,
-                'count' => $group->count(),
-            ];
-        });
 
         $procedimientosPendientes = $procedimientos->where('estado', 'en proceso');
 
@@ -95,18 +89,8 @@ class EmpleadoController extends Controller
             return $item->orden->paciente_id;
         })->count();
 
-        dd([
-            "procedimientosByExamen" => $procedimientosByExamen,
-            "procedimientosByEstado" => $procedimientosByEstado,
-            "pacientesHoy" => $pacientesHoy,
-            "ordenes" => $ordenes,
-            "empleado" => $empleado,
-            "procedimientos" => $procedimientos,
-            "procedimientosPendientes" => $procedimientosPendientes,
-            "primerProcedimiento" => $procedimientosPendientes->first()->examen,
-        ]);
 
-        return view('dashboard', compact('empleado', 'procedimientos', 'procedimientosByExamen', 'procedimientosByEstado', 'pacientesHoy', 'ordenes'));
+        return view('dashboard', compact('procedimientosPendientes', 'empleado', 'procedimientos', 'procedimientosByExamen', 'pacientesHoy', 'ordenes'));
     }
 
     public function select()
