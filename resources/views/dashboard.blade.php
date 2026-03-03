@@ -15,7 +15,6 @@
         @php
 
         $totalProcedimientos = $procedimientos->count();
-        $pendientes = $procedimientosByEstado->where('estado', 'en proceso')->sum('count');
 
 
         @endphp
@@ -61,11 +60,13 @@
                         <x-iconos.resultados :active="false" class="text-white" />
                     </div>
                     <div class="w-full pl-4">
-                        @foreach ($procedimientosByEstado as $estado)
+
                         <span class="text-4xl font-bold">
-                            {{ $estado['count'] }}
+                            {{
+                                $procedimientosPendientes->count()
+                            }}
                         </span>
-                        @endforeach
+
                     </div>
                 </div>
                 @foreach ($procedimientosByExamen as $examen)
