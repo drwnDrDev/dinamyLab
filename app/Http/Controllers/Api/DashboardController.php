@@ -26,8 +26,11 @@ class DashboardController extends Controller
                 'estado' => $group->first()->estado,
                 'count' => $group->count(),
             ];
-        });
-        $pacientesHoy = $procedimientos->unique('persona_id')->count();
+        })->values();
+
+        $pacientesHoy = $procedimientos->unique(function ($item) {
+            return $item->orden->paciente_id;
+        })->count();
 
         return response()->json([
             'ordenes' => $ordenes,
