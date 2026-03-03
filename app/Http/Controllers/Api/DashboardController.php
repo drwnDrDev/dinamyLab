@@ -21,12 +21,7 @@ class DashboardController extends Controller
             ];
         })->sortByDesc('count')->values();
 
-        $procedimientosByEstado = $procedimientos->where('estado', 'en proceso')->groupBy('estado')->map(function ($group) {
-            return [
-                'estado' => $group->first()->estado,
-                'count' => $group->count(),
-            ];
-        })->values();
+        
 
         $pacientesHoy = $procedimientos->unique(function ($item) {
             return $item->orden->paciente_id;
