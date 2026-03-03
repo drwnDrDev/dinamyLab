@@ -64,17 +64,20 @@ class EmpleadoController extends Controller
         //
     }
 
-    public function dashboard()
+    public function dashboard($periodo )
     {
         $sede = session('sede');
         $usuario = auth()->user();
         $empleado = Empleado::where('user_id', $usuario->id)->first();
-        $ordenes = \App\Models\Orden::all();
+        $ordenes = $usuario->hasRole('administrador') ? \App\Models\Orden::all() : \App\Models\Orden::whereHas('procedimientos', function ($query) use ($sede) {
+            $query->where('sede_id', $sede->id);
+        })->get()   ;
         $procedimientos = $usuario->hasRole('administrador') ? \App\Models\Procedimiento::all() :  \App\Models\Procedimiento::where('sede_id', $sede->id)->get();
 
         $procedimientosByExamen = $procedimientos->groupBy('examen_id')->map(function ($group) {
             return [
                 'examen' => $group->first()->examen->nombre,
+                'id' => $group->first()->examen->id,
                 'count' => $group->count(),
             ];
         })->sortByDesc('count')->values();
@@ -85,7 +88,11 @@ class EmpleadoController extends Controller
                 'count' => $group->count(),
             ];
         });
-        $pacientesHoy = $procedimientos->unique('persona_id')->count();
+
+        $pacientesHoy = $procedimientos->unique(function ($item) {
+            return $item->orden->paciente_id;
+        })->count();
+
 
         return view('dashboard', compact('empleado', 'procedimientos', 'procedimientosByExamen', 'procedimientosByEstado', 'pacientesHoy', 'ordenes'));
     }
