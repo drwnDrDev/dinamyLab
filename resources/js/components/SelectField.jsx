@@ -43,7 +43,7 @@ const SelectField = ({
         <select
           id={name}
           name={name}
-          className="appearance-none border-none flex-1 w-full h-9 px-2.5 pr-8 text-sm text-text bg-transparent focus:outline-none cursor-pointer capitalize disabled:cursor-not-allowed min-w-0"
+          className="appearance-none border-none flex-1 w-full h-9 px-2.5 pr-8 text-sm text-text bg-transparent focus:ring-0 cursor-pointer capitalize disabled:cursor-not-allowed min-w-0"
           value={value ?? ''}
           onChange={onChange}
           disabled={disabled}
