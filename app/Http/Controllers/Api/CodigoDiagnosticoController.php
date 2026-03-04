@@ -94,20 +94,19 @@ class CodigoDiagnosticoController extends Controller
 
      public function search(Request $request)
     {
-        $query = $request->input('search');
+        $query = $request->input('query');
         $codigoDiagnostico = CodigoDiagnostico::where('nombre', 'like', "%$query%")
         ->orWhere('descripcion', 'like', "%$query%")
         ->orWhere('grupo', 'like', "%$query%")
         ->orWhere('sub_grupo', 'like', "%$query%")
         ->orWhere('codigo', 'like', "%$query%")
         ->orderBy('nivel', 'DESC')
-        ->paginate(10);
+        ->get();
         return response()->json(
             [
                 'message' => 'Resultados de búsqueda',
-                'data' => [
-                    "codigoDiagnostico" => $codigoDiagnostico
-                ]
+                'data' =>  $codigoDiagnostico
+                
             ]
         );
     }
