@@ -67,8 +67,7 @@ Route::get('cie10/{id}', [CodigoDiagnosticoController::class, 'show']);
 Route::post('cie10', [CodigoDiagnosticoController::class, 'store']);
 Route::patch('cie10/{codigo}/activar', [CodigoDiagnosticoController::class, 'activar']);
 
-Route::get('cie10/buscar', [CodigoDiagnosticoController::class, 'buscarPorNombre']);
-Route::get('cie10/buscar/{codigo}', [CodigoDiagnosticoController::class, 'buscarPorCodigo']);
+Route::post('cie10/buscar', [CodigoDiagnosticoController::class, 'search']);
 
 Route::get('personas', [PersonaController::class, 'index']);
 Route::get('personas/{id}', [PersonaController::class, 'show']);
