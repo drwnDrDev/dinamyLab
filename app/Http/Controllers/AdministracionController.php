@@ -62,10 +62,40 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-    $filePath = base_path('resources/utils/tablas/diciembre/doctora_sandra/diciembre.csv');
+    $filePath = base_path('resources/utils/tablas/2026/febrero/doctora_pilar/bitacora.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
+
+    $perfiles = [
+        [
+            "prestador" => "110010219801",
+            "nombre" => "Dra. Sandra",
+            "codServicio" => 334,
+             "grupoServicios" => "01",
+             "finalidadTecnologiaSalud" => "15",
+             "causaMotivoAtencion" => "38",
+             "tipoDiagnosticoPrincipal" => "01",
+             "usuario" => "63362234",
+             "codDiagnosticoPrincipal"	=> null,
+             "clave" => "Lanegra2002*"
+        ],
+        [
+            "prestador" => "110013629101",
+            "nombre" => "Dra. Pilar",
+            "codServicio" => 706,
+             "grupoServicios" => "02",
+             "finalidadTecnologiaSalud" => "16",
+             "causaMotivoAtencion" => "38",
+             "tipoDiagnosticoPrincipal" => "01",
+             "usuario" => "51712439",
+             "codDiagnosticoPrincipal"	=> "Z017",
+             "clave" => "Mapi2025"
+        ]
+    ];
+
+
+
     $file = new SplFileObject($filePath, 'r');
     $file->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
 
@@ -100,20 +130,20 @@ $listaProcedimientos = array_map(function($line) {
     return array(
         "tipoDocumentoIdentificacion" => $data[0],
         "numDocumentoIdentificacion" => $data[1],
-        "fechaNacimiento" => $data[5],
-        "sexo" => $data[6],
-        "fechaProcedimiento" => $data[15],
+        "fechaNacimiento" => $data[6],
+        "sexo" => $data[7],
+        "fechaProcedimiento" => $data[14],
         "factura" =>null,
         "CUP" => null,
-        "CIE10" => $data[13],
-        "paisOrigen" => $data[2]=="VENEZUELA" ?"862":"170",
+        "CIE10" => null,
+        "paisOrigen" => $data[0]=="SI" ?"862":"170",
         "CupProcedimiento" => $data[12]
     );
 }, $recordsToInsert);
 
 
 
-foreach ($listaProcedimientos as $procedimiento) {
+foreach ($listaProcedimientos as $procedimiento ) {
 
     // Buscar si el usuario ya existe
     $key = $procedimiento['tipoDocumentoIdentificacion'] . '-' . $procedimiento['numDocumentoIdentificacion'];
@@ -165,19 +195,19 @@ foreach ($listaProcedimientos as $procedimiento) {
     // );
 
     $usuariosMap[$key]['servicios']['procedimientos'][] = array(
-                    "codPrestador" => "110010219801",
+                    "codPrestador" => $perfiles[1]['prestador'],
                     "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'],
                     "idMIPRES" => "",
                     "numAutorizacion" => $procedimiento['factura'],
                     "codProcedimiento" => $procedimiento['CupProcedimiento'],
                     "viaIngresoServicioSalud" => "01",//demanda expontanea
                     "modalidadGrupoServicioTecSal" => "01", //Intramural
-                    "grupoServicios" => "01",//01 consulta externa 02 APOYO DIAGNOSTICO Y COMPLEMENTACION TERAPEUTICA
-                    "codServicio" => 334,//odontologia general
-                    "finalidadTecnologiaSalud" => "16",
+                    "grupoServicios" =>  $perfiles[1]['grupoServicios'],//01 consulta externa 02 APOYO DIAGNOSTICO Y COMPLEMENTACION TERAPEUTICA
+                    "codServicio" => $perfiles[1]['codServicio'],// 334=odontologia general, 706=examen de laboratorio
+                    "finalidadTecnologiaSalud" => $perfiles[1]['finalidadTecnologiaSalud'],//16 tratamiento 15 diagnostico
                     "tipoDocumentoIdentificacion" => "CC",
-                    "numDocumentoIdentificacion" => "63362234",
-                    "codDiagnosticoPrincipal" => $procedimiento['CIE10'],
+                    "numDocumentoIdentificacion" => $perfiles[1]['usuario'],
+                    "codDiagnosticoPrincipal" =>$perfiles[1]['codDiagnosticoPrincipal'] ? $perfiles[1]['codDiagnosticoPrincipal'] : $procedimiento['CIE10'],
                     "codDiagnosticoRelacionado" => null,
                     "codComplicacion" => null,
                     "vrServicio" => 0,
@@ -196,10 +226,10 @@ foreach ($listaProcedimientos as $procedimiento) {
 //descargar el archivo JSON
 if (!empty($usuarios)) {
     $json = json_encode(array(
-           "numDocumentoIdObligado"=> "63362234",
+           "numDocumentoIdObligado"=> $perfiles[1]['usuario'],
             "numFactura"=> null,
             "tipoNota"=> "RS",
-            "numNota"=> "122025",
+            "numNota"=> "022026",
         "usuarios" => $usuarios
     ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     $fileName = 'usuarios.json';
