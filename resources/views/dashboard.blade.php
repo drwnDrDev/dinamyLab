@@ -34,7 +34,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         {{-- Procedimientos --}}
-        <div class="bg-white/80 dark:bg-slate-800/70 rounded-2xl shadow-sm shadow-primary/5 border border-borders/40 dark:border-slate-700/50 p-5">
+        <div class="bg-gradient-to-br from-primary/10 to-primary/20dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-primary/5 border border-borders/40 dark:border-slate-700/50 p-5">
             <div class="flex items-start justify-between">
                 <div class="p-2.5 bg-primary/10 dark:bg-primary/20 rounded-xl">
                     <x-iconos.procedimientos :active="false" class="text-primary w-6 h-6" />
@@ -48,7 +48,7 @@
         </div>
 
         {{-- Pacientes --}}
-        <div class="bg-white/80 dark:bg-slate-800/70 rounded-2xl shadow-sm shadow-teal-500/5 border border-borders/40 dark:border-slate-700/50 p-5">
+        <div class="bg-gradient-to-br from-teal-500/10 to-teal-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-teal-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
             <div class="flex items-start justify-between">
                 <div class="p-2.5 bg-teal-500/10 dark:bg-teal-500/20 rounded-xl">
                     <x-iconos.personas :active="false" class="text-teal-600 dark:text-teal-400 w-6 h-6" />
@@ -62,7 +62,7 @@
         </div>
 
         {{-- En Proceso --}}
-        <div class="bg-white/80 dark:bg-slate-800/70 rounded-2xl shadow-sm shadow-rose-400/5 border border-borders/40 dark:border-slate-700/50 p-5">
+        <div class="bg-gradient-to-br from-pink-500/10 to-pink-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-rose-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
             <div class="flex items-start justify-between">
                 <div class="p-2.5 bg-rose-400/10 dark:bg-rose-400/20 rounded-xl">
                     <x-iconos.resultados :active="false" class="text-rose-400 w-6 h-6" />
@@ -127,7 +127,7 @@
             {{-- ========================
                  EN PROCESO — barras (2/3)
             ======================== --}}
-            <div class="h-full lg:col-span-2 bg-white/80 dark:bg-slate-800/70 rounded-2xl shadow-sm border border-rose-100/50 dark:border-rose-900/20 overflow-hidden">
+            <div class="h-full lg:col-span-2 bg-white/80 dark:bg-slate-800/70 rounded-2xl shadow-lg border border-rose-100/50 dark:border-rose-900/20 overflow-hidden">
 
                 <div class="px-6 py-4 border-b border-rose-100/50 dark:border-rose-900/20 flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -165,7 +165,7 @@
             {{-- ========================
                  DISTRIBUCIÓN — donut (1/3)
             ======================== --}}
-            <div class="bg-white/80 dark:bg-slate-800/70 rounded-2xl shadow-sm border border-borders/40 dark:border-slate-700/50 overflow-hidden">
+            <div class="bg-white/80 dark:bg-slate-800/70 rounded-2xl shadow-lg border border-borders/40 dark:border-slate-700/50 overflow-hidden">
 
                 <div class="px-6 py-4 border-b border-borders/40 dark:border-slate-700/50">
                     <h2 class="text-text dark:text-white font-semibold font-ubuntu text-lg">Distribución</h2>
@@ -213,7 +213,7 @@
             {{-- ========================
                  ÓRDENES RECIENTES — full width (3/3)
             ======================== --}}
-            <div class="lg:col-span-3 bg-white/80 dark:bg-slate-800/70 rounded-2xl shadow-sm border border-borders/40 dark:border-slate-700/50 overflow-hidden">
+            <div class="lg:col-span-3 bg-white/80 dark:bg-slate-800/70 rounded-2xl shadow-lg border border-borders/40 dark:border-slate-700/50 overflow-hidden">
 
                 <div class="px-6 py-4 border-b border-borders/40 dark:border-slate-700/50 flex items-center justify-between">
                     <div>
@@ -226,7 +226,7 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                    <table class="w-full text-xs">
                         <thead>
                             <tr class="bg-secondary/30 dark:bg-slate-700/30 text-left">
                                 <th class="px-6 py-3 text-titles dark:text-cyan-400 font-medium text-xs uppercase tracking-wider">N°</th>
@@ -239,21 +239,21 @@
                         <tbody class="divide-y divide-borders/30 dark:divide-slate-700/30">
                             @forelse ($ordenes as $orden)
                             <tr class="hover:bg-secondary/20 dark:hover:bg-slate-700/20 transition-colors duration-150">
-                                <td class="px-6 py-3 font-semibold text-text dark:text-white">#{{ $orden->numero }}</td>
-                                <td class="px-6 py-3 text-titles dark:text-slate-400 tabular-nums">{{ $orden->created_at->format('d/m/Y') }}</td>
-                                <td class="px-6 py-3 text-text dark:text-white">{{ $orden->paciente->primer_nombre }} {{ $orden->paciente->primer_apellido }}</td>
-                                <td class="px-6 py-3 text-center">
+                                <td class="px-6 py-1 font-semibold text-text dark:text-white">#{{ $orden->numero }}</td>
+                                <td class="px-6 py-1 text-titles dark:text-slate-400 tabular-nums">{{ $orden->created_at->format('d/m/Y') }}</td>
+                                <td class="px-6 py-1 text-text dark:text-white capitalize">{{ $orden->paciente->primer_nombre }} {{ $orden->paciente->primer_apellido }}</td>
+                                <td class="px-6 py-1 text-center">
                                     <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-secondary/50 dark:bg-slate-700 text-titles dark:text-cyan-400 font-semibold text-xs">
                                         {{ $orden->procedimientos->count() }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-3 text-center">
-                                    <a href="{{ route('ordenes.show', $orden->numero) }}">
+                                <td class="px-6 py-1 text-center">
+                                    <a href="{{ route('ordenes.show', $orden->id) }}">
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors
                                             {{ $orden->terminada
                                                 ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
                                                 : 'bg-amber-50 text-amber-600 hover:bg-amber-100' }}">
-                                            {{ $orden->terminada ? 'Terminada' : 'Pendiente' }}
+                                            {{ $orden->terminada ? 'Terminada' : 'Sin Terminar' }}
                                         </span>
                                     </a>
                                 </td>
