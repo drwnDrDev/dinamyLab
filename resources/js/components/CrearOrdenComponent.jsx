@@ -202,7 +202,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                                 onChange={handleTablasRefUpdate}
                                 name="numero_orden"
                                 value={formOrden.numero_orden}
-                                className={`h-9 w-24 px-2 text-sm text-center font-semibold text-titles bg-white rounded-md border-0 focus:outline-none transition-colors ${
+                                className={`h-9 w-24 px-2 text-lg text-center font-semibold text-primary bg-white rounded-md border-0 focus:outline-none transition-colors ${
                                     errors.numero_orden
                                         ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
                                         : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'

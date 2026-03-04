@@ -1,12 +1,10 @@
 import React from "react";
-import { useState, useEffect } from 'react';
 import SelectField from "./SelectField";
+import CieSearchInput from "./CieSearchInput";
 import { useTablasRef } from './hooks/useTablasRef';
-import { useCieCups } from './hooks/useCieCups';
 
 const DatosOrden = ({ formOrden, onUpdate, error }) => {
     const { modalidades, finalidades, viasIngreso, servicios } = useTablasRef();
-    const { cie10 } = useCieCups();
 
     return (
         <section>
@@ -35,21 +33,17 @@ const DatosOrden = ({ formOrden, onUpdate, error }) => {
                     onChange={onUpdate}
                     error={error?.cod_servicio}
                 />
-                <SelectField
+                <CieSearchInput
                     label="CIE Principal"
                     name="cie_principal"
                     value={formOrden.cie_principal || ''}
-                    codigo={true}
-                    options={cie10}
                     onChange={onUpdate}
                     error={error?.cie_principal}
                 />
-                <SelectField
+                <CieSearchInput
                     label="CIE Relacionado"
                     name="cie_relacionado"
                     value={formOrden.cie_relacionado || ''}
-                    codigo={true}
-                    options={cie10}
                     onChange={onUpdate}
                     error={error?.cie_relacionado}
                 />
