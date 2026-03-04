@@ -86,14 +86,13 @@ const CieSearchInput = ({ label, name, value, onChange, error }) => {
             setLoading(false);
             return;
         }
-        console.log('Buscando código CIE en API:', searchQuery);
+        
         setLoading(true);
         const timer = setTimeout(() => {
             axiosInstance
                 .post(`/api/cie10/buscar`, { query: searchQuery })
                 .then(res => {
                     setResults(Array.isArray(res.data?.data) ? res.data.data.slice(0, 10) : []);
-                    console.log('Resultados de búsqueda CIE:', res.data.data);
                 })
                 .catch(() => setResults([]))
                 .finally(() => setLoading(false));
