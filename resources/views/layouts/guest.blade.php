@@ -14,7 +14,7 @@
     <body class="font-sans text-gray-900 antialiased">
 
 
-            <main class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-2xl overflow-hidden sm:rounded-lg">
+            <main class="w-full sm:max-w-md m-auto mt-6 px-6 py-4 bg-white shadow-2xl overflow-hidden sm:rounded-lg">
                 {{ $slot }}
             </main>
 
