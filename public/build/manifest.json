@@ -43,7 +43,6 @@
     "isEntry": true,
     "name": "app",
     "names": [
-      "app.css",
       "app.css"
     ]
   },
@@ -69,7 +68,7 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-DqExQIx5.js",
+    "file": "assets/app-Do4l5Ma9.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -77,7 +76,8 @@
       "_index-C2KC86Ta.js",
       "_client-DCM6oUEP.js",
       "_useAxiosAuth-JGr_IZ3E.js",
-      "_index-B9ygI19o.js"
+      "_index-B9ygI19o.js",
+      "resources/js/components/guest/Typewriter.jsx"
     ],
     "css": [
       "assets/app-BUduhF5i.css"
@@ -118,7 +118,7 @@
     "isEntry": true
   },
   "resources/js/components/guest/Typewriter.jsx": {
-    "file": "assets/Typewriter-DMl4pWwa.js",
+    "file": "assets/Typewriter-DpIIvn7w.js",
     "name": "Typewriter",
     "src": "resources/js/components/guest/Typewriter.jsx",
     "isEntry": true,

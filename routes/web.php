@@ -25,10 +25,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/migracion', function () {
-    Artisan::call('migrate:fresh --seed');
-    return '¡La migración ha sido ejecutada con éxito!';
-});
+
 
 // Rutas públicas de registro de citas (sin autenticación requerida)
 Route::get('/citas/registrar', [PreRegistroCitaController::class, 'create'])->name('citas.create');
@@ -110,6 +107,10 @@ Route::middleware('auth','verified','can:ver_facturas')->group(function () {
 });
 
 Route::middleware('auth', 'verified','can:eliminar_persona')->group(function () {
+    Route::get('/migracion', function () {
+    Artisan::call('migrate:fresh --seed');
+    return '¡La migración ha sido ejecutada con éxito!';
+        });
     Route::get('admin/empresa',[App\Http\Controllers\EmpresaController::class,'show'])->name('empresa.show');
     Route::get('/admin/dashboard',[App\Http\Controllers\EmpleadoController::class,'dashboard'])->name('admin.dashboard');
     Route::resource('/admin/empleados', EmpleadoController::class)->except(['index']);

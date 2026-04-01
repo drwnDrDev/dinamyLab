@@ -91,24 +91,11 @@
             <div class="font-light border-t border-borders text-center p-2">
 
                 <spam class="">
-                    <span class="text-xs">Tels: </span>
-                    @foreach ( $procedimiento->sede->telefonos as $telefono)
-                    <span class="text-xs"> {{$telefono->numero}}</span>
-                    @if (!$loop->last)
-                    <span class="text-xs">- </span>
-                    @endif
+                    <span class="text-xs">Tels: {{$procedimiento->sede->telefonos->first()->numero}} </span>
 
-                    @endforeach
                 </spam>
                 <spam class="text-xs">Dirección: {{$procedimiento->sede->direccion->direccion}}</spam>
-                @if ($procedimiento->sede->emails && count($procedimiento->sede->emails) > 0)
-                <spam class="text-xs">Email: {{$procedimiento->sede->emails->first()->email}} </spam>
-
-                @elseif ($procedimiento->sede->empresa->emails && count($procedimiento->sede->empresa->emails) > 0)
-                <spam class="text-xs">Email: {{$procedimiento->sede->empresa->emails->first()->email}} </spam>
-                @endif
-
-            </div>
+             </div>
         </footer>
     </article>
 
