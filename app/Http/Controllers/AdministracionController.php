@@ -62,7 +62,7 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-    $filePath = base_path('resources/utils/tablas/2026/febrero/doctora_pilar/bitacora.csv');
+    $filePath = base_path('resources/utils/tablas/2026/marzo/doctora_sandra/bitacora_marzo.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
@@ -93,6 +93,8 @@ class AdministracionController extends Controller
              "clave" => "Mapi2025"
         ]
     ];
+
+    $doctoraSeletionada = $perfiles[0]; // Cambia el índice para seleccionar la doctora deseada
 
 
 
@@ -130,13 +132,13 @@ $listaProcedimientos = array_map(function($line) {
     return array(
         "tipoDocumentoIdentificacion" => $data[0],
         "numDocumentoIdentificacion" => $data[1],
-        "fechaNacimiento" => $data[6],
-        "sexo" => $data[7],
-        "fechaProcedimiento" => $data[14],
+        "fechaNacimiento" => $data[5],
+        "sexo" => $data[6],
+        "fechaProcedimiento" => $data[15],
         "factura" =>null,
         "CUP" => null,
-        "CIE10" => null,
-        "paisOrigen" => $data[0]=="SI" ?"862":"170",
+        "CIE10" => $data[13],
+        "paisOrigen" => $data[0]=="SI" || $data[0]=="PT" ?"862":"170",
         "CupProcedimiento" => $data[12]
     );
 }, $recordsToInsert);
@@ -195,19 +197,19 @@ foreach ($listaProcedimientos as $procedimiento ) {
     // );
 
     $usuariosMap[$key]['servicios']['procedimientos'][] = array(
-                    "codPrestador" => $perfiles[1]['prestador'],
+                    "codPrestador" => $doctoraSeletionada['prestador'],
                     "fechaInicioAtencion" => $procedimiento['fechaProcedimiento'],
                     "idMIPRES" => "",
                     "numAutorizacion" => $procedimiento['factura'],
                     "codProcedimiento" => $procedimiento['CupProcedimiento'],
                     "viaIngresoServicioSalud" => "01",//demanda expontanea
                     "modalidadGrupoServicioTecSal" => "01", //Intramural
-                    "grupoServicios" =>  $perfiles[1]['grupoServicios'],//01 consulta externa 02 APOYO DIAGNOSTICO Y COMPLEMENTACION TERAPEUTICA
-                    "codServicio" => $perfiles[1]['codServicio'],// 334=odontologia general, 706=examen de laboratorio
-                    "finalidadTecnologiaSalud" => $perfiles[1]['finalidadTecnologiaSalud'],//16 tratamiento 15 diagnostico
+                    "grupoServicios" =>  $doctoraSeletionada['grupoServicios'],//01 consulta externa 02 APOYO DIAGNOSTICO Y COMPLEMENTACION TERAPEUTICA
+                    "codServicio" => $doctoraSeletionada['codServicio'],// 334=odontologia general, 706=examen de laboratorio
+                    "finalidadTecnologiaSalud" => $doctoraSeletionada['finalidadTecnologiaSalud'],//16 tratamiento 15 diagnostico
                     "tipoDocumentoIdentificacion" => "CC",
-                    "numDocumentoIdentificacion" => $perfiles[1]['usuario'],
-                    "codDiagnosticoPrincipal" =>$perfiles[1]['codDiagnosticoPrincipal'] ? $perfiles[1]['codDiagnosticoPrincipal'] : $procedimiento['CIE10'],
+                    "numDocumentoIdentificacion" => $doctoraSeletionada['usuario'],
+                    "codDiagnosticoPrincipal" =>$doctoraSeletionada['codDiagnosticoPrincipal'] ? $doctoraSeletionada['codDiagnosticoPrincipal'] : $procedimiento['CIE10'],
                     "codDiagnosticoRelacionado" => null,
                     "codComplicacion" => null,
                     "vrServicio" => 0,
@@ -226,10 +228,10 @@ foreach ($listaProcedimientos as $procedimiento ) {
 //descargar el archivo JSON
 if (!empty($usuarios)) {
     $json = json_encode(array(
-           "numDocumentoIdObligado"=> $perfiles[1]['usuario'],
+           "numDocumentoIdObligado"=> $doctoraSeletionada['usuario'],
             "numFactura"=> null,
             "tipoNota"=> "RS",
-            "numNota"=> "022026",
+            "numNota"=> "032026",
         "usuarios" => $usuarios
     ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     $fileName = 'usuarios.json';
