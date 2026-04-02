@@ -1,0 +1,1 @@
+import{R as t}from"./index-DrBtkhmp.js";import{c as r}from"./client-CcFspOvB.js";import{F as o}from"./FormPersona-_QJ0xuo4.js";import"./index-42ANG6Sg.js";if(document.getElementById("react-create-persona")){const e=document.getElementById("react-create-persona");r.createRoot(e).render(t.createElement(o,{perfil:"Paciente"}))}

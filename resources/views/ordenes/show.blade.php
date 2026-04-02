@@ -1,7 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ __('Orden Medica') }}
+        <x-breadcrumb :items="[
+            ['label' => 'Inicio', 'href' => route('inicio')],
+            ['label' => 'Órdenes', 'href' => route('ordenes')],
+            ['label' => 'Orden #' . $orden->numero],
+        ]" />
+        <h2 class="font-serif text-2xl font-bold text-text dark:text-white leading-tight">
+            Orden Médica
         </h2>
     </x-slot>
 
@@ -9,11 +14,10 @@
         <div class="py-4 flex justify-between items-center">
             <div>
                 <p class="text-2xl font-bold leading-tight tracking-[-0.015em]">Numero de Orden: {{$orden->numero}}</p>
-                <p class="text-titles">
-                    <button
-                        class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3] font-medium leading-normal w-full {{ $orden->terminada==null ? 'bg-rose-200 text-rose-600' : 'bg-secondary text-primary' }}">
-                        <span class="truncate">{{ $orden->terminada==null ? 'Pendiente':'Completada' }}</span>
-                    </button>
+                <p class="text-titles mt-1">
+                    <span class="{{ $orden->terminada ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400' : 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400' }} inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                        {{ $orden->terminada ? 'Completada' : 'Pendiente' }}
+                    </span>
                 </p>
             </div>
             <div class="flex gap-2">
@@ -54,11 +58,11 @@
             <div class="flex overflow-hidden rounded-xl border border-borders">
                 <table class="flex-1">
                     <thead>
-                        <tr class="">
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Procedimiento')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Test')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
+                        <tr class="bg-secondary/40 dark:bg-slate-700/40">
+                            <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal">Fecha</th>
+                            <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal">Procedimiento</th>
+                            <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal">Examen</th>
+                            <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal">Estado</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,7 +93,7 @@
             <div class="p-4 flex justify-center gap-2 items-center w-full overflow-hidden rounded-xl border border-borders">
                 <div class="flex flex-col justify-center items-end">
                     <p class="font-semibold">Abono Total:</p>
-                    <p class="font-semibold"0>Saldo:</p>
+                    <p class="font-semibold">Saldo:</p>
                     <p class="font-semibold text-2xl">Total:</p>
                 </div>
                 <div class="flex flex-col">

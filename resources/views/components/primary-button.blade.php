@@ -1,7 +1,7 @@
 @props(['active'=> false, 'href' => null, 'type' => 'submit'])
 
 @php
-    $classes = 'inline-flex items-center px-4 py-2 bg-primary border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-sm hover:bg-[#50D5F7] focus:bg-primary active:bg-primary focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-2 transition ease-in-out duration-150';
+    $classes = 'inline-flex items-center px-5 py-2.5 bg-primary border border-transparent rounded-xl font-semibold text-xs text-white uppercase tracking-wider shadow-sm shadow-primary/25 hover:bg-primary/90 hover:shadow-md hover:shadow-primary/20 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all ease-in-out duration-200';
 @endphp
 
 @if($href)

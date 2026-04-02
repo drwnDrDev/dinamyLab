@@ -1,49 +1,48 @@
 {
-  "_FormPersona-KC0ULFtU.js": {
-    "file": "assets/FormPersona-KC0ULFtU.js",
+  "_FormPersona-_QJ0xuo4.js": {
+    "file": "assets/FormPersona-_QJ0xuo4.js",
     "name": "FormPersona",
     "imports": [
-      "_index-C2KC86Ta.js",
-      "_index-B9ygI19o.js"
+      "_index-DrBtkhmp.js",
+      "_index-42ANG6Sg.js"
     ]
   },
-  "_client-DCM6oUEP.js": {
-    "file": "assets/client-DCM6oUEP.js",
+  "_client-CcFspOvB.js": {
+    "file": "assets/client-CcFspOvB.js",
     "name": "client",
     "imports": [
-      "_index-C2KC86Ta.js"
+      "_index-DrBtkhmp.js"
     ]
   },
-  "_index-B9ygI19o.js": {
-    "file": "assets/index-B9ygI19o.js",
+  "_index-42ANG6Sg.js": {
+    "file": "assets/index-42ANG6Sg.js",
     "name": "index"
   },
-  "_index-C2KC86Ta.js": {
-    "file": "assets/index-C2KC86Ta.js",
+  "_index-DrBtkhmp.js": {
+    "file": "assets/index-DrBtkhmp.js",
     "name": "index"
   },
-  "_manejadorEventos-COZSVYWs.js": {
-    "file": "assets/manejadorEventos-COZSVYWs.js",
+  "_manejadorEventos-DBiLoqNi.js": {
+    "file": "assets/manejadorEventos-DBiLoqNi.js",
     "name": "manejadorEventos",
     "imports": [
-      "_index-B9ygI19o.js"
+      "_index-42ANG6Sg.js"
     ]
   },
-  "_useAxiosAuth-JGr_IZ3E.js": {
-    "file": "assets/useAxiosAuth-JGr_IZ3E.js",
+  "_useAxiosAuth-4ip-iMrP.js": {
+    "file": "assets/useAxiosAuth-4ip-iMrP.js",
     "name": "useAxiosAuth",
     "imports": [
-      "_index-C2KC86Ta.js",
-      "_index-B9ygI19o.js"
+      "_index-DrBtkhmp.js",
+      "_index-42ANG6Sg.js"
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-BUduhF5i.css",
+    "file": "assets/app-Doti68Ag.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
     "names": [
-      "app.css",
       "app.css"
     ]
   },
@@ -52,14 +51,14 @@
     "src": "resources/css/rips-cargador.png"
   },
   "resources/js/ExamenDetail.jsx": {
-    "file": "assets/ExamenDetail-CQkK4D8H.js",
+    "file": "assets/ExamenDetail-DkG6kQrG.js",
     "name": "ExamenDetail",
     "src": "resources/js/ExamenDetail.jsx",
     "isEntry": true,
     "imports": [
-      "_index-B9ygI19o.js",
-      "_index-C2KC86Ta.js",
-      "_client-DCM6oUEP.js"
+      "_index-42ANG6Sg.js",
+      "_index-DrBtkhmp.js",
+      "_client-CcFspOvB.js"
     ]
   },
   "resources/js/app.js": {
@@ -69,46 +68,47 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-DqExQIx5.js",
+    "file": "assets/app-BSE5nzU8.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
     "imports": [
-      "_index-C2KC86Ta.js",
-      "_client-DCM6oUEP.js",
-      "_useAxiosAuth-JGr_IZ3E.js",
-      "_index-B9ygI19o.js"
+      "_index-DrBtkhmp.js",
+      "_client-CcFspOvB.js",
+      "_useAxiosAuth-4ip-iMrP.js",
+      "_index-42ANG6Sg.js",
+      "resources/js/components/guest/Typewriter.jsx"
     ],
     "css": [
-      "assets/app-BUduhF5i.css"
+      "assets/app-Doti68Ag.css"
     ],
     "assets": [
       "assets/rips-cargador-DoL-Xzn1.png"
     ]
   },
   "resources/js/appOrden.jsx": {
-    "file": "assets/appOrden-C85vOL1a.js",
+    "file": "assets/appOrden-DdvLgc2k.js",
     "name": "appOrden",
     "src": "resources/js/appOrden.jsx",
     "isEntry": true,
     "imports": [
-      "_index-C2KC86Ta.js",
-      "_client-DCM6oUEP.js",
-      "_FormPersona-KC0ULFtU.js",
-      "_index-B9ygI19o.js",
-      "_useAxiosAuth-JGr_IZ3E.js"
+      "_index-DrBtkhmp.js",
+      "_client-CcFspOvB.js",
+      "_FormPersona-_QJ0xuo4.js",
+      "_index-42ANG6Sg.js",
+      "_useAxiosAuth-4ip-iMrP.js"
     ]
   },
   "resources/js/appPersona.jsx": {
-    "file": "assets/appPersona-CbG8zl3Y.js",
+    "file": "assets/appPersona-CtPAoydz.js",
     "name": "appPersona",
     "src": "resources/js/appPersona.jsx",
     "isEntry": true,
     "imports": [
-      "_index-C2KC86Ta.js",
-      "_client-DCM6oUEP.js",
-      "_FormPersona-KC0ULFtU.js",
-      "_index-B9ygI19o.js"
+      "_index-DrBtkhmp.js",
+      "_client-CcFspOvB.js",
+      "_FormPersona-_QJ0xuo4.js",
+      "_index-42ANG6Sg.js"
     ]
   },
   "resources/js/buscarPersona.js": {
@@ -118,22 +118,22 @@
     "isEntry": true
   },
   "resources/js/components/guest/Typewriter.jsx": {
-    "file": "assets/Typewriter-DMl4pWwa.js",
+    "file": "assets/Typewriter-CQWowG_3.js",
     "name": "Typewriter",
     "src": "resources/js/components/guest/Typewriter.jsx",
     "isEntry": true,
     "imports": [
-      "_index-C2KC86Ta.js"
+      "_index-DrBtkhmp.js"
     ]
   },
   "resources/js/convenioCreate.jsx": {
-    "file": "assets/convenioCreate-BhhRvI3V.js",
+    "file": "assets/convenioCreate-C2LmpAz1.js",
     "name": "convenioCreate",
     "src": "resources/js/convenioCreate.jsx",
     "isEntry": true,
     "imports": [
-      "_index-C2KC86Ta.js",
-      "_client-DCM6oUEP.js"
+      "_index-DrBtkhmp.js",
+      "_client-CcFspOvB.js"
     ]
   },
   "resources/js/crearOrdenes.js": {
@@ -143,23 +143,23 @@
     "isEntry": true
   },
   "resources/js/crearPersona.js": {
-    "file": "assets/crearPersona-DVd9Xovs.js",
+    "file": "assets/crearPersona-CB7irK8a.js",
     "name": "crearPersona",
     "src": "resources/js/crearPersona.js",
     "isEntry": true,
     "imports": [
-      "_manejadorEventos-COZSVYWs.js",
-      "_index-B9ygI19o.js"
+      "_manejadorEventos-DBiLoqNi.js",
+      "_index-42ANG6Sg.js"
     ]
   },
   "resources/js/main.js": {
-    "file": "assets/main-BOIdc0TS.js",
+    "file": "assets/main-BqOQCzuc.js",
     "name": "main",
     "src": "resources/js/main.js",
     "isEntry": true,
     "imports": [
-      "_manejadorEventos-COZSVYWs.js",
-      "_index-B9ygI19o.js"
+      "_manejadorEventos-DBiLoqNi.js",
+      "_index-42ANG6Sg.js"
     ]
   },
   "resources/js/obtenerStaticos.js": {

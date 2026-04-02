@@ -1,83 +1,86 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-wrap justify-evenly items-center mb-4">
-            <h1 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
-                {{ __('Medical order') }}
-            </h1>
-            <x-primary-button href="{{ route('ordenes.create') }}" class="w-full sm:w-40">
-                {{ __('Create new order') }}
+        <x-breadcrumb :items="[
+            ['label' => 'Inicio', 'href' => route('inicio')],
+            ['label' => 'Órdenes'],
+        ]" />
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h1 class="text-xl font-bold text-text dark:text-white tracking-tight">Órdenes Médicas</h1>
+                <p class="text-sm text-muted dark:text-slate-400 mt-0.5">Gestión de órdenes de análisis</p>
+            </div>
+            <x-primary-button href="{{ route('ordenes.create') }}">
+                <svg class="w-4 h-4 mr-1.5 -ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Nueva Orden
             </x-primary-button>
         </div>
     </x-slot>
+
     <x-canva>
-
-        <section class="flex flex-wrap items-center justify-between mb-4 dark:text-slate-50 dark:bg-slate-950 p-4 rounded-xl">
-            <h2 class="font-semibold text-xl text-text leading-tight dark:text-yellow-100">Órdenes recientes</h2>
-
-            <div class="py-3 w-1/2 mx-auto">
-                <label class="flex flex-col min-w-40 h-12 w-full">
-                    <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
-                        <div
-                            class="text-titles flex border-none bg-secondary dark:bg-gray-700 dark:text-blue-50 items-center justify-center pl-4 rounded-l-xl border-r-0"
-                            data-icon="MagnifyingGlass"
-                            data-size="24px"
-                            data-weight="regular">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                                <path
-                                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
-                            </svg>
-                        </div>
-                        <input
-                            placeholder="Search by patient name or report ID"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                            value="" />
-                    </div>
-                </label>
+        <!-- Barra de búsqueda y filtros -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+            <h2 class="text-sm font-semibold text-text dark:text-white">Órdenes recientes</h2>
+            <div class="relative w-full sm:w-72">
+                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-muted dark:text-slate-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 256 256">
+                        <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
+                    </svg>
+                </div>
+                <input
+                    placeholder="Buscar por paciente o número..."
+                    class="w-full h-9 pl-9 pr-4 text-sm bg-background dark:bg-slate-800 border border-borders dark:border-slate-700 text-text dark:text-slate-100 placeholder:text-muted dark:placeholder:text-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 dark:focus:ring-cyan-500/30 focus:border-primary dark:focus:border-cyan-500 transition-colors"
+                />
             </div>
+        </div>
 
-        </section>
-        <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
-            <table class="flex-1">
+        <!-- Tabla -->
+        <div class="overflow-hidden rounded-xl border border-borders/60 dark:border-slate-800">
+            <table class="w-full text-sm">
                 <thead>
-
-                    <tr class="bg-background">
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Fecha</th>
-                        <th class="px-4 py-3 text-left text-text w-32 text-sm font-medium leading-normal">Orden Médica</th>
-                        <th class="px-4 py-3 text-left text-text w-96 text-sm font-medium leading-normal">Paciente</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Estado</th>
-
+                    <tr class="bg-background dark:bg-slate-800/60 border-b border-borders/60 dark:border-slate-800">
+                        <th class="px-4 py-3 text-left text-xs font-600 font-semibold text-muted dark:text-slate-400 uppercase tracking-wider w-36">Fecha</th>
+                        <th class="px-4 py-3 text-left text-xs font-600 font-semibold text-muted dark:text-slate-400 uppercase tracking-wider w-32">N° Orden</th>
+                        <th class="px-4 py-3 text-left text-xs font-600 font-semibold text-muted dark:text-slate-400 uppercase tracking-wider">Paciente</th>
+                        <th class="px-4 py-3 text-left text-xs font-600 font-semibold text-muted dark:text-slate-400 uppercase tracking-wider w-36">Estado</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-borders/40 dark:divide-slate-800">
                     @foreach ($ordenes as $orden)
-                    <tr data-url="{{ route('ordenes.show', $orden) }}" onclick="window.location.href=this.dataset.url" class="border-t border-borders cursor-pointer hover:bg-secondary">
-                        <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                            {{ $orden->created_at->format('d-m-Y') }}
+                    <tr data-url="{{ route('ordenes.show', $orden) }}"
+                        onclick="window.location.href=this.dataset.url"
+                        class="bg-white dark:bg-slate-900 hover:bg-primary/5 dark:hover:bg-primary/10 cursor-pointer transition-colors group">
+                        <td class="px-4 py-3 text-muted dark:text-slate-400 font-normal">
+                            {{ $orden->created_at->format('d/m/Y') }}
                         </td>
-                        <td class="content-start px-4 py-2 w-32 text-titles text-sm font-normal leading-normal">
-                            <a href="{{route('ordenes.show',$orden)}}" class="text-titles">{{$orden->numero}}</a>
+                        <td class="px-4 py-3">
+                            <span class="font-semibold text-primary dark:text-cyan-400 group-hover:underline">
+                                #{{ $orden->numero }}
+                            </span>
                         </td>
-                        <td class="content-start px-4 py-2 w-96 text-sm font-normal leading-normal">
+                        <td class="px-4 py-3 font-medium text-text dark:text-slate-200">
                             {{ $orden->paciente->nombreCompleto() }}
                         </td>
-
-                        <td class="content-start px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-                            <button
-                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">{{ $orden->terminada==null ? 'Pendiente':'Completada' }}</span>
-                            </button>
+                        <td class="px-4 py-3">
+                            @if($orden->terminada)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Completada
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                                    Pendiente
+                                </span>
+                            @endif
                         </td>
-
                     </tr>
-
-
                     @endforeach
-
                 </tbody>
-
             </table>
-
         </div>
-        {{ $ordenes->links() }}
+
+        <div class="mt-4">
+            {{ $ordenes->links() }}
+        </div>
     </x-canva>
 </x-app-layout>

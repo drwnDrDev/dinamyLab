@@ -5,8 +5,13 @@
     </div>
     @endif
     <x-slot name="header">
-        <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ __('Historia') }}
+        <x-breadcrumb :items="[
+            ['label' => 'Inicio', 'href' => route('inicio')],
+            ['label' => 'Pacientes', 'href' => route('personas')],
+            ['label' => $persona->nombreCompleto()],
+        ]" />
+        <h2 class="font-serif text-2xl font-bold text-text dark:text-white leading-tight">
+            Historia Clínica
         </h2>
     </x-slot>
     <x-canva>
@@ -126,11 +131,11 @@
                 @isset($procedimientos['terminado'])
                 <table class="flex-1">
                     <thead>
-                        <tr class="">
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Test')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Result')}}</th>
+                        <tr class="bg-secondary/40 dark:bg-slate-700/40">
+                            <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal">Fecha</th>
+                            <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal">Orden</th>
+                            <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal">Examen</th>
+                            <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal">Estado</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -168,10 +173,10 @@
                     <table class="flex-1">
                         <thead>
                             <tr class="">
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Order')}}</th>
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Procedure')}}</th>
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
+                                <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal bg-secondary/40 dark:bg-slate-700/40">Fecha</th>
+                                <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal bg-secondary/40 dark:bg-slate-700/40">Orden</th>
+                                <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal bg-secondary/40 dark:bg-slate-700/40">Procedimiento</th>
+                                <th class="px-4 py-3 text-left text-text dark:text-slate-300 w-40 text-sm font-medium leading-normal bg-secondary/40 dark:bg-slate-700/40">Estado</th>
                             </tr>
                         </thead>
                         <tbody>
