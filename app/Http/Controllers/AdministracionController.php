@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Jobs\TestJob;
 use App\Models\Procedimiento;
+use Carbon\Carbon;
 use Illuminate\Foundation\Exceptions\Renderer\Exception;
 use Illuminate\Support\Facades\Cache;
 use SplFileObject;
@@ -62,7 +63,7 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-    $filePath = base_path('resources/utils/tablas/2026/marzo/doctora_sandra/bitacora_marzo.csv');
+    $filePath = base_path('resources/utils/tablas/2026/mayo/doctora_sandra/bitacora.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
@@ -107,7 +108,9 @@ if ($file === false) {
 }
 
 $lista = $file->fread($file->getSize());
-
+$fecha = Carbon::now()->format('Y-m-d');
+$fechaBase = Carbon::create(1899, 12, 30);
+$numero = $fechaBase->diffInDays($fecha);
 $recordsToInsert = [];
 try {
     $file->rewind(); // Asegura que estamos al inicio del archivo
@@ -136,8 +139,8 @@ $listaProcedimientos = array_map(function($line) {
         "sexo" => $data[6],
         "fechaProcedimiento" => $data[15],
         "factura" =>null,
-        "CUP" => null,
-        "CIE10" => $data[13],
+        "CUP" => $data[12],
+        "CIE10" =>$data[13],
         "paisOrigen" => $data[0]=="SI" || $data[0]=="PT" ?"862":"170",
         "CupProcedimiento" => $data[12]
     );
@@ -209,7 +212,7 @@ foreach ($listaProcedimientos as $procedimiento ) {
                     "finalidadTecnologiaSalud" => $doctoraSeletionada['finalidadTecnologiaSalud'],//16 tratamiento 15 diagnostico
                     "tipoDocumentoIdentificacion" => "CC",
                     "numDocumentoIdentificacion" => $doctoraSeletionada['usuario'],
-                    "codDiagnosticoPrincipal" =>$doctoraSeletionada['codDiagnosticoPrincipal'] ? $doctoraSeletionada['codDiagnosticoPrincipal'] : $procedimiento['CIE10'],
+                    "codDiagnosticoPrincipal" => $procedimiento['CIE10'] ?? $doctoraSeletionada['codDiagnosticoPrincipal'],
                     "codDiagnosticoRelacionado" => null,
                     "codComplicacion" => null,
                     "vrServicio" => 0,
@@ -231,7 +234,7 @@ if (!empty($usuarios)) {
            "numDocumentoIdObligado"=> $doctoraSeletionada['usuario'],
             "numFactura"=> null,
             "tipoNota"=> "RS",
-            "numNota"=> "032026",
+            "numNota"=> str_pad($numero, 6, "0", STR_PAD_LEFT),
         "usuarios" => $usuarios
     ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     $fileName = 'usuarios.json';
