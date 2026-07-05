@@ -63,7 +63,7 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-    $filePath = base_path('resources/utils/tablas/2026/mayo/doctora_sandra/bitacora.csv');
+    $filePath = base_path('resources/utils/tablas/2026/junio/doctora_pilar/bitacora.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
@@ -95,8 +95,7 @@ class AdministracionController extends Controller
         ]
     ];
 
-    $doctoraSeletionada = $perfiles[0]; // Cambia el índice para seleccionar la doctora deseada
-
+    $doctoraSeletionada = $perfiles[1]; // Cambia el índice para seleccionar la doctora deseada
 
 
     $file = new SplFileObject($filePath, 'r');
@@ -135,14 +134,15 @@ $listaProcedimientos = array_map(function($line) {
     return array(
         "tipoDocumentoIdentificacion" => $data[0],
         "numDocumentoIdentificacion" => $data[1],
-        "fechaNacimiento" => $data[5],
-        "sexo" => $data[6],
-        "fechaProcedimiento" => $data[15],
+        "fechaNacimiento" => $data[6],
+        "sexo" => $data[7],
+        "fechaProcedimiento" => $data[8] . " " . $data[9],
         "factura" =>null,
         "CUP" => $data[12],
-        "CIE10" =>$data[13],
-        "paisOrigen" => $data[0]=="SI" || $data[0]=="PT" ?"862":"170",
-        "CupProcedimiento" => $data[12]
+        "CIE10" =>"Z017",
+        "paisOrigen" => $data[0] === "PT" ? "862" : "170",
+        "CupProcedimiento" => $data[12],
+        "vrServicio" => $data[13]
     );
 }, $recordsToInsert);
 
@@ -215,7 +215,7 @@ foreach ($listaProcedimientos as $procedimiento ) {
                     "codDiagnosticoPrincipal" => $procedimiento['CIE10'] ?? $doctoraSeletionada['codDiagnosticoPrincipal'],
                     "codDiagnosticoRelacionado" => null,
                     "codComplicacion" => null,
-                    "vrServicio" => 0,
+                    "vrServicio" => intval($procedimiento['vrServicio']),
                     "conceptoRecaudo" => "05",
                     "valorPagoModerador" => 0,
                     "numFEVPagoModerador" => "",
@@ -278,7 +278,7 @@ $usuarios = array_map(function($procedimiento) {
                     "codDiagnosticoPrincipal" => "Z017",
                     "codDiagnosticoRelacionado" => null,
                     "codComplicacion" => null,
-                    "vrServicio" => 0,
+                    "vrServicio" => intval($procedimiento['vrServicio']),
                     "conceptoRecaudo" => "05",
                     "valorPagoModerador" => 0,
                     "numFEVPagoModerador" => "",
