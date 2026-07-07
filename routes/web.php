@@ -11,6 +11,7 @@ use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\PreRegistroCitaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProcedimientoController;
+use App\Http\Controllers\ReprocesarController;
 use App\Http\Controllers\ResultadosController;
 use App\Http\Controllers\ResolucionController;
 use App\Http\Controllers\SearchController;
@@ -25,7 +26,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
+Route::get('/reprocesar', [ReprocesarController::class, 'showUploadForm'])->name('reprocesar.upload');
+Route::post('/reprocesar', [ReprocesarController::class, 'upload'])->name('reprocesar.upload.post');
+Route::post('/reprocesar/reprocesar', [ReprocesarController::class, 'reprocesar'])->name('reprocesar.reprocesar');
+Route::get('/reprocesar/exportar', [ReprocesarController::class, 'exportar'])->name('reprocesar.exportar');
 
 // Rutas públicas de registro de citas (sin autenticación requerida)
 Route::get('/citas/registrar', [PreRegistroCitaController::class, 'create'])->name('citas.create');

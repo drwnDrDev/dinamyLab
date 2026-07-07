@@ -24,7 +24,7 @@ class CodigoCup extends Model
         self::incrementarNivel('codigo', 30);
         self::resetearNiveles();
     }
-
+    
 
 
 }
