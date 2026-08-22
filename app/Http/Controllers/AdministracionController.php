@@ -63,7 +63,7 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-    $filePath = base_path('resources/utils/tablas/2026/junio/doctora_pilar/bitacora.csv');
+    $filePath = base_path('resources/utils/tablas/2026/julio/doctora_sandra/bitacora.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
@@ -95,7 +95,7 @@ class AdministracionController extends Controller
         ]
     ];
 
-    $doctoraSeletionada = $perfiles[1]; // Cambia el índice para seleccionar la doctora deseada
+    $doctoraSeletionada = $perfiles[0]; // Cambia el índice para seleccionar la doctora deseada
 
 
     $file = new SplFileObject($filePath, 'r');
@@ -129,20 +129,20 @@ $recordsToInsert = array_slice($recordsToInsert, 1);
 
 
 
-$listaProcedimientos = array_map(function($line) {
-    $data = explode(";", $line[0]);
+$listaProcedimientos = array_map(function($data) {
+
     return array(
         "tipoDocumentoIdentificacion" => $data[0],
         "numDocumentoIdentificacion" => $data[1],
-        "fechaNacimiento" => $data[6],
-        "sexo" => $data[7],
-        "fechaProcedimiento" => $data[8] . " " . $data[9],
+        "fechaNacimiento" => $data[5],
+        "sexo" => $data[6],
+        "fechaProcedimiento" => $data[15],
         "factura" =>null,
-        "CUP" => $data[12],
-        "CIE10" =>"Z017",
+        "CUP" => null,
+        "CIE10" =>$data[13],
         "paisOrigen" => $data[0] === "PT" ? "862" : "170",
         "CupProcedimiento" => $data[12],
-        "vrServicio" => $data[13]
+        "vrServicio" => 40000
     );
 }, $recordsToInsert);
 
