@@ -63,7 +63,7 @@ class AdministracionController extends Controller
     public function rips()
     {
 
-    $filePath = base_path('resources/utils/tablas/2026/julio/doctora_sandra/bitacora.csv');
+    $filePath = base_path('resources/utils/tablas/2026/septiembre/doc_sandra/bitacora.csv');
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'Archivo no encontrado.'], 404);
     }
@@ -91,7 +91,7 @@ class AdministracionController extends Controller
              "tipoDiagnosticoPrincipal" => "01",
              "usuario" => "51712439",
              "codDiagnosticoPrincipal"	=> "Z017",
-             "clave" => "Mapi2025"
+             "clave" => "Maria2026*"
         ]
     ];
 
@@ -139,10 +139,10 @@ $listaProcedimientos = array_map(function($data) {
         "fechaProcedimiento" => $data[15],
         "factura" =>null,
         "CUP" => null,
-        "CIE10" =>$data[13],
+        "CIE10" => $data[13],
         "paisOrigen" => $data[0] === "PT" ? "862" : "170",
         "CupProcedimiento" => $data[12],
-        "vrServicio" => 40000
+        "vrServicio" => 40000,
     );
 }, $recordsToInsert);
 
