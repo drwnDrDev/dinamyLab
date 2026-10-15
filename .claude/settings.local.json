@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude *)",
+      "Bash(npm show *)",
+      "Bash(npx @anthropic-ai/claude-code --version)",
+      "Bash(npm update *)",
+      "Bash(find /c/drwnDev/PROJECTS/DinamyLAB/database/migrations -name \"*.php\" -exec grep -l \"Schema::create\\\\|Schema::table\" {} \\\\;)",
+      "Bash(xargs -I {} basename {})",
+      "Bash(xargs wc *)",
+      "Bash(git -C /c/drwnDev/PROJECTS/DinamyLAB log --oneline)"
+    ]
+  }
+}
