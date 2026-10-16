@@ -1,9 +1,0 @@
-.idea/
-build/
-vendor/
-
-*.cache
-*.clover
-*.orig
-
-composer.lock

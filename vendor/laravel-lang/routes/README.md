@@ -1,6 +1,9 @@
 # Routes Localization
 
-![laravel lang routes](https://banners.beyondco.de/Localize%20Routes.png?theme=light&packageManager=composer+require&packageName=laravel-lang%2Froutes&pattern=topography&style=style_2&description=by+Laravel+Lang&md=1&showWatermark=1&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg)
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://banners.beyondco.de/Routes.png?pattern=topography&style=style_2&fontSize=100px&md=1&showWatermark=1&icon=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg&theme=dark&packageManager=composer+require&packageName=laravel-lang%2Froutes&description=by+Laravel+Lang&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg">
+    <img src="https://banners.beyondco.de/Routes.png?pattern=topography&style=style_2&fontSize=100px&md=1&showWatermark=1&icon=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg&theme=light&packageManager=composer+require&packageName=laravel-lang%2Froutes&description=by+Laravel+Lang&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg" alt="Routes">
+</picture>
 
 [![Stable Version][badge_stable]][link_packagist]
 [![Total Downloads][badge_downloads]][link_packagist]
