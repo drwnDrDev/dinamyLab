@@ -3,6 +3,15 @@
         resultado_{{$procedimiento->orden->paciente->nombreCompleto()}}
     </x-slot>
 
+    <div class="flex justify-end gap-2 p-2 print:hidden">
+        <x-secondary-button onclick="window.print()">Imprimir</x-secondary-button>
+        @if (Route::has('resultados.pdf'))
+            <a href="{{ route('resultados.pdf', $procedimiento) }}">
+                <x-primary-button>Descargar PDF</x-primary-button>
+            </a>
+        @endif
+    </div>
+
     <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!min-h-screen print:!text-xs print:!p-0 print:!bg-white print:!text-black">
         <section class="print_header hidden print:!flex pb-2  items-center w-full">
             <figure class="w-16 my-auto p-0">

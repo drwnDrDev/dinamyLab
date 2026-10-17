@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Estado;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
 use App\Services\EscogerReferencia;
@@ -155,6 +156,31 @@ class ResultadosController extends Controller
         }
         EscogerReferencia::actualizaResultado($request->except(['_token', 'submit']), $procedimiento);
         return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados actualizados correctamente.');
+    }
+
+    public function pdf(Procedimiento $procedimiento)
+    {
+        $procedimiento->load([
+            'orden.paciente',
+            'examen',
+            'sede.empresa',
+            'sede.telefonos',
+            'sede.direccion',
+            'sede.emails',
+            'empleado.user',
+        ]);
+
+        if ($procedimiento->resultado->isEmpty()) {
+            return redirect()->route('resultados.create', $procedimiento)
+                ->with('warning', 'No hay resultados para este procedimiento.');
+        }
+
+        $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+
+        $pdf = Pdf::loadView('pdf.resultado', compact('procedimiento', 'parametros'))
+            ->setPaper('letter');
+
+        return $pdf->stream('resultado-'.$procedimiento->orden->numero.'.pdf');
     }
 
     public function historia(Persona $persona)

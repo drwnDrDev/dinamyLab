@@ -78,6 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/resultados/{procedimiento}/ver',[ResultadosController::class,'show'])->name('resultados.show');
     Route::get('/resultados/{procedimiento}/edit',[ResultadosController::class,'edit'])->name('resultados.edit');
     Route::put('/resultados/{procedimiento}/update',[ResultadosController::class,'update'])->name('resultados.update');
+    Route::get('/resultados/{procedimiento}/pdf',[ResultadosController::class,'pdf'])->name('resultados.pdf');
     Route::get('reportes',[ProcedimientoController::class,'reportes'])->name('reportes');
     Route::post('reportes/rips',[ProcedimientoController::class,'json_rips'])->name('descargar.rips');
     Route::get('parametros',[App\Http\Controllers\ParametroController::class,'index'])->name('parametros.index');
