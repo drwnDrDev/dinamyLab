@@ -134,6 +134,9 @@
             @endif
         @endforeach
     </tbody>
+    <tfoot>
+        3014819820 -Cr 78L 69 D 15
+    </tfoot>
 </table>
 
 <div class="firma">
