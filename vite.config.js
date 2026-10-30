@@ -3,6 +3,13 @@ import laravel from 'laravel-vite-plugin';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+    // Necesario para HMR cuando Vite corre dentro de Docker
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+        strictPort: true,
+        hmr: { host: 'localhost' },
+    },
     plugins: [
 
         laravel({
