@@ -13,8 +13,7 @@
             <h2 class="font-semibold text-xl text-text leading-tight">Codigos CIE-10</h2>
 
 
-            <form method="POST" action="{{ route('cie10.search') }}" class="py-3 w-1/2 mx-auto">
-                @csrf
+            <form method="GET" action="{{ route('cie10.index') }}" class="py-3 w-full max-w-3xl">
                 <label class="flex flex-col min-w-40 h-12 w-full">
                     <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
                         <div
@@ -28,12 +27,22 @@
                             </svg>
                         </div>
                         <input
-                            placeholder="Search by patient name or report ID"
+                            placeholder="Buscar por código, descripción o grupo"
                             class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                            name="search" />
+                            name="search"
+                            value="{{ request('search') }}" />
                     </div>
                 </label>
-        </form>
+                <div class="mt-2 flex flex-wrap gap-2">
+                    <select name="activo" class="rounded-lg border-borders bg-background text-text">
+                        <option value="">Todos los estados</option>
+                        <option value="1" @selected(request('activo') === '1')>Activos</option>
+                        <option value="0" @selected(request('activo') === '0')>Inactivos</option>
+                    </select>
+                    <button type="submit" class="rounded-lg bg-primary px-4 py-2 text-white">Buscar</button>
+                    <a href="{{ route('cie10.index') }}" class="rounded-lg border border-borders px-4 py-2 text-text">Limpiar</a>
+                </div>
+            </form>
 
         </section>
         <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
@@ -48,7 +57,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($codigoDiagnostico as $cie)
+                    @forelse ($codigoDiagnostico as $cie)
                     <tr data-url="{{ route('cie10.show', $cie) }}" onclick="window.location.href=this.dataset.url" class="border-t border-borders cursor-pointer hover:bg-secondary">
                         <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
                             {{ $cie->descripcion }}
@@ -60,7 +69,7 @@
                         </td>
 
                         <td class="content-start px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-                            @if ($cie->estado)
+                            @if ($cie->activo)
                                 <span class="text-green-500">Activo</span>
                             @else
                                 <span class="text-red-500">Inactivo</span>
@@ -68,7 +77,9 @@
                         </td>
 
                     </tr>
-                    @endforeach
+                    @empty
+                        <tr><td colspan="4" class="px-4 py-6 text-center text-text">No se encontraron diagnósticos.</td></tr>
+                    @endforelse
 
                 </tbody>
             </table>

@@ -14,19 +14,30 @@ use App\Models\Orden;
 class ResultadosController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-
-        $resultados = Procedimiento::with(['orden.paciente', 'resultado'])
+        $filters = $request->validate(['busqueda' => 'nullable|string|max:100']);
+        $busqueda = trim($filters['busqueda'] ?? '');
+        $resultados = Procedimiento::with(['orden.paciente', 'resultado', 'examen'])
             ->whereHas('resultado')
             ->where('estado', Estado::TERMINADO)
             ->where('updated_at', '>=', now()->subDays(2))
+            ->when($busqueda !== '', function ($query) use ($busqueda) {
+                $query->where(function ($query) use ($busqueda) {
+                    $query->whereHas('orden', fn ($orden) => $orden->where('numero', 'like', "%{$busqueda}%")
+                        ->orWhereHas('paciente', function ($paciente) use ($busqueda) {
+                            $paciente->where('numero_documento', 'like', "%{$busqueda}%")
+                                ->orWhere('primer_nombre', 'like', "%{$busqueda}%")
+                                ->orWhere('segundo_nombre', 'like', "%{$busqueda}%")
+                                ->orWhere('primer_apellido', 'like', "%{$busqueda}%")
+                                ->orWhere('segundo_apellido', 'like', "%{$busqueda}%");
+                        }))
+                        ->orWhereHas('examen', fn ($examen) => $examen->where('nombre', 'like', "%{$busqueda}%"));
+                });
+            })
             ->orderBy('updated_at', 'desc')
-            ->get();
-
-        if ($resultados->isEmpty()) {
-            return redirect()->back()->with('info', 'No hay resultados disponibles.');
-        }
+            ->paginate(25)
+            ->withQueryString();
         return view('resultados.index', compact('resultados'));
     }
     public function show(Procedimiento $procedimiento)
