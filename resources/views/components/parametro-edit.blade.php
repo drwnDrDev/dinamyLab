@@ -1,5 +1,10 @@
 @props(['parametro'])
 
+@php
+    $fieldName = 'resultados[' . $parametro['id'] . ']';
+    $fieldValue = old('resultados.' . $parametro['id'], $parametro['resultado'] ?? '');
+@endphp
+
 
     <div class="Componente_param grid grid-cols-4 gap-2 pl-4 mb-2 text-sm items-center">
 
@@ -7,7 +12,7 @@
             @case ('text')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="text" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="text" name="{{$fieldName}}" id="{{$parametro['id']}}" value="{{ $fieldValue }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>{{$parametro['referencia']}}</p></div>
@@ -16,7 +21,7 @@
             @case ('number')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="number" step="0.005" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="number" step="0.005" name="{{$fieldName}}" id="{{$parametro['id']}}" value="{{ $fieldValue }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>{{$parametro['referencia']}}</p></div>
@@ -24,7 +29,7 @@
             @case ('date')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="date" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="date" name="{{$fieldName}}" id="{{$parametro['id']}}" value="{{ $fieldValue }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md"></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>{{$parametro['referencia']}}</p></div>
@@ -32,10 +37,11 @@
             @case ('select')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><select name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" class="w-full p-2 uppercase pr-10 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><select name="{{$fieldName}}" id="{{$parametro['id']}}" class="w-full p-2 uppercase pr-10 border-borders focus:border-primary focus:ring-primary
             rounded-md">
+                    <option value="">Seleccione</option>
                     @foreach ($parametro['opciones'] as $opcion)
-                    <option value="{{$opcion}}" class="active:bg-titles uppercase">{{$opcion}}</option>
+                    <option value="{{$opcion}}" @selected((string) $fieldValue === (string) $opcion) class="active:bg-titles uppercase">{{$opcion}}</option>
                     @endforeach
                 </select></div>
             <div><p>{{$parametro['unidades']}}</p></div>
@@ -44,7 +50,7 @@
             @case ('list')
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input list="opciones-{{$parametro['id']}}" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input list="opciones-{{$parametro['id']}}" name="{{$fieldName}}" id="{{$parametro['id']}}" value="{{ $fieldValue }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require>
                     <datalist id="opciones-{{$parametro['id']}}">
                     @foreach ($parametro['opciones'] as $opcion)
@@ -59,8 +65,8 @@
             @case ('textarea')
 
             <div class="pt-4 uppercase font-semibold"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="pt-4 col-span-3"><textarea name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" rows="2" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
-            rounded-md"></textarea>
+            <div class="pt-4 col-span-3"><textarea name="{{$fieldName}}" id="{{$parametro['id']}}" rows="2" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            rounded-md">{{ $fieldValue }}</textarea>
             </div>
 
             @break
@@ -68,7 +74,7 @@
             @default
 
             <div class="uppercase"><label for="{{$parametro['id']}}">{{$parametro['nombre']}}</label></div>
-            <div class="text-end"><input type="text" name="{{$parametro['id']}}" id="{{$parametro['id']}}" value="{{ $parametro['resultado'] ?? '' }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
+            <div class="text-end"><input type="text" name="{{$fieldName}}" id="{{$parametro['id']}}" value="{{ $fieldValue }}" class="w-full p-2 border-borders focus:border-primary focus:ring-primary
             rounded-md" require></div>
             <div><p>{{$parametro['unidades']}}</p></div>
             <div><p>{{$parametro['referencia']}}</p></div>
