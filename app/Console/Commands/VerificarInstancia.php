@@ -69,6 +69,46 @@ class VerificarInstancia extends Command
             );
         }
 
+        $fallos += $this->check(
+            'APP_ENV es production',
+            config('app.env') === 'production',
+            'APP_ENV debe ser production: este comando verifica un despliegue real.'
+        );
+
+        $cliente = config('instancias.cliente', []);
+
+        $fallos += $this->check(
+            'CLIENTE_RAZON_SOCIAL definido',
+            filled($cliente['razon_social'] ?? null),
+            'Falta CLIENTE_RAZON_SOCIAL: ClienteSeeder crearía una empresa sin nombre.'
+        );
+
+        $fallos += $this->check(
+            'CLIENTE_NIT definido',
+            filled($cliente['nit'] ?? null),
+            'Falta CLIENTE_NIT: ClienteSeeder no puede crear la empresa.'
+        );
+
+        $fallos += $this->check(
+            'CLIENTE_ADMIN_EMAIL es un email válido',
+            filter_var($cliente['admin_email'] ?? '', FILTER_VALIDATE_EMAIL) !== false,
+            'CLIENTE_ADMIN_EMAIL no es un email válido: no se podría iniciar sesión.'
+        );
+
+        // env() no aplica el default si la variable existe vacía: un
+        // CLIENTE_ADMIN_PASSWORD= en blanco deja al admin sin contraseña.
+        $fallos += $this->check(
+            'CLIENTE_ADMIN_PASSWORD no está vacía',
+            filled($cliente['admin_password'] ?? null),
+            'CLIENTE_ADMIN_PASSWORD está vacía: el admin quedaría sin contraseña.'
+        );
+
+        $fallos += $this->check(
+            'CLIENTE_ADMIN_DOCUMENTO definido',
+            filled($cliente['admin_documento'] ?? null),
+            'Falta CLIENTE_ADMIN_DOCUMENTO: no se puede crear el empleado del admin.'
+        );
+
         $this->newLine();
 
         if ($fallos > 0) {

@@ -20,6 +20,10 @@ class EnsureInstance
         $hosts = config('instancias.hosts', []);
 
         if (blank($actual)) {
+            // En producción una instancia sin declarar es un error de configuración:
+            // fallar cerrado evita que atienda el dominio de otro cliente.
+            abort_if(app()->isProduction(), 503, 'Instancia no declarada (APP_INSTANCE).');
+
             return $next($request);
         }
 
