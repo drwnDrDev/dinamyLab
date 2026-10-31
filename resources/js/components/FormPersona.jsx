@@ -8,6 +8,8 @@ import CompletedCheck from "./CompletedCheck";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
 import axios from "axios";
 
+const TIPO_AFILIACION_PARTICULAR = '12';
+
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 axios.defaults.withCredentials = true;
 
@@ -42,7 +44,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
         pais_residencia: '170',
         correo: '',
         eps: '',
-        tipo_afiliacion: ''
+        tipo_afiliacion: TIPO_AFILIACION_PARTICULAR
     });
 
     const { tiposDocumento, paises, municipios, epsList } = usePersonaReferencias();
@@ -125,7 +127,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 pais_residencia: persona.pais_residencia || '',
                 correo: persona.correo || '',
                 eps: persona.eps || '',
-                tipo_afiliacion: persona.tipo_afiliacion || ''
+                tipo_afiliacion: persona.tipo_afiliacion || TIPO_AFILIACION_PARTICULAR
             }));
         }
     };
@@ -188,7 +190,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 pais_residencia: '170',
                 correo: '',
                 eps: '',
-                tipo_afiliacion: ''
+                tipo_afiliacion: TIPO_AFILIACION_PARTICULAR
             });
             setPersonaExistente(null);
 

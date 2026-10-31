@@ -15,6 +15,7 @@
 
 
             <main class="w-full sm:max-w-md m-auto mt-6 px-6 py-4 bg-white shadow-2xl overflow-hidden sm:rounded-lg">
+                @include('layouts.notifications')
                 {{ $slot }}
             </main>
 

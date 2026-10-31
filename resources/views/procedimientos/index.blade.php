@@ -7,7 +7,7 @@
 
     <x-canva>
 
-        <div class="py-3">
+        <form method="GET" action="{{ route('procedimientos') }}" class="py-3">
             <label class="flex flex-col min-w-40 h-12 w-full">
                 <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
                     <div
@@ -21,12 +21,16 @@
                         </svg>
                     </div>
                     <input
-                        placeholder="Search by patient name or report ID"
+                        name="busqueda"
+                        value="{{ request('busqueda') }}"
+                        placeholder="Orden, documento, paciente o examen"
                         class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                        value="" />
+                        />
                 </div>
             </label>
-        </div>
+            <button type="submit" class="mt-2 rounded-lg bg-primary px-4 py-2 text-white">Buscar</button>
+            <a href="{{ route('procedimientos') }}" class="mt-2 inline-block rounded-lg border border-borders px-4 py-2 text-text">Limpiar</a>
+        </form>
         <h2 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] py-5">Procedimientos recientes</h2>
 
         <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
@@ -46,7 +50,7 @@
                         @if ($procedimientos->isEmpty())
                             <tr>
                                 <td colspan="5" class="px-4 py-2 text-center text-titles text-sm font-normal leading-normal">
-                                    No hay procedimientos en proceso.
+                                    No se encontraron procedimientos en proceso.
                                 </td>
                             </tr>
 
@@ -58,7 +62,7 @@
                                 {{ $procedimiento->created_at->format('Y-m-d') }}
                             </td>
                             <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->numero }}
+                                {{ $procedimiento->orden->numero }}
                             </td>
                             <td class="px-4 py-2 w-60 text-sm font-normal leading-normal">
                                 {{ $procedimiento->orden->paciente->nombreCompleto() }}
@@ -79,6 +83,7 @@
                 </tbody>
             </table>
         </div>
+        {{ $procedimientos->links() }}
 
     </x-canva>
 

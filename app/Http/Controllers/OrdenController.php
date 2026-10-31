@@ -7,6 +7,7 @@ use App\Models\Orden;
 use App\Models\Examen;
 use App\Models\Persona;
 use App\Services\ElegirEmpresa;
+use App\Services\SugerirNumeroOrden;
 use App\Models\MetodoPago;
 use App\Models\TipoDocumento;
 use App\Http\Requests\OrdenStoreRequest;
@@ -21,23 +22,38 @@ class OrdenController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-
-
+        $filters = $request->validate([
+            'busqueda' => 'nullable|string|max:100',
+            'estado' => 'nullable|in:pendiente,completada',
+        ]);
         $sede = session('sede');
 
         if (!$sede) {
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }
-        $ordenes = Orden::with(['paciente'])
-            ->where('sede_id', $sede->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(6);
 
-        if ($ordenes->isEmpty()) {
-            return redirect()->route('ordenes.create')->with('error', 'lista de ordenes vacias');
+        $busqueda = trim($filters['busqueda'] ?? '');
+        $query = Orden::with('paciente')->where('sede_id', $sede->id);
+
+        if ($busqueda !== '') {
+            $query->where(function ($query) use ($busqueda) {
+                $query->where('numero', 'like', "%{$busqueda}%")
+                    ->orWhereHas('paciente', function ($paciente) use ($busqueda) {
+                        $paciente->where('numero_documento', 'like', "%{$busqueda}%")
+                            ->orWhere('primer_nombre', 'like', "%{$busqueda}%")
+                            ->orWhere('segundo_nombre', 'like', "%{$busqueda}%")
+                            ->orWhere('primer_apellido', 'like', "%{$busqueda}%")
+                            ->orWhere('segundo_apellido', 'like', "%{$busqueda}%");
+                    });
+            });
         }
+
+        $query->when(($filters['estado'] ?? null) === 'pendiente', fn ($query) => $query->whereNull('terminada'));
+        $query->when(($filters['estado'] ?? null) === 'completada', fn ($query) => $query->whereNotNull('terminada'));
+        $ordenes = $query->orderByDesc('created_at')->paginate(25)->withQueryString();
+
         return view('ordenes.index', compact('ordenes'));
     }
 
@@ -52,15 +68,7 @@ class OrdenController extends Controller
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }
         $examenes = Examen::all();
-        $orden_numero = Orden::where('sede_id', $sede->id)
-               ->max('numero') ?  : 0; // Si no hay órdenes, iniciar en 0
-        if (Orden::where('numero', $orden_numero+1)->exists()) {
-            // Si ya existe el número de orden, comenzar en la siguiente unidad de mil
-            $maxNumero = Orden::max('numero');
-            $orden_numero =( ceil(($maxNumero + 1) / 2000) * 2000);
-        }else {
-            $orden_numero = $orden_numero + 1; // Incrementar para la nueva orden
-        }
+        $orden_numero = SugerirNumeroOrden::paraSede($sede->id);
         return view('ordenes.create', compact('examenes', 'orden_numero', 'persona'));
     }
 
