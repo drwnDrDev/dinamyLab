@@ -8,30 +8,42 @@ use App\Estado;
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
 use App\Services\EscogerReferencia;
+use App\Services\ActualizarResultados;
 use App\Models\Persona;
 use App\Models\Orden;
 
 class ResultadosController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-
-        $resultados = Procedimiento::with(['orden.paciente', 'resultado'])
+        $filters = $request->validate(['busqueda' => 'nullable|string|max:100']);
+        $busqueda = trim($filters['busqueda'] ?? '');
+        $resultados = Procedimiento::with(['orden.paciente', 'resultado', 'examen'])
             ->whereHas('resultado')
             ->where('estado', Estado::TERMINADO)
             ->where('updated_at', '>=', now()->subDays(2))
+            ->when($busqueda !== '', function ($query) use ($busqueda) {
+                $query->where(function ($query) use ($busqueda) {
+                    $query->whereHas('orden', fn ($orden) => $orden->where('numero', 'like', "%{$busqueda}%")
+                        ->orWhereHas('paciente', function ($paciente) use ($busqueda) {
+                            $paciente->where('numero_documento', 'like', "%{$busqueda}%")
+                                ->orWhere('primer_nombre', 'like', "%{$busqueda}%")
+                                ->orWhere('segundo_nombre', 'like', "%{$busqueda}%")
+                                ->orWhere('primer_apellido', 'like', "%{$busqueda}%")
+                                ->orWhere('segundo_apellido', 'like', "%{$busqueda}%");
+                        }))
+                        ->orWhereHas('examen', fn ($examen) => $examen->where('nombre', 'like', "%{$busqueda}%"));
+                });
+            })
             ->orderBy('updated_at', 'desc')
-            ->get();
-
-        if ($resultados->isEmpty()) {
-            return redirect()->back()->with('info', 'No hay resultados disponibles.');
-        }
+            ->paginate(25)
+            ->withQueryString();
         return view('resultados.index', compact('resultados'));
     }
     public function show(Procedimiento $procedimiento)
     {
-
+        $this->autorizarSede(request(), $procedimiento);
 
         // Carga el procedimiento con sus relaciones necesarias
         $procedimiento->load(['orden.paciente', 'resultado', 'sede']);
@@ -42,8 +54,9 @@ class ResultadosController extends Controller
                 ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
         }
         $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+        $cambios = $procedimiento->cambiosResultado;
 
-        return view('resultados.show', compact('procedimiento', 'parametros'));
+        return view('resultados.show', compact('procedimiento', 'parametros', 'cambios'));
     }
     public function create(Procedimiento $procedimiento)
     {
@@ -123,6 +136,7 @@ class ResultadosController extends Controller
     }
     public function edit(Procedimiento $procedimiento)
     {
+        $this->autorizarSede(request(), $procedimiento);
 
         // Carga el procedimiento con sus relaciones necesarias
         $procedimiento->load(['orden.paciente', 'resultado', 'sede', 'examen.parametros.opciones']);
@@ -139,22 +153,44 @@ class ResultadosController extends Controller
 
         return view('resultados.edit', compact('procedimiento', 'parametros'));
     }
-    public function update(Request $request, Procedimiento $procedimiento)
+    public function update(Request $request, Procedimiento $procedimiento, ActualizarResultados $actualizarResultados)
     {
-        // Validar unicidad de (procedimiento_id, parametro_id) antes de guardar
-        $input = collect($request->except(['_token', 'submit']));
-        $duplicates = [];
-        foreach ($input->keys() as $paramId) {
-            if (is_numeric($paramId) && !$procedimiento->resultado()->where('parametro_id', $paramId)->exists()) {
-                $duplicates[] = $paramId;
-            }
-        }
-        if (!empty($duplicates)) {
-            return redirect()->back()
-                ->with('warning', 'No existen resultados previos para los parámetros: ' . implode(', ', $duplicates));
-        }
-        EscogerReferencia::actualizaResultado($request->except(['_token', 'submit']), $procedimiento);
-        return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados actualizados correctamente.');
+        $this->autorizarSede($request, $procedimiento);
+        $validated = $request->validate([
+            'observacion' => ['required', 'string', 'max:1000'],
+            'resultados' => ['required', 'array', 'min:1'],
+            'resultados.*' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $cantidadCambios = $actualizarResultados->actualizar(
+            $procedimiento,
+            (int) $request->session()->get('sede')->id,
+            $validated['resultados'],
+            trim($validated['observacion']),
+            (int) $request->user()->id,
+            $request->user()->name
+        );
+
+        $mensaje = $cantidadCambios > 0
+            ? "Se guardaron {$cantidadCambios} cambio(s) en los resultados."
+            : 'No se detectaron cambios en los resultados.';
+
+        return redirect()->route('resultados.show', $procedimiento)->with('success', $mensaje);
+    }
+
+    private function autorizarSede(Request $request, Procedimiento $procedimiento): void
+    {
+        $sede = $request->session()->get('sede');
+        $empleado = $request->user()?->empleado;
+
+        abort_unless(
+            $sede
+                && $empleado
+                && (int) $procedimiento->sede_id === (int) $sede->id
+                && $empleado->sedes()->whereKey($sede->id)->exists(),
+            403,
+            'No tiene acceso a los resultados de esta sede.'
+        );
     }
 
     public function historia(Persona $persona)

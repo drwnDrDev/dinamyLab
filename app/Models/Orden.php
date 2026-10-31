@@ -24,7 +24,6 @@ class Orden extends Model
     public function casts()
     {
         return [
-            'numero' => 'integer',
             'abono' => 'decimal:2',
             'total' => 'decimal:2',
         ];

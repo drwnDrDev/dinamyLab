@@ -7,7 +7,7 @@
 </x-slot>
 <x-canva>
 
-    <div class="py-3">
+    <form method="GET" action="{{ route('examenes') }}" class="py-3">
         <label class="flex flex-col min-w-40 h-12 w-full">
             <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
                 <div
@@ -21,12 +21,25 @@
                     </svg>
                 </div>
                 <input
-                    placeholder="Buscar por nombre de examen o ID"
+                    name="busqueda"
+                    value="{{ request('busqueda') }}"
+                    placeholder="Buscar por nombre, CUP o descripción"
                     class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                    value="" />
+                    />
             </div>
         </label>
-    </div>
+        <div class="mt-3 flex flex-wrap gap-3">
+            <label class="sr-only" for="sexo">Filtrar por sexo</label>
+            <select id="sexo" name="sexo" class="rounded-lg border-borders bg-background text-text">
+                <option value="">Todos los sexos</option>
+                <option value="M" @selected(request('sexo') === 'M')>Masculino</option>
+                <option value="F" @selected(request('sexo') === 'F')>Femenino</option>
+                <option value="A" @selected(request('sexo') === 'A')>Todos</option>
+            </select>
+            <button type="submit" class="rounded-lg bg-primary px-4 py-2 text-white">Buscar</button>
+            <a href="{{ route('examenes') }}" class="rounded-lg border border-borders px-4 py-2 text-text">Limpiar</a>
+        </div>
+    </form>
 
     <h2 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Exámenes</h2>
     <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
@@ -52,7 +65,7 @@
                 </div>
             <div class="flex flex-col gap-2 px-4 py-3">
                 @if ($examenes->isEmpty())
-                    <div class="text-text text-base font-normal">No hay exámenes disponibles.</div>
+                    <div class="text-text text-base font-normal">No se encontraron exámenes.</div>
                 @else
                     <table class="w-full table-auto">
                         <thead>
@@ -96,4 +109,5 @@
 
     </div>
 </x-canva>
+{{ $examenes->links() }}
 </x-app-layout>

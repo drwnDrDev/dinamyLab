@@ -71,7 +71,11 @@ const CieSearchInput = ({ label, name, value, onChange, error }) => {
         axiosInstance
             .post(`/api/cie10/buscar`, { query: value })
             .then(res => {
-                const data = Array.isArray(res.data) ? res.data : [];
+                const data = Array.isArray(res.data?.data)
+                    ? res.data.data
+                    : Array.isArray(res.data)
+                        ? res.data
+                        : [];
                 const match = data.find(item => String(item.codigo) === String(value));
                 if (match) { setSelected(match); setInputText(match.nombre); }
             })
