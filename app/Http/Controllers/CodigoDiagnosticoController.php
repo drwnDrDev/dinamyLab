@@ -7,9 +7,27 @@ use App\Models\CodigoDiagnostico;
 
 class CodigoDiagnosticoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $codigoDiagnostico = CodigoDiagnostico::orderBy('nivel', 'DESC')->paginate(10);
+        $filters = $request->validate([
+            'search' => 'nullable|string|max:100',
+            'activo' => 'nullable|in:0,1',
+        ]);
+        $busqueda = trim($filters['search'] ?? '');
+        $codigoDiagnostico = CodigoDiagnostico::query()
+            ->when($busqueda !== '', function ($query) use ($busqueda) {
+                $query->where(function ($query) use ($busqueda) {
+                    $query->where('nombre', 'like', "%{$busqueda}%")
+                        ->orWhere('descripcion', 'like', "%{$busqueda}%")
+                        ->orWhere('grupo', 'like', "%{$busqueda}%")
+                        ->orWhere('sub_grupo', 'like', "%{$busqueda}%")
+                        ->orWhere('codigo', 'like', "%{$busqueda}%");
+                });
+            })
+            ->when(isset($filters['activo']), fn ($query) => $query->where('activo', $request->boolean('activo')))
+            ->orderByDesc('nivel')
+            ->paginate(25)
+            ->withQueryString();
         return view('diagnosticos.index', ['codigoDiagnostico' => $codigoDiagnostico]);
     }
 
@@ -20,15 +38,7 @@ class CodigoDiagnosticoController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('search');
-        $codigoDiagnostico = CodigoDiagnostico::where('nombre', 'like', "%$query%")
-        ->orWhere('descripcion', 'like', "%$query%")
-        ->orWhere('grupo', 'like', "%$query%")
-        ->orWhere('sub_grupo', 'like', "%$query%")
-        ->orWhere('codigo', 'like', "%$query%")
-        ->orderBy('nivel', 'DESC')
-        ->paginate(10);
-        return view('diagnosticos.index', ['codigoDiagnostico' => $codigoDiagnostico]);
+        return redirect()->route('cie10.index', ['search' => $request->input('search')]);
     }
 
     public function store(Request $request)

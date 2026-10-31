@@ -18,10 +18,47 @@ class PersonaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $personas = Persona::all();
-        return view('personas.index', compact('personas'));
+        $filters = $request->validate([
+            'busqueda' => 'nullable|string|max:100',
+            'sexo' => 'nullable|in:M,F,I',
+            'municipio_id' => 'nullable|integer|exists:municipios,id',
+            'eps' => 'nullable|string|max:255',
+        ]);
+        $busqueda = trim($filters['busqueda'] ?? '');
+        $query = Persona::query()->with(['direccion.municipio', 'afiliacionSalud']);
+
+        if ($busqueda !== '') {
+            $query->where(function ($query) use ($busqueda) {
+                $query->where('numero_documento', 'like', "%{$busqueda}%")
+                    ->orWhere('primer_nombre', 'like', "%{$busqueda}%")
+                    ->orWhere('segundo_nombre', 'like', "%{$busqueda}%")
+                    ->orWhere('primer_apellido', 'like', "%{$busqueda}%")
+                    ->orWhere('segundo_apellido', 'like', "%{$busqueda}%");
+            });
+        }
+
+        $query->when($filters['sexo'] ?? null, fn ($query, $sexo) => $query->where('sexo', $sexo));
+        $query->when($filters['municipio_id'] ?? null, fn ($query, $municipioId) => $query->whereHas(
+            'direccion',
+            fn ($direccion) => $direccion->where('municipio_id', $municipioId)
+        ));
+        $query->when($filters['eps'] ?? null, fn ($query, $eps) => $query->whereHas(
+            'afiliacionSalud',
+            fn ($afiliacion) => $afiliacion->where('eps', $eps)
+        ));
+
+        $personas = $query->orderByDesc('created_at')->paginate(25)->withQueryString();
+        $municipios = Municipio::query()->orderBy('municipio')->get(['id', 'municipio']);
+        $eps = \App\Models\AfiliacionSalud::query()
+            ->whereNotNull('eps')
+            ->where('eps', '!=', '')
+            ->distinct()
+            ->orderBy('eps')
+            ->pluck('eps');
+
+        return view('personas.index', compact('personas', 'municipios', 'eps'));
     }
 
     /**

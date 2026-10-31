@@ -63,6 +63,7 @@ Route::get('via-ingreso/{codigo}', [\App\Http\Controllers\Api\ViaIngresoControll
 Route::patch('via-ingreso/{codigo}/activar', [\App\Http\Controllers\Api\ViaIngresoController::class, 'activar'])->name('vias-ingreso.activar');
 
 Route::get('cie10', [CodigoDiagnosticoController::class, 'index']);
+Route::get('cie10/gestion', [CodigoDiagnosticoController::class, 'gestion']);
 Route::get('cie10/{id}', [CodigoDiagnosticoController::class, 'show']);
 Route::post('cie10', [CodigoDiagnosticoController::class, 'store']);
 Route::patch('cie10/{codigo}/activar', [CodigoDiagnosticoController::class, 'activar']);
