@@ -15,6 +15,13 @@ test('en produccion sin dominios configurados responde 503', function () {
     $this->get('http://biotek.test/login')->assertStatus(503);
 });
 
+test('en produccion sin instancia declarada responde 503', function () {
+    $this->app['env'] = 'production';
+    config(['instancias.actual' => null, 'instancias.hosts' => []]);
+
+    $this->get('http://biotek.test/login')->assertStatus(503);
+});
+
 test('acepta el dominio declarado por la instancia', function () {
     config(['instancias.actual' => 'biotek', 'instancias.hosts' => ['biotek.test']]);
 
