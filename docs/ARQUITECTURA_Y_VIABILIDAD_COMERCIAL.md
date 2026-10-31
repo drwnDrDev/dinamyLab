@@ -249,6 +249,13 @@ Tarifa (polimórfica)
 **Auth Controllers (7, Breeze scaffolding):**
 - Registro, login, restablecimiento de contraseña, verificación de email
 
+**Cambio propuesto: Laravel Fortify (pendiente de implementación backend):**
+- Reemplazar Breeze como backend de autenticación web, conservando los flujos actuales de registro, login, restablecimiento de contraseña y verificación de email.
+- Fortify es headless: expone acciones y rutas de autenticación, pero no entrega pantallas. La interfaz debe implementarse en Blade/React y conectarse a esos flujos.
+- Configurar Fortify, sus vistas y funciones habilitadas; retirar las rutas y controladores de autenticación de Breeze para evitar duplicidad.
+- Mantener Sanctum para la autenticación de la API. Fortify no lo reemplaza ni modifica los tokens API existentes.
+- La migración requiere cambios backend; este documento registra el destino, pero dichos cambios quedan pendientes para el responsable backend.
+
 ### Rutas
 
 **Web (`routes/web.php` — 93 rutas):**
@@ -428,7 +435,7 @@ if (document.getElementById('react-crear-orden')) {
    - Exportación a JSON/CSV
 
 10. **Gestión de Usuarios**
-    - Autenticación (Breeze scaffolding)
+    - Autenticación actual (Breeze scaffolding); migración propuesta a Laravel Fortify pendiente
     - Control de acceso por roles (admin, técnico de lab, recepcionista — Spatie)
     - Vinculación Empleado ↔ Usuario ↔ Organización
     - Control de acceso por sede
@@ -622,7 +629,7 @@ A veces retorna arrays crudos, a veces colecciones Eloquent. Sin API Resources c
 
 ### ✅ Fortalezas
 
-- Autenticación Laravel + Sanctum para API
+- Autenticación web actual con Breeze y API con Sanctum; Fortify está propuesto como reemplazo de Breeze, no implementado
 - Spatie roles y permisos integrado
 - CSRF en formularios Blade (`@csrf`)
 - Contraseñas hasheadas con bcrypt (BCRYPT_ROUNDS=12)
