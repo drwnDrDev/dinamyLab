@@ -21,6 +21,16 @@ return Application::configure(basePath: dirname(__DIR__))
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Session\Middleware\StartSession::class,
         ]);
+
+        // Aísla cada instancia: una petición dirigida al dominio de otro
+        // cliente se rechaza con 503 (ver config/instancias.php).
+        $middleware->web(append: [
+            \App\Http\Middleware\EnsureInstance::class,
+        ]);
+
+        $middleware->api(append: [
+            \App\Http\Middleware\EnsureInstance::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
