@@ -14,6 +14,278 @@ input:autofill {
     background-color: #f9fafb !important; /* Para navegadores que no usan `-webkit-` */
 }
 
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+    }
+
+    body {
+        background-color: #020617;
+        color: #e2e8f0;
+    }
+
+    body :is(
+        [class~="bg-white"],
+        [class~="bg-gray-50"],
+        [class~="bg-gray-100"],
+        [class~="bg-gray-200"],
+        [class~="bg-gray-300"],
+        [class~="bg-slate-50"],
+        [class~="bg-slate-100"],
+        [class~="bg-slate-200"],
+        [class~="bg-slate-300"],
+        [class~="bg-[#e7f2f3]"],
+        [class~="bg-zinc-50"],
+        [class~="bg-zinc-100"],
+        [class~="bg-neutral-50"],
+        [class~="bg-neutral-100"],
+        [class~="bg-stone-50"],
+        [class~="bg-stone-100"],
+        [class~="bg-stone-200"]
+    ):not([class*="dark:bg-"]) {
+        background-color: #1e293b;
+    }
+
+    body :is(
+        [class~="bg-background"],
+        [class~="bg-secondary"]
+    ):not([class*="dark:bg-"]) {
+        background-color: #1e293b;
+    }
+
+    body [class~="bg-primary"]:not([class*="dark:bg-"]) {
+        background-color: #0e7490;
+    }
+
+    body :is(
+        [class~="bg-green-50"],
+        [class~="bg-green-100"],
+        [class~="bg-green-200"],
+        [class~="bg-green-300"],
+        [class~="bg-emerald-50"],
+        [class~="bg-emerald-100"]
+    ):not([class*="dark:bg-"]) {
+        background-color: #052e16;
+    }
+
+    body :is(
+        [class~="bg-red-50"],
+        [class~="bg-red-100"],
+        [class~="bg-red-200"],
+        [class~="bg-red-300"]
+    ):not([class*="dark:bg-"]) {
+        background-color: #450a0a;
+    }
+
+    body :is(
+        [class~="bg-blue-50"],
+        [class~="bg-blue-100"],
+        [class~="bg-blue-200"],
+        [class~="bg-blue-300"],
+        [class~="bg-indigo-50"],
+        [class~="bg-indigo-100"]
+    ):not([class*="dark:bg-"]) {
+        background-color: #172554;
+    }
+
+    body :is(
+        [class~="bg-amber-50"],
+        [class~="bg-amber-100"],
+        [class~="bg-yellow-50"],
+        [class~="bg-yellow-100"],
+        [class~="bg-yellow-200"]
+    ):not([class*="dark:bg-"]) {
+        background-color: #422006;
+    }
+
+    body :is(
+        [class~="bg-pink-50"],
+        [class~="bg-pink-100"],
+        [class~="bg-pink-200"],
+        [class~="bg-rose-50"],
+        [class~="bg-rose-200"]
+    ):not([class*="dark:bg-"]) {
+        background-color: #4c0519;
+    }
+
+    body :is(
+        [class~="bg-purple-50"],
+        [class~="bg-purple-200"],
+        [class~="bg-violet-50"],
+        [class~="bg-violet-200"]
+    ):not([class*="dark:bg-"]) {
+        background-color: #2e1065;
+    }
+
+    body :is(
+        [class~="bg-teal-50"],
+        [class~="bg-teal-200"]
+    ):not([class*="dark:bg-"]) {
+        background-color: #042f2e;
+    }
+
+    body :is(
+        [class~="text-gray-300"],
+        [class~="text-gray-400"],
+        [class~="text-gray-500"],
+        [class~="text-gray-600"],
+        [class~="text-slate-300"],
+        [class~="text-slate-400"],
+        [class~="text-slate-500"],
+        [class~="text-slate-600"],
+        [class~="text-zinc-400"],
+        [class~="text-zinc-500"],
+        [class~="text-neutral-400"],
+        [class~="text-neutral-500"],
+        [class~="text-neutral-700"],
+        [class~="text-stone-400"],
+        [class~="text-stone-500"],
+        [class~="text-stone-900"]
+    ):not([class*="dark:text-"]) {
+        color: #cbd5e1;
+    }
+
+    body :is(
+        [class~="text-gray-700"],
+        [class~="text-gray-800"],
+        [class~="text-gray-900"],
+        [class~="text-slate-700"],
+        [class~="text-slate-800"],
+        [class~="text-slate-900"],
+        [class~="text-black"]
+    ):not([class*="dark:text-"]) {
+        color: #f1f5f9;
+    }
+
+    body [class~="text-text"]:not([class*="dark:text-"]) {
+        color: #e2e8f0;
+    }
+
+    body [class~="text-titles"]:not([class*="dark:text-"]) {
+        color: #67e8f9;
+    }
+
+    body [class~="text-primary"]:not([class*="dark:text-"]) {
+        color: #67e8f9;
+    }
+
+    body :is(
+        [class~="text-green-500"],
+        [class~="text-green-600"],
+        [class~="text-green-700"],
+        [class~="text-green-800"],
+        [class~="text-green-900"],
+        [class~="text-emerald-600"],
+        [class~="text-emerald-700"],
+        [class~="text-emerald-800"]
+    ):not([class*="dark:text-"]) {
+        color: #86efac;
+    }
+
+    body :is(
+        [class~="text-red-600"],
+        [class~="text-red-700"],
+        [class~="text-red-800"]
+    ):not([class*="dark:text-"]) {
+        color: #fca5a5;
+    }
+
+    body :is(
+        [class~="text-blue-500"],
+        [class~="text-blue-600"],
+        [class~="text-blue-700"],
+        [class~="text-blue-800"],
+        [class~="text-blue-900"],
+        [class~="text-indigo-600"],
+        [class~="text-indigo-700"],
+        [class~="text-indigo-800"],
+        [class~="text-indigo-900"]
+    ):not([class*="dark:text-"]) {
+        color: #93c5fd;
+    }
+
+    body :is(
+        [class~="text-amber-600"],
+        [class~="text-amber-700"],
+        [class~="text-amber-800"],
+        [class~="text-yellow-600"],
+        [class~="text-yellow-700"],
+        [class~="text-yellow-800"],
+        [class~="text-yellow-900"]
+    ):not([class*="dark:text-"]) {
+        color: #fcd34d;
+    }
+
+    body :is(
+        [class~="text-pink-800"],
+        [class~="text-pink-900"],
+        [class~="text-rose-600"]
+    ):not([class*="dark:text-"]) {
+        color: #f9a8d4;
+    }
+
+    body :is(
+        [class~="text-purple-800"],
+        [class~="text-purple-900"]
+    ):not([class*="dark:text-"]) {
+        color: #d8b4fe;
+    }
+
+    body :is(
+        [class~="text-teal-600"],
+        [class~="text-teal-700"],
+        [class~="text-teal-800"],
+        [class~="text-teal-900"]
+    ):not([class*="dark:text-"]) {
+        color: #5eead4;
+    }
+
+    body :is(
+        [class~="border-gray-200"],
+        [class~="border-gray-300"],
+        [class~="border-slate-200"],
+        [class~="border-slate-300"],
+        [class~="border-borders"]
+    ):not([class*="dark:border-"]) {
+        border-color: #475569;
+    }
+
+    body :is(
+        [class~="hover:bg-gray-100"],
+        [class~="hover:bg-gray-200"],
+        [class~="hover:bg-slate-100"],
+        [class~="hover:bg-slate-200"]
+    ):not([class*="dark:hover:bg-"]):hover {
+        background-color: #334155;
+    }
+
+    body :is(
+        [class~="hover:bg-primary"],
+        [class~="hover:bg-[#50D5F7]"]
+    ):not([class*="dark:hover:bg-"]):hover {
+        background-color: #0e7490;
+    }
+
+    body :is(input, select, textarea):not([class*="dark:bg-"]) {
+        background-color: #0f172a;
+        border-color: #475569;
+    }
+
+    body :is(input, select, textarea):not([class*="dark:text-"]) {
+        color: #f1f5f9;
+    }
+
+    input:-webkit-autofill {
+        -webkit-text-fill-color: #f1f5f9 !important;
+        box-shadow: 0 0 0 1000px #0f172a inset !important;
+    }
+
+    input:autofill {
+        color: #f1f5f9;
+        background-color: #0f172a !important;
+    }
+}
+
 
 .ubuntu-light {
   font-family: "Ubuntu", sans-serif;
