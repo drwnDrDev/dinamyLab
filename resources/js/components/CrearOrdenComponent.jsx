@@ -52,7 +52,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const [formOrden, setFormOrden] = useState(initialFormState);
     const [currentStep, setCurrentStep] = useState(1);
     const [stepError, setStepError] = useState(null);
-    const { validateForm, errors, clearError } = useOrderValidation();
+    const { validateForm, validateField, errors, clearError } = useOrderValidation();
 
     useEffect(() => {
         if (!persona) return;
@@ -106,9 +106,19 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
             case 2:
                 return formOrden.examenes.length === 0 ? 'Debe agregar al menos un examen para continuar.' : null;
             case 3: {
-                const campos = ['modalidad', 'cod_servicio', 'cie_principal', 'finalidad', 'via_ingreso'];
-                const faltantes = campos.filter(c => !formOrden[c]);
-                return faltantes.length > 0 ? 'Complete todos los campos obligatorios para continuar.' : null;
+                const campos = [
+                    ['modalidad', 'Modalidad de atención'],
+                    ['cod_servicio', 'Servicio habilitado'],
+                    ['cie_principal', 'CIE principal'],
+                    ['finalidad', 'Finalidad de consulta'],
+                    ['via_ingreso', 'Vía de ingreso'],
+                ];
+                const faltantes = campos
+                    .filter(([campo]) => !formOrden[campo])
+                    .map(([, etiqueta]) => etiqueta);
+                return faltantes.length > 0
+                    ? `Complete estos campos para continuar: ${faltantes.join(', ')}.`
+                    : null;
             }
             default:
                 return null;
@@ -116,6 +126,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     };
 
     const handleNext = () => {
+        setError(null);
         const err = getStepError(currentStep);
         if (err) {
             setStepError(err);
@@ -127,6 +138,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
 
     const handlePrev = () => {
         setStepError(null);
+        setError(null);
         setCurrentStep(prev => Math.max(prev - 1, 1));
     };
 
@@ -139,7 +151,26 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
         }
 
         if (!validateForm(formOrden)) {
-            setStepError('Por favor complete todos los campos obligatorios.');
+            const campos = [
+                ['numero_orden', 'Número de orden', 3],
+                ['paciente_id', 'Paciente', 1],
+                ['examenes', 'Exámenes', 2],
+                ['modalidad', 'Modalidad de atención', 3],
+                ['cod_servicio', 'Servicio habilitado', 3],
+                ['cie_principal', 'CIE principal', 3],
+                ['finalidad', 'Finalidad de consulta', 3],
+                ['via_ingreso', 'Vía de ingreso', 3],
+                ['abono', 'Abono', 2],
+                ['total', 'Total', 2],
+            ];
+            const primerCampoInvalido = campos.find(([campo]) => !validateField(campo, formOrden[campo], formOrden));
+            const paso = primerCampoInvalido?.[2] ?? 3;
+            const camposInvalidos = campos
+                .filter(([campo]) => !validateField(campo, formOrden[campo], formOrden))
+                .map(([, etiqueta]) => etiqueta);
+
+            setStepError(`Revise estos datos antes de crear la orden: ${camposInvalidos.join(', ')}.`);
+            setCurrentStep(paso);
             return;
         }
 
@@ -153,7 +184,26 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                 window.location.href = `/ordenes-medicas/${response.data.data.id}/ver`;
             }
         } catch (err) {
-            setError(err.response?.data?.message || 'Error al crear la orden. Intente nuevamente.');
+            const validationErrors = err.response?.data?.errors;
+            const validationMessages = validationErrors && typeof validationErrors === 'object'
+                ? Object.values(validationErrors).flat().filter(message => typeof message === 'string')
+                : [];
+
+            if (validationMessages.length > 0) {
+                const invalidFields = Object.keys(validationErrors);
+                const paso = invalidFields.some(campo => campo === 'paciente_id')
+                    ? 1
+                    : invalidFields.some(campo => campo.startsWith('examenes') || ['abono', 'total'].includes(campo))
+                        ? 2
+                        : invalidFields.some(campo => ['modalidad', 'cod_servicio', 'cie_principal', 'cie_relacionado', 'finalidad', 'via_ingreso', 'numero_orden'].includes(campo))
+                            ? 3
+                            : 4;
+
+                setCurrentStep(paso);
+                setError(`No se pudo crear la orden. ${validationMessages.join(' ')}`);
+            } else {
+                setError(err.response?.data?.message || 'Error al crear la orden. Intente nuevamente.');
+            }
         } finally {
             setLoading(false);
         }
@@ -216,7 +266,11 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
 
                         {/* Banner de error de paso (validación) */}
                         {stepError && (
-                            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-md text-sm flex items-start gap-2">
+                            <div
+                                className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-md text-sm flex items-start gap-2"
+                                role="alert"
+                                aria-live="assertive"
+                            >
                                 <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                                 </svg>
@@ -226,7 +280,11 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
 
                         {/* Banner de error de API */}
                         {error && (
-                            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-start gap-2">
+                            <div
+                                className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-start gap-2"
+                                role="alert"
+                                aria-live="assertive"
+                            >
                                 <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
