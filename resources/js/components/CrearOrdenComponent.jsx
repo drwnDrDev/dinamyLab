@@ -12,26 +12,21 @@ import { useOrderValidation } from './hooks/useOrdenValidation';
 const formatCOP = (value) =>
     new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 
+const getNextSequenceSuggestion = (value) => {
+    const match = value.match(/^(.*?)(\d+)$/);
+    if (!match) return null;
+
+    const currentNumber = Number(match[2]);
+    if (!Number.isSafeInteger(currentNumber) || currentNumber === Number.MAX_SAFE_INTEGER) return null;
+
+    return `${match[1]}${String(currentNumber + 1).padStart(match[2].length, '0')}`;
+};
+
 const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const { axiosInstance, csrfLoaded } = useAxiosAuth();
-    const [next_numero, setNextNumero] = useState(null);
-
-    useEffect(() => {
-        const fetchNextNumero = async () => {
-            try {
-                const response = await axiosInstance.get('/api/ordenes/max-numero');
-                if (response.status === 200) {
-                    setNextNumero(response.data.next_numero);
-                }
-            } catch (error) {
-                console.error('Error al obtener el siguiente número de orden:', error);
-            }
-        };
-        fetchNextNumero();
-    }, [axiosInstance]);
 
     const initialFormState = {
-        numero_orden: next_numero || '',
+        numero_orden: '',
         paciente_id: null,
         examenes: [],
         cod_servicio: null,
@@ -52,18 +47,14 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const [formOrden, setFormOrden] = useState(initialFormState);
     const [currentStep, setCurrentStep] = useState(1);
     const [stepError, setStepError] = useState(null);
+    const [orderNumberBlurred, setOrderNumberBlurred] = useState(false);
     const { validateForm, errors, clearError } = useOrderValidation();
+    const nextSequenceSuggestion = getNextSequenceSuggestion(formOrden.numero_orden);
 
     useEffect(() => {
         if (!persona) return;
         setFormOrden(prev => ({ ...prev, paciente_id: persona.id || null }));
     }, [persona]);
-
-    useEffect(() => {
-        if (next_numero !== null) {
-            setFormOrden(prev => ({ ...prev, numero_orden: next_numero }));
-        }
-    }, [next_numero]);
 
     useEffect(() => {
         if (dataDefoult && Object.keys(dataDefoult).length > 0) {
@@ -92,6 +83,12 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
         const { name, value } = e.target;
         setFormOrden(prev => ({ ...prev, [name]: value }));
         clearError(name);
+    };
+
+    const handleOrderNumberChange = (e) => {
+        setOrderNumberBlurred(false);
+        setError(null);
+        handleTablasRefUpdate(e);
     };
 
     const handleValoresUpdate = (name, value) => {
@@ -143,11 +140,20 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
             return;
         }
 
+        const numeroOrden = formOrden.numero_orden.trim();
+        if (!/^\d+$/.test(numeroOrden)) {
+            setError('El servidor actual solo permite guardar números de orden numéricos. El soporte para valores alfanuméricos está pendiente.');
+            return;
+        }
+
         setLoading(true);
         setError(null);
 
         try {
-            const response = await axiosInstance.post('/api/ordenes', formOrden);
+            const response = await axiosInstance.post('/api/ordenes', {
+                ...formOrden,
+                numero_orden: numeroOrden,
+            });
             setCompleteMessage(true);
             if (response?.data?.data?.id) {
                 window.location.href = `/ordenes-medicas/${response.data.data.id}/ver`;
@@ -192,22 +198,43 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                             </h1>
                         </div>
                         {/* Número de orden */}
-                        <div className="flex items-center gap-2">
-                            <label htmlFor="numero_orden" className="text-sm text-gray-500 font-medium">
-                                Orden N°
-                            </label>
-                            <input
-                                type="number"
-                                id="numero_orden"
-                                onChange={handleTablasRefUpdate}
-                                name="numero_orden"
-                                value={formOrden.numero_orden}
-                                className={`h-9 w-24 px-2 text-lg text-center font-semibold text-primary bg-white rounded-md border-0 focus:outline-none transition-colors ${
-                                    errors.numero_orden
-                                        ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
-                                        : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'
-                                }`}
-                            />
+                        <div className="flex flex-col items-end gap-1">
+                            <div className="flex items-center gap-2">
+                                <label htmlFor="numero_orden" className="text-sm text-gray-500 font-medium">
+                                    Número de orden
+                                </label>
+                                <input
+                                    type="text"
+                                    id="numero_orden"
+                                    onChange={handleOrderNumberChange}
+                                    onBlur={() => setOrderNumberBlurred(true)}
+                                    name="numero_orden"
+                                    value={formOrden.numero_orden}
+                                    maxLength={255}
+                                    aria-invalid={Boolean(errors.numero_orden)}
+                                    aria-describedby="numero-orden-ayuda"
+                                    className={`h-9 w-48 px-2 text-lg font-semibold text-primary bg-white rounded-md border-0 focus:outline-none transition-colors ${
+                                        errors.numero_orden
+                                            ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
+                                            : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'
+                                    }`}
+                                />
+                            </div>
+                            <div id="numero-orden-ayuda" className="max-w-xs text-right text-xs" aria-live="polite">
+                                {errors.numero_orden && (
+                                    <p className="text-red-600" role="alert">{errors.numero_orden}</p>
+                                )}
+                                {nextSequenceSuggestion && (
+                                    <p className="text-gray-500">
+                                        Sufijo consecutivo detectado. Si pertenece a una serie: {nextSequenceSuggestion}
+                                    </p>
+                                )}
+                                {orderNumberBlurred && formOrden.numero_orden.trim() && (
+                                    <p className="mt-1 text-amber-700">
+                                        No es posible verificar si ya existe en esta sede; el servidor aún no ofrece esa consulta.
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
 
