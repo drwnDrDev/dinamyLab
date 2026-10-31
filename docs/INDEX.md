@@ -30,6 +30,7 @@ prueba de que una función esté lista para producción.
 
 | Archivo | Tema y vigencia |
 |---|---|
+| [PRUEBAS_ROLES_PERMISOS.md](./PRUEBAS_ROLES_PERMISOS.md) | Diagnóstico actualizado de roles, permisos y membresía de sede; incluye matriz de casos y ejemplos Pest propuestos. Los bloqueos de backend quedan señalados, no implementados. |
 | [SISTEMA_POLICIES_EMPRESA.md](./SISTEMA_POLICIES_EMPRESA.md) | Diseño de autorización y separación de datos por empresa. Distinguir las políticas implementadas de las propuestas. |
 | [README_POLICIES.md](./README_POLICIES.md) | Guía y estado del trabajo de policies; no implica que todos los recursos estén cubiertos. |
 | [EJEMPLOS_IMPLEMENTACION_POLICIES.md](./EJEMPLOS_IMPLEMENTACION_POLICIES.md) | Ejemplos de autorización. Son referencias; no asumir que sus rutas, firmas o reglas coinciden con el sistema actual. |
