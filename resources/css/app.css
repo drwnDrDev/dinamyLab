@@ -334,3 +334,22 @@ input:autofill {
   font-weight: 700;
   font-style: italic;
 }
+
+.resultados-print-table {
+    border-collapse: collapse;
+}
+
+@media print {
+    .resultados-print-table thead {
+        display: table-header-group;
+    }
+
+    .resultados-print-table tbody {
+        display: table-row-group;
+    }
+
+    .resultados-print-table tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
