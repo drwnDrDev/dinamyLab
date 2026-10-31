@@ -7,7 +7,7 @@ entorno anterior (XAMPP / PHP en Windows + SQLite).
 
 | Antes                         | Ahora                                   |
 |-------------------------------|-----------------------------------------|
-| PHP 8.2.12 de XAMPP (Windows) | PHP 8.4 en contenedor (último parche)   |
+| PHP 8.2.12 de XAMPP (Windows) | PHP 8.5 en contenedor (último parche)   |
 | SQLite (`database.sqlite`)    | MySQL 8.4 en contenedor                 |
 | `php artisan serve`           | nginx + PHP-FPM                         |
 | `npm/pnpm run dev` en Windows | Vite en contenedor (Node 22 + pnpm)     |
@@ -83,7 +83,7 @@ Abre **http://localhost:8000**.
 | Servicio | Qué es                     | Puerto en tu máquina     |
 |----------|----------------------------|--------------------------|
 | `web`    | nginx                      | `8000` (`APP_PORT`)      |
-| `app`    | PHP 8.4-FPM (Laravel)      | —                        |
+| `app`    | PHP 8.5-FPM (Laravel)      | —                        |
 | `queue`  | `php artisan queue:work`   | —                        |
 | `db`     | MySQL 8.4                  | `3307` (`FORWARD_DB_PORT`) |
 | `vite`   | Vite dev server + HMR      | `5173`                   |
