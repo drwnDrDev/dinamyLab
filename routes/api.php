@@ -104,6 +104,7 @@ Route::post('ordenes', [OrdenController::class, 'store']);
 Route::patch('/ordenes-medicas/{orden}',[OrdenController::class,'add'])->name('ordenes.add');
 Route::post('resultados/{procedimiento}',[ResultadosController::class,'store']);
 Route::get('ordenes/max-numero', [OrdenController::class, 'max_numero']);
+Route::get('ordenes/verificar-numero', [OrdenController::class, 'verificarNumero']);
 
 Route::resources([
     'tarifas' => \App\Http\Controllers\Api\TarifaController::class,

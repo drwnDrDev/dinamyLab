@@ -7,6 +7,7 @@ use App\Models\Orden;
 use App\Models\Examen;
 use App\Models\Persona;
 use App\Services\ElegirEmpresa;
+use App\Services\SugerirNumeroOrden;
 use App\Models\MetodoPago;
 use App\Models\TipoDocumento;
 use App\Http\Requests\OrdenStoreRequest;
@@ -67,15 +68,7 @@ class OrdenController extends Controller
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }
         $examenes = Examen::all();
-        $orden_numero = Orden::where('sede_id', $sede->id)
-               ->max('numero') ?  : 0; // Si no hay órdenes, iniciar en 0
-        if (Orden::where('numero', $orden_numero+1)->exists()) {
-            // Si ya existe el número de orden, comenzar en la siguiente unidad de mil
-            $maxNumero = Orden::max('numero');
-            $orden_numero =( ceil(($maxNumero + 1) / 2000) * 2000);
-        }else {
-            $orden_numero = $orden_numero + 1; // Incrementar para la nueva orden
-        }
+        $orden_numero = SugerirNumeroOrden::paraSede($sede->id);
         return view('ordenes.create', compact('examenes', 'orden_numero', 'persona'));
     }
 

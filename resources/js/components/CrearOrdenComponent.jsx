@@ -15,6 +15,9 @@ const formatCOP = (value) =>
 const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const { axiosInstance, csrfLoaded } = useAxiosAuth();
     const [next_numero, setNextNumero] = useState(null);
+    const [numeroOrdenDuplicado, setNumeroOrdenDuplicado] = useState(false);
+    const [sugerenciaNumeroOrden, setSugerenciaNumeroOrden] = useState('');
+    const [errorVerificacionNumero, setErrorVerificacionNumero] = useState('');
 
     useEffect(() => {
         const fetchNextNumero = async () => {
@@ -55,6 +58,39 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const { validateForm, validateField, errors, clearError } = useOrderValidation();
 
     useEffect(() => {
+        const numero = formOrden.numero_orden.trim();
+        if (!csrfLoaded || numero.length === 0 || numero.length > 255) {
+            setNumeroOrdenDuplicado(false);
+            setErrorVerificacionNumero('');
+            return undefined;
+        }
+
+        let cancelled = false;
+        const timer = setTimeout(async () => {
+            try {
+                const response = await axiosInstance.get('/api/ordenes/verificar-numero', {
+                    params: { numero_orden: numero },
+                });
+                if (cancelled) return;
+                setNumeroOrdenDuplicado(response.data.usado);
+                setSugerenciaNumeroOrden(response.data.sugerencia || '');
+                setErrorVerificacionNumero('');
+            } catch (verificationError) {
+                if (cancelled) return;
+                setErrorVerificacionNumero(
+                    verificationError.response?.data?.message || 'No se pudo verificar si el número ya está en uso.'
+                );
+                console.error('Error al verificar el número de orden:', verificationError);
+            }
+        }, 350);
+
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [axiosInstance, csrfLoaded, formOrden.numero_orden]);
+
+    useEffect(() => {
         if (!persona) return;
         setFormOrden(prev => ({ ...prev, paciente_id: persona.id || null }));
     }, [persona]);
@@ -91,6 +127,10 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const handleTablasRefUpdate = (e) => {
         const { name, value } = e.target;
         setFormOrden(prev => ({ ...prev, [name]: value }));
+        if (name === 'numero_orden') {
+            setNumeroOrdenDuplicado(false);
+            setErrorVerificacionNumero('');
+        }
         clearError(name);
     };
 
@@ -174,6 +214,12 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
             return;
         }
 
+        if (numeroOrdenDuplicado) {
+            setCurrentStep(3);
+            setError('Ese número de orden ya fue usado en esta sede. Ingrese otro número antes de continuar.');
+            return;
+        }
+
         setLoading(true);
         setError(null);
 
@@ -242,22 +288,33 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                             </h1>
                         </div>
                         {/* Número de orden */}
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                             <label htmlFor="numero_orden" className="text-sm text-gray-500 font-medium">
                                 Orden N°
                             </label>
                             <input
-                                type="number"
+                                type="text"
                                 id="numero_orden"
+                                maxLength={255}
+                                title="Máximo 255 caracteres"
+                                autoComplete="off"
                                 onChange={handleTablasRefUpdate}
                                 name="numero_orden"
                                 value={formOrden.numero_orden}
-                                className={`h-9 w-24 px-2 text-lg text-center font-semibold text-primary bg-white rounded-md border-0 focus:outline-none transition-colors ${
+                                className={`h-9 w-48 px-2 text-lg text-center font-semibold text-primary bg-white rounded-md border-0 focus:outline-none transition-colors ${
                                     errors.numero_orden
                                         ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
                                         : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'
                                 }`}
                             />
+                            {numeroOrdenDuplicado && (
+                                <p className="basis-full text-sm text-red-600" role="alert">
+                                    Este número ya fue usado. Sugerencia: {sugerenciaNumeroOrden || 'ingrese otro número'}.
+                                </p>
+                            )}
+                            {errorVerificacionNumero && (
+                                <p className="basis-full text-sm text-amber-700" role="status">{errorVerificacionNumero}</p>
+                            )}
                         </div>
                     </div>
 
@@ -409,19 +466,24 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                                 currentStep !== 4 ? 'hidden' : ''
                             }`}
                         >
-                            {loading ? (
-                                <>
-                                    <div className="animate-spin h-4 w-4 border-b-2 border-white rounded-full"></div>
-                                    Creando orden...
-                                </>
-                            ) : (
-                                <>
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Crear Orden
-                                </>
-                            )}
+                            <span
+                                aria-hidden="true"
+                                className={`h-4 w-4 rounded-full border-b-2 border-white ${
+                                    loading ? 'inline-block animate-spin' : 'hidden'
+                                }`}
+                            />
+                            <svg
+                                className={`h-4 w-4 ${loading ? 'hidden' : ''}`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                                aria-hidden="true"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className={loading ? 'hidden' : ''}>Crear Orden</span>
+                            <span className={loading ? '' : 'hidden'}>Creando orden...</span>
                         </button>
                     </div>
 
