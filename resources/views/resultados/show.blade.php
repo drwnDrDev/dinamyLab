@@ -110,6 +110,42 @@
         </footer>
     </article>
 
+    <section class="print:hidden max-w-6xl mx-auto p-4 md:p-6">
+        <h2 class="mb-3 text-lg font-semibold text-titles dark:text-white">Historial de modificaciones</h2>
+        @if ($cambios->isEmpty())
+            <p class="rounded-md border border-borders bg-background p-4 text-sm text-text dark:text-gray-300">
+                Este resultado no tiene modificaciones registradas.
+            </p>
+        @else
+            <div class="overflow-x-auto rounded-lg border border-borders">
+                <table class="w-full border-collapse text-sm">
+                    <thead class="bg-secondary text-left text-titles dark:bg-slate-800 dark:text-white">
+                        <tr>
+                            <th class="px-3 py-2">Fecha</th>
+                            <th class="px-3 py-2">Parámetro</th>
+                            <th class="px-3 py-2">Valor anterior</th>
+                            <th class="px-3 py-2">Valor nuevo</th>
+                            <th class="px-3 py-2">Modificado por</th>
+                            <th class="px-3 py-2">Observación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($cambios as $cambio)
+                            <tr class="border-t border-borders align-top text-text dark:text-gray-200">
+                                <td class="whitespace-nowrap px-3 py-2">{{ $cambio->created_at->format('d/m/Y H:i') }}</td>
+                                <td class="px-3 py-2">{{ $cambio->parametro_nombre }}</td>
+                                <td class="px-3 py-2">{{ $cambio->valor_anterior ?? 'Vacío' }}</td>
+                                <td class="px-3 py-2">{{ $cambio->valor_nuevo ?? 'Vacío' }}</td>
+                                <td class="px-3 py-2">{{ $cambio->usuario_nombre }}</td>
+                                <td class="px-3 py-2">{{ $cambio->observacion }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </section>
+
 
 
 </x-app-layout>
