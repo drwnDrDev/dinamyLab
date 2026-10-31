@@ -1,6 +1,6 @@
 # Imagen PHP-FPM para desarrollo de DinamyLAB
-# 8.4: soporte de seguridad hasta dic-2028; la etiqueta trae el último parche (>= 8.4.27, PHP2Shell)
-FROM php:8.4-fpm
+# 8.5: versión objetivo del proyecto (último parche disponible en la etiqueta)
+FROM php:8.5-fpm
 
 ARG UID=1000
 ARG GID=1000
