@@ -1,6 +1,6 @@
 @props(['item'])
 
-@if ($item['nombre'] !== 'observaciones')
+@if (($item['tipo_dato'] ?? null) !== 'textarea' && $item['nombre'] !== 'observaciones')
     {{-- Parámetros normales --}}
     <td class="text-left py-2 pl-2 uppercase max-w-80">
         <label>{{$item['nombre']}}</label>

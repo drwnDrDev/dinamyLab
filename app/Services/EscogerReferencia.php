@@ -156,27 +156,28 @@ class EscogerReferencia
             Log::info('No se encontraron resultados para el procedimiento.', ['procedimiento_id' => $proc->id]);
             return ['info' => 'No se encontraron resultados para este procedimiento.'];
         }
-        foreach ($proc->examen->parametros()->with('valoresReferencia')->orderBy('posicion')->get() as $parametroBase) {
+        $parametros = [];
+        foreach ($proc->examen->parametros()->with(['valoresReferencia', 'opciones'])->orderBy('posicion')->get() as $parametroBase) {
             $resultado = $resultadosP->firstWhere('parametro_id', $parametroBase->id);
-
+            $referencia = self::estableceReferencia($datosDemograficos, $parametroBase);
 
             if (!$resultado) {
-
-            $parametros[] = [
-                'id'        => $parametroBase->id,
-                'nombre'    => $parametroBase->nombre,
-                'grupo'     => $parametroBase->grupo,
-                'posicion' =>  $parametroBase->posicion,
-                'es_normal' => $isNormal,
-                'tipo_dato' => $parametroBase->tipo_dato,
-                'resultado' => null,
-                'metodo'    => $parametroBase->metodo,
-                'unidades'  => $parametroBase->unidades,
-                //'referencia'=> optional($referencia)->salida ?? null,
-            ];
-            continue;
+                $parametros[] = [
+                    'id' => $parametroBase->id,
+                    'nombre' => $parametroBase->nombre,
+                    'grupo' => $parametroBase->grupo,
+                    'posicion' => $parametroBase->posicion,
+                    'es_normal' => true,
+                    'tipo_dato' => $parametroBase->tipo_dato,
+                    'resultado' => null,
+                    'metodo' => $parametroBase->metodo,
+                    'unidades' => $parametroBase->unidades,
+                    'referencia' => $referencia?->salida,
+                    'opciones' => $parametroBase->opciones->pluck('valor')->all(),
+                ];
+                continue;
             }
-            $referencia = self::estableceReferencia($datosDemograficos, $resultado->parametro);
+
             $isNormal = true;
             if ($referencia) {
                 try {
