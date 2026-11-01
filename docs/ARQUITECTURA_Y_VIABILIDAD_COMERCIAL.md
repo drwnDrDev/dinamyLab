@@ -1,15 +1,47 @@
 # DinamyLAB — Evaluación de Arquitectura y Viabilidad Comercial
 
-**Fecha:** 2026-10-14  
-**Modelo:** Claude Sonnet 4.6  
-**Propósito:** Análisis técnico-comercial para propuesta a cliente — comparación entre IAs
+**Fecha:** 2026-11-01 (revisión de la versión del 2026-10-14)
+**Modelo:** Claude Opus 5.5
+**Propósito:** Análisis técnico-comercial para propuesta a cliente
+**Fuente:** código y historial de git de la rama `maloca` (commit `db5c0e91`).
+**Documentos relacionados:** [MANUAL.md](./MANUAL.md) (funcionamiento, roles y permisos), [DESPLIEGUE_INSTANCIAS.md](./DESPLIEGUE_INSTANCIAS.md), [ENTORNO_DOCKER_WSL.md](./ENTORNO_DOCKER_WSL.md).
 
 ---
 
 ## TL;DR
 
-**Base sólida. MVP funcional en 6–8 semanas.**  
-El núcleo clínico (orden → análisis → resultado → factura) funciona. El dominio colombiano está correctamente modelado. Las brechas son conocidas y estimables.
+**Base sólida, más cerca de producción que hace dos semanas. MVP productivo en 5–7 semanas.**
+Desde la versión anterior se resolvieron varios bloqueantes: el proyecto corre en Docker con MySQL 8.4, subió a Laravel 13 y PHP 8.5, los listados tienen paginación y búsqueda, existe auditoría de cambios en resultados, ingreso de resultados por lotes, reporte imprimible y un modelo de despliegue por cliente (una instancia por cliente en cPanel).
+
+Siguen pendientes:
+- **Ruta destructiva `GET /migracion`**, que ejecuta `migrate:fresh --seed`.
+- **Creación de facturas bloqueada** por un `dd()`.
+- **Control de sede incompleto.**
+- Notificaciones.
+- PDF generado en servidor.
+- Rate limiting.
+- Configuración final de producción.
+
+### Cambios desde la versión del 2026-10-14
+
+| Área | Antes | Ahora |
+|---|---|---|
+| Framework | Laravel 12 | **Laravel 13.38** |
+| PHP | 8.2 (XAMPP, vulnerable) | **PHP 8.5** (contenedor `php:8.5-fpm`) |
+| Base de datos | SQLite | **MySQL 8.4** (Docker); SQLite solo para tests |
+| Entorno dev | XAMPP + `artisan serve` | **Docker Compose**: nginx, PHP-FPM, MySQL, worker de colas, Vite |
+| Sesiones / colas | `file` | `database` |
+| `vendor/` | Versionado en git | **Fuera de git** (commit `041d1fa4`) |
+| Despliegue | No definido | **Una instancia por cliente** en cPanel + Git (`.cpanel.yml`, runbook) |
+| Aislamiento de clientes | Solo por sesión | Middleware `EnsureInstance` por hostname + BD propia por cliente |
+| Listado de pacientes | `Persona::all()` | Paginado (25) con búsqueda y filtros |
+| Resultados | Edición sin rastro | **Auditoría** en `resultado_cambios` (valor anterior/nuevo, usuario, observación) |
+| Ingreso de resultados | Uno a uno | **Por lotes** (`GuardarResultadosLote` + isla React `ResultadosLote`) |
+| Reporte de resultados | Layout sin implementar | **Vista imprimible** (CSS `@media print`); `barryvdh/laravel-dompdf` instalado, sin usar |
+| Número de orden | Entero, lógica en controller | `string`, servicio `SugerirNumeroOrden` (respeta prefijos y ceros) |
+| Errores | Páginas por defecto | Páginas propias en español (401–504) y notificaciones de UI |
+| Seeders | Mezclados | Separados: `CatalogoBaseSeeder`, `ClienteSeeder`, `DemoSeeder`, `RolesYPermisosSeeder` |
+| Tests | 18 archivos | **26 archivos** |
 
 ---
 
@@ -20,33 +52,36 @@ El núcleo clínico (orden → análisis → resultado → factura) funciona. El
 3. [Schema de Base de Datos](#3-schema-de-base-de-datos)
 4. [Arquitectura Backend](#4-arquitectura-backend)
 5. [Arquitectura Frontend](#5-arquitectura-frontend)
-6. [Features Implementados](#6-features-implementados)
-7. [Deuda Técnica](#7-deuda-técnica)
-8. [Cobertura de Tests](#8-cobertura-de-tests)
-9. [Dependencias](#9-dependencias)
-10. [Seguridad](#10-seguridad)
-11. [Comparación con Software Similar](#11-comparación-con-software-similar)
-12. [Costos y Pricing](#12-costos-y-pricing)
-13. [Tiempos de Entrega](#13-tiempos-de-entrega)
-14. [Riesgos para la Propuesta](#14-riesgos-para-la-propuesta)
-15. [Resumen Ejecutivo](#15-resumen-ejecutivo)
+6. [Infraestructura y Despliegue](#6-infraestructura-y-despliegue)
+7. [Features Implementados](#7-features-implementados)
+8. [Deuda Técnica](#8-deuda-técnica)
+9. [Cobertura de Tests](#9-cobertura-de-tests)
+10. [Dependencias](#10-dependencias)
+11. [Seguridad](#11-seguridad)
+12. [Comparación con Software Similar](#12-comparación-con-software-similar)
+13. [Costos y Pricing](#13-costos-y-pricing)
+14. [Tiempos de Entrega](#14-tiempos-de-entrega)
+15. [Riesgos para la Propuesta](#15-riesgos-para-la-propuesta)
+16. [Resumen Ejecutivo](#16-resumen-ejecutivo)
 
 ---
 
 ## 1. Estadísticas del Codebase
 
-| Métrica | Valor |
-|---|---|
-| Controladores PHP | 75 archivos — 5,911 LOC |
-| Modelos Eloquent | 43 archivos — 1,848 LOC |
-| Vistas Blade | 156 archivos |
-| Componentes React/JS | 45+ archivos — ~10,215 LOC |
-| Migraciones | 52 archivos |
-| Tests | 18 archivos |
-| Services | 8 archivos |
-| Form Requests | 5 archivos |
-| Policies | 3 archivos |
-| Archivos totales gestionados | ~600+ |
+| Métrica | Valor (2026-11-01) | Antes (2026-10-14) |
+|---|---|---|
+| Controladores PHP | 75 archivos — 6,277 LOC (22 en `Api/`) | 75 — 5,911 LOC |
+| Modelos Eloquent | 43 archivos — 1,838 LOC | 43 — 1,848 LOC |
+| Vistas Blade | 169 archivos | 156 |
+| Archivos React/JS | 79 archivos — ~10,650 LOC | 45+ — ~10,215 LOC |
+| Migraciones | 54 archivos | 52 |
+| Tests | 26 archivos | 18 |
+| Services | 11 archivos | 8 |
+| Form Requests | 5 archivos | 5 |
+| Policies | 3 archivos | 3 |
+| Middleware propio | 1 (`EnsureInstance`) | 0 |
+| Comandos Artisan propios | 1 (`instancia:verificar`) | 0 |
+| Declaraciones `Route::` | web 89 · api 74 · auth 17 | ~93 web · 40+ api |
 
 ---
 
@@ -55,40 +90,41 @@ El núcleo clínico (orden → análisis → resultado → factura) funciona. El
 ```
 DinamyLAB/
 ├── app/
+│   ├── Console/Commands/       # instancia:verificar
 │   ├── Http/
-│   │   ├── Controllers/        # 75 controladores web + API
+│   │   ├── Controllers/        # 75 controladores (22 API)
+│   │   ├── Middleware/         # EnsureInstance (guarda por hostname)
 │   │   └── Requests/           # 5 Form Requests
 │   ├── Models/                 # 43 modelos Eloquent
-│   ├── Services/               # 8 servicios de negocio
+│   ├── Services/               # 11 servicios de negocio
 │   ├── Policies/               # 3 políticas de autorización
-│   ├── Jobs/                   # Jobs para colas
-│   ├── Providers/              # Service providers
-│   ├── Support/                # Helpers y utilidades
-│   └── View/                   # View composers
+│   ├── Jobs/, Providers/, Support/, View/
+├── config/instancias.php       # Identidad, dominios y datos del cliente (desde .env)
 ├── database/
-│   ├── migrations/             # 52 migraciones
-│   ├── seeders/
+│   ├── migrations/             # 54 migraciones
+│   ├── seeders/                # Catálogo base / Cliente / Demo / Roles
 │   └── factories/
-├── resources/
-│   ├── views/                  # 156 plantillas Blade
-│   ├── js/                     # React islands + lógica JS
-│   └── css/
-├── routes/
-│   ├── web.php                 # 93 rutas web
-│   └── api.php                 # 40+ endpoints API
-├── tests/
-│   ├── Feature/                # 13 tests de integración
-│   └── Unit/                   # 2 tests unitarios
-├── config/                     # 13 archivos de configuración
-├── docs/                       # 11 archivos de documentación
-└── public/
+├── docker/                     # Dockerfile PHP 8.5, php.ini, nginx
+├── compose.yaml                # Entorno de desarrollo
+├── .cpanel.yml                 # Tareas de despliegue en cPanel
+├── resources/{views,js,css}
+├── routes/{web,api,auth}.php
+├── tests/{Feature,Unit}
+└── docs/
 ```
 
 ---
 
 ## 3. Schema de Base de Datos
 
-**52 migraciones** que cubren el dominio completo del sector salud colombiano.
+**54 migraciones** que cubren el dominio del sector salud colombiano. Motor de desarrollo y producción: **MySQL 8.4** (`utf8mb4_unicode_ci`, zona horaria `America/Bogota`).
+
+### Cambios recientes
+
+| Migración | Efecto |
+|---|---|
+| `alter_ordenes_medicas_numero_to_string` | El número de orden pasa a texto para admitir prefijos y ceros a la izquierda |
+| `create_resultado_cambios_table` | Bitácora de ediciones de resultados: procedimiento, resultado, parámetro, usuario, valor anterior, valor nuevo, observación |
 
 ### Entidades Núcleo
 
@@ -108,6 +144,7 @@ DinamyLAB/
 | `examenes` | Catálogo de análisis (hemograma, glucosa, etc.) |
 | `procedimientos` | Instancias de análisis vinculadas a órdenes |
 | `resultados` | Valores obtenidos del análisis |
+| `resultado_cambios` | **Nuevo.** Auditoría de ediciones de resultados |
 | `valor_referencias` | Rangos de referencia por examen |
 | `orden_examen` | Pivot M2M: órdenes ↔ exámenes (con cantidad) |
 | `observacions` | Notas sobre procedimientos |
@@ -139,43 +176,22 @@ DinamyLAB/
 |---|---|
 | `convenios` | Contratos de servicio y tarifas negociadas |
 | `tarifas` | Reglas de precio (polimórfico: examen, servicio, procedimiento) |
-| `sede_tarifa` | Precios por sede (pivot) |
-| `convenio_tarifa` | Precios por convenio (pivot) |
-| `facturas` | Facturas |
-| `factura_medio_pagos` | Métodos de pago por factura (pivot) |
-| `impuestos` | Reglas de impuestos |
-| `metodo_pagos` | Métodos de pago |
+| `sede_tarifa` / `convenio_tarifa` | Precios por sede / por convenio |
+| `facturas`, `factura_medio_pagos` | Facturas y métodos de pago |
+| `impuestos`, `metodo_pagos` | Impuestos y métodos de pago |
 | `resolucions` | Resoluciones DIAN para facturación |
 
 ### Datos de Contacto (Polimórficos)
 
-| Tabla | Tipo polimórfico |
-|---|---|
-| `contacto_emergencias` | emrgenciable_type |
-| `direccions` | direccionable_type |
-| `telefonos` | telefonoable_type |
-| `correo_electronicos` | emailable_type |
-| `red_socials` | redable_type |
+`contacto_emergencias`, `direccions`, `telefonos`, `correo_electronicos`, `red_socials`.
 
 ### Atención Clínica
 
-| Tabla | Descripción |
-|---|---|
-| `modalidad_atencions` | Ambulatorio, hospitalario, etc. |
-| `finalidads` | Diagnóstico, control, tamizaje, etc. |
-| `via_ingresos` | Urgencia, consulta externa, etc. |
-| `servicios` | Tipos de servicio |
-| `servicio_habilitados` | Servicios habilitados por organización |
+`modalidad_atencions`, `finalidads`, `via_ingresos`, `servicios`, `servicio_habilitados`.
 
 ### Especiales
 
-| Tabla | Descripción |
-|---|---|
-| `pre_registros_citas` | Pre-registro de citas anónimas (público) |
-| `parametros` | Parámetros configurables del sistema |
-| `opcions` | Opciones para formularios/selects |
-| `roles`, `permissions` | Spatie: roles y permisos |
-| `personal_access_tokens` | Sanctum: tokens API |
+`pre_registros_citas` (público), `parametros`, `opcions`, `roles`/`permissions` (Spatie), `personal_access_tokens` (Sanctum), `sessions`, `jobs` (sesiones y colas en BD).
 
 ### Modelo de Relaciones Principales
 
@@ -184,30 +200,18 @@ Persona (paciente)
 ├── has many Ordenes
 ├── has one AfiliacionSalud
 ├── morphOne Direccion
-├── morphMany Telefonos
-├── morphMany CorreoElectronicos
-└── morphMany RedSocials
+└── morphMany Telefonos / CorreoElectronicos / RedSocials
 
 Orden
-├── belongs to Persona
-├── belongs to Sede
-├── has many Procedimientos
-├── has many Facturas
-├── belongs to many Examenes (pivot orden_examen, con cantidad)
-└── → Resultados (a través de Procedimientos)
+├── belongs to Persona, Sede
+├── has many Procedimientos, Facturas
+└── belongs to many Examenes (pivot orden_examen, con cantidad)
 
 Procedimiento
-├── belongs to Orden
-├── belongs to Examen
-├── belongs to Empleado
-├── belongs to Sede
-├── has one Resultado
-├── has one ContactoEmergencia
+├── belongs to Orden, Examen, Empleado, Sede
+├── has many Resultados
+├── has many ResultadoCambios   ← nuevo
 └── has many Observacions
-
-Resultado
-├── belongs to Procedimiento
-└── has many ValorReferencias
 
 Tarifa (polimórfica)
 ├── tarifable: Examen | Servicio | Procedimiento
@@ -221,640 +225,522 @@ Tarifa (polimórfica)
 
 ### Controladores (75 total)
 
-**Web Controllers:**
-- `PersonaController` — CRUD pacientes
-- `OrdenController` — Crear y gestionar órdenes
-- `ProcedimientoController` — Estado de procedimientos
-- `ResultadosController` — Ingreso de resultados
-- `FacturaController` — Facturación
-- `ExamenController` — Catálogo de exámenes
-- `ConvenioController` — Contratos y tarifas
-- `EmpleadoController` — Gestión de personal y dashboard
-- `SedeController` — Gestión de sucursales
-- `AdministracionController` — Admin del sistema
-- `PreRegistroCitaController` — Pre-registro de citas
-- +15 controladores de soporte
+**Web:** `PersonaController`, `OrdenController`, `ProcedimientoController`, `ResultadosController`, `FacturaController`, `ExamenController` (incluye lotes), `ConvenioController`, `EmpleadoController`, `SedeController`, `AdministracionController`, `PreRegistroCitaController`, `CodigoCupController`, `CodigoDiagnosticoController` y controladores de soporte.
 
-**API Controllers (31 en `Http/Controllers/Api/`):**
-- `PersonaController` — CRUD personas vía API
-- `OrdenController` — Creación de órdenes vía API
-- `ExamenesController` — Listado y cálculo de precios
-- `ResultadosController` — Envío de resultados
-- `PreRegistroCitaController` — Endpoints públicos y autenticados
-- `TarifaController` — CRUD de tarifas
-- `FrontendDataController` — Datos estáticos para el frontend
-- `DashboardController` — Métricas del dashboard
-- +helpers para CUPS, CIE-10, municipios, datos del sistema de salud
+**API (22 en `Http/Controllers/Api/`):** personas, órdenes, exámenes y precios, resultados, pre-registro de citas, tarifas, datos estáticos del frontend, dashboard, CUPS, CIE-10 (nuevo endpoint paginado con búsqueda), municipios y sistema de salud.
 
-**Auth Controllers (7, Breeze scaffolding):**
-- Registro, login, restablecimiento de contraseña, verificación de email
+**Auth (Breeze):** registro, login, restablecimiento de contraseña, verificación de email. Se corrigió la pérdida de sesión por doble desencriptado de cookies en la API (`bootstrap/app.php`).
 
-**Cambio propuesto: Laravel Fortify (pendiente de implementación backend):**
-- Reemplazar Breeze como backend de autenticación web, conservando los flujos actuales de registro, login, restablecimiento de contraseña y verificación de email.
-- Fortify es headless: expone acciones y rutas de autenticación, pero no entrega pantallas. La interfaz debe implementarse en Blade/React y conectarse a esos flujos.
-- Configurar Fortify, sus vistas y funciones habilitadas; retirar las rutas y controladores de autenticación de Breeze para evitar duplicidad.
-- Mantener Sanctum para la autenticación de la API. Fortify no lo reemplaza ni modifica los tokens API existentes.
-- La migración requiere cambios backend; este documento registra el destino, pero dichos cambios quedan pendientes para el responsable backend.
+**Cambio propuesto, sin implementar: Laravel Fortify.** Reemplazaría a Breeze como backend de autenticación web y mantendría Sanctum para la API. Es un cambio de backend que queda en manos del responsable backend.
 
-### Rutas
+### Middleware
 
-**Web (`routes/web.php` — 93 rutas):**
-- Públicas: `/citas/registrar` (pre-registro)
-- Protegidas (auth): `/ordenes`, `/resultados`, `/personas`, `/procedimientos`, `/examenes`
-- Solo admin (`can:eliminar_persona`): gestión CUPS/CIE-10, admin empleados, CRUD convenios
-- Financieras (`can:ver_facturas`): facturación, contratos, resoluciones DIAN
+- `EnsureInstance` (web y API): rechaza con 503 las peticiones a un hostname que no está en `APP_HOSTS`. Sin `APP_INSTANCE` no actúa (desarrollo y tests).
+- Sanctum stateful + `StartSession` en la API, para que los endpoints lean la sede activa de la sesión.
 
-**API (`routes/api.php` — 40+ endpoints):**
-- Públicos: `POST /api/citas/pre-registrar`, `GET /api/citas/consultar/{codigo}`
-- Autenticados (Sanctum): `/api/cups`, `/api/personas`, `/api/ordenes`, `/api/resultados`, `/api/tarifas`
-- Anidados: `/api/procedimientos/examen/{examenId}/pendientes`
-
-### Services (8 archivos)
+### Services (11 archivos)
 
 | Servicio | Responsabilidad |
 |---|---|
 | `GuardarPersona` | Parsea nombres, guarda paciente con contactos |
 | `GuardarConvenio` | Guarda contratos de servicio |
-| `EscogerPrecioExamen` | Lógica de priorización de tarifas |
-| `EscogerReferencia` | Selecciona rango de referencia para resultados |
-| `GuardarContacto` | Guarda info de contacto (teléfono, email, dirección) |
-| `ElegirEmpresa` | Selección de organización basada en sesión |
-| `NombreParser` | Divide nombre completo en primer/segundo nombre y apellidos |
-| `ParseadorListaPersonas` | Importación masiva de listas de pacientes |
+| `GuardarContacto` | Guarda teléfono, email, dirección |
+| `EscogerPrecioExamen` | Priorización de tarifas |
+| `EscogerReferencia` | Selecciona rango de referencia (refactorizado) |
+| `ElegirEmpresa` | Selección de organización según sesión |
+| `NombreParser` | Divide nombre completo |
+| `ParseadorListaPersonas` | Importación masiva de pacientes |
+| `ActualizarResultados` | **Nuevo.** Edita resultados en transacción con bloqueo de fila, valida por tipo de dato (número, fecha, opción) y registra el cambio en `resultado_cambios` |
+| `GuardarResultadosLote` | **Nuevo.** Guarda resultados de varios procedimientos de un examen en una sola operación |
+| `SugerirNumeroOrden` | **Nuevo.** Propone el siguiente número de orden por sede, conservando prefijo y relleno de ceros |
 
 ### Lógica de Tarifas (EscogerPrecioExamen)
 
-Jerarquía de prioridad para calcular precio:
 1. `convenio+sede` — precio específico por contrato y sucursal
 2. `sede` — precio específico por sucursal
 3. `precio_base` — precio base del examen
 
-### Form Requests (5 archivos)
+### Form Requests y Policies
 
-- `StorePersonaRequest` — Validación de creación de paciente
-- `OrdenStoreRequest` — Validación de creación de orden
-- `ProfileUpdateRequest` — Actualización de perfil de usuario
-- `CambiarNombrePersonaRequest` — Cambio de nombre
-- Auth requests (3, Breeze)
-
-### Policies (3 archivos)
-
-- `EmpresaPolicy` — Control de acceso a organizaciones
-- `PreRegistroCitaPolicy` — Propiedad de pre-registros de citas
-- `SedePolicy` — Control de acceso a sucursales
-- Trait compartido: `ChecksEmpresaAccess` — Verifica relación user→empleado→organización
+Sin cambios: 5 Form Requests (`StorePersonaRequest`, `OrdenStoreRequest` ajustado, `ProfileUpdateRequest`, `CambiarNombrePersonaRequest`, `LoginRequest`) y 3 Policies (`EmpresaPolicy`, `PreRegistroCitaPolicy`, `SedePolicy`, con el trait `ChecksEmpresaAccess`).
 
 ---
 
 ## 5. Arquitectura Frontend
 
-### Vistas Blade (156 archivos)
+### Vistas Blade (169 archivos)
 
-| Directorio | Contenido |
-|---|---|
-| `layouts/` | Layouts maestros, navegación, footer |
-| `auth/` | Login, registro, recuperación de contraseña |
-| `personas/` | Lista, detalle, formularios de creación de pacientes |
-| `ordenes/` | Creación (con islands React), listado, detalle |
-| `resultados/` | Formularios de ingreso, historial |
-| `procedimientos/` | Visualización de estados |
-| `examenes/` | Catálogo, detalle, operaciones batch |
-| `facturas/` | Lista y detalle de facturas |
-| `convenios/` | Formularios (Blade y React) |
-| `citas/` | Pre-registro de citas |
-| `admin/`, `empresa/`, `sedes/`, `empleados/` | Áreas admin |
+Además de los módulos existentes (`personas/`, `ordenes/`, `resultados/`, `procedimientos/`, `examenes/`, `facturas/`, `convenios/`, `citas/`, `admin/`, `empresa/`, `sedes/`, `empleados/`):
 
-### Componentes React (45+ archivos, ~10K LOC)
+- **Listados con búsqueda y filtros** en personas, órdenes, procedimientos, resultados, exámenes, facturas, convenios, CUPS y CIE-10.
+- **`resultados/show`** rediseñado como reporte imprimible: encabezado, datos del paciente, tabla de parámetros y pie de página que solo aparecen al imprimir.
+- **`resultados/edit`** con observación obligatoria y visualización del historial de cambios.
+- **`errors/`**: páginas de error propias (401, 403, 404, 419, 422, 429, 500–504) sobre una plantilla común.
+- **`layouts/notifications`**: avisos de éxito y error unificados.
+- Correcciones del modo oscuro.
 
-**Entry points (registrados en vite.config.js):**
-- `app.jsx` — Dashboard, registro de citas, dropdown, typewriter
-- `appOrden.jsx` — Creación de órdenes
-- `appPersona.jsx` — Detalle de persona
-- `ExamenDetail.jsx` — Detalle de examen
-- `convenioCreate.jsx` — Formulario de convenios
+### Componentes React
 
-**Componentes principales:**
+**Entry points (vite.config.js):** `app.jsx` (dashboard, citas, lotes de resultados, etc.), `appOrden.jsx`, `appPersona.jsx`, `ExamenDetail.jsx`, `convenioCreate.jsx`.
 
 | Componente | Función |
 |---|---|
-| `CrearOrdenComponent` | Flujo completo: paciente → exámenes → diagnósticos |
-| `FormPersona` | Formulario de paciente (reutilizable) |
-| `AutocompleteInput` | Dropdown con búsqueda genérico |
-| `CieSearchInput` | Búsqueda de códigos CIE-10 con debounce |
-| `BuscarModelo` | Búsqueda genérica de modelos |
-| `TablaExamenes` | Tabla de exámenes con precios |
-| `StepperOrden` | Formulario multi-paso para órdenes |
-| `FormPreRegistroCita` | Formulario de pre-registro público |
-| `RecepcionCitas` | Panel de recepción de citas |
-| `TarifasExamenesSede` | Visualización de precios por sede |
-| `ConvenioForm` | Formulario de convenio con búsqueda de países |
-| `DatosPersona`, `DatosOrden`, `DatosExamenes` | Componentes de visualización de datos |
+| `CrearOrdenComponent` | Flujo paciente → exámenes → diagnósticos (corregido; valores por defecto revisados) |
+| `ResultadosLote` | **Nuevo.** Ingreso de resultados por lotes para un examen |
+| `Setup` | Configuración inicial (reescrito) |
+| `FormPersona` | Formulario de paciente reutilizable |
+| `AutocompleteInput`, `CieSearchInput`, `BuscarModelo` | Búsquedas con autocompletado |
+| `TablaExamenes`, `StepperOrden` | Tabla de exámenes y formulario multipaso |
+| `FormPreRegistroCita`, `RecepcionCitas` | Pre-registro y recepción |
+| `TarifasExamenesSede`, `ConvenioForm` | Tarifas y convenios |
 
-### Patrón de Integración Islands
+### Patrón de islas
 
-```html
-<!-- Blade template -->
-<div id="react-crear-orden" data-persona='{{ json_encode($paciente) }}'></div>
-```
-
-```javascript
-// app.jsx
-if (document.getElementById('react-crear-orden')) {
-  const element = document.getElementById('react-crear-orden');
-  const persona = JSON.parse(element.getAttribute('data-persona'));
-  const root = createRoot(element);
-  root.render(<CrearOrdenComponent paciente={persona} />);
-}
-```
-
-### Gestión de Estado
-
-- `useState` / `useReducer` local (sin Redux ni Context global)
-- Estado de formularios manejado en cada componente
-- Llamadas API vía axios (`resources/js/api.js`)
-- Session storage para selección de sede (fuente dual con sesión PHP)
+Cada componente React se monta sobre un `<div id="...">` dentro de una vista Blade y recibe sus datos por atributos `data-*`. No hay SPA ni estado global; el estado es local (`useState`/`useReducer`) y las llamadas van por axios.
 
 ---
 
-## 6. Features Implementados
+## 6. Infraestructura y Despliegue
 
-### ✅ Completamente Funcionales
+### Desarrollo (Docker Compose)
 
-1. **Gestión de Pacientes**
-   - Crear paciente (parseo de nombre, tipo de documento, fecha nacimiento, sexo, nacionalidad)
-   - Buscar paciente por número de documento
-   - Ver perfil con historial de órdenes y procedimientos
-   - Asociar dirección, teléfono, email, redes sociales
+| Servicio | Imagen | Función |
+|---|---|---|
+| `app` | `php:8.5-fpm` (propia) | PHP-FPM con la aplicación |
+| `web` | `nginx:1.27-alpine` | Servidor web en `:8000` |
+| `db` | `mysql:8.4` | Base de datos en `:3307` del host, con healthcheck |
+| `queue` | misma imagen que `app` | `php artisan queue:work` |
+| `vite` | `node:22-alpine` | HMR con pnpm en `:5173` |
 
-2. **Creación de Órdenes Médicas**
-   - Seleccionar paciente → elegir exámenes → definir diagnósticos (CIE-10) → crear orden
-   - Formulario React con autocomplete para exámenes y diagnósticos
-   - Numeración de órdenes (incremental por sede, maneja huecos)
-   - Múltiples exámenes por orden con cantidades
-   - Cálculo de totales basado en tarifas o precio base
-   - Vinculación a múltiples procedimientos
+Las credenciales salen del `.env`; el compose no tiene secretos.
 
-3. **Gestión de Procedimientos**
-   - Auto-creación de procedimientos al guardar la orden (uno por examen)
-   - Seguimiento de estado (en proceso, completado, etc.)
-   - Vinculación a empleado ejecutor y sede
-   - Registro de código diagnóstico, servicio, modalidad, finalidad, vía de ingreso
+### Producción: una instancia por cliente
 
-4. **Ingreso de Resultados**
-   - Ingresar resultados de laboratorio por procedimiento
-   - Seleccionar rango de referencia por examen
-   - Almacenar valores numéricos + marcador clínico (normal/anormal)
-   - Ver historial de resultados por paciente
+- Cada cliente tiene **su propio clone, `.env`, base de datos y `storage/`**. El código es el mismo repositorio y el mismo tag para todos.
+- Despliegue con **cPanel → Git Version Control** y tareas en `.cpanel.yml`.
+- Aislamiento: `APP_INSTANCE`, `APP_HOSTS`, `SESSION_COOKIE` propio y `SESSION_DOMAIN` vacío, para que una instancia no atienda ni comparta cookies con otra.
+- Datos del cliente (razón social, NIT, sede, código de prestador, admin) en variables `CLIENTE_*`, cargados por `ClienteSeeder`. El código no conoce a ningún cliente.
+- `php artisan instancia:verificar` revisa la configuración antes de abrir la instancia.
 
-5. **Sistema de Precios**
-   - Jerarquía: convenio+sede → solo sede → precio base del examen
-   - Precios multisede (diferentes precios por sucursal)
-   - Precios por convenio
-   - Cálculo automático del total en la orden
+Este modelo es más simple que una arquitectura multi-tenant en una sola base de datos. Encaja con un MVP: cada cliente queda aislado a nivel de BD y el costo de hosting sigue siendo bajo.
 
-6. **Pre-Registro de Citas** (Público)
-   - Registro anónimo: nombre, teléfono, fecha/hora preferida
-   - Código de confirmación (TODO: envío por email/SMS)
-   - Check-in en panel de recepción
-   - El personal puede confirmar/completar o cancelar el pre-registro
+### Pendientes de infraestructura
 
-7. **Facturación**
-   - Crear facturas desde órdenes
-   - Vincular múltiples métodos de pago por factura
-   - Gestión de resoluciones DIAN
-   - Términos de pago a 30 días por defecto
+- **Spike S0 (`vendor/`)**: como `vendor/` ya no está en git, el hosting debe poder correr Composer. Si no puede, hay que volver a versionarlo.
+- **Versión de PHP en el hosting**: `composer.json` exige `^8.5`. Si el hosting no la ofrece, bajar a `^8.3` (mínimo de Laravel 13).
+- **CI**: el workflow de GitHub Actions usa PHP 8.5, pero solo se dispara en `master` y `*.x`, y la rama principal es `main`.
 
-8. **Integración con Sistema de Salud**
-   - Selección de EPS por paciente
-   - Tipo de afiliación (contributivo, subsidiado, etc.)
-   - Seguimiento de plan de salud
+---
 
-9. **Generación de Reportes** (Parcial)
-   - Exportación RIPS (estándar de facturación colombiano)
-   - Filtrado por estado de procedimientos
-   - Exportación a JSON/CSV
+## 7. Features Implementados
 
-10. **Gestión de Usuarios**
-    - Autenticación actual (Breeze scaffolding); migración propuesta a Laravel Fortify pendiente
-    - Control de acceso por roles (admin, técnico de lab, recepcionista — Spatie)
-    - Vinculación Empleado ↔ Usuario ↔ Organización
-    - Control de acceso por sede
+### ✅ Funcionales
 
-11. **Dashboard y Analíticas**
-    - Métricas: procedimientos pendientes, pacientes del día, órdenes
-    - Desglose por estado de procedimientos
-    - Tarjetas de navegación rápida
+1. **Gestión de pacientes**: crear, buscar y filtrar con paginación, ver perfil con historial, contactos (la edición web falta; ver Parciales).
+2. **Órdenes médicas**: paciente → exámenes → CIE-10 → orden; número sugerido por sede con prefijos; múltiples exámenes con cantidades; totales por tarifa.
+3. **Procedimientos**: auto-creados por examen, estados, empleado, sede, datos RIPS.
+4. **Ingreso de resultados**: por procedimiento y **por lotes**; rangos de referencia; validación por tipo de dato.
+5. **Edición auditada de resultados**: cada cambio guarda valor anterior, valor nuevo, usuario y observación obligatoria, dentro de una transacción con bloqueo.
+6. **Reporte de resultados imprimible**: vista con formato de impresión (encabezado, paciente, parámetros, pie). Se imprime o guarda como PDF desde el navegador.
+7. **Precios**: convenio+sede → sede → precio base; multisede.
+8. **Pre-registro de citas** (público): código de confirmación, check-in, confirmación o cancelación.
+9. **Sistema de salud**: EPS, tipo de afiliación, plan.
+10. **RIPS**: exportación JSON/CSV (conserva valores de prueba en algunos puntos; falta validación normativa).
+11. **Usuarios y roles**: Breeze + Spatie (roles `admin`, `prestador`, `agente`, `contable`, `paciente`), vínculo empleado ↔ usuario ↔ organización.
+12. **Dashboard**: métricas de procedimientos, pacientes y órdenes.
+13. **Búsqueda y filtrado** en todos los listados principales, incluidos CUPS y CIE-10.
+14. **Despliegue por cliente**: instancias aisladas, seeders separados, verificación de instancia.
 
-### 🟡 Parcialmente Funcionales
+### 🟡 Parciales
 
-- **Importación masiva de pacientes** — Componente y parseo funcionan; transacción sin probar a fondo
-- **Procesamiento batch de exámenes** — Vista creada; lógica pendiente de verificación
-- **Edición de persona** — Creación funciona; actualización incompleta
-- **Gestión de códigos CIE-10** — Vista funciona; agregar/editar/eliminar puede faltar pulido
-- **Funcionalidad de búsqueda** — Búsqueda básica funciona; filtrado avanzado incompleto
+- **Facturación**: hay listado, detalle, medios de pago y resoluciones DIAN, pero **la creación está bloqueada**: `FacturaController.php:95` tiene un `dd()` antes de guardar.
+- **PDF generado en servidor**: `barryvdh/laravel-dompdf` está instalado, pero ningún código lo usa todavía. Hoy el PDF sale de la impresión del navegador, lo que alcanza para entregar en mostrador pero no para enviar por correo ni archivar.
+- **Cargador de listas de pacientes**: parsea la lista y deja elegir una persona para llenar el formulario. **No** crea registros en lote.
+- **Edición de persona**: en web, `edit`, `update` y `destroy` de `PersonaController` están vacíos; solo existe la actualización por API.
+- **Control por sede**: `elegirSede()` no verifica que el usuario pertenezca a la sede, y las escrituras de resultados (`store` web y API) no aplican el control que sí tiene `update`. Detalle en [MANUAL.md §7](./MANUAL.md#7-roles-permisos-y-sedes).
+- **Auditoría HABEAS DATA**: cubre la edición de resultados; falta registrar accesos y cambios a datos de pacientes y órdenes.
 
-### ❌ Solo Scaffolding (No Funcional)
+### ❌ No implementado
 
-- Notificaciones por email (TODO en `PreRegistroCitaController`)
-- Notificaciones por SMS
-- Portal de pacientes (acceso propio)
+- Notificaciones por email, SMS o WhatsApp (`MAIL_MAILER=log`; sigue el `TODO` en `PreRegistroCitaController`)
+- Portal de pacientes
 - Recordatorios de citas
-- **Generación de PDF de resultados** (layout existe, sin implementar)
-- Soporte multilenguaje (scaffolding presente; español hardcodeado)
+- Multilenguaje (español fijo; aceptable para el mercado objetivo)
 
 ---
 
-## 7. Deuda Técnica
+## 8. Deuda Técnica
 
-### 🔴 Crítico — Bloqueante para Producción
+### ✅ Resuelto desde la versión anterior
 
-**1. Sin generación de PDF de reportes**
-El entregable principal de un laboratorio es el reporte escrito de resultados. El layout existe en Blade pero no hay librería de PDF ni lógica de generación implementada.
+| # anterior | Ítem | Cómo se resolvió |
+|---|---|---|
+| 3 | `Persona::all()` sin paginación | Paginación de 25 con búsqueda en todos los listados principales |
+| 4 (parcial) | SQLite como base de datos | MySQL 8.4 en Docker y en el modelo de despliegue |
+| 8 (parcial) | Sin auditoría de resultados | Tabla `resultado_cambios` + `ActualizarResultados` |
+| 10 (parcial) | Aislamiento de organización | Una instancia y una BD por cliente + `EnsureInstance` |
+| 13 (parcial) | Número de orden con lógica fija en el controller | `SugerirNumeroOrden` |
+| — | `vendor/` versionado | Fuera de git |
+| — | PHP 8.2 vulnerable / Laravel 12 con soporte hasta feb-2027 | PHP 8.5 + Laravel 13 |
+| — | Sesión que se perdía al llamar la API | Corrección del middleware en `bootstrap/app.php` |
 
-**2. Sin notificaciones (email/SMS/WhatsApp)**
-El flujo de pre-registro de citas tiene un `TODO: Aquí enviar email de confirmación` en `PreRegistroCitaController`. Los pacientes no reciben ninguna comunicación.
+### 🔴 Crítico — Bloqueante para producción
 
-**3. `Persona::all()` sin paginación**
-`PersonaController::index()` carga todos los pacientes en memoria. Falla con >500 registros. Afecta el listado principal de pacientes.
+**1. Ruta destructiva `GET /migracion`.** `routes/web.php:115` ejecuta `migrate:fresh --seed`, que borra toda la base de datos. Está protegida con `can:eliminar_persona`, un permiso que el seeder le asigna al rol `prestador`. Hay que retirarla antes de cargar datos reales.
 
-**4. `APP_DEBUG=true` + SQLite en producción**
-La configuración de desarrollo está activa. SQLite no es apta para producción con múltiples usuarios concurrentes.
+**2. Creación de facturas bloqueada.** `FacturaController.php:95` tiene un `dd()` antes de guardar. Si la propuesta incluye facturación, hay que terminarla.
 
-**5. Sin rate limiting en endpoints públicos**
-`POST /api/citas/pre-registrar` y `GET /api/citas/consultar/{codigo}` son completamente públicos sin throttling. Vulnerables a spam y abuso.
+**3. Control de sede incompleto.** Un usuario puede activar una sede a la que no pertenece, y las escrituras de resultados por `store` web y por API no verifican la membresía.
 
-**6. País hardcodeado como "170" (Colombia)**
-9+ ocurrencias en controladores (`AdministracionController`, `ListaPersonasController`, `GuardarPersona`). Debe ser constante o valor de configuración.
+**4. Sin notificaciones (email/WhatsApp).** El pre-registro conserva el `TODO` de envío del código, y no hay mailer configurado.
 
-### 🟡 Importante — No Bloqueante Inmediato
+**5. Sin PDF generado en servidor.** El reporte se imprime desde el navegador. Para enviarlo por correo o archivarlo hace falta usar DomPDF, que ya está instalado.
 
-**7. N+1 Queries en flujos frecuentes**
-- `EmpleadoController::dashboard()` hace lazy-loading masivo de relaciones
-- `ListaPersonasController` itera relaciones sin batching
-- Múltiples controladores cargan órdenes/procedimientos sin `->with()` de eager loading
+**6. Sin rate limiting en endpoints públicos.** `POST /api/citas/pre-registrar`, `POST /api/citas/pre-registrar-lista` y `GET /api/citas/consultar/{codigo}` no tienen `throttle`. Solo las rutas de verificación de email lo tienen.
 
-**8. Sin auditoría de acceso a datos de pacientes**
-Requerimiento de HABEAS DATA (Ley 1581 Colombia). No hay `created_by`/`updated_by` en entidades críticas. Las modificaciones de resultados no se registran.
+**7. Configuración de producción sin cerrar.** `.env.example` trae `APP_DEBUG=true`. El runbook indica `false`, pero no hay una verificación que lo obligue. Además falta resolver el spike de `vendor/` y la versión de PHP del hosting (ver §6).
 
-**9. Policies faltantes para órdenes y procedimientos**
-`EmpresaPolicy` implementada; `OrdenPolicy` y `ProcedimientoPolicy` no existen. Las rutas usan `can:eliminar_persona` pero sin políticas dedicadas.
+### 🟡 Importante
 
-**10. Aislamiento de organización incompleto**
-La búsqueda de exámenes retorna resultados globales. Los usuarios no están completamente aislados por organización en todos los flujos.
+**8. Permisos demasiado amplios.** `can:eliminar_persona` protege todo el grupo administrativo, y varios permisos que el código consulta (`crear_sedes`, `editar_empresa`, `gestionar_citas`, `eliminar_orden_medica`, …) no existen en el seeder. Faltan `OrdenPolicy` y `ProcedimientoPolicy`, y `SedePolicy` está registrada pero no se invoca.
 
-**11. Lógica de negocio escapándose a controllers**
-75 controladores vs 8 services. Con el tiempo, esto hace el código difícil de mantener y testear.
+**9. Edición web de persona sin implementar** (métodos vacíos en `PersonaController`).
 
-**12. Duplicación de lógica**
-`PersonaController` y `Api/PersonaController` tienen validaciones superpuestas. La creación de órdenes está duplicada entre web y API. El parseo de nombres se usa en múltiples lugares sin helper consistente.
+**10. País hardcodeado como "170".** Más de 20 apariciones en controladores, servicios y en `Persona`. Debería ser una constante o un valor de configuración.
 
-### 🟠 Menor — Deuda a Largo Plazo
+**11. N+1 queries.** Las vistas nuevas usan eager loading, pero `EmpleadoController::dashboard()` y `ListaPersonasController` siguen sin optimizar.
 
-**13. Valores mágicos hardcodeados**
-- Strings de tipo de tarifa: `'por_convenio_y_sede'`, `'por_sede'`, `'precio_base'`
-- Redondeo del número de orden a múltiplos de 2000 (OrdenController línea ~60)
-- Términos de pago a 30 días en FacturaController
+**12. Auditoría HABEAS DATA incompleta.** Falta registrar quién consulta o modifica datos de pacientes y órdenes. Hay 19 llamadas a `Log::` en `app/`, sin un formato común de usuario + acción + ID.
 
-**14. Inconsistencia en validaciones**
-- Algunos controllers usan Form Requests (correcto)
-- Otros validan inline con `$request->validate()`
-- Campos opcionales sin validación de longitud o formato
+**13. Lógica en controllers.** Ahora hay 11 services frente a 75 controllers, y los flujos nuevos ya usan services. Los módulos antiguos siguen igual.
 
-**15. Fragmentación de estado en frontend**
-- React fetch de datos estáticos vía `/api/static-data-for-frontend` en cada mount (sin caché)
-- `localStorage` para países pero no para otros datos de referencia
-- Sesión PHP + estado React = dos fuentes de verdad para la sede activa
+**14. Duplicación web/API.** Las validaciones de persona y la creación de órdenes están en dos lugares, igual que la captura de resultados.
 
-**16. Sin transacciones en operaciones bulk**
-`DB::transaction` solo en `OrdenController` y `TarifaController`. Falta en operaciones masivas (`ListaPersonasController`, `ReprocesarController`).
+### 🟠 Menor
 
-**17. `Empleado->nombre()` no retorna nada**
-Método en el modelo `Empleado` (líneas 29-30) sin `return`. Bug silencioso.
-
-**18. Tipo de dato inconsistente en respuestas API**
-A veces retorna arrays crudos, a veces colecciones Eloquent. Sin API Resources consistentes.
+**15. Valores fijos**: strings de tipo de tarifa y vencimiento de factura a 30 días (`FacturaController:92`).
+**16. Validaciones inconsistentes**: unos flujos usan Form Requests y otros validan inline.
+**17. Estado del frontend**: los datos estáticos se piden en cada montaje, y la sede activa vive en la sesión PHP y en el estado de React.
+**18. Transacciones faltantes** en `ListaPersonasController` y `ReprocesarController`.
+**19. `Empleado->nombre()` sin `return`** (`app/Models/Empleado.php:29-31`). Sigue sin corregir.
+**20. Respuestas API sin API Resources** consistentes.
+**21. `EmpresaPolicyTest` desalineado**: usa nombres de ruta `sedes.*` cuando las rutas son `admin.sedes.*`, y un test no tiene aserciones.
 
 ---
 
-## 8. Cobertura de Tests
+## 9. Cobertura de Tests
 
-**18 archivos de tests (Pest + PHPUnit)**
+**26 archivos (Pest 4 + PHPUnit).** En esta revisión no se ejecutó la suite; las cifras de aprobados y fallidos deben confirmarse con `docker compose exec app php artisan test`.
 
-### Feature Tests (13 archivos)
+### Feature (24 archivos)
 
-| Test | Cobertura |
-|---|---|
-| `Auth/` (6 tests) | Registro, login, reset de contraseña, verificación de email |
-| `DashboardPageTest` | Acceso al dashboard |
-| `ExamenesPrecioApiTest` | API de cálculo de precios |
-| `OrdenesApiTest` | 10 casos: creación, validación, relaciones |
-| `ElegirSedeTest` | Selección de organización/sede |
-| `WelcomePageTest` | Renderizado de página de inicio |
-| `ProfileTest` | CRUD de perfil de usuario |
-| `Policies/EmpresaPolicyTest` | Verificaciones de autorización |
+| Grupo | Archivos | Cobertura |
+|---|---|---|
+| `Auth/` | 7 | Registro, login, reset, verificación, confirmación y actualización de contraseña, **persistencia de sesión** (nuevo) |
+| `Instancias/` | 5 | **Nuevo.** Guarda por hostname, comando `instancia:verificar`, branding, deploy cPanel, seeders |
+| `ResultadosEdicionTest` | 1 | **Nuevo.** Edición auditada de resultados |
+| `ResultadosLoteTest` | 1 | **Nuevo.** Ingreso por lotes |
+| `UiNotificationsTest` | 1 | **Nuevo.** Notificaciones de interfaz |
+| `InicioRedirectTest` | 1 | **Nuevo.** Redirección sin sede |
+| `OrdenesApiTest` | 1 | Creación y validación de órdenes (ampliado) |
+| Otros | 7 | Dashboard, precios, elegir sede, welcome, perfil, `EmpresaPolicy`, ejemplo |
 
-### Unit Tests (2 archivos)
+### Unit (2 archivos)
 
-| Test | Cobertura |
-|---|---|
-| `EscogerPrecioExamenTest` | Lógica de prioridad de tarifas |
-| `ExampleTest` | Esqueleto vacío |
+`EscogerPrecioExamenTest` y `ExampleTest` (vacío).
 
-### Brechas de Cobertura
+### Brechas
 
-- ❌ Sin tests para: creación de paciente, ingreso de resultados, importación masiva, búsqueda, pre-registro de citas
-- ❌ Sin tests API para: personas, actualización de exámenes, CRUD de tarifas, resultados
-- ❌ Sin tests de autorización para: acceso a orden/procedimiento/resultado
-- ❌ Datos de seed incompletos (TestDataSeeder puede no crear todos los registros necesarios)
-- ✅ Flujo crítico de órdenes cubierto (creación → validación → creación de procedimiento)
+- ❌ Sin tests para: creación y edición de paciente, importación masiva, pre-registro de citas, facturación, exportación RIPS
+- ❌ Sin tests de autorización para órdenes, procedimientos y resultados
+- ❌ El flujo completo orden → resultado → reporte no tiene un test de extremo a extremo
+- ⚠️ Fallas preexistentes reportadas el 2026-10-29 (sin verificar en esta revisión): a `Convenio` le falta `HasFactory`, la factory de `Empleado` usa un `tipo_documento_id` inexistente y `header.blade.php` lee `->sedes` sobre `null`
+- ⚠️ El CI no corre en la rama `main` (ver §6)
 
 ---
 
-## 9. Dependencias
+## 10. Dependencias
 
 ### Backend (composer.json)
 
 | Paquete | Versión | Propósito |
 |---|---|---|
-| laravel/framework | ^12.0 | Framework core |
-| laravel/sanctum | ^4.0 | Autenticación API por tokens |
-| laravel/tinker | ^2.10.1 | REPL |
+| php | ^8.5 | Runtime |
+| laravel/framework | **^13.0** (13.38) | Framework |
+| laravel/sanctum | ^4.0 | Autenticación API |
+| laravel/tinker | **^3.0** | REPL |
+| barryvdh/laravel-dompdf | **^3.1** (nuevo) | PDF (instalado, sin usar) |
 | spatie/array-to-xml | ^3.4 | Exportación RIPS |
 | spatie/laravel-permission | ^6.18 | Roles y permisos |
 
-**Dev-only:**
+**Dev:** faker ^1.23, **laravel-lang/common ^6.7**, breeze ^2.3, pail ^1.2.2, pint ^1.13, sail ^1.41, mockery ^1.6, collision ^8.6, **pest ^4.0**, **pest-plugin-laravel ^4**.
 
-| Paquete | Versión | Propósito |
-|---|---|---|
-| fakerphp/faker | ^1.23 | Datos de test |
-| laravel/breeze | ^2.3 | Scaffolding de auth |
-| laravel/pail | ^1.2.2 | Visor de logs |
-| laravel/sail | ^1.41 | Entorno Docker dev |
-| laravel/pint | ^1.13 | Linter de código |
-| pestphp/pest | ^3.8 | Framework de testing |
-| pestphp/pest-plugin-laravel | ^3.2 | Pest para Laravel |
-| mockery/mockery | ^1.6 | Librería de mocking |
+### Frontend (package.json, pnpm)
 
-### Frontend (package.json)
+react ^19.2, react-dom ^19.2, vite ^7.2.4, @vitejs/plugin-react ^5.1.1, laravel-vite-plugin ^2.0.1, tailwindcss ^3.4.18, @tailwindcss/forms, axios ^1.13.2, postcss, autoprefixer, concurrently.
 
-| Paquete | Versión | Propósito |
-|---|---|---|
-| react | ^19.2.0 | Librería UI |
-| react-dom | ^19.2.0 | Binding DOM |
-| vite | ^7.2.4 | Bundler |
-| @vitejs/plugin-react | ^5.1.1 | Plugin Vite para React |
-| laravel-vite-plugin | ^2.0.1 | Integración Laravel/Vite |
-| tailwindcss | ^3.4.18 | CSS framework |
-| @tailwindcss/forms | ^0.5.10 | Estilos de formularios |
-| @tailwindcss/vite | ^4.1.17 | Tailwind en Vite |
-| axios | ^1.13.2 | Cliente HTTP |
-| postcss | ^8.5.6 | Procesamiento CSS |
-| autoprefixer | ^10.4.22 | Prefijos CSS |
-| concurrently | ^9.2.1 | Ejecutar múltiples scripts |
+### Ausencias relevantes
 
-### Librerías Notablemente Ausentes
-
-| Librería | Impacto |
+| Librería / servicio | Impacto |
 |---|---|
-| PDF generation (DomPDF, TCPDF, Snappy) | **Crítico** — sin reportes para pacientes |
-| Email service (Mailgun, SES) | **Crítico** — sin notificaciones |
-| Jest/Vitest | Sin tests unitarios frontend |
-| TypeScript | Sin tipado en componentes React |
-| react-hook-form | Validación de formularios manual |
-| Rate limiting config | Endpoints públicos sin protección |
+| Proveedor de email (SMTP, Mailgun, SES) | **Crítico**: sin notificaciones |
+| WhatsApp Business API | Alto: es el canal esperado en Colombia |
+| Vitest/Jest | Sin tests de frontend |
+| TypeScript | Sin tipado en React |
 
 ---
 
-## 10. Seguridad
+## 11. Seguridad
 
 ### ✅ Fortalezas
 
-- Autenticación web actual con Breeze y API con Sanctum; Fortify está propuesto como reemplazo de Breeze, no implementado
-- Spatie roles y permisos integrado
-- CSRF en formularios Blade (`@csrf`)
-- Contraseñas hasheadas con bcrypt (BCRYPT_ROUNDS=12)
-- Form Request validation en flujos principales
-- Variables sensibles en `.env`
+- PHP 8.5 y Laravel 13: versiones con soporte, que eliminan la exposición de PHP 8.2 / XAMPP
+- Breeze (web) + Sanctum (API); Spatie para roles y permisos
+- CSRF, bcrypt (12 rondas), Form Requests en los flujos principales
+- Secretos en `.env`; el compose no tiene credenciales
+- **Aislamiento por cliente**: BD, `storage/` y cookie de sesión propios, más la guarda de hostname
+- **Trazabilidad de resultados clínicos**: toda edición queda auditada con observación
+- Sesiones en BD (no en archivos)
+- Páginas de error propias que no exponen detalles internos
 
 ### ⚠️ Preocupaciones
 
-**Exposición de datos:**
-- PII de pacientes (direcciones, teléfonos, emails) almacenado en texto plano
-- Las APIs retornan modelos Eloquent completos (pueden filtrar campos internos)
-- Sin encriptación de datos en reposo
-
-**Privacidad médica (HABEAS DATA — Ley 1581 Colombia):**
-- Sin log de auditoría de quién accedió a qué datos de paciente
-- Aislamiento de organización por sesión (débil para setups multi-organización)
-- Sin encriptación de códigos médicos sensibles
-
-**API pública:**
-- `/api/citas/pre-registrar` sin rate limiting — vulnerable a spam
-- `/api/static-data-for-frontend` expone todos los datos de referencia (puede ser aceptable)
-- Sin validación en algunos endpoints (`OptcionController`, `TributoController`)
-
-**Configuración de producción:**
-- `APP_DEBUG=true` activo — expone stack traces
-- `SQLite` no apto para múltiples usuarios concurrentes
-- `SESSION_DRIVER=file` — no escalable horizontalmente
+- **`GET /migracion` borra la base de datos** y la puede ejecutar el rol `prestador`
+- **Selección de sede sin verificar membresía**, y escrituras de resultados sin control de sede
+- **Endpoints públicos sin rate limiting** (pre-registro y consulta de citas)
+- `APP_DEBUG=true` por defecto en `.env.example`
+- PII de pacientes en texto plano; sin cifrado en reposo
+- Las APIs devuelven modelos Eloquent completos
+- HABEAS DATA: falta la bitácora de accesos a datos de pacientes
+- `/api/static-data-for-frontend` expone todos los datos de referencia (probablemente aceptable)
+- Faltan validaciones en algunos endpoints (`OpcionController`, `TributoController`)
 
 ---
 
-## 11. Comparación con Software Similar
+## 12. Comparación con Software Similar
 
 | Criterio | DinamyLAB | LabSoft (CO) | OpenELIS | LIS1 SaaS (CO) | SCC LIS |
 |---|---|---|---|---|---|
 | **Dominio colombiano** | ✅ Nativo | ✅ | ❌ EEUU | ✅ | Parcial |
 | **CUPS / CIE-10 / RIPS** | ✅ | ✅ | Parcial | ✅ | ❌ |
-| **Stack moderno** | ✅ Laravel 12 / React 19 | ❌ Legacy | ❌ Java/legacy | ✅ | ❌ |
+| **Stack moderno** | ✅ Laravel 13 / React 19 / PHP 8.5 | ❌ Legacy | ❌ Java/legacy | ✅ | ❌ |
 | **Multi-sede** | ✅ | Parcial | ✅ | ✅ | ✅ |
 | **Código propio (customizable)** | ✅ | ❌ | ✅ (OSS) | ❌ | ❌ |
-| **PDF de reportes** | ❌ Falta | ✅ | ✅ | ✅ | ✅ |
+| **Reporte de resultados** | 🟡 Imprimible (sin PDF por correo) | ✅ | ✅ | ✅ | ✅ |
+| **Auditoría de resultados** | ✅ | ✅ | ✅ | ✅ | Parcial |
+| **Ingreso por lotes** | ✅ | ✅ | ✅ | ✅ | Parcial |
 | **Notificaciones** | ❌ Falta | ✅ | Parcial | ✅ | Parcial |
-| **App móvil** | ❌ | ❌ | ❌ | Parcial | ❌ |
+| **Facturación** | 🟡 Creación bloqueada | ✅ | ❌ | ✅ | Parcial |
 | **Integración EPS/Seguros** | ✅ | ✅ | ❌ | ✅ | ❌ |
 | **Precio estimado (COP/mes)** | A definir | $800K–$2M | Gratis* | $400K–$1.2M | $600K–$1.5M |
-| **Facilidad de implementación** | Media | Media | Compleja | Fácil | Media |
+| **Facilidad de implementación** | Media-fácil (instancia por cliente) | Media | Compleja | Fácil | Media |
 
-*OpenELIS es OSS pero la implementación y soporte tienen costo alto.
+*OpenELIS es OSS, pero la implementación y el soporte cuestan. Los precios de competidores son estimaciones de referencia y no se volvieron a verificar en esta revisión.
 
-### Ventajas Diferenciales de DinamyLAB
+### Ventajas diferenciales
 
-1. **Stack moderno + dominio colombiano** — ningún competidor tiene ambas cosas
-2. **Código 100% propio** — se puede customizar para cada cliente sin depender del vendor
-3. **Precio potencialmente competitivo** — 30-40% más barato que LabSoft con mejor UX
-4. **Arquitectura escalable** — puede crecer sin rediseño
+1. **Stack moderno + dominio colombiano**, ahora en las versiones más recientes de Laravel y PHP.
+2. **Código 100% propio**, customizable por cliente.
+3. **Aislamiento fuerte por cliente** (BD propia), un argumento de venta frente a SaaS compartidos en términos de privacidad.
+4. **Costo de operación bajo** con hosting cPanel.
 
-### Brechas Críticas vs. Competidores
+### Brechas frente a competidores
 
-1. **PDF de reportes** — brecha más visible para cualquier evaluador
-2. **Notificaciones** — WhatsApp es estándar en Colombia para comunicación con pacientes
-3. **Sin prueba de producción** — competidores tienen años de clientes reales
+1. **Notificaciones**: WhatsApp es el estándar en Colombia.
+2. **PDF por correo**: hoy el reporte solo sale impreso o guardado desde el navegador.
+3. **Sin clientes en producción** todavía.
 
 ---
 
-## 12. Costos y Pricing
+## 13. Costos y Pricing
 
-### Costo de Llevar a Producción (MVP Mínimo)
+### Costo de llevar a producción (MVP mínimo)
 
 Estimado con 1 desarrollador senior (~$80.000 COP/hora):
 
-| Ítem | Horas | Costo estimado (COP) |
+| Ítem | Horas | Costo (COP) | Antes |
+|---|---|---|---|
+| Autorización crítica: retirar `/migracion`, membresía de sede, escrituras de resultados | 8–12h | $640.000 – $960.000 | — |
+| Terminar la creación de facturas (quitar `dd()`, persistir, probar) | 6–10h | $480.000 – $800.000 | — |
+| PDF en servidor con DomPDF (reutilizando la vista imprimible) | 8–12h | $640.000 – $960.000 | 20–30h |
+| Email / WhatsApp de notificaciones | 15–20h | $1.200.000 – $1.600.000 | 15–20h |
+| N+1 restantes (dashboard, listas de personas) | 6–10h | $480.000 – $800.000 | 8–12h |
+| Cierre de producción (spike `vendor/`, PHP del host, `APP_DEBUG`, CI) | 4–6h | $320.000 – $480.000 | 8–10h |
+| Rate limiting en endpoints públicos | 4–6h | $320.000 – $480.000 | 6–8h |
+| Tests de flujos críticos + corrección de fallas preexistentes | 12–18h | $960.000 – $1.440.000 | 16–24h |
+| **Total mínimo viable** | **63–94h** | **$5.040.000 – $7.520.000** | 73–104h |
+
+### Trabajo adicional recomendado
+
+| Ítem | Horas | Costo (COP) |
 |---|---|---|
-| PDF de reportes clínicos | 20–30h | $1.600.000 – $2.400.000 |
-| Email / WhatsApp notificaciones | 15–20h | $1.200.000 – $1.600.000 |
-| Paginación + eager loading (N+1) | 8–12h | $640.000 – $960.000 |
-| Configuración de producción (DB, debug, env) | 8–10h | $640.000 – $800.000 |
-| Rate limiting + hardening de seguridad mínimo | 6–8h | $480.000 – $640.000 |
-| Tests de flujos críticos | 16–24h | $1.280.000 – $1.920.000 |
-| **Total mínimo viable** | **73–104h** | **$5.840.000 – $8.320.000** |
+| Auditoría HABEAS DATA de accesos (la de resultados ya existe) | 6–10h | $480.000 – $800.000 |
+| Matriz de permisos + Policies de Orden y Procedimiento | 6–8h | $480.000 – $640.000 |
+| Edición web de persona (hoy son métodos vacíos) | 8–10h | $640.000 – $800.000 |
+| País "170" a configuración + bug `Empleado->nombre()` | 2–4h | $160.000 – $320.000 |
+| Migración de Breeze a Fortify (opcional) | 8–12h | $640.000 – $960.000 |
+| **Subtotal adicional** | **30–44h** | **$2.400.000 – $3.520.000** |
 
-### Trabajo adicional recomendado (no obligatorio para MVP)
+**Costo total estimado para una versión de producción robusta: $7.440.000 – $11.040.000 COP** (antes: $8.72M – $12.24M). La reducción frente a la versión anterior es menor de lo que sugieren los avances porque esta revisión encontró bloqueantes que la anterior no registraba (`/migracion`, facturas, control de sede).
 
-| Ítem | Horas | Costo estimado (COP) |
-|---|---|---|
-| Auditoría HABEAS DATA (logs de acceso) | 10–15h | $800.000 – $1.200.000 |
-| Policies faltantes (Orden, Procedimiento) | 6–8h | $480.000 – $640.000 |
-| Refactoring N+1 completo | 12–16h | $960.000 – $1.280.000 |
-| Edición de persona completa | 8–10h | $640.000 – $800.000 |
-| **Subtotal adicional** | **36–49h** | **$2.880.000 – $3.920.000** |
+### Modelos de pricing para el cliente
 
-**Costo total estimado para versión de producción robusta: $8.720.000 – $12.240.000 COP**
-
-### Modelos de Pricing para el Cliente
+Se mantienen los de la versión anterior.
 
 **Opción A — Licencia mensual SaaS:**
+
 | Segmento | Descripción | Precio |
 |---|---|---|
 | Lab pequeño | 1 sede, <500 órdenes/mes | $350.000 – $550.000 COP/mes |
 | Lab mediano | 2-3 sedes, <2.000 órdenes/mes | $800.000 – $1.200.000 COP/mes |
 | Lab grande | 4+ sedes, >2.000 órdenes/mes | $1.500.000+ COP/mes (a negociar) |
 
-**Opción B — Licencia única + implementación:**
-- Fee de implementación: $8.000.000 – $15.000.000 COP (customización, migración de datos)
-- Soporte y actualizaciones: $2.000.000 – $4.000.000 COP/año
-- Más atractivo para labs que migran desde otro sistema
+**Opción B — Licencia única + implementación:** fee de $8M – $15M COP y soporte de $2M – $4M COP/año.
 
-**Opción C — Modelo híbrido (recomendado para el primer cliente):**
-- Implementación inicial: $5.000.000 – $8.000.000 COP
-- Mensualidad: $400.000 – $600.000 COP/mes
-- Incluye: hosting, soporte, actualizaciones de seguridad
+**Opción C — Híbrido (recomendado para el primer cliente):** implementación de $5M – $8M COP y mensualidad de $400.000 – $600.000 COP con hosting, soporte y actualizaciones.
 
-### Costos de Hosting (estimados)
+### Borrador de propuesta "Plan Emprendedor" (10-oct-2026)
 
-| Opción | Descripción | Costo mensual (USD) |
+Se redactó una propuesta concreta para un laboratorio de 1 sede (antes estaba en `openCode_comercial.md`). Sus precios quedan **por debajo** de los rangos de arriba, porque apuntan a un cliente piloto. Su validez de 15 días ya venció, así que debe re-emitirse.
+
+| Plan | Pago inicial | Mensualidad | Total año 1 |
+|---|---|---|---|
+| **Emprendedor Híbrido** (recomendado) | $3.500.000 (50% anticipo + 50% contra entrega) | $249.000 | $6.488.000 |
+| Pago único (ancla) | $8.500.000, incluye 12 meses de hosting y soporte | — (renovación $2.500.000/año) | $8.500.000 |
+| SaaS puro | Setup $900.000 | $349.000 (permanencia 12 meses) | $5.088.000 |
+
+**Alcance ofrecido:** pacientes y carga desde Excel, órdenes, captura de resultados con hasta 30 exámenes parametrizados, reporte imprimible con logo y firma, usuarios ilimitados en la sede, facturación básica con resolución DIAN, RIPS JSON, instalación, 2 sesiones de capacitación, 30 días de garantía y soporte por WhatsApp/correo con 2 ajustes menores al mes. Las horas fuera de alcance se cobran a $120.000 COP/hora.
+
+**No incluido:** interfaz con analizadores (ASTM/HL7), portal de pacientes, WhatsApp/SMS masivo, facturación electrónica ante DIAN, multisede, citas en línea, contabilidad e inventarios.
+
+**Desajustes con el estado actual del código, que hay que resolver antes de re-emitirla:**
+- Ofrece **facturación básica**, y la creación de facturas está bloqueada (§8, ítem 2).
+- Ofrece **carga masiva**, y el cargador actual no crea registros en lote (§7).
+- Promete un **cronograma de 2–3 semanas**, que no incluye las 63–94h de trabajo mínimo de este documento. Un plazo realista es el de §14.
+- Excluye **multisede y citas en línea**, que el sistema ya tiene. Pueden ofrecerse como diferencial o como plan superior.
+
+### Costos de hosting
+
+El modelo de una instancia por cliente en cPanel permite alojar varios clientes en un mismo plan.
+
+| Opción | Descripción | Costo mensual (USD, estimado) |
 |---|---|---|
-| DigitalOcean / Linode | VPS dedicado, 1-5 clientes | $50 – $80 |
-| Railway / Render | Serverless, inicio rápido | $20 – $40 |
-| AWS Colombia-adjacent | Escalable, alta disponibilidad | $80 – $150 |
+| Hosting cPanel (plan con PHP 8.3+, SSH y Git) | Varios clientes, una instancia cada uno | $10 – $30 |
+| VPS (DigitalOcean / Linode) con Docker | Más control; reutiliza la configuración de desarrollo | $20 – $80 |
+| Nube (AWS / GCP) | Alta disponibilidad | $80 – $150 |
 
 ---
 
-## 13. Tiempos de Entrega
+## 14. Tiempos de Entrega
 
-### Para el Primer Cliente (MVP de Producción)
+### Primer cliente (MVP de producción)
 
 **Con 1 desarrollador senior a tiempo completo:**
 
 ```
-Semana 1-2:  PDF de reportes clínicos + email básico
-Semana 3-4:  Migración a PostgreSQL + configuración producción + seguridad mínima
-Semana 5-6:  QA, tests de flujos críticos, correcciones
-Semana 7-8:  Piloto con el cliente (datos reales, ajustes de UX)
+Semana 1:    Autorización crítica (/migracion, sedes) + rate limiting + cierre de producción
+Semana 2:    Terminar facturación + PDF en servidor
+Semana 3:    Notificaciones por email (y WhatsApp si se prioriza) + N+1 restantes
+Semana 4-5:  Tests de flujos críticos, corrección de fallas, instancia piloto en cPanel
+Semana 6-7:  Piloto con el cliente (datos reales, ajustes de UX)
 ──────────────────────────────────────────────────────────
-Total: 6–8 semanas
+Total: 5–7 semanas   (antes: 6–8)
 ```
 
-**Con 2 desarrolladores:**
-```
-Total: 4–5 semanas
-```
+**Con 2 desarrolladores:** 3–5 semanas.
 
-### Para una Propuesta Comercial Sólida
+### Hitos
 
 | Hito | Duración acumulada |
 |---|---|
-| Sistema base funcional en producción | Semana 6 |
-| Período de estabilización con cliente real | Semana 10 |
-| **Firma de aceptación formal** | **~2.5 meses** |
+| Instancia del cliente en producción | Semana 5 |
+| Estabilización con cliente real | Semana 9 |
+| **Firma de aceptación formal** | **~2–2.5 meses** |
 
-### Roadmap Post-MVP (para propuestas más ambiciosas)
+### Roadmap post-MVP
 
 | Fase | Plazo | Contenido |
 |---|---|---|
-| **MVP v1** | 0–2 meses | PDF + notificaciones + producción + seguridad básica |
-| **v1.5** | 2–4 meses | HABEAS DATA, policies completas, edición de persona, búsqueda avanzada |
-| **v2** | 4–6 meses | Portal de pacientes, reportes analíticos, integración RIPS automática |
-| **v3** | 6–12 meses | App móvil, WhatsApp Business API, integración con sistema de salud colombiano (SIVEP) |
+| **MVP v1** | 0–1.5 meses | Autorización crítica, facturación, notificaciones, PDF en servidor, producción, seguridad básica |
+| **v1.5** | 1.5–3 meses | HABEAS DATA completo, policies, edición de persona, Fortify |
+| **v2** | 3–5 meses | Portal de pacientes, reportes analíticos, RIPS automático |
+| **v3** | 5–12 meses | WhatsApp Business API, app móvil, integración SISPRO |
 
 ---
 
-## 14. Riesgos para la Propuesta
+## 15. Riesgos para la Propuesta
 
-### Riesgos Técnicos
+### Riesgos técnicos
 
 | Riesgo | Probabilidad | Impacto | Mitigación |
 |---|---|---|---|
-| SQLite en producción falla bajo carga | Alta | Alto | Migrar a PostgreSQL antes de producción |
-| N+1 degrada performance con volumen | Media | Alto | Agregar eager loading antes del piloto |
-| Sin PDF bloquea adopción | Alta | Crítico | Implementar en las primeras 2 semanas |
-| Tests insuficientes causan regresiones | Media | Alto | Tests de flujos críticos antes del piloto |
+| Pérdida total de datos por `GET /migracion` | Media | Crítico | Retirar la ruta antes de cargar datos reales |
+| Un usuario opera sobre una sede ajena | Media | Alto | Verificar `empleado_sede` en la selección y en las escrituras |
+| Se vende facturación y no funciona | Alta si se ofrece | Alto | Terminarla o sacarla del alcance de la propuesta |
+| El hosting cPanel no tiene PHP 8.5 o no ejecuta Composer | Media | Alto | Resolver el spike S0 antes de firmar; bajar a `^8.3` o versionar `vendor/` |
+| Spam en endpoints públicos de citas | Alta | Medio | `throttle` antes del piloto |
+| Regresiones por tests insuficientes o fallas preexistentes | Media | Alto | Corregir las fallas y cubrir el flujo completo |
+| N+1 en dashboard con volumen real | Media | Medio | Eager loading antes del piloto |
+| Falta de notificaciones frena la adopción | Alta | Alto | Email en las primeras 2 semanas |
+| ~~SQLite en producción~~ | — | — | **Resuelto**: MySQL 8.4 |
 
-### Riesgos Legales/Regulatorios
-
-| Riesgo | Descripción |
-|---|---|
-| **HABEAS DATA (Ley 1581)** | Obligatorio para datos de salud en Colombia. Sin auditoría de acceso, hay exposición legal. No bloquea el MVP pero debe estar en roadmap visible. |
-| **Facturación electrónica DIAN** | La estructura de resoluciones DIAN está implementada. Pero si el cliente necesita e-facturación real, hay trabajo adicional. |
-| **RIPS electrónico** | La exportación RIPS en JSON/CSV existe. Si el cliente necesita envío electrónico al SISPRO, es trabajo adicional. |
-
-### Riesgos Comerciales
+### Riesgos legales y regulatorios
 
 | Riesgo | Descripción |
 |---|---|
-| **Desarrollador único** | El cliente asume continuidad del servicio. Considerar cláusula de código escrow o documentación de entrega. |
-| **Sin clientes de referencia** | Es el primer despliegue productivo. Proponer precio de "cliente piloto" con beneficios a cambio de caso de estudio. |
-| **Competidores establecidos** | LabSoft tiene años de tracción. Diferenciar por precio + modernidad + customización. |
+| **HABEAS DATA (Ley 1581)** | Avance parcial: la edición de resultados se audita. Falta la bitácora de accesos a datos de pacientes. No bloquea el MVP, pero debe aparecer en el roadmap. |
+| **Facturación electrónica DIAN** | Las resoluciones están modeladas; la e-facturación real es trabajo adicional. |
+| **RIPS electrónico** | Hay exportación JSON/CSV; el envío a SISPRO es trabajo adicional. |
 
----
+### Riesgos comerciales
 
-## 15. Resumen Ejecutivo
-
-### Estado del Proyecto
-
-> DinamyLAB tiene el **70% del trabajo hecho**. El dominio clínico colombiano está correctamente modelado, la arquitectura es sólida para escalar, y el stack tecnológico (Laravel 12 + React 19) es moderno y mantenible. Las brechas restantes son predecibles, estimables y **no requieren rediseño**.
-
-### Fortalezas para la Propuesta
-
-1. **Dominio colombiano capturado** — CUPS, CIE-10, RIPS, EPS, tipos de afiliación. Es el conocimiento más difícil de adquirir y ya está en el código.
-2. **Flujo nuclear funcional** — orden → análisis → resultado → factura trabaja de extremo a extremo.
-3. **Arquitectura multi-sede** — listo para clientes con varias sucursales desde el día uno.
-4. **Stack moderno** — ventaja competitiva frente a LabSoft y otros sistemas legacy en Colombia.
-5. **Código 100% propio** — sin dependencia de vendor externo; customizable para cada cliente.
-
-### Brechas para Producción
-
-1. PDF de reportes clínicos — **el entregable principal de un lab**
-2. Notificaciones (email mínimo, WhatsApp ideal)
-3. Migración de SQLite a base de datos de producción
-4. Configuración de seguridad para producción
-5. Tests de flujos críticos
-
-### Mensaje para la Propuesta Comercial
-
-> *Para un laboratorio clínico pequeño en Colombia, DinamyLAB representa una solución más moderna y económica que las alternativas actuales, con la ventaja única de ser completamente customizable. El sistema está a 6–8 semanas de producción. El costo de desarrollo restante es estimable y acotado.*
-
-### Números Clave
-
-| Métrica | Valor |
+| Riesgo | Descripción |
 |---|---|
-| Horas para producción mínima | 73–104h |
-| Inversión de desarrollo restante | $5.8M – $8.3M COP |
-| Precio sugerido primer cliente (mensual) | $400.000 – $600.000 COP/mes |
-| Fee de implementación sugerido | $5M – $8M COP |
-| Tiempo hasta firma de aceptación | ~2.5 meses |
-| ROI del desarrollo (si se cierra 1 cliente a $500K/mes) | Break-even en ~16 meses |
+| **Continuidad del equipo** | Hoy hay dos desarrolladores. Conviene ofrecer documentación de entrega o código en escrow. |
+| **Sin clientes de referencia** | Proponer un precio de cliente piloto a cambio de un caso de estudio. |
+| **Competidores establecidos** | Diferenciarse por precio, modernidad, customización y aislamiento de datos. |
 
 ---
 
-*Análisis generado por Claude Sonnet 4.6 — DinamyLAB — 2026-10-14*
+## 16. Resumen Ejecutivo
+
+### Estado del proyecto
+
+> DinamyLAB tiene **cerca del 75% del trabajo hecho** (antes 70%; esta revisión encontró bloqueantes que la anterior no registraba). En dos semanas se pasó de un entorno local con SQLite y Laravel 12 a un proyecto en Docker con MySQL, Laravel 13 y PHP 8.5, con un modelo de despliegue por cliente definido y documentado. También se cerraron brechas funcionales: auditoría de resultados, ingreso por lotes, reporte imprimible y búsqueda en todos los listados. Lo que falta es acotado y **no requiere rediseño**.
+
+### Fortalezas para la propuesta
+
+1. **Dominio colombiano capturado**: CUPS, CIE-10, RIPS, EPS, afiliación.
+2. **Flujo clínico funcional**: orden → análisis → resultado (con auditoría) → reporte imprimible.
+3. **Multi-sede y una instancia aislada por cliente.**
+4. **Stack actualizado** con soporte de seguridad a largo plazo.
+5. **Código 100% propio.**
+
+### Brechas para producción
+
+1. Autorización crítica: retirar `/migracion` y verificar la membresía de sede
+2. Terminar la creación de facturas
+3. Notificaciones (email como mínimo, WhatsApp como ideal)
+4. PDF generado en servidor, para envío y archivo
+5. Rate limiting en endpoints públicos
+6. Cierre de la configuración de producción (spike `vendor/`, PHP del hosting, `APP_DEBUG`, CI)
+7. Tests del flujo completo y corrección de fallas preexistentes
+
+### Mensaje para la propuesta comercial
+
+> *Para un laboratorio clínico pequeño en Colombia, DinamyLAB es una solución moderna, económica y totalmente customizable, en la que los datos de cada laboratorio viven en su propia base de datos. El sistema está a 5–7 semanas de producción, con un costo de desarrollo restante acotado.*
+
+### Números clave
+
+| Métrica | Valor | Antes |
+|---|---|---|
+| Horas para producción mínima | 63–94h | 73–104h |
+| Inversión de desarrollo restante (mínima) | $5.0M – $7.5M COP | $5.8M – $8.3M |
+| Precio sugerido primer cliente (mensual) | $400.000 – $600.000 COP/mes (borrador piloto: $249.000) | igual |
+| Fee de implementación sugerido | $5M – $8M COP (borrador piloto: $3.5M) | igual |
+| Tiempo hasta firma de aceptación | ~2–2.5 meses | ~2.5 meses |
+| Break-even del desarrollo restante (1 cliente a $500K/mes, sin contar fee) | ~10–15 meses | ~16 meses |
+
+---
+
+*Análisis generado por Claude Opus 5.5 — DinamyLAB — 2026-11-01. Revisión de la versión del 2026-10-14 (Claude Sonnet 4.6).*
