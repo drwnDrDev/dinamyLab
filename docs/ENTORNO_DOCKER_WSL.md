@@ -11,13 +11,14 @@ entorno anterior (XAMPP / PHP en Windows + SQLite).
 | SQLite (`database.sqlite`)    | MySQL 8.4 en contenedor                 |
 | `php artisan serve`           | nginx + PHP-FPM                         |
 | `npm/pnpm run dev` en Windows | Vite en contenedor (Node 22 + pnpm)     |
+| Laravel 12                    | Laravel 13                              |
+| `vendor/` versionado en git   | `vendor/` fuera de git (`composer install`) |
 
 > ⚠️ **Seguridad:** PHP 8.2.12 es vulnerable a PHP2Shell
 > (CVE-2026-109618 / CVE-2026-109619, ejecución remota de código, explotada
 > activamente). Si aún tienes XAMPP corriendo, apágalo o actualízalo.
 
-La versión de Laravel **no** cambió (sigue 12.x). La actualización a Laravel 13
-se hará en una rama aparte.
+El proyecto usa **Laravel 13** y exige PHP `^8.5` (ver `composer.json`).
 
 ## Requisitos (una sola vez)
 
@@ -129,10 +130,8 @@ docker compose exec app php artisan migrate:fresh --seed
 
 ## Cosas a tener en cuenta
 
-- **`vendor/` está versionado en git.** Al correr `composer install` dentro del
-  contenedor, Composer regenera `vendor/autoload.php` y `vendor/composer/*`
-  (mismo contenido, otro orden). **No hagas commit de esos cambios**; descártalos
-  con `git checkout -- vendor/`.
+- **`vendor/` no está en git.** Después de clonar, o cuando cambie
+  `composer.lock`, ejecuta `docker compose exec app composer install`.
 - **Los tests siguen usando SQLite en memoria** (`phpunit.xml`), no MySQL.
 - **Búsquedas `LIKE`:** MySQL con `utf8mb4_unicode_ci` no distingue mayúsculas
   ni tildes (`jose` encuentra `José`). SQLite sí distinguía tildes, así que el
