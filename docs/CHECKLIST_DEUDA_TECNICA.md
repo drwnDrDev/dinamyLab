@@ -53,7 +53,7 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 
 | Estado | ID | Issue | Ubicación | Esfuerzo | Viabilidad | Área | Comentarios |
 |---|---|---|---|---|---|---|---|
-| `[ ]` | I-01 | Configurar el CI para que corra en `main` (hoy solo en `master` y `*.x`) | `.github/workflows/tests.yml` | 0.5–1h | Alta | Infra | |
+| `[x]` | I-01 | Configurar el CI para que corra en `main` (también corre en `master` y `*.x`) | `.github/workflows/tests.yml` | 0.5–1h | Alta | Infra | |
 | `[ ]` | I-02 | Corregir las fallas de tests reportadas el 2026-10-29: `HasFactory` en `Convenio`, `tipo_documento_id` inexistente en la factory de `Empleado`, `->sedes` sobre `null` en `header.blade.php` | `app/Models/Convenio.php`, `database/factories/EmpleadoFactory.php`, `resources/views/layouts/header.blade.php` | 2–4h | Alta | BE + FE | Verificar primero con `docker compose exec app php artisan test` |
 | `[ ]` | I-03 | Matriz de roles y permisos: dividir `can:eliminar_persona` del grupo admin, sembrar los permisos que faltan, crear `OrdenPolicy` y `ProcedimientoPolicy` e invocar `SedePolicy` | `routes/web.php`, `RolesYPermisosSeeder`, `app/Policies/` | 6–8h | Media | BE | Requiere que el responsable funcional apruebe la matriz |
 | `[ ]` | I-04 | Auditoría HABEAS DATA: registrar accesos y cambios a datos de pacientes y órdenes con formato común (usuario, acción, ID) | `app/` (19 llamadas a `Log::`) | 6–10h | Media | BE | La edición de resultados ya se audita en `resultado_cambios` |
@@ -96,6 +96,6 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 | 🟡 Importante | 10 | 10 | 0 | 47–69h + I-07, I-09 |
 | 🟠 Menor | 11 | 11 | 0 | 31.5–53.5h + M-11 |
 
-**Orden sugerido para empezar** (máximo impacto con mínimo esfuerzo): C-01 → C-02 → I-01 → I-02 → M-01. Son unas 5–8h en total y desbloquean un CI confiable y una base segura para el resto.
+**Orden sugerido para empezar** (máximo impacto con mínimo esfuerzo): C-01 → C-02 → I-02 → M-01. Son unas 4.5–7.5h en total y desbloquean un CI confiable y una base segura para el resto.
 
 Al deprecar u omitir un ítem que afecta horas o alcance de la propuesta, actualizar también §13 y §14 de [ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md](./ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md).
