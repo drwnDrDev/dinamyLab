@@ -177,7 +177,8 @@ const CrearOrdenComponentMejorado = (paciente, { dataDefoult = ordenDataDefault 
                 <h1 className="text-2xl font-bold text-titles mb-4">Crear Nueva Orden</h1>
                 <label htmlFor="numero_orden" className='text-xl pr-4'>Numero de Orden: </label>
                 <input
-                    type="number"
+                    type="text"
+                    maxLength={255}
                     onChange={handleTablasRefUpdate}
                     name="numero_orden"
                     value={formOrden.numero_orden}

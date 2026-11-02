@@ -15,6 +15,9 @@ const formatCOP = (value) =>
 const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const { axiosInstance, csrfLoaded } = useAxiosAuth();
     const [next_numero, setNextNumero] = useState(null);
+    const [numeroOrdenDuplicado, setNumeroOrdenDuplicado] = useState(false);
+    const [sugerenciaNumeroOrden, setSugerenciaNumeroOrden] = useState('');
+    const [errorVerificacionNumero, setErrorVerificacionNumero] = useState('');
 
     useEffect(() => {
         const fetchNextNumero = async () => {
@@ -52,7 +55,40 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const [formOrden, setFormOrden] = useState(initialFormState);
     const [currentStep, setCurrentStep] = useState(1);
     const [stepError, setStepError] = useState(null);
-    const { validateForm, errors, clearError } = useOrderValidation();
+    const { validateForm, validateField, errors, clearError } = useOrderValidation();
+
+    useEffect(() => {
+        const numero = formOrden.numero_orden.trim();
+        if (!csrfLoaded || numero.length === 0 || numero.length > 255) {
+            setNumeroOrdenDuplicado(false);
+            setErrorVerificacionNumero('');
+            return undefined;
+        }
+
+        let cancelled = false;
+        const timer = setTimeout(async () => {
+            try {
+                const response = await axiosInstance.get('/api/ordenes/verificar-numero', {
+                    params: { numero_orden: numero },
+                });
+                if (cancelled) return;
+                setNumeroOrdenDuplicado(response.data.usado);
+                setSugerenciaNumeroOrden(response.data.sugerencia || '');
+                setErrorVerificacionNumero('');
+            } catch (verificationError) {
+                if (cancelled) return;
+                setErrorVerificacionNumero(
+                    verificationError.response?.data?.message || 'No se pudo verificar si el número ya está en uso.'
+                );
+                console.error('Error al verificar el número de orden:', verificationError);
+            }
+        }, 350);
+
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [axiosInstance, csrfLoaded, formOrden.numero_orden]);
 
     useEffect(() => {
         if (!persona) return;
@@ -91,6 +127,10 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const handleTablasRefUpdate = (e) => {
         const { name, value } = e.target;
         setFormOrden(prev => ({ ...prev, [name]: value }));
+        if (name === 'numero_orden') {
+            setNumeroOrdenDuplicado(false);
+            setErrorVerificacionNumero('');
+        }
         clearError(name);
     };
 
@@ -106,9 +146,19 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
             case 2:
                 return formOrden.examenes.length === 0 ? 'Debe agregar al menos un examen para continuar.' : null;
             case 3: {
-                const campos = ['modalidad', 'cod_servicio', 'cie_principal', 'finalidad', 'via_ingreso'];
-                const faltantes = campos.filter(c => !formOrden[c]);
-                return faltantes.length > 0 ? 'Complete todos los campos obligatorios para continuar.' : null;
+                const campos = [
+                    ['modalidad', 'Modalidad de atención'],
+                    ['cod_servicio', 'Servicio habilitado'],
+                    ['cie_principal', 'CIE principal'],
+                    ['finalidad', 'Finalidad de consulta'],
+                    ['via_ingreso', 'Vía de ingreso'],
+                ];
+                const faltantes = campos
+                    .filter(([campo]) => !formOrden[campo])
+                    .map(([, etiqueta]) => etiqueta);
+                return faltantes.length > 0
+                    ? `Complete estos campos para continuar: ${faltantes.join(', ')}.`
+                    : null;
             }
             default:
                 return null;
@@ -116,6 +166,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     };
 
     const handleNext = () => {
+        setError(null);
         const err = getStepError(currentStep);
         if (err) {
             setStepError(err);
@@ -127,6 +178,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
 
     const handlePrev = () => {
         setStepError(null);
+        setError(null);
         setCurrentStep(prev => Math.max(prev - 1, 1));
     };
 
@@ -139,7 +191,32 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
         }
 
         if (!validateForm(formOrden)) {
-            setStepError('Por favor complete todos los campos obligatorios.');
+            const campos = [
+                ['numero_orden', 'Número de orden', 3],
+                ['paciente_id', 'Paciente', 1],
+                ['examenes', 'Exámenes', 2],
+                ['modalidad', 'Modalidad de atención', 3],
+                ['cod_servicio', 'Servicio habilitado', 3],
+                ['cie_principal', 'CIE principal', 3],
+                ['finalidad', 'Finalidad de consulta', 3],
+                ['via_ingreso', 'Vía de ingreso', 3],
+                ['abono', 'Abono', 2],
+                ['total', 'Total', 2],
+            ];
+            const primerCampoInvalido = campos.find(([campo]) => !validateField(campo, formOrden[campo], formOrden));
+            const paso = primerCampoInvalido?.[2] ?? 3;
+            const camposInvalidos = campos
+                .filter(([campo]) => !validateField(campo, formOrden[campo], formOrden))
+                .map(([, etiqueta]) => etiqueta);
+
+            setStepError(`Revise estos datos antes de crear la orden: ${camposInvalidos.join(', ')}.`);
+            setCurrentStep(paso);
+            return;
+        }
+
+        if (numeroOrdenDuplicado) {
+            setCurrentStep(3);
+            setError('Ese número de orden ya fue usado en esta sede. Ingrese otro número antes de continuar.');
             return;
         }
 
@@ -153,7 +230,26 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                 window.location.href = `/ordenes-medicas/${response.data.data.id}/ver`;
             }
         } catch (err) {
-            setError(err.response?.data?.message || 'Error al crear la orden. Intente nuevamente.');
+            const validationErrors = err.response?.data?.errors;
+            const validationMessages = validationErrors && typeof validationErrors === 'object'
+                ? Object.values(validationErrors).flat().filter(message => typeof message === 'string')
+                : [];
+
+            if (validationMessages.length > 0) {
+                const invalidFields = Object.keys(validationErrors);
+                const paso = invalidFields.some(campo => campo === 'paciente_id')
+                    ? 1
+                    : invalidFields.some(campo => campo.startsWith('examenes') || ['abono', 'total'].includes(campo))
+                        ? 2
+                        : invalidFields.some(campo => ['modalidad', 'cod_servicio', 'cie_principal', 'cie_relacionado', 'finalidad', 'via_ingreso', 'numero_orden'].includes(campo))
+                            ? 3
+                            : 4;
+
+                setCurrentStep(paso);
+                setError(`No se pudo crear la orden. ${validationMessages.join(' ')}`);
+            } else {
+                setError(err.response?.data?.message || 'Error al crear la orden. Intente nuevamente.');
+            }
         } finally {
             setLoading(false);
         }
@@ -192,22 +288,33 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                             </h1>
                         </div>
                         {/* Número de orden */}
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                             <label htmlFor="numero_orden" className="text-sm text-gray-500 font-medium">
                                 Orden N°
                             </label>
                             <input
-                                type="number"
+                                type="text"
                                 id="numero_orden"
+                                maxLength={255}
+                                title="Máximo 255 caracteres"
+                                autoComplete="off"
                                 onChange={handleTablasRefUpdate}
                                 name="numero_orden"
                                 value={formOrden.numero_orden}
-                                className={`h-9 w-24 px-2 text-lg text-center font-semibold text-primary bg-white rounded-md border-0 focus:outline-none transition-colors ${
+                                className={`h-9 w-48 px-2 text-lg text-center font-semibold text-primary bg-white rounded-md border-0 focus:outline-none transition-colors ${
                                     errors.numero_orden
                                         ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
                                         : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'
                                 }`}
                             />
+                            {numeroOrdenDuplicado && (
+                                <p className="basis-full text-sm text-red-600" role="alert">
+                                    Este número ya fue usado. Sugerencia: {sugerenciaNumeroOrden || 'ingrese otro número'}.
+                                </p>
+                            )}
+                            {errorVerificacionNumero && (
+                                <p className="basis-full text-sm text-amber-700" role="status">{errorVerificacionNumero}</p>
+                            )}
                         </div>
                     </div>
 
@@ -216,7 +323,11 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
 
                         {/* Banner de error de paso (validación) */}
                         {stepError && (
-                            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-md text-sm flex items-start gap-2">
+                            <div
+                                className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-md text-sm flex items-start gap-2"
+                                role="alert"
+                                aria-live="assertive"
+                            >
                                 <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                                 </svg>
@@ -226,7 +337,11 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
 
                         {/* Banner de error de API */}
                         {error && (
-                            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-start gap-2">
+                            <div
+                                className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-start gap-2"
+                                role="alert"
+                                aria-live="assertive"
+                            >
                                 <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -328,39 +443,48 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                             Anterior
                         </button>
 
-                        {currentStep < 4 ? (
-                            <button
-                                type="button"
-                                onClick={handleNext}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-titles transition-colors"
+                        <button
+                            type="button"
+                            onClick={handleNext}
+                            disabled={currentStep === 4}
+                            aria-hidden={currentStep === 4}
+                            className={`inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-titles transition-colors disabled:opacity-50 ${
+                                currentStep === 4 ? 'hidden' : ''
+                            }`}
+                        >
+                            Siguiente
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleSubmit}
+                            disabled={loading || currentStep !== 4}
+                            aria-hidden={currentStep !== 4}
+                            className={`inline-flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-titles transition-colors disabled:opacity-50 ${
+                                currentStep !== 4 ? 'hidden' : ''
+                            }`}
+                        >
+                            <span
+                                aria-hidden="true"
+                                className={`h-4 w-4 rounded-full border-b-2 border-white ${
+                                    loading ? 'inline-block animate-spin' : 'hidden'
+                                }`}
+                            />
+                            <svg
+                                className={`h-4 w-4 ${loading ? 'hidden' : ''}`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                                aria-hidden="true"
                             >
-                                Siguiente
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </button>
-                        ) : (
-                            <button
-                                type="button"
-                                onClick={handleSubmit}
-                                disabled={loading}
-                                className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-titles transition-colors disabled:opacity-50"
-                            >
-                                {loading ? (
-                                    <>
-                                        <div className="animate-spin h-4 w-4 border-b-2 border-white rounded-full"></div>
-                                        Creando orden...
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        Crear Orden
-                                    </>
-                                )}
-                            </button>
-                        )}
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className={loading ? 'hidden' : ''}>Crear Orden</span>
+                            <span className={loading ? '' : 'hidden'}>Creando orden...</span>
+                        </button>
                     </div>
 
                 </div>

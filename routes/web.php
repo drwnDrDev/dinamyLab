@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/examenes',[ExamenController::class,'index'])->name('examenes');
     Route::get('/examenes/{examen}',[ExamenController::class,'show'])->name('examenes.show');
     Route::get('/examenes/{examen}/lote',[ExamenController::class,'lote'])->name('examenes.lote');
+    Route::post('/examenes/{examen}/lote/resultados',[ExamenController::class,'guardarLote'])->name('examenes.lote.store');
 
     Route::match(['get', 'post'], 'search', [SearchController::class, 'search'])->name('search');
 

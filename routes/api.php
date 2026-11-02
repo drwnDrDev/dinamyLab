@@ -63,6 +63,7 @@ Route::get('via-ingreso/{codigo}', [\App\Http\Controllers\Api\ViaIngresoControll
 Route::patch('via-ingreso/{codigo}/activar', [\App\Http\Controllers\Api\ViaIngresoController::class, 'activar'])->name('vias-ingreso.activar');
 
 Route::get('cie10', [CodigoDiagnosticoController::class, 'index']);
+Route::get('cie10/gestion', [CodigoDiagnosticoController::class, 'gestion']);
 Route::get('cie10/{id}', [CodigoDiagnosticoController::class, 'show']);
 Route::post('cie10', [CodigoDiagnosticoController::class, 'store']);
 Route::patch('cie10/{codigo}/activar', [CodigoDiagnosticoController::class, 'activar']);
@@ -103,6 +104,7 @@ Route::post('ordenes', [OrdenController::class, 'store']);
 Route::patch('/ordenes-medicas/{orden}',[OrdenController::class,'add'])->name('ordenes.add');
 Route::post('resultados/{procedimiento}',[ResultadosController::class,'store']);
 Route::get('ordenes/max-numero', [OrdenController::class, 'max_numero']);
+Route::get('ordenes/verificar-numero', [OrdenController::class, 'verificarNumero']);
 
 Route::resources([
     'tarifas' => \App\Http\Controllers\Api\TarifaController::class,
