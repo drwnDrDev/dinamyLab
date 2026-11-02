@@ -67,6 +67,12 @@ class EmpleadoController extends Controller
     public function dashboard( )
     {
         $sede = session('sede');
+
+        if (! $sede) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Selecciona una sede para continuar.');
+        }
+
         $usuario = auth()->user();
         $empleado = Empleado::where('user_id', $usuario->id)->first();
         $ordenes = $usuario->hasRole('administrador') ? \App\Models\Orden::all() : \App\Models\Orden::whereHas('procedimientos', function ($query) use ($sede) {

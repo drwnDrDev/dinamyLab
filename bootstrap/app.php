@@ -12,15 +12,25 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
-
-        // 1. Configura el grupo de middleware 'api' para comportamiento STATEFUL (SPA)
+        // Sanctum ya aplica EncryptCookies, StartSession, CSRF y AuthenticateSession
+        // en peticiones stateful. No agregues EncryptCookies aquí: desencriptar dos
+        // veces invalida la cookie de sesión y el usuario vuelve al login.
+        // StartSession se mantiene para los controladores de la API que leen la
+        // sesión (p. ej. la sede elegida) en peticiones no stateful.
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Cookie\Middleware\EncryptCookies::class,
             \Illuminate\Session\Middleware\StartSession::class,
         ]);
 
+        // Aísla cada instancia: una petición dirigida al dominio de otro
+        // cliente se rechaza con 503 (ver config/instancias.php).
+        $middleware->web(append: [
+            \App\Http\Middleware\EnsureInstance::class,
+        ]);
+
+        $middleware->api(append: [
+            \App\Http\Middleware\EnsureInstance::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
