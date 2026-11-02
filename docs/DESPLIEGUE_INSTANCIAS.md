@@ -69,7 +69,7 @@ Ejecutar una sola vez por cliente.
    | `SESSION_DOMAIN` | **vacío** (cookie host-only) |
    | `SESSION_COOKIE` | `<instancia>_session` |
    | `DB_*` | Los de su propia BD |
-   | `CLIENTE_*` | Razón social, NIT, sede, código de prestador y admin |
+   | `CLIENTE_*` | Razón social, NIT, sede, código de prestador, admin (email, contraseña y documento) |
 
    > `APP_INSTANCE`, `APP_HOSTS` y `SESSION_COOKIE` son lo que impide que una
    > instancia atienda el dominio de la otra. Si `SESSION_DOMAIN` lleva un punto
@@ -101,8 +101,12 @@ Ejecutar una sola vez por cliente.
    exámenes, roles). Tarda unos **30–60 segundos**; si el host corta por tiempo
    de ejecución, subir `max_execution_time` temporalmente.
 
-   `ClienteSeeder` crea la empresa, su sede y el usuario admin a partir de las
-   variables `CLIENTE_*`. Es idempotente.
+   `ClienteSeeder` crea la empresa, su sede, el usuario admin y su `Empleado`
+   (con la sede asignada) a partir de las variables `CLIENTE_*`. Es idempotente.
+   Sin ese `Empleado` el admin inicia sesión pero `/dashboard` falla.
+
+   Orden obligatorio: `CatalogoBaseSeeder` antes que `ClienteSeeder` (el empleado
+   necesita el tipo de documento `CC` del catálogo).
 
    > No ejecutar `db:seed` sin `--class`: `DatabaseSeeder` siembra datos de
    > demostración (Biotek y San Pablo), no datos de producción.
