@@ -48,6 +48,7 @@ return [
         'codigo_prestador' => env('CLIENTE_CODIGO_PRESTADOR', '0000000000'),
         'admin_email' => env('CLIENTE_ADMIN_EMAIL', 'admin@ejemplo.test'),
         'admin_password' => env('CLIENTE_ADMIN_PASSWORD', 'password'),
+        'admin_documento' => env('CLIENTE_ADMIN_DOCUMENTO', '1000000000'),
     ],
 
 ];
