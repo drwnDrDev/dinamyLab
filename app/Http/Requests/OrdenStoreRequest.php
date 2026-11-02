@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use App\Models\Orden;
 
 class OrdenStoreRequest extends FormRequest
 {
@@ -23,13 +23,7 @@ class OrdenStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'numero_orden' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('ordenes_medicas', 'numero')
-                    ->where('sede_id', session('sede')->id ?? 1),
-            ],
+            'numero_orden' => 'required|string|max:255',
             'paciente_id' => 'required|exists:personas,id',
             'fecha' => 'nullable|date',
             'sede_id' => 'required|exists:sedes,id',

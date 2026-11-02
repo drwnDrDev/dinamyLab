@@ -39,7 +39,7 @@ class OrdenesApiTest extends TestCase
 
         $orderData = [
             'paciente_id' => $paciente->id,
-            'numero_orden' => '12345',
+            'numero_orden' => 12345,
             'fecha_orden' => now()->format('Y-m-d'),
             'examenes' => [
                 [
@@ -80,7 +80,7 @@ class OrdenesApiTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('ordenes_medicas', [
-            'numero' => '12345',
+            'numero' => 12345,
             'paciente_id' => $paciente->id,
             'total' => 200,
         ]);
@@ -93,7 +93,7 @@ class OrdenesApiTest extends TestCase
 
         $orderData = [
             'paciente_id' => $paciente->id,
-            'numero_orden' => '12345',
+            'numero_orden' => 12345,
             'fecha_orden' => now()->format('Y-m-d'),
             'examenes' => [
                 [
@@ -116,7 +116,7 @@ class OrdenesApiTest extends TestCase
     {
         $response = $this->actingAs($this->user, 'sanctum')
             ->postJson('/api/ordenes', [
-                'numero_orden' => '12345',
+                'numero_orden' => 12345,
                 'fecha_orden' => now()->format('Y-m-d'),
                 'examenes' => [],
                 'modalidad' => '01',
@@ -153,7 +153,7 @@ class OrdenesApiTest extends TestCase
         $response = $this->actingAs($this->user, 'sanctum')
             ->postJson('/api/ordenes', [
                 'paciente_id' => $paciente->id,
-                'numero_orden' => '12345',
+                'numero_orden' => 12345,
                 'fecha_orden' => now()->format('Y-m-d'),
                 'modalidad' => '01',
                 'finalidad' => '15',
@@ -188,7 +188,7 @@ class OrdenesApiTest extends TestCase
 
         $orderData = [
             'paciente_id' => $paciente->id,
-            'numero_orden' => '12345',
+            'numero_orden' => 12345,
             'fecha_orden' => now()->format('Y-m-d'),
             'examenes' => [
                 [
@@ -208,7 +208,7 @@ class OrdenesApiTest extends TestCase
 
         $response->assertStatus(201);
 
-        $orden = Orden::where('numero', '12345')->first();
+        $orden = Orden::where('numero', 12345)->first();
         $this->assertNotNull($orden);
 
         // Verificar que se crearon 3 procedimientos
@@ -228,7 +228,7 @@ class OrdenesApiTest extends TestCase
 
         $orderData = [
             'paciente_id' => $paciente->id,
-            'numero_orden' => '12345',
+            'numero_orden' => 12345,
             'fecha_orden' => now()->format('Y-m-d'),
             'examenes' => [
                 [
@@ -252,7 +252,7 @@ class OrdenesApiTest extends TestCase
 
         $response->assertStatus(201);
 
-        $orden = Orden::where('numero', '12345')->first();
+        $orden = Orden::where('numero', 12345)->first();
         $this->assertCount(2, $orden->examenes);
 
         $this->assertTrue($orden->examenes->contains($examen1));
@@ -265,7 +265,7 @@ class OrdenesApiTest extends TestCase
 
         $orderData = [
             'paciente_id' => 99999,
-            'numero_orden' => '12345',
+            'numero_orden' => 12345,
             'fecha_orden' => now()->format('Y-m-d'),
             'examenes' => [
                 [
@@ -292,7 +292,7 @@ class OrdenesApiTest extends TestCase
 
         $orderData = [
             'paciente_id' => $paciente->id,
-            'numero_orden' => '12345',
+            'numero_orden' => 12345,
             'fecha_orden' => now()->format('Y-m-d'),
             'examenes' => [
                 [
@@ -311,135 +311,5 @@ class OrdenesApiTest extends TestCase
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['examenes.0.id']);
-    }
-
-    public function test_can_create_orden_with_alphanumeric_number(): void
-    {
-        $paciente = Persona::factory()->create();
-        $examen = Examen::factory()->create(['valor' => 100]);
-
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->postJson('/api/ordenes', [
-                'paciente_id' => $paciente->id,
-                'numero_orden' => 'LAB-2026-A007',
-                'fecha_orden' => now()->format('Y-m-d'),
-                'examenes' => [['id' => $examen->id, 'cantidad' => 1, 'valor' => 100]],
-                'modalidad' => '01',
-                'finalidad' => '15',
-                'via_ingreso' => '01',
-            ]);
-
-        $response->assertCreated()
-            ->assertJsonPath('data.numero', 'LAB-2026-A007');
-
-        $this->assertDatabaseHas('ordenes_medicas', [
-            'numero' => 'LAB-2026-A007',
-            'paciente_id' => $paciente->id,
-        ]);
-    }
-
-    public function test_can_create_order_number_with_255_characters(): void
-    {
-        $paciente = Persona::factory()->create();
-        $examen = Examen::factory()->create();
-        $numero = str_repeat('A', 255);
-
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->postJson('/api/ordenes', [
-                'paciente_id' => $paciente->id,
-                'numero_orden' => $numero,
-                'fecha_orden' => now()->format('Y-m-d'),
-                'examenes' => [['id' => $examen->id, 'cantidad' => 1, 'valor' => 100]],
-                'modalidad' => '01',
-                'finalidad' => '15',
-                'via_ingreso' => '01',
-            ]);
-
-        $response->assertCreated()
-            ->assertJsonPath('data.numero', $numero);
-    }
-
-    public function test_numero_orden_may_not_exceed_255_characters(): void
-    {
-        $paciente = Persona::factory()->create();
-        $examen = Examen::factory()->create();
-
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->postJson('/api/ordenes', [
-                'paciente_id' => $paciente->id,
-                'numero_orden' => str_repeat('A', 256),
-                'fecha_orden' => now()->format('Y-m-d'),
-                'examenes' => [['id' => $examen->id, 'cantidad' => 1, 'valor' => 100]],
-                'modalidad' => '01',
-                'finalidad' => '15',
-                'via_ingreso' => '01',
-            ]);
-
-        $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['numero_orden']);
-    }
-
-    public function test_numero_orden_must_be_unique_within_the_same_sede(): void
-    {
-        $paciente = Persona::factory()->create();
-        $examen = Examen::factory()->create();
-        Orden::create([
-            'sede_id' => $this->sede->id,
-            'numero' => 'LAB-001',
-            'paciente_id' => $paciente->id,
-            'user_id' => $this->user->id,
-            'total' => 100,
-        ]);
-
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->postJson('/api/ordenes', [
-                'paciente_id' => $paciente->id,
-                'numero_orden' => 'LAB-001',
-                'fecha_orden' => now()->format('Y-m-d'),
-                'examenes' => [['id' => $examen->id, 'cantidad' => 1, 'valor' => 100]],
-                'modalidad' => '01',
-                'finalidad' => '15',
-                'via_ingreso' => '01',
-            ]);
-
-        $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['numero_orden']);
-    }
-
-    public function test_suggested_order_number_increments_alphanumeric_sequence(): void
-    {
-        $paciente = Persona::factory()->create();
-        Orden::create([
-            'sede_id' => $this->sede->id,
-            'numero' => 'LAB-009',
-            'paciente_id' => $paciente->id,
-            'user_id' => $this->user->id,
-            'total' => 100,
-        ]);
-
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->getJson('/api/ordenes/max-numero');
-
-        $response->assertOk()
-            ->assertJsonPath('next_numero', 'LAB-010');
-    }
-
-    public function test_number_verification_reports_existing_number_and_suggestion(): void
-    {
-        $paciente = Persona::factory()->create();
-        Orden::create([
-            'sede_id' => $this->sede->id,
-            'numero' => 'LAB-009',
-            'paciente_id' => $paciente->id,
-            'user_id' => $this->user->id,
-            'total' => 100,
-        ]);
-
-        $response = $this->actingAs($this->user, 'sanctum')
-            ->getJson('/api/ordenes/verificar-numero?numero_orden=LAB-009');
-
-        $response->assertOk()
-            ->assertJsonPath('usado', true)
-            ->assertJsonPath('sugerencia', 'LAB-010');
     }
 }

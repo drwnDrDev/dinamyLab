@@ -4,65 +4,58 @@
     </x-slot>
 
     <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!min-h-screen print:!text-xs print:!p-0 print:!bg-white print:!text-black">
-        <table class="resultados-print-table w-full table-fixed border-collapse">
-            <colgroup>
-                <col class="w-2/5">
-                <col class="w-1/5">
-                <col class="w-1/5">
-                <col class="w-1/5">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th colspan="4" class="p-0 text-left font-normal">
-                        <section class="print_header hidden print:!flex pb-2 items-center w-full">
-                            <figure class="w-16 my-auto p-0">
-                                @if (session('sede')->id === $procedimiento->sede->id)
-                                    <img class="fill-current object-contain text-gray-800" src="{{ asset('storage/logos/'.$procedimiento->sede->logo) }}" alt="{{ session('sede')->nombre }}">
-                                @else
-                                    <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                                @endif
-                            </figure>
-                            <div class="pl-4">
-                                <h2 class="font-semibold text-xl">{{$procedimiento->sede->empresa->nombre_comercial}}</h2>
-                                <p>{{$procedimiento->sede->nombre}}</p>
-                                <p class="font-light">NIT. {{$procedimiento->sede->empresa->nit}}</p>
-                            </div>
-                        </section>
+        <section class="print_header hidden print:!flex pb-2  items-center w-full">
+            <figure class="w-16 my-auto p-0">
 
-                        <section class="print_paciente grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
-                            <div class="col-span-2 flex gap-2">
-                                <span class="font-normal">Paciente:</span>
-                                <h3 class="text-titles font-normal">{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
-                            </div>
-                            <div class="w-full grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
-                                <span class="font-normal">Identificación:</span>
-                                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->tipo_documento->cod_rips}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
-                                <span class="font-normal">Sexo:</span>
-                                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->sexo === 'M' ? 'Masculino' : 'Femenino'}}</h3>
-                                <span class="font-normal">Edad:</span>
-                                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->edad()}}</h3>
-                            </div>
-                            <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
-                                <span class="font-normal">Fecha de atención:</span>
-                                <h3 class="text-titles font-light">{{$procedimiento->orden->created_at->format('d-m-Y')}}</h3>
-                                <span>Fecha de Nacimiento:</span>
-                                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->fecha_nacimiento->format('d-m-Y')}}</h3>
-                                <span class="font-normal">Orden Nº:</span>
-                                <h3 class="text-titles font-light">{{$procedimiento->orden->numero}}</h3>
-                            </div>
-                        </section>
+                @if (session('sede')->id === $procedimiento->sede->id)
+                <img class="fill-current object-contain text-gray-800" src="{{ asset('storage/logos/'.$procedimiento->sede->logo) }}" alt="{{ session('sede')->nombre }}">
+                @else
+                <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                @endif()
+            </figure>
+            <div class="pl-4">
+                <h2 class="font-semibold text-xl">{{$procedimiento->sede->empresa->nombre_comercial}}</h2>
+                <p class="">{{$procedimiento->sede->nombre}}</p>
+                <p class="font-light">NIT. {{$procedimiento->sede->empresa->nit}}</p>
+            </div>
+        </section>
 
-                        <h1 class="font-semibold text-center my-4 uppercase">{{$procedimiento->examen->nombre}}</h1>
-                    </th>
-                </tr>
-                <tr class="header_resultado text-titles border-b border-t border-text">
-                    <th class="py-2 pl-2 text-left font-semibold">Parámetro</th>
-                    <th class="py-2 text-right font-semibold">Resultado</th>
-                    <th class="py-2 text-left font-semibold">U. Medida</th>
-                    <th class="py-2 text-left font-semibold">V. de Referencia</th>
-                </tr>
-            </thead>
-            <tbody class="print_paramentros">
+        <section class="print_paciente grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">
+            <div class="col-span-2 flex gap-2">
+                <span class="font-normal ">Paciente: </span>
+                <h3 class="text-titles font-normal">{{$procedimiento->orden->paciente->nombreCompleto()}}</h3>
+            </div>
+            <div class="w-full grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
+
+                <span class="font-normal ">Identificación: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->tipo_documento->cod_rips}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
+                <span class="font-normal ">Sexo: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->sexo==="M" ? 'Masculino':'Femenino'}} </h3>
+                <span class="font-normal ">Edad: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->edad()}}</h3>
+
+
+
+            </div>
+            <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0">
+                <span class="font-normal ">Fecha de atención: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->created_at->format('d-m-Y')}}</h3>
+                <span>Fecha de Nacimiento: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->fecha_nacimiento->format('d-m-Y')}}</h3>
+                <span class="font-normal ">Órden Nº: </span>
+                <h3 class="text-titles font-light">{{$procedimiento->orden->numero}}</h3>
+
+            </div>
+        </section>
+
+        <section class="print_paramentros w-full">
+            <h1 class="font-semibold text-center my-4 uppercase">{{$procedimiento->examen->nombre}}</h1>
+            <div class="header_resultado grid [grid-template-columns:minmax(25%,40%)_20%_20%_minmax(max-content,20%)] gap-2 pl-4 mb-2 text-titles border-b border-t border-text">
+                <h2 class="font-semibold">Parametro</h2>
+                <h2 class="font-semibold text-end">Resultado</h2>
+                <h2 class="font-semibold">U. Medida</h2>
+                <h2 class="font-semibold">V. de Referencia</h2>
+            </div>
             @php
             $lastGroup = null;
             @endphp
@@ -70,20 +63,16 @@
             @foreach ( $parametros as $p)
 
             @if ($p['grupo'] && $p['grupo'] !== $lastGroup)
-            <tr class="break-inside-avoid">
-                <th colspan="4" class="pt-2 pl-2 text-left font-semibold uppercase">{{ $p['grupo']}}</th>
-            </tr>
+            <h3 class="pt-2 pl-2 font-semibold uppercase col-span-full">{{ $p['grupo']}}</h3>
             @php
             $lastGroup = $p['grupo'];
             @endphp
             @endif
-            <tr class="break-inside-avoid border-b-[0.2px] border-dashed border-secondary">
-                <x-parametro-print-table :item="$p" />
-            </tr>
+            <x-parametro-print :item="$p" />
 
             @endforeach
-            </tbody>
-        </table>
+
+        </section>
 
         <div class="text-end text-xs font-light p-4 print:hidden">
             <p class="text-xs font-light">Bacteriologo: {{$procedimiento->empleado->user->name}} - {{$procedimiento->empleado->numero_documento}}</p>
@@ -109,42 +98,6 @@
              </div>
         </footer>
     </article>
-
-    <section class="print:hidden max-w-6xl mx-auto p-4 md:p-6">
-        <h2 class="mb-3 text-lg font-semibold text-titles dark:text-white">Historial de modificaciones</h2>
-        @if ($cambios->isEmpty())
-            <p class="rounded-md border border-borders bg-background p-4 text-sm text-text dark:text-gray-300">
-                Este resultado no tiene modificaciones registradas.
-            </p>
-        @else
-            <div class="overflow-x-auto rounded-lg border border-borders">
-                <table class="w-full border-collapse text-sm">
-                    <thead class="bg-secondary text-left text-titles dark:bg-slate-800 dark:text-white">
-                        <tr>
-                            <th class="px-3 py-2">Fecha</th>
-                            <th class="px-3 py-2">Parámetro</th>
-                            <th class="px-3 py-2">Valor anterior</th>
-                            <th class="px-3 py-2">Valor nuevo</th>
-                            <th class="px-3 py-2">Modificado por</th>
-                            <th class="px-3 py-2">Observación</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($cambios as $cambio)
-                            <tr class="border-t border-borders align-top text-text dark:text-gray-200">
-                                <td class="whitespace-nowrap px-3 py-2">{{ $cambio->created_at->format('d/m/Y H:i') }}</td>
-                                <td class="px-3 py-2">{{ $cambio->parametro_nombre }}</td>
-                                <td class="px-3 py-2">{{ $cambio->valor_anterior ?? 'Vacío' }}</td>
-                                <td class="px-3 py-2">{{ $cambio->valor_nuevo ?? 'Vacío' }}</td>
-                                <td class="px-3 py-2">{{ $cambio->usuario_nombre }}</td>
-                                <td class="px-3 py-2">{{ $cambio->observacion }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
-    </section>
 
 
 

@@ -9,8 +9,6 @@ use App\Estado;
 use App\Models\Sede;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
-use App\Services\SugerirNumeroOrden;
 
 class OrdenController extends Controller
 {
@@ -39,13 +37,7 @@ class OrdenController extends Controller
 
         $validated = $request->validate([
             'paciente_id' => 'required|exists:personas,id',
-            'numero_orden' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('ordenes_medicas', 'numero')
-                    ->where('sede_id', $request->session()->get('sede')->id ?? 1),
-            ],
+            'numero_orden' => 'required|integer',
             'fecha_orden' => 'required|date',
             'examenes' => 'required|array',
             'examenes.*.id' => 'required|exists:examenes,id',
@@ -184,27 +176,12 @@ class OrdenController extends Controller
     public function max_numero(Request $request)
     {
         $sede = $request->session()->get('sede');
-        $sedeId = $sede->id ?? 1;
-        $siguienteNumero = SugerirNumeroOrden::paraSede($sedeId);
+        $maxNumero = Orden::where('sede_id', $sede->id ?? 1)->max('numero');
         return response()->json([
-            'next_numero' => $siguienteNumero,
+            'max_numero' => $maxNumero ?? 0,
+            'next_numero' => ($maxNumero ?? 0) + 1,
             'sesion_sede'=> isset($sede),
-        ]);
-    }
-
-    public function verificarNumero(Request $request)
-    {
-        $validated = $request->validate([
-            'numero_orden' => 'required|string|max:255',
-        ]);
-        $sede = $request->session()->get('sede');
-        $sedeId = $sede->id ?? 1;
-        $numero = trim($validated['numero_orden']);
-
-        return response()->json([
-            'usado' => Orden::withTrashed()->where('sede_id', $sedeId)->where('numero', $numero)->exists(),
-            'sugerencia' => SugerirNumeroOrden::paraSede($sedeId),
-        ]);
+    ]);
     }
     /**
      * Remove the specified resource from storage.

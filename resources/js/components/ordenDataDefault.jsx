@@ -1,9 +1,9 @@
 const ordenDataDefault = {
         cod_servicio: 706,
         via_ingreso: '01',
-        cie_principal: 'Z017',
+        cie_principal: null,    
         cie_relacionado: null,
-        finalidad: '15',
+        finalidad: '16',
         modalidad: '01',
         
 };

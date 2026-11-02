@@ -13,24 +13,11 @@ class ConvenioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $filters = $request->validate(['busqueda' => 'nullable|string|max:100']);
-        $busqueda = trim($filters['busqueda'] ?? '');
+
         return view('convenios.index', [
-            'convenios' => Convenio::with('telefonos')
-                ->where('empresa_id', auth()->user()->empleado->empresa_id)
-                ->when($busqueda !== '', function ($query) use ($busqueda) {
-                    $query->where(function ($query) use ($busqueda) {
-                        $query->where('razon_social', 'like', "%{$busqueda}%")
-                            ->orWhere('numero_documento', 'like', "%{$busqueda}%")
-                            ->orWhere('numero_contrato', 'like', "%{$busqueda}%")
-                            ->orWhereHas('telefonos', fn ($telefonos) => $telefonos->where('numero', 'like', "%{$busqueda}%"));
-                    });
-                })
-                ->orderBy('razon_social')
-                ->paginate(25)
-                ->withQueryString(),
+            'convenios' => Convenio::where('empresa_id', auth()->user()->empleado->empresa_id)->get(),
         ]);
     }
 

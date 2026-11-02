@@ -15,33 +15,20 @@ class ProcedimientoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $filters = $request->validate(['busqueda' => 'nullable|string|max:100']);
+
         $sede = session('sede');
         if (!$sede) {
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }
-        $busqueda = trim($filters['busqueda'] ?? '');
         $procedimientos = Procedimiento::with(['orden.paciente', 'examen'])
+
             ->where('sede_id', $sede->id)
-            ->where('estado', 'en proceso')
-            ->when($busqueda !== '', function ($query) use ($busqueda) {
-                $query->where(function ($query) use ($busqueda) {
-                    $query->whereHas('orden', fn ($orden) => $orden->where('numero', 'like', "%{$busqueda}%")
-                        ->orWhereHas('paciente', function ($paciente) use ($busqueda) {
-                            $paciente->where('numero_documento', 'like', "%{$busqueda}%")
-                                ->orWhere('primer_nombre', 'like', "%{$busqueda}%")
-                                ->orWhere('segundo_nombre', 'like', "%{$busqueda}%")
-                                ->orWhere('primer_apellido', 'like', "%{$busqueda}%")
-                                ->orWhere('segundo_apellido', 'like', "%{$busqueda}%");
-                        }))
-                        ->orWhereHas('examen', fn ($examen) => $examen->where('nombre', 'like', "%{$busqueda}%"));
-                });
-            })
-            ->orderByDesc('updated_at')
-            ->paginate(25)
-            ->withQueryString();
+            ->where('estado','en proceso')
+            ->orderBy('updated_at')
+            ->get();
+
 
         return view('procedimientos.index', compact('procedimientos'));
     }
@@ -240,3 +227,4 @@ if (!empty($procedimientos)) {
 }
 }
 }
+

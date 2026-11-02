@@ -55,10 +55,6 @@ class Procedimiento extends Model
     public function resultado(){
         return $this->hasMany(Resultado::class);
     }
-    public function cambiosResultado()
-    {
-        return $this->hasMany(ResultadoCambio::class)->orderByDesc('created_at');
-    }
     public function factura()
     {
         return $this->belongsTo(Factura::class);

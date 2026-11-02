@@ -12,7 +12,7 @@
     </h2>
   </x-slot>
   <x-canva>
-    <form method="GET" action="{{ route('facturas') }}" class="py-3 flex flex-wrap gap-3">
+    <div class="py-3 w-1/2 mx-auto">
       <label class="flex flex-col min-w-40 h-12 w-full">
         <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
           <div
@@ -26,16 +26,12 @@
             </svg>
           </div>
           <input
-            name="busqueda"
-            value="{{ request('busqueda') }}"
-            placeholder="Número de factura, pagador o documento"
+            placeholder="Search by number invoice or orden ID"
             class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-            />
+            value="" />
         </div>
       </label>
-      <button type="submit" class="rounded-lg bg-primary px-4 py-2 text-white">Buscar</button>
-      <a href="{{ route('facturas') }}" class="rounded-lg border border-borders px-4 py-2 text-text">Limpiar</a>
-    </form>
+    </div>
 
     <h2 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Facturas recientes</h2>
     <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
@@ -52,27 +48,22 @@
         </thead>
         <tbody>
 
-          @forelse ($facturas as $factura)
+          @foreach ($facturas as $factura)
           <tr class="border-t border-borders">
             <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
               {{ $factura->created_at->format('Y-m-d') }}
             </td>
             <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-              <a href="{{ route('facturas.show', $factura) }}" class="text-titles">{{ $factura->numero }}</a>
+              <a href="{{route('ordenes.show',$orden)}}" class="text-titles">{{$factura->numero}}</a>
             </td>
             <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
-              {{ $factura->pagador instanceof \App\Models\Persona ? $factura->pagador->nombreCompleto() : ($factura->pagador->razon_social ?? 'No disponible') }}
+              {{ $factura->pagador->nombre}}
             </td>
-            <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">{{ number_format($factura->total, 0, ',', '.') }}</td>
-            <td class="content-start px-4 py-2 w-40 text-sm font-normal leading-normal">{{ $factura->estado }}</td>
           </tr>
-          @empty
-          <tr><td colspan="5" class="px-4 py-6 text-center text-text">No se encontraron facturas.</td></tr>
-          @endforelse
+          @endforeach
         </tbody>
       </table>
     </div>
-    {{ $facturas->links() }}
   </x-canva>
 
 </x-app-layout>

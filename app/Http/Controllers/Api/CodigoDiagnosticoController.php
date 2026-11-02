@@ -26,52 +26,6 @@ class CodigoDiagnosticoController extends Controller
         ], 200);
     }
 
-    public function gestion(Request $request)
-    {
-        $validated = $request->validate([
-            'search' => 'nullable|string|max:100',
-            'estado' => 'nullable|in:todos,activos,inactivos',
-            'page' => 'nullable|integer|min:1',
-        ]);
-        $search = trim($validated['search'] ?? '');
-        $query = CodigoDiagnostico::query();
-
-        if ($search !== '') {
-            $query->where(function ($query) use ($search) {
-                $query->where('codigo', 'like', "%{$search}%")
-                    ->orWhere('nombre', 'like', "%{$search}%")
-                    ->orWhere('descripcion', 'like', "%{$search}%")
-                    ->orWhere('grupo', 'like', "%{$search}%")
-                    ->orWhere('sub_grupo', 'like', "%{$search}%");
-            });
-        }
-
-        $todos = clone $query;
-        $activos = (clone $query)->where('activo', true)->count();
-        $inactivos = (clone $query)->where('activo', false)->count();
-
-        if (($validated['estado'] ?? 'todos') === 'activos') {
-            $query->where('activo', true);
-        } elseif (($validated['estado'] ?? 'todos') === 'inactivos') {
-            $query->where('activo', false);
-        }
-
-        $paginador = $query->orderByDesc('nivel')->orderBy('codigo')->paginate(25);
-
-        return response()->json([
-            'message' => 'Códigos de diagnóstico encontrados',
-            'data' => $paginador->items(),
-            'meta' => [
-                'current_page' => $paginador->currentPage(),
-                'last_page' => $paginador->lastPage(),
-                'total' => $paginador->total(),
-                'todos' => $todos->count(),
-                'activos' => $activos,
-                'inactivos' => $inactivos,
-            ],
-        ]);
-    }
-
     public function show($id)
     {
         $codigoDiagnostico = CodigoDiagnostico::find($id);
@@ -116,12 +70,6 @@ class CodigoDiagnosticoController extends Controller
     public function activar($codigo)
     {
         $codigoDiagnostico = CodigoDiagnostico::where('codigo', $codigo)->first();
-        if (!$codigoDiagnostico) {
-            return response()->json([
-                'message' => 'Código de diagnóstico no encontrado',
-                'data' => null,
-            ], 404);
-        }
         $codigoDiagnostico->activo = !$codigoDiagnostico->activo;
         $codigoDiagnostico->save();
         return response()->json([

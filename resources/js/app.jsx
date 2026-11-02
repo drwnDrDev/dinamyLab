@@ -10,7 +10,6 @@ import DropdownComponent from './components/DropdownComponent';
 import Typewriter from './components/guest/Typewriter';
 import RegistroCitaAnonimo from './components/citas/RegistroCitaAnonimo';
 import TarifasExamenesSede from './components/TarifasExamenesSede';
-import ResultadosLote from './components/resultados/ResultadosLote';
 
 // Renderizado condicional basado en la presencia de elementos en el DOM
 
@@ -72,18 +71,6 @@ if (document.getElementById('tarifas-examenes-root')) {
     const sedeId = parseInt(element.getAttribute('data-sede-id') || '0', 10);
     const root = createRoot(element);
     root.render(<TarifasExamenesSede sedeId={sedeId} />);
-}
-
-if (document.getElementById('resultados-lote-root')) {
-    const element = document.getElementById('resultados-lote-root');
-    const initialMuestras = JSON.parse(element.querySelector('#resultados-lote-data').textContent);
-    const root = createRoot(element);
-    root.render(
-        <ResultadosLote
-            action={element.dataset.action}
-            initialMuestras={initialMuestras}
-        />
-    );
 }
 
 //

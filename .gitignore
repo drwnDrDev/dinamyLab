@@ -1,11 +1,9 @@
 /.phpunit.cache
 /node_modules
-/vendor
 /storage/*.key
 /storage/pail
 /public/hot
 .env
-.env.testing
 .env.backup
 .env.production
 .phpactor.json
@@ -28,4 +26,3 @@ yarn-error.log
 
 
 
-/.pnpm-store

@@ -6,7 +6,7 @@
     <x-canva>
     <div class="flex items-center justify-between mb-4">
       <h1 class="text-2xl font-bold">Convenios y Colaboradores</h1>
-      <form method="GET" action="{{ route('convenios.index') }}" class="flex flex-1 items-center gap-2 py-3">
+      <div class="py-3 w-1/3 mx-auto">
 
       <label class="flex flex-col min-w-40 h-12 w-full">
         <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
@@ -22,16 +22,12 @@
           </div>
           <input
             type="search"
-            name="busqueda"
-            value="{{ request('busqueda') }}"
-            placeholder="Razón social, NIT, contrato o teléfono"
+            placeholder="{{__('Search')}}"
             class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
              />
         </div>
       </label>
-      <button type="submit" class="rounded-lg bg-primary px-4 py-2 text-white">Buscar</button>
-      <a href="{{ route('convenios.index') }}" class="rounded-lg border border-borders px-4 py-2 text-text">Limpiar</a>
-      </form>
+    </div>
     <x-primary-button  href="{{ route('convenios.create') }}" class="w-40" id="tipoGuardado" name="tipoGuardado">Nuevo Convenio</x-primary-button>
 
     </div>
@@ -45,13 +41,12 @@
             <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Razon Social</th>
             <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">NIT</th>
             <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Telefono</th>
-            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Acciones</th>
           </tr>
         </thead>
         <tbody>
 
         @if($convenios->isEmpty())
-            <tr><td colspan="4" class="px-4 py-6 text-center text-text">No se encontraron convenios.</td></tr>
+            <p>No hay convenios registrados.</p>
         @else
 
         @foreach ($convenios as $convenio)
@@ -61,10 +56,10 @@
             </td>
 
             <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
-              {{ $convenio->numero_documento }}
+              {{ $convenio->nit }}
             </td>
             <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
-              {{ $convenio->telefonos->first()?->numero ?? 'No disponible' }}
+              {{ $convenio->contacto ? $convenio->contacto->telefono : 'No disponible' }}
             </td>
             <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
               <a href="{{ route('convenios.show', $convenio->id) }}" class="text-blue-500 hover:underline">Ver Detalles</a>
@@ -76,6 +71,5 @@
       </table>
     </div>
   </x-canva>
-  {{ $convenios->links() }}
 
 </x-app-layout>

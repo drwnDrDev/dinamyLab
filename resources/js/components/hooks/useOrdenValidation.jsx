@@ -5,8 +5,8 @@ import { useState } from 'react';
 const validationRules = {
   numero_orden: {
     required: true,
-    validate: (value) => typeof value === 'string' && value.trim().length > 0 && value.length <= 255,
-    message: "El número de orden es obligatorio y no puede superar 255 caracteres"
+    validate: (value) => /^[1-9]\d{0,4}$/.test(value),
+    message: "Debe ser un número positivo de 1 a 5 dígitos (sin ceros al inicio)"
   },
   
   paciente_id: {

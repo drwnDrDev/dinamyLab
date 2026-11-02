@@ -18,31 +18,11 @@ class FacturaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $filters = $request->validate(['busqueda' => 'nullable|string|max:100']);
-        $busqueda = trim($filters['busqueda'] ?? '');
-        $facturas = Factura::with('pagador')
-            ->when($busqueda !== '', function ($query) use ($busqueda) {
-                $query->where(function ($query) use ($busqueda) {
-                    $query->where('numero', 'like', "%{$busqueda}%")
-                        ->orWhere('estado', 'like', "%{$busqueda}%")
-                        ->orWhereHasMorph('pagador', [Persona::class], function ($pagador) use ($busqueda) {
-                            $pagador->where('numero_documento', 'like', "%{$busqueda}%")
-                                ->orWhere('primer_nombre', 'like', "%{$busqueda}%")
-                                ->orWhere('segundo_nombre', 'like', "%{$busqueda}%")
-                                ->orWhere('primer_apellido', 'like', "%{$busqueda}%")
-                                ->orWhere('segundo_apellido', 'like', "%{$busqueda}%");
-                        })
-                        ->orWhereHasMorph('pagador', [Convenio::class], function ($pagador) use ($busqueda) {
-                            $pagador->where('razon_social', 'like', "%{$busqueda}%")
-                                ->orWhere('numero_documento', 'like', "%{$busqueda}%");
-                        });
-                });
-            })
-            ->orderByDesc('created_at')
-            ->paginate(25)
-            ->withQueryString();
+        $facturas = Factura::with(['paciente', 'orden'])
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('facturas.index', compact('facturas'));
     }
 
@@ -102,7 +82,7 @@ class FacturaController extends Controller
      */
     public function show(Factura $factura)
     {
-        $factura->load(['pagador', 'mediosPago', 'sede', 'resolucion']);
+        $factura->load(['paciente', 'orden.examenes']);
         return view('facturas.show', compact('factura'));
     }
 
