@@ -8,6 +8,7 @@
 |---|---|
 | [MANUAL.md](./MANUAL.md) | **Empezar aquí.** Funcionamiento de la aplicación, flujos, roles y permisos, hallazgos de autorización y estado por módulo. |
 | [ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md](./ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md) | Estado técnico, deuda, costos, pricing (incluye el borrador del Plan Emprendedor), tiempos y riesgos para propuestas comerciales. |
+| [CHECKLIST_DEUDA_TECNICA.md](./CHECKLIST_DEUDA_TECNICA.md) | Issues de deuda técnica por prioridad y viabilidad, con estado y comentarios (pendiente, a deprecar, omitido). |
 | [ENTORNO_DOCKER_WSL.md](./ENTORNO_DOCKER_WSL.md) | Montar el entorno local con WSL 2 + Docker Compose. |
 | [DESPLIEGUE_INSTANCIAS.md](./DESPLIEGUE_INSTANCIAS.md) | Runbook de cPanel: una instancia por cliente, migraciones, operación. |
 | [CLAUDE.md](./CLAUDE.md) | Instrucciones internas para Claude Code; no es documentación de usuario. |
