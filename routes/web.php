@@ -28,6 +28,10 @@ Route::get('/', function () {
 });
 Route::get('/migracion', function () {
     Artisan::call('migrate:fresh --seed');
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
     return '¡La migración ha sido ejecutada con éxito!';
 });
 

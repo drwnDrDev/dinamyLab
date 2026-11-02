@@ -1,6 +1,6 @@
 {
-  "_FormPersona-KC0ULFtU.js": {
-    "file": "assets/FormPersona-KC0ULFtU.js",
+  "_FormPersona-d4XaI-d_.js": {
+    "file": "assets/FormPersona-d4XaI-d_.js",
     "name": "FormPersona",
     "imports": [
       "_index-C2KC86Ta.js",
@@ -38,7 +38,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-BUduhF5i.css",
+    "file": "assets/app-CXLdcDUv.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -68,7 +68,7 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-Do4l5Ma9.js",
+    "file": "assets/app-CGqTWw3F.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -80,34 +80,34 @@
       "resources/js/components/guest/Typewriter.jsx"
     ],
     "css": [
-      "assets/app-BUduhF5i.css"
+      "assets/app-CXLdcDUv.css"
     ],
     "assets": [
       "assets/rips-cargador-DoL-Xzn1.png"
     ]
   },
   "resources/js/appOrden.jsx": {
-    "file": "assets/appOrden-C85vOL1a.js",
+    "file": "assets/appOrden-D2UQDMxo.js",
     "name": "appOrden",
     "src": "resources/js/appOrden.jsx",
     "isEntry": true,
     "imports": [
       "_index-C2KC86Ta.js",
       "_client-DCM6oUEP.js",
-      "_FormPersona-KC0ULFtU.js",
+      "_FormPersona-d4XaI-d_.js",
       "_index-B9ygI19o.js",
       "_useAxiosAuth-JGr_IZ3E.js"
     ]
   },
   "resources/js/appPersona.jsx": {
-    "file": "assets/appPersona-CbG8zl3Y.js",
+    "file": "assets/appPersona-2DLZjo2y.js",
     "name": "appPersona",
     "src": "resources/js/appPersona.jsx",
     "isEntry": true,
     "imports": [
       "_index-C2KC86Ta.js",
       "_client-DCM6oUEP.js",
-      "_FormPersona-KC0ULFtU.js",
+      "_FormPersona-d4XaI-d_.js",
       "_index-B9ygI19o.js"
     ]
   },
