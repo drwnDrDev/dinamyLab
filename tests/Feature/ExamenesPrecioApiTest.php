@@ -23,9 +23,11 @@ class ExamenesPrecioApiTest extends TestCase
     {
         parent::setUp();
 
-        // I-11: EscogerPrecioExamen filtra por tarifas.sede_id, que no existe (la sede va en sede_tarifa).
-        // Se reactivan cuando backend corrija el servicio. Ver docs/CHECKLIST_DEUDA_TECNICA.md.
-        $this->markTestSkipped('I-11: EscogerPrecioExamen usa tarifas.sede_id inexistente; pendiente de backend.');
+        // I-11: el servicio ya está corregido, pero el endpoint obtenerPrecio no tiene ruta en
+        // routes/api.php. Si se publica: registrar la ruta, crear las tarifas con
+        // $tarifa->sedes()->attach() y enviar los parámetros en la URL (getJson recibe headers,
+        // no query params). Ver docs/CHECKLIST_DEUDA_TECNICA.md.
+        $this->markTestSkipped('I-11: endpoint obtenerPrecio sin ruta; pendiente de decidir si se publica.');
 
         // Ejecutar seeders necesarios
         $this->seed(\Database\Seeders\PaisSeeder::class);

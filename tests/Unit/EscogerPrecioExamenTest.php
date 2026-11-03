@@ -22,10 +22,6 @@ class EscogerPrecioExamenTest extends TestCase
     {
         parent::setUp();
 
-        // I-11: EscogerPrecioExamen filtra por tarifas.sede_id, que no existe (la sede va en sede_tarifa).
-        // Se reactivan cuando backend corrija el servicio. Ver docs/CHECKLIST_DEUDA_TECNICA.md.
-        $this->markTestSkipped('I-11: EscogerPrecioExamen usa tarifas.sede_id inexistente; pendiente de backend.');
-
         // Ejecutar seeders necesarios
         $this->seed(\Database\Seeders\PaisSeeder::class);
         $this->seed(\Database\Seeders\TipoDocumentoSeeder::class);
@@ -43,12 +39,7 @@ class EscogerPrecioExamenTest extends TestCase
     public function test_returns_tarifa_by_convenio_y_sede()
     {
         // Crear tarifa específica para convenio + sede
-        $tarifa = Tarifa::create([
-            'precio' => 80000,
-            'tarifable_type' => 'App\Models\Examen',
-            'tarifable_id' => $this->examen->id,
-            'sede_id' => $this->sede->id,
-        ]);
+        $tarifa = $this->crearTarifaEnSede(80000);
 
         // Vincular tarifa al convenio
         $this->convenio->tarifas()->attach($tarifa->id);
@@ -66,12 +57,7 @@ class EscogerPrecioExamenTest extends TestCase
     public function test_returns_tarifa_by_sede_when_no_convenio_tarifa()
     {
         // Crear tarifa solo por sede (sin vincular a convenio)
-        $tarifa = Tarifa::create([
-            'precio' => 90000,
-            'tarifable_type' => 'App\Models\Examen',
-            'tarifable_id' => $this->examen->id,
-            'sede_id' => $this->sede->id,
-        ]);
+        $tarifa = $this->crearTarifaEnSede(90000);
 
         $resultado = EscogerPrecioExamen::obtener($this->examen, $this->convenio, $this->sede);
 
@@ -97,12 +83,7 @@ class EscogerPrecioExamenTest extends TestCase
      */
     public function test_obtener_precio_returns_float()
     {
-        $tarifa = Tarifa::create([
-            'precio' => 75000,
-            'tarifable_type' => 'App\Models\Examen',
-            'tarifable_id' => $this->examen->id,
-            'sede_id' => $this->sede->id,
-        ]);
+        $tarifa = $this->crearTarifaEnSede(75000);
 
         $this->convenio->tarifas()->attach($tarifa->id);
 
@@ -118,19 +99,9 @@ class EscogerPrecioExamenTest extends TestCase
     public function test_priority_convenio_y_sede_over_sede()
     {
         // Crear dos tarifas: una por sede y otra por convenio+sede
-        $tarifa_sede = Tarifa::create([
-            'precio' => 90000,
-            'tarifable_type' => 'App\Models\Examen',
-            'tarifable_id' => $this->examen->id,
-            'sede_id' => $this->sede->id,
-        ]);
+        $tarifa_sede = $this->crearTarifaEnSede(90000);
 
-        $tarifa_convenio = Tarifa::create([
-            'precio' => 70000,
-            'tarifable_type' => 'App\Models\Examen',
-            'tarifable_id' => $this->examen->id,
-            'sede_id' => $this->sede->id,
-        ]);
+        $tarifa_convenio = $this->crearTarifaEnSede(70000);
 
         // Vincular solo la tarifa de convenio
         $this->convenio->tarifas()->attach($tarifa_convenio->id);
@@ -154,5 +125,49 @@ class EscogerPrecioExamenTest extends TestCase
         $this->assertIsArray($resultado);
         $this->assertArrayHasKey('precio', $resultado);
         $this->assertEquals(100000, $resultado['precio']);
+    }
+
+    /**
+     * Crea una tarifa del examen y la asocia a la sede por la tabla pivote sede_tarifa.
+     */
+    private function crearTarifaEnSede(float $precio, ?Sede $sede = null): Tarifa
+    {
+        $tarifa = Tarifa::create([
+            'precio' => $precio,
+            'tarifable_type' => Examen::class,
+            'tarifable_id' => $this->examen->id,
+        ]);
+        $tarifa->sedes()->attach(($sede ?? $this->sede)->id);
+
+        return $tarifa;
+    }
+
+    /**
+     * Prueba: una tarifa de otro convenio no se aplica como tarifa "por sede"
+     */
+    public function test_tarifa_de_otro_convenio_no_se_aplica()
+    {
+        $otroConvenio = Convenio::factory()->create();
+        $tarifa = $this->crearTarifaEnSede(60000);
+        $otroConvenio->tarifas()->attach($tarifa->id);
+
+        $resultado = EscogerPrecioExamen::obtener($this->examen, $this->convenio, $this->sede);
+
+        $this->assertEquals(100000, $resultado['precio']);
+        $this->assertEquals('precio_base', $resultado['tipo_tarifa']);
+    }
+
+    /**
+     * Prueba: una tarifa de otra sede no se aplica
+     */
+    public function test_tarifa_de_otra_sede_no_se_aplica()
+    {
+        $otraSede = Sede::factory()->create();
+        $this->crearTarifaEnSede(50000, $otraSede);
+
+        $resultado = EscogerPrecioExamen::obtener($this->examen, $this->convenio, $this->sede);
+
+        $this->assertEquals(100000, $resultado['precio']);
+        $this->assertEquals('precio_base', $resultado['tipo_tarifa']);
     }
 }
