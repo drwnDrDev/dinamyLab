@@ -43,7 +43,7 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 | `[O]` | C-06 | Terminar la creación de facturas: quitar el `dd()`, guardar y probar | `FacturaController.php:95` | 6–10h | Media | BE | Decidir si la facturación entra en la propuesta comercial; si no, puede quedar como `[O]` para el MVP |
 | `[O]` | C-07 | Generar el PDF del reporte en servidor con DomPDF, reutilizando la vista imprimible | `resources/views/resultados/show.blade.php` | 8–12h | Media | BE + FE | DomPDF ya está instalado. Requisito previo para enviar resultados por correo (C-08)/ omitimos por ahora, se desarrollara en el futuro |
 | `[ ]` | C-08 | Notificaciones por email (WhatsApp como fase posterior) | `config/mail.php`, `MAIL_MAILER=log` | 15–20h | Baja | BE + Infra | El `TODO` actual está en el pre-registro público de citas (ver C-09). Si ese flujo se retira, redefinir qué se notifica (p. ej. resultados listos) |
-| `[D]` | C-09 | Rate limiting en los endpoints públicos de citas | `routes/api.php:24-26` (`citas/pre-registrar`, `citas/pre-registrar-lista`, `citas/consultar/{codigo}`) | 4–6h | — | BE | **A deprecar:** los endpoints públicos se van a quitar del proyecto, así que no hace falta limitarlos. Al retirarlos, revisar también las rutas web públicas de `routes/web.php:35-38` (`/citas/registrar`, `/citas/confirmacion/{codigo}`, `/citas/confirmar/{codigo}`), los componentes `FormPreRegistroCita` y `RecepcionCitas`, `PreRegistroCitaController` (web y API), `PreRegistroCitaPolicy` y la tabla `pre_registros_citas` (no borrar migraciones; crear una nueva si se elimina la tabla). |
+| `[x]` | C-09 | Rate limiting en los endpoints públicos de citas | `routes/api.php:24-26` (`citas/pre-registrar`, `citas/pre-registrar-lista`, `citas/consultar/{codigo}`) | 4–6h | — | BE | **A deprecar:** los endpoints públicos se van a quitar del proyecto, así que no hace falta limitarlos. Al retirarlos, revisar también las rutas web públicas de `routes/web.php:35-38` (`/citas/registrar`, `/citas/confirmacion/{codigo}`, `/citas/confirmar/{codigo}`), los componentes `FormPreRegistroCita` y `RecepcionCitas`, `PreRegistroCitaController` (web y API), `PreRegistroCitaPolicy` y la tabla `pre_registros_citas` (no borrar migraciones; crear una nueva si se elimina la tabla). **Hecho 2026-11-03:** se retiró el módulo completo, incluidas las rutas internas `/citas/*` y `recepcion/pre-registros/*`; la tabla se elimina con la migración `2026_11_03_000000_drop_pre_registros_citas_table`. Antes de migrar en producción, exportar los pre-registros si se quieren conservar. |
 
 **Subtotal (sin deprecados):** 41–63h
 
@@ -54,7 +54,7 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 | Estado | ID | Issue | Ubicación | Esfuerzo | Viabilidad | Área | Comentarios |
 |---|---|---|---|---|---|---|---|
 | `[x]` | I-01 | Configurar el CI para que corra en `main` (también corre en `master` y `*.x`) | `.github/workflows/tests.yml` | 0.5–1h | Alta | Infra | |
-| `[ ]` | I-02 | Corregir las fallas de tests reportadas el 2026-10-29: `HasFactory` en `Convenio`, `tipo_documento_id` inexistente en la factory de `Empleado`, `->sedes` sobre `null` en `header.blade.php` | `app/Models/Convenio.php`, `database/factories/EmpleadoFactory.php`, `resources/views/layouts/header.blade.php` | 2–4h | Alta | BE + FE | Verificar primero con `docker compose exec app php artisan test` |
+| `[x]` | I-02 | Corregir las fallas de tests reportadas el 2026-10-29: `HasFactory` en `Convenio`, `tipo_documento_id` inexistente en la factory de `Empleado`, `->sedes` sobre `null` en `header.blade.php` | `app/Models/Convenio.php`, `database/factories/EmpleadoFactory.php`, `resources/views/layouts/header.blade.php` | 2–4h | Alta | BE + FE | **Hecho 2026-11-03.** La columna sí existía: la factory fallaba por FK con ids fijos (`tipo_documento_id=1`, `empresa_id=1`); ahora usa factories. Se agregó `ConvenioFactory`. Al correr, aparecieron I-11 y los fallos de M-02. |
 | `[ ]` | I-03 | Matriz de roles y permisos: dividir `can:eliminar_persona` del grupo admin, sembrar los permisos que faltan, crear `OrdenPolicy` y `ProcedimientoPolicy` e invocar `SedePolicy` | `routes/web.php`, `RolesYPermisosSeeder`, `app/Policies/` | 6–8h | Media | BE | Requiere que el responsable funcional apruebe la matriz |
 | `[ ]` | I-04 | Auditoría HABEAS DATA: registrar accesos y cambios a datos de pacientes y órdenes con formato común (usuario, acción, ID) | `app/` (19 llamadas a `Log::`) | 6–10h | Media | BE | La edición de resultados ya se audita en `resultado_cambios` |
 | `[ ]` | I-05 | Eliminar N+1 en el dashboard y en la lista de personas | `EmpleadoController::dashboard()`, `Api/ListaPersonasController` | 6–10h | Media | BE | |
@@ -63,6 +63,7 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 | `[ ]` | I-08 | Test de extremo a extremo del flujo orden → procedimiento → resultado → reporte, y tests de autorización | `tests/Feature/` | 10–14h | Media | BE | Incluir los casos de `MANUAL.md` §7.5 |
 | `[ ]` | I-09 | Mover a services la lógica que sigue en controllers de los módulos antiguos | 75 controllers / 11 services | Continuo | Baja | BE | Hacerlo a medida que se toque cada módulo, no como tarea aparte |
 | `[ ]` | I-10 | Unificar la duplicación web/API (validación de persona, creación de órdenes, captura de resultados) | `PersonaController` / `Api/PersonaController`, `OrdenController` / `Api/OrdenController`, `ResultadosController` / `Api/ResultadosController` | 8–12h | Baja | BE | Depende de I-09 |
+| `[ ]` | I-11 | `EscogerPrecioExamen` filtra por `tarifas.sede_id`, que no existe (la relación sede–tarifa está en `sede_tarifa`): la consulta falla, el `catch` la oculta y siempre devuelve el precio base. Además, `Api\ExamenesController::obtenerPrecio` no tiene ruta en `routes/api.php` | `app/Services/EscogerPrecioExamen.php`, `app/Http/Controllers/Api/ExamenesController.php`, `tests/Unit/EscogerPrecioExamenTest.php`, `tests/Feature/ExamenesPrecioApiTest.php` | 2–4h | Alta | BE | Detectado el 2026-11-03. Hoy nadie usa el servicio (no hay impacto en producción). Los 14 tests están marcados como `skipped`; al corregir, quitar el `markTestSkipped` y vincular las tarifas por `sede_tarifa` en los tests. Ver la referencia en `Api\TarifaController`. Decidir si el endpoint se publica. |
 
 **Subtotal (sin I-09 continuo ni I-07):** 47–69h
 
@@ -72,8 +73,8 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 
 | Estado | ID | Issue | Ubicación | Esfuerzo | Viabilidad | Área | Comentarios |
 |---|---|---|---|---|---|---|---|
-| `[ ]` | M-01 | `Empleado->nombre()` no tiene `return` | `app/Models/Empleado.php:29-31` | 0.5h | Alta | BE | |
-| `[ ]` | M-02 | Alinear `EmpresaPolicyTest` con las rutas reales (`admin.sedes.*`) y agregar las aserciones que faltan | `tests/Feature/Policies/EmpresaPolicyTest.php` | 1–2h | Alta | BE | |
+| `[x]` | M-01 | `Empleado->nombre()` no tiene `return` | `app/Models/Empleado.php:29-31` | 0.5h | Alta | BE | |
+| `[ ]` | M-02 | Alinear `EmpresaPolicyTest` con las rutas reales (`admin.sedes.*`) y agregar las aserciones que faltan | `tests/Feature/Policies/EmpresaPolicyTest.php` | 1–2h | Media | BE | 2026-11-03: 7 de los 9 tests fallan porque el test no siembra roles ni permisos (`admin`, `crear_sedes`, `editar_sedes`), usa rutas `sedes.*` inexistentes y algunas respuestas dan 403 donde espera 200. **Se resuelve junto con I-03.** |
 | `[ ]` | M-03 | Validar los endpoints sin validación | `OpcionController`, `TributoController` | 1–2h | Alta | BE | |
 | `[ ]` | M-04 | Pasar el país "170" (más de 20 apariciones) a una constante o a configuración | Controllers, `GuardarPersona`, `GuardarContacto`, `Persona` | 2–3h | Alta | BE | |
 | `[ ]` | M-05 | Pasar a constantes los valores fijos: tipos de tarifa y vencimiento de factura a 30 días | `EscogerPrecioExamen`, `FacturaController:92` | 1–2h | Alta | BE | |
@@ -90,12 +91,16 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 
 ## Resumen
 
-| Prioridad | Ítems | Pendientes | Deprecados / omitidos | Horas estimadas |
-|---|---|---|---|---|
-| 🔴 Crítico | 9 | 8 | 1 (C-09) | 41–63h |
-| 🟡 Importante | 10 | 10 | 0 | 47–69h + I-07, I-09 |
-| 🟠 Menor | 11 | 11 | 0 | 31.5–53.5h + M-11 |
+| Prioridad | Ítems | Pendientes / en curso | Hechos | Deprecados / omitidos | Horas estimadas |
+|---|---|---|---|---|---|
+| 🔴 Crítico | 9 | 4 (C-03, C-04, C-05, C-08) | 1 (C-09) | 4 (C-01, C-02, C-06, C-07) | 41–63h |
+| 🟡 Importante | 11 | 9 | 2 (I-01, I-02) | 0 | 47–69h + I-07, I-09, I-11 |
+| 🟠 Menor | 11 | 10 | 1 (M-01) | 0 | 31.5–53.5h + M-11 |
+
+> Las horas son las de la estimación original; no se han descontado los ítems hechos ni los omitidos.
 
 **Orden sugerido para empezar** (máximo impacto con mínimo esfuerzo): C-01 → C-02 → I-02 → M-01. Son unas 4.5–7.5h en total y desbloquean un CI confiable y una base segura para el resto.
+
+**Avance 2026-11-03:** I-02 y M-01 hechos; C-01 y C-02 omitidos. Suite: 88 pasan, 14 `skipped` (I-11) y 7 fallan (M-02, pendiente de I-03).
 
 Al deprecar u omitir un ítem que afecta horas o alcance de la propuesta, actualizar también §13 y §14 de [ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md](./ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md).
