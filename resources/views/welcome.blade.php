@@ -71,22 +71,6 @@
                     </p>
                 </header>
 
-                <div class="w-full max-w-sm space-y-3 p-5 bg-white/60 dark:bg-slate-800/60 rounded-2xl
-                            backdrop-blur-sm border border-[#0eb4d1]/20 dark:border-slate-700
-                            shadow-sm">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
-                        {{ __('Agendar una Cita') }}
-                    </h2>
-                    <p class="text-sm text-slate-600 dark:text-slate-400">
-                        {{ __('Agenda tu cita de laboratorio de forma rápida y sencilla') }}
-                    </p>
-                    <a href="{{ route('citas.create') }}"
-                       class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg font-medium text-sm text-white
-                              bg-[#0eb4d1] hover:bg-[#0a9ab8] active:bg-[#088eaf]
-                              transition-colors duration-200 shadow-md hover:shadow-lg">
-                        {{ __('Nueva Cita') }}
-                    </a>
-                </div>
             </section>
 
             <!-- Sección Login -->

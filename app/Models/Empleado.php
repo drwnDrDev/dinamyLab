@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Empleado extends Model
 
 {
-        /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\PersonaFactory> */
+        /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\EmpleadoFactory> */
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $fillable = [
@@ -27,7 +27,7 @@ class Empleado extends Model
         return $this->belongsTo(User::class);
     }
     public function nombre(){
-        $this->user->name;
+        return $this->user->name;
     }
 
     public function sedes()

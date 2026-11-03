@@ -13,19 +13,44 @@ Diseño de referencia: `docs/superpowers/specs/2026-10-30-multitenant-design.md`
 ### Decisión pendiente: `vendor/`
 
 El repositorio **no versiona `vendor/`** (commit `041d1fa4`). En cPanel eso solo
-funciona si el deploy puede ejecutar Composer. Hay que resolver el **spike S0**:
+funciona si el deploy puede ejecutar Composer. Hay que resolver el **spike S0**
+(C-04 en `CHECKLIST_DEUDA_TECNICA.md`). Está pendiente de definir con el
+responsable backend.
 
-- **Opción A** — el servidor tiene PHP CLI y Composer funciona:
-  versionar `composer.phar` y añadir como primera tarea de `.cpanel.yml`:
-  `php composer.phar install --no-dev --optimize-autoloader`
-- **Opción B** — no hay Composer: revertir el commit `041d1fa4` para volver a
-  versionar `vendor/`.
+**Recomendación: opción A.** Es probable que funcione: `.cpanel.yml` ya ejecuta
+`php artisan …` en cada deploy, así que el servidor tiene PHP CLI.
 
-Comprobación rápida en cPanel → *Terminal*:
+- **Opción A (preferida)**: el servidor tiene PHP CLI y Composer funciona.
+  Versionar `composer.phar` y agregar como **primera** tarea de `.cpanel.yml`:
+
+  ```yaml
+  - php composer.phar install --no-dev --optimize-autoloader --no-interaction
+  ```
+
+  Ventajas: nadie sube `vendor/` a mano, el servidor instala exactamente lo que
+  fija `composer.lock`, el historial de git sigue limpio (`vendor/` pesa ~128 MB
+  y miles de archivos) y las dependencias de desarrollo (Pest, Collision…) no
+  llegan a producción. En hosting compartido, si Composer falla por memoria:
+  `php -d memory_limit=-1 composer.phar install …`.
+
+- **Opción B (solo si el servidor no puede ejecutar Composer)**: versionar
+  `vendor/`, pero **no en `main` ni en las ramas de desarrollo**. Usar una rama
+  aparte (p. ej. `deploy`) que genere GitHub Actions con
+  `composer install --no-dev --optimize-autoloader` y `npm run build`, y que sea
+  la que cPanel descarga. Así no se sube nada a mano y `main` no se llena de
+  `vendor/`. Revertir `041d1fa4` (volver a versionar `vendor/` en `main`) queda
+  como último recurso.
+
+> **Nunca** hacer commit del `vendor/` de una máquina de desarrollo: tiene las
+> dependencias de desarrollo y no necesariamente coincide con `composer.lock`.
+> El intento del 2026-11-01 (respaldado en el tag `archive/maloca-2026-11-01`)
+> agregó más de 7.000 archivos al repositorio.
+
+Comprobación rápida en cPanel → *Terminal* (o por SSH):
 
 ```bash
 php -v
-composer -V
+composer -V              # o: php composer.phar -V
 ```
 
 Anotar la versión de PHP. `composer.json` exige `^8.5`; si el host no la ofrece,
@@ -69,7 +94,7 @@ Ejecutar una sola vez por cliente.
    | `SESSION_DOMAIN` | **vacío** (cookie host-only) |
    | `SESSION_COOKIE` | `<instancia>_session` |
    | `DB_*` | Los de su propia BD |
-   | `CLIENTE_*` | Razón social, NIT, sede, código de prestador y admin |
+   | `CLIENTE_*` | Razón social, NIT, sede, código de prestador, admin (email, contraseña y documento) |
 
    > `APP_INSTANCE`, `APP_HOSTS` y `SESSION_COOKIE` son lo que impide que una
    > instancia atienda el dominio de la otra. Si `SESSION_DOMAIN` lleva un punto
@@ -101,8 +126,12 @@ Ejecutar una sola vez por cliente.
    exámenes, roles). Tarda unos **30–60 segundos**; si el host corta por tiempo
    de ejecución, subir `max_execution_time` temporalmente.
 
-   `ClienteSeeder` crea la empresa, su sede y el usuario admin a partir de las
-   variables `CLIENTE_*`. Es idempotente.
+   `ClienteSeeder` crea la empresa, su sede, el usuario admin y su `Empleado`
+   (con la sede asignada) a partir de las variables `CLIENTE_*`. Es idempotente.
+   Sin ese `Empleado` el admin inicia sesión pero `/dashboard` falla.
+
+   Orden obligatorio: `CatalogoBaseSeeder` antes que `ClienteSeeder` (el empleado
+   necesita el tipo de documento `CC` del catálogo).
 
    > No ejecutar `db:seed` sin `--class`: `DatabaseSeeder` siembra datos de
    > demostración (Biotek y San Pablo), no datos de producción.
