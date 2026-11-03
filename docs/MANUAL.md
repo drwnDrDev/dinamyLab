@@ -124,9 +124,11 @@ Hay permisos que se consultan en el código pero que el seeder no crea ni asigna
 2. Facturas y convenios exigen `auth`, `verified` y `can:ver_facturas`.
 3. Todo el grupo administrativo usa `can:eliminar_persona`: empresas, empleados, sedes, catálogos y `/migracion`.
 4. `EmpresaPolicy`, `SedePolicy` y `PreRegistroCitaPolicy` están registradas, pero `SedeController` no las invoca.
-5. `SedeController::elegirSede()` guarda en sesión cualquier sede, sin verificar membresía.
-6. `ResultadosController` (web) llama a `autorizarSede()` en `show`, `edit` y `update`, pero no en `store`.
-7. La escritura de resultados por API no verifica membresía ni un permiso específico.
+5. `SedeController::elegirSede()` verifica la membresía en `empleado_sede` y responde 403 sin cambiar la sesión (C-05, 2026-11-03).
+6. `ResultadosController` (web) aplica el control de sede en `show`, `create`, `edit`, `update` y `store` (`create` y `store` se agregaron en C-05).
+7. La escritura de resultados por API (`Api\ResultadosController::store`) aplica el mismo control de sede y guarda como `empleado_id` al empleado autenticado, no al valor enviado (C-05). Todavía no exige un permiso específico (ver I-03).
+
+El control está centralizado en `App\Services\ControlSede` y registra cada denegación en el log (usuario, acción e IDs, sin datos del paciente).
 8. `SedePolicy` compara la empresa del empleado, no `empleado_sede`.
 
 ### 7.4 Hallazgos priorizados (para backend)
@@ -152,14 +154,14 @@ Son criterios de aceptación para backend. Cada caso debe comprobar el código d
 | PERM-03 | `agente` pide facturas | 403 |
 | PERM-04 | Usuario sin autorización en una operación administrativa | 403 |
 | PERM-05 | `prestador` accede a `/migracion` | La ruta no existe en producción y nunca migra |
-| SEDE-01 | Empleado de la sede A elige la sede B | 403; la sesión no cambia. **Hoy falla** |
-| SEDE-02 | Usuario sin empleado elige una sede | 403. **Hoy falla** |
+| SEDE-01 | Empleado de la sede A elige la sede B | 403; la sesión no cambia. Cubierto en `ControlSedeTest` |
+| SEDE-02 | Usuario sin empleado elige una sede | 403. Cubierto en `ControlSedeTest` |
 | SEDE-03 | Empleado de la sede A elige la sede A | Éxito; A queda en sesión |
 | SEDE-04 | Sede activa A, procedimiento de la sede B | 403; sin cambios |
 | SEDE-05 | Usuario no miembro actualiza un resultado | 403; valor e historial iguales |
 | SEDE-06 | Sin sede activa al modificar resultados | 403 o redirección controlada |
-| SEDE-07 | Usuario no miembro guarda un resultado por POST web | 403. **Hoy falla** |
-| SEDE-08 | Usuario no miembro guarda un resultado por API | 403. **Hoy falla** |
+| SEDE-07 | Usuario no miembro guarda un resultado por POST web | 403. Cubierto en `ControlSedeTest` |
+| SEDE-08 | Usuario no miembro guarda un resultado por API | 403. Cubierto en `ControlSedeTest` |
 | DATA-01 | Usuario de otra empresa pide un ID directo | Sin acceso ni mutación |
 | DATA-02 | Petición denegada con payload | `assertDatabaseHas` con el valor anterior y sin auditoría falsa |
 

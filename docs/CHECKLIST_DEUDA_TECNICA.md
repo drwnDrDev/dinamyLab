@@ -39,7 +39,7 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 | `[O]` | C-02 | Dejar `APP_DEBUG=false` como valor de producción y hacer que `instancia:verificar` falle si está en `true` con `APP_ENV=production` | `.env.example`, `app/Console/Commands/VerificarInstancia.php` | 1–2h | Alta | BE | |
 | `[~]` | C-03 | Sacar del repositorio los datos reales de pacientes y reescribir el historial de git | `resources/utils/rips_julio.json`, `bitacora.json`, `json_de_pueba.json`, `tablas/LogsBaseEntity.csv`; ruta `doc_sandra/` en `AdministracionController.php:66` | 2–4h + coordinación | Media | Repo | Detectado el 2026-11-01; no aparece en el doc de viabilidad. Requiere force push coordinado con el otro desarrollador. |
 | `[~]` | C-04 | Spike S0: confirmar si el hosting ejecuta Composer (si no, volver a versionar `vendor/`) y qué versión de PHP ofrece (si no es 8.5, bajar a `^8.3`) | `composer.json`, `.cpanel.yml`, `DESPLIEGUE_INSTANCIAS.md` | 2–4h | Media | Infra | |
-| `[ ]` | C-05 | Control de sede: `elegirSede()` debe verificar `empleado_sede`, y `store` de resultados (web y API) debe aplicar el mismo control que `update` | `SedeController::elegirSede()`, `ResultadosController::store()`, `Api/ResultadosController` | 6–10h | Media | BE | Pruebas de aceptación SEDE-01 a SEDE-08 en `MANUAL.md` §7.5 |
+| `[x]` | C-05 | Control de sede: `elegirSede()` debe verificar `empleado_sede`, y `store` de resultados (web y API) debe aplicar el mismo control que `update` | `SedeController::elegirSede()`, `ResultadosController::store()`, `Api/ResultadosController` | 6–10h | Media | BE | Pruebas de aceptación SEDE-01 a SEDE-08 en `MANUAL.md` §7.5. **Hecho 2026-11-03:** control centralizado en `App\Services\ControlSede` (también en `create`, que mostraba datos de otra sede). La API ahora guarda como `empleado_id` al empleado autenticado; antes guardaba el `user_id` o el valor enviado por el cliente. Tests en `ControlSedeTest`. |
 | `[O]` | C-06 | Terminar la creación de facturas: quitar el `dd()`, guardar y probar | `FacturaController.php:95` | 6–10h | Media | BE | Decidir si la facturación entra en la propuesta comercial; si no, puede quedar como `[O]` para el MVP |
 | `[O]` | C-07 | Generar el PDF del reporte en servidor con DomPDF, reutilizando la vista imprimible | `resources/views/resultados/show.blade.php` | 8–12h | Media | BE + FE | DomPDF ya está instalado. Requisito previo para enviar resultados por correo (C-08)/ omitimos por ahora, se desarrollara en el futuro |
 | `[ ]` | C-08 | Notificaciones por email (WhatsApp como fase posterior) | `config/mail.php`, `MAIL_MAILER=log` | 15–20h | Baja | BE + Infra | El `TODO` actual está en el pre-registro público de citas (ver C-09). Si ese flujo se retira, redefinir qué se notifica (p. ej. resultados listos) |
@@ -63,7 +63,7 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 | `[ ]` | I-08 | Test de extremo a extremo del flujo orden → procedimiento → resultado → reporte, y tests de autorización | `tests/Feature/` | 10–14h | Media | BE | Incluir los casos de `MANUAL.md` §7.5 |
 | `[ ]` | I-09 | Mover a services la lógica que sigue en controllers de los módulos antiguos | 75 controllers / 11 services | Continuo | Baja | BE | Hacerlo a medida que se toque cada módulo, no como tarea aparte |
 | `[ ]` | I-10 | Unificar la duplicación web/API (validación de persona, creación de órdenes, captura de resultados) | `PersonaController` / `Api/PersonaController`, `OrdenController` / `Api/OrdenController`, `ResultadosController` / `Api/ResultadosController` | 8–12h | Baja | BE | Depende de I-09 |
-| `[ ]` | I-11 | `EscogerPrecioExamen` filtra por `tarifas.sede_id`, que no existe (la relación sede–tarifa está en `sede_tarifa`): la consulta falla, el `catch` la oculta y siempre devuelve el precio base. Además, `Api\ExamenesController::obtenerPrecio` no tiene ruta en `routes/api.php` | `app/Services/EscogerPrecioExamen.php`, `app/Http/Controllers/Api/ExamenesController.php`, `tests/Unit/EscogerPrecioExamenTest.php`, `tests/Feature/ExamenesPrecioApiTest.php` | 2–4h | Alta | BE | Detectado el 2026-11-03. Hoy nadie usa el servicio (no hay impacto en producción). Los 14 tests están marcados como `skipped`; al corregir, quitar el `markTestSkipped` y vincular las tarifas por `sede_tarifa` en los tests. Ver la referencia en `Api\TarifaController`. Decidir si el endpoint se publica. |
+| `[~]` | I-11 | `EscogerPrecioExamen` filtra por `tarifas.sede_id`, que no existe (la relación sede–tarifa está en `sede_tarifa`): la consulta falla, el `catch` la oculta y siempre devuelve el precio base. Además, `Api\ExamenesController::obtenerPrecio` no tiene ruta en `routes/api.php` | `app/Services/EscogerPrecioExamen.php`, `app/Http/Controllers/Api/ExamenesController.php`, `tests/Unit/EscogerPrecioExamenTest.php`, `tests/Feature/ExamenesPrecioApiTest.php` | 2–4h | Alta | BE | Detectado el 2026-11-03. Hoy nadie usa el servicio (no hay impacto en producción). Los 14 tests están marcados como `skipped`; al corregir, quitar el `markTestSkipped` y vincular las tarifas por `sede_tarifa` en los tests. Ver la referencia en `Api\TarifaController`. Decidir si el endpoint se publica. **2026-11-03:** servicio corregido (relación `Tarifa::sedes()` y exclusión de tarifas de otros convenios); los tests unitarios pasan. Falta decidir si se publica el endpoint (`ExamenesPrecioApiTest` sigue en `skipped`). |
 
 **Subtotal (sin I-09 continuo ni I-07):** 47–69h
 
@@ -93,7 +93,7 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 
 | Prioridad | Ítems | Pendientes / en curso | Hechos | Deprecados / omitidos | Horas estimadas |
 |---|---|---|---|---|---|
-| 🔴 Crítico | 9 | 4 (C-03, C-04, C-05, C-08) | 1 (C-09) | 4 (C-01, C-02, C-06, C-07) | 41–63h |
+| 🔴 Crítico | 9 | 3 (C-03, C-04, C-08) | 2 (C-05, C-09) | 4 (C-01, C-02, C-06, C-07) | 41–63h |
 | 🟡 Importante | 11 | 9 | 2 (I-01, I-02) | 0 | 47–69h + I-07, I-09, I-11 |
 | 🟠 Menor | 11 | 10 | 1 (M-01) | 0 | 31.5–53.5h + M-11 |
 
@@ -101,6 +101,6 @@ Cada fila es un issue. Se ordenan **por prioridad** (crítico → importante →
 
 **Orden sugerido para empezar** (máximo impacto con mínimo esfuerzo): C-01 → C-02 → I-02 → M-01. Son unas 4.5–7.5h en total y desbloquean un CI confiable y una base segura para el resto.
 
-**Avance 2026-11-03:** I-02 y M-01 hechos; C-01 y C-02 omitidos. Suite: 88 pasan, 14 `skipped` (I-11) y 7 fallan (M-02, pendiente de I-03).
+**Avance 2026-11-03:** I-02 y M-01 hechos; C-01 y C-02 omitidos. Suite: 88 pasan, 14 `skipped` (I-11) y 7 fallan (M-02, pendiente de I-03). Después de C-05 e I-11: 107 pasan, 8 `skipped` (endpoint de precios) y 7 fallan (M-02).
 
 Al deprecar u omitir un ítem que afecta horas o alcance de la propuesta, actualizar también §13 y §14 de [ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md](./ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md).
