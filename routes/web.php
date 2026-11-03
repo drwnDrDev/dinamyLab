@@ -8,7 +8,6 @@ use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\PersonaController;
-use App\Http\Controllers\PreRegistroCitaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProcedimientoController;
 use App\Http\Controllers\ReprocesarController;
@@ -39,13 +38,6 @@ Route::get('/reprocesar', [ReprocesarController::class, 'showUploadForm'])->name
 Route::post('/reprocesar', [ReprocesarController::class, 'upload'])->name('reprocesar.upload.post');
 Route::post('/reprocesar/reprocesar', [ReprocesarController::class, 'reprocesar'])->name('reprocesar.reprocesar');
 Route::get('/reprocesar/exportar', [ReprocesarController::class, 'exportar'])->name('reprocesar.exportar');
-
-// Rutas públicas de registro de citas (sin autenticación requerida)
-Route::get('/citas/registrar', [PreRegistroCitaController::class, 'create'])->name('citas.create');
-Route::post('/citas/registrar', [PreRegistroCitaController::class, 'store'])->name('citas.store');
-Route::get('/citas/confirmacion/{codigo}', [PreRegistroCitaController::class, 'confirmacion'])->name('citas.confirmacion');
-Route::post('/citas/confirmar/{codigo}', [PreRegistroCitaController::class, 'confirmar'])->name('citas.confirmar');
-Route::get('/citas/exito', [PreRegistroCitaController::class, 'exito'])->name('citas.exito');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard',[EmpleadoController::class, 'select'])->name('dashboard');
@@ -93,13 +85,6 @@ Route::middleware('auth')->group(function () {
     Route::get('parametros',[App\Http\Controllers\ParametroController::class,'index'])->name('parametros.index');
 
     Route::get('administracion/sede/{sede}',[SedeController::class,'elegirSede'])->name('elegir.sede');
-
-    // Rutas de gestión de pre-registros de citas (solo autenticados)
-    Route::get('/citas', [PreRegistroCitaController::class, 'index'])->name('citas.index');
-    Route::get('/citas/{preRegistro}', [PreRegistroCitaController::class, 'show'])->name('citas.show');
-    Route::put('/citas/{preRegistro}/estado', [PreRegistroCitaController::class, 'updateEstado'])->name('citas.updateEstado');
-    Route::delete('/citas/{preRegistro}/cancelar', [PreRegistroCitaController::class, 'cancelar'])->name('citas.cancelar');
-    Route::match(['get', 'post'], '/citas/filtrar', [PreRegistroCitaController::class, 'filtrar'])->name('citas.filtrar');
 });
 
 Route::middleware('auth','verified','can:ver_facturas')->group(function () {

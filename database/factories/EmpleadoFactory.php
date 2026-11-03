@@ -3,10 +3,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Empresa;
+use App\Models\TipoDocumento;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Persona>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Empleado>
  */
 class EmpleadoFactory extends Factory
 {
@@ -20,11 +23,12 @@ class EmpleadoFactory extends Factory
         return [
             'cargo' => fake()->jobTitle(),
             'firma' => null,
-            'tipo_documento_id' => 1,
+            // Las FK se crean con su factory: en la BD de tests no hay registros con id fijo
+            'tipo_documento_id' => TipoDocumento::factory(),
             'numero_documento' => fake()->unique()->numerify('#########'),
             'fecha_nacimiento' => fake()->date(),
-            'user_id' => fake()->numberBetween(1, 5),
-            'empresa_id' => 1,
+            'user_id' => User::factory(),
+            'empresa_id' => Empresa::factory(),
         ];
     }
 }
