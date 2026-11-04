@@ -17,9 +17,12 @@ class Tarifa extends Model
         return $this->morphTo();
     }
 
-    public function sede()
+    /**
+     * Sedes donde aplica la tarifa (tabla pivote sede_tarifa).
+     */
+    public function sedes()
     {
-        return $this->belongsTo(Sede::class,'sede_tarifa','tarifa_id','sede_id');
+        return $this->belongsToMany(Sede::class, 'sede_tarifa', 'tarifa_id', 'sede_id')->withTimestamps();
     }
 
     public function examen()

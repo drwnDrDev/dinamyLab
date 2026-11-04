@@ -7,6 +7,7 @@ use App\Estado;
 
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
+use App\Services\ControlSede;
 use App\Services\EscogerReferencia;
 use App\Services\ActualizarResultados;
 use App\Models\Persona;
@@ -60,7 +61,7 @@ class ResultadosController extends Controller
     }
     public function create(Procedimiento $procedimiento)
     {
-
+        $this->autorizarSede(request(), $procedimiento);
 
         $parametros = EscogerReferencia::recorrerParametrosExamen($procedimiento->load(['orden.paciente', 'examen.parametros']));
         if (empty($parametros)) {
@@ -85,6 +86,7 @@ class ResultadosController extends Controller
     }
     public function store(Request $request, Procedimiento $procedimiento)
     {
+    $this->autorizarSede($request, $procedimiento);
 
     $procedimiento->fecha = $request->input('fecha_procedimiento', now()); // Actualiza la fecha del procedimiento con la fecha enviada o la fecha actual
     $procedimiento->save();
@@ -180,17 +182,7 @@ class ResultadosController extends Controller
 
     private function autorizarSede(Request $request, Procedimiento $procedimiento): void
     {
-        $sede = $request->session()->get('sede');
-        $empleado = $request->user()?->empleado;
-
-        abort_unless(
-            $sede
-                && $empleado
-                && (int) $procedimiento->sede_id === (int) $sede->id
-                && $empleado->sedes()->whereKey($sede->id)->exists(),
-            403,
-            'No tiene acceso a los resultados de esta sede.'
-        );
+        ControlSede::autorizarProcedimiento($request, $procedimiento);
     }
 
     public function historia(Persona $persona)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Examen;
 use App\Models\Sede;
+use App\Services\ControlSede;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Http\Request;
 
@@ -64,11 +65,10 @@ class SedeController extends Controller
     /**
      * Choose a Sede for the user.
      */
-    public function elegirSede(Sede $sede)
+    public function elegirSede(Request $request, Sede $sede)
     {
-            if (!$sede) {
-                return redirect()->back()->with('error', 'Sede no encontrada.');
-            }
+            // C-05: solo se puede elegir una sede a la que pertenece el empleado (empleado_sede)
+            ControlSede::autorizarEleccion($request, $sede);
 
             session(['sede' => $sede]);
             return redirect()->route('inicio')->with('success', 'Sede seleccionada correctamente.');
