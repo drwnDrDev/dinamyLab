@@ -67,7 +67,7 @@ class SedeController extends Controller
      */
     public function elegirSede(Request $request, Sede $sede)
     {
-            // C-05: solo se puede elegir una sede a la que pertenece el empleado (empleado_sede)
+            // C-05: la elección valida pertenencia, salvo para el administrador global.
             ControlSede::autorizarEleccion($request, $sede);
 
             session(['sede' => $sede]);

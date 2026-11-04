@@ -18,9 +18,11 @@
             </div>
             <div class="flex gap-2">
 
-                <a href="{{route('ordenes.create',$orden->paciente->id)}}">
-                    <x-primary-button>Nueva Orden</x-primary-button>
-                </a>
+                @can('crear_orden')
+                    <a href="{{route('ordenes.create',$orden->paciente->id)}}">
+                        <x-primary-button>Nueva Orden</x-primary-button>
+                    </a>
+                @endcan
 
                 <x-secondary-button onclick="window.print()">{{__('Ticket')}}</x-secondary-button>
             </div>

@@ -9,6 +9,7 @@ use App\Models\Examen;
 use App\Models\Procedimiento;
 use App\Models\Sede;
 use App\Services\EscogerPrecioExamen;
+use App\Services\ControlSede;
 use Illuminate\Http\Request;
 
 class ExamenesController extends Controller
@@ -53,6 +54,10 @@ class ExamenesController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (! $request->user()->can('editar_examen')) {
+            ControlSede::autorizarSedeActiva($request);
+        }
+
         $examen = Examen::find($id);
         if (!$examen) {
             return response()->json([
@@ -60,7 +65,26 @@ class ExamenesController extends Controller
                 'data' => null
             ], 404);
         }
-    $examen->update($request->except('_token', '_method','submit'));
+        $rules = [
+            'descripcion' => ['sometimes', 'nullable', 'string', 'max:2000'],
+        ];
+
+        if ($request->user()->can('editar_examen')) {
+            $rules += [
+                'nombre' => ['sometimes', 'string', 'max:255'],
+                'cup' => ['sometimes', 'string', 'max:20'],
+                'valor' => ['sometimes', 'numeric', 'min:0'],
+                'nombre_alternativo' => ['sometimes', 'nullable', 'string', 'max:255'],
+                'sexo_aplicable' => ['sometimes', 'nullable', 'in:F,M,A'],
+                'activo' => ['sometimes', 'boolean'],
+                'nivel' => ['sometimes', 'integer'],
+            ];
+        }
+
+        $validated = $request->validate($rules);
+        $examen->fill($validated);
+        $examen->save();
+
         return response()->json([
             'message' => 'Examen actualizado',
             'success' => true,
@@ -74,10 +98,14 @@ class ExamenesController extends Controller
     /**
      * Obtener procedimientos pendientes para un examen específico
      */
-    public function obtenerProcedimientosPendientes($examenId)
+    public function obtenerProcedimientosPendientes(Request $request, $examenId)
     {
         try {
+            $sede = $request->user()->hasRole('admin')
+                ? null
+                : ControlSede::autorizarSedeActiva($request);
             $procedimientos = Procedimiento::where('examen_id', $examenId)
+                ->when($sede, fn ($query) => $query->where('sede_id', $sede->id))
                 ->where('estado', Estado::PROCESO)
                 ->with([
                     'orden.paciente',

@@ -18,11 +18,15 @@ class ResultadosController extends Controller
 
     public function index(Request $request)
     {
+        $sede = $request->user()->hasRole('admin')
+            ? null
+            : ControlSede::autorizarSedeActiva($request);
         $filters = $request->validate(['busqueda' => 'nullable|string|max:100']);
         $busqueda = trim($filters['busqueda'] ?? '');
         $resultados = Procedimiento::with(['orden.paciente', 'resultado', 'examen'])
             ->whereHas('resultado')
             ->where('estado', Estado::TERMINADO)
+            ->when($sede, fn ($query) => $query->where('sede_id', $sede->id))
             ->where('updated_at', '>=', now()->subDays(2))
             ->when($busqueda !== '', function ($query) use ($busqueda) {
                 $query->where(function ($query) use ($busqueda) {
@@ -166,7 +170,7 @@ class ResultadosController extends Controller
 
         $cantidadCambios = $actualizarResultados->actualizar(
             $procedimiento,
-            (int) $request->session()->get('sede')->id,
+            (int) ($request->session()->get('sede')?->id ?? $procedimiento->sede_id),
             $validated['resultados'],
             trim($validated['observacion']),
             (int) $request->user()->id,
@@ -187,7 +191,15 @@ class ResultadosController extends Controller
 
     public function historia(Persona $persona)
     {
+        $sede = request()->user()->hasRole('admin')
+            ? request()->session()->get('sede')
+            : ControlSede::autorizarSedeActiva(request());
+        if (! $sede) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Selecciona una sede para imprimir el historial clínico.');
+        }
         $ordenes = Orden::where('paciente_id', $persona->id)
+                       ->where('sede_id', $sede->id)
                        ->orderBy('updated_at', 'desc')
                        ->get();
         return view(
@@ -199,9 +211,20 @@ class ResultadosController extends Controller
     public function historia_show(Request $request, Persona $persona)
     {
 
-        $sede = request()->session()->get('sede');
-        $procedimientos = Procedimiento::find(array_keys($request->all()))->map(
+        $sede = $request->user()->hasRole('admin')
+            ? $request->session()->get('sede')
+            : ControlSede::autorizarSedeActiva($request);
+        if (! $sede) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Selecciona una sede para imprimir el historial clínico.');
+        }
+        $procedimientos = Procedimiento::where('sede_id', $sede->id)
+            ->whereHas('orden', fn ($orden) => $orden->where('paciente_id', $persona->id))
+            ->whereIn('id', array_keys($request->except(['_token'])))
+            ->get()
+            ->map(
             function ($procedimiento) {
+                ControlSede::autorizarProcedimiento(request(), $procedimiento);
                 return [
                     'procedimiento' => $procedimiento,
                     'resultado' => EscogerReferencia::obtenerResultados($procedimiento)

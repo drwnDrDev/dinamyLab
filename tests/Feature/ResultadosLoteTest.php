@@ -12,6 +12,7 @@ use App\Models\Procedimiento;
 use App\Models\Sede;
 use App\Models\User;
 use Database\Seeders\PaisSeeder;
+use Database\Seeders\RolesYPermisosSeeder;
 use Database\Seeders\TestDataSeeder;
 use Database\Seeders\TipoDocumentoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -40,8 +41,10 @@ class ResultadosLoteTest extends TestCase
         $this->seed(PaisSeeder::class);
         $this->seed(TipoDocumentoSeeder::class);
         $this->seed(TestDataSeeder::class);
+        $this->seed(RolesYPermisosSeeder::class);
 
         $this->user = User::factory()->create();
+        $this->user->assignRole('prestador');
         $this->sede = Sede::factory()->create();
         $empleado = Empleado::factory()->create([
             'user_id' => $this->user->id,

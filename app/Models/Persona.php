@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\NombreParser;
 
 
@@ -11,6 +12,7 @@ class Persona extends Model
 
     /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\PersonaFactory> */
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
+    use SoftDeletes;
     protected $fillable = [
         'primer_nombre',
         'segundo_nombre',

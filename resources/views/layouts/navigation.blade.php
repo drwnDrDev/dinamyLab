@@ -16,25 +16,35 @@
             {{ __('Dashboard') }}
         </x-nav-link>
 
-        <x-nav-link :href="route('personas')" icono="personas" :active="request()->routeIs('personas*')">
-            {{ __('People') }}
-        </x-nav-link>
+        @can('ver_persona')
+            <x-nav-link :href="route('personas')" icono="personas" :active="request()->routeIs('personas*')">
+                {{ __('People') }}
+            </x-nav-link>
+        @endcan
 
-        <x-nav-link :href="route('ordenes')" icono="ordenes" :active="request()->routeIs('ordenes*')">
-            {{ __('Medical order') }}
-        </x-nav-link>
+        @can('ver_orden')
+            <x-nav-link :href="route('ordenes')" icono="ordenes" :active="request()->routeIs('ordenes*')">
+                {{ __('Medical order') }}
+            </x-nav-link>
+        @endcan
 
-        <x-nav-link :href="route('procedimientos')" icono="procedimientos" :active="request()->routeIs('procedimientos*')">
-            {{ __('Procedures') }}
-        </x-nav-link>
+        @can('ver_procedimiento')
+            <x-nav-link :href="route('procedimientos')" icono="procedimientos" :active="request()->routeIs('procedimientos*')">
+                {{ __('Procedures') }}
+            </x-nav-link>
+        @endcan
 
-        <x-nav-link :href="route('resultados')" icono="resultados" :active="request()->routeIs('resultados*')">
-            {{ __('Results') }}
-        </x-nav-link>
+        @can('ver_resultado')
+            <x-nav-link :href="route('resultados')" icono="resultados" :active="request()->routeIs('resultados*')">
+                {{ __('Results') }}
+            </x-nav-link>
+        @endcan
 
-        <x-nav-link :href="route('caja')" icono="caja" :active="request()->routeIs('caja*')">
-            {{ __('Cash register') }}
-        </x-nav-link>
+        @role('admin')
+            <x-nav-link :href="route('caja')" icono="caja" :active="request()->routeIs('caja*')">
+                {{ __('Cash register') }}
+            </x-nav-link>
+        @endrole
 
         @can('ver_facturas')
         <x-nav-link :href="route('facturas')" icono="facturas" :active="request()->routeIs('facturas*')">
@@ -44,9 +54,11 @@
         @endcan
 
 
-        <x-nav-link :href="route('reportes')" icono="reportes" :active="request()->routeIs('reportes*')">
-            {{ __('Reportes') }}
-        </x-nav-link>
+        @if(auth()->user()->hasRole('admin') || auth()->user()->can('ver_reportes'))
+            <x-nav-link :href="route('reportes')" icono="reportes" :active="request()->routeIs('reportes*')">
+                {{ __('Reportes') }}
+            </x-nav-link>
+        @endif
 
         
         @if(auth()->user()?->hasRole('admin'))

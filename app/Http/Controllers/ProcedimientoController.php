@@ -8,6 +8,8 @@ use App\Models\Orden;
 use App\Models\Persona;
 use App\Models\Procedimiento;
 use App\Models\Sede;
+use App\Services\ControlSede;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ProcedimientoController extends Controller
@@ -17,14 +19,13 @@ class ProcedimientoController extends Controller
      */
     public function index(Request $request)
     {
+        $sede = $request->user()->hasRole('admin')
+            ? $request->session()->get('sede')
+            : ControlSede::autorizarSedeActiva($request);
         $filters = $request->validate(['busqueda' => 'nullable|string|max:100']);
-        $sede = session('sede');
-        if (!$sede) {
-            return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
-        }
         $busqueda = trim($filters['busqueda'] ?? '');
         $procedimientos = Procedimiento::with(['orden.paciente', 'examen'])
-            ->where('sede_id', $sede->id)
+            ->when(! $request->user()->hasRole('admin'), fn ($query) => $query->where('sede_id', $sede->id))
             ->where('estado', 'en proceso')
             ->when($busqueda !== '', function ($query) use ($busqueda) {
                 $query->where(function ($query) use ($busqueda) {
@@ -71,6 +72,8 @@ class ProcedimientoController extends Controller
      */
     public function show(Procedimiento $procedimiento)
     {
+        ControlSede::autorizarProcedimiento(request(), $procedimiento);
+
         return view('procedimientos.show', compact('procedimiento'));
     }
 
@@ -95,7 +98,10 @@ class ProcedimientoController extends Controller
      */
     public function destroy(Procedimiento $procedimiento)
     {
-        //
+        ControlSede::autorizarProcedimiento(request(), $procedimiento);
+        $procedimiento->delete();
+
+        return redirect()->route('procedimientos')->with('success', 'Procedimiento eliminado correctamente.');
     }
 
     public function resultado()
@@ -112,14 +118,17 @@ class ProcedimientoController extends Controller
 
     public function reportes(Request $request){
 
-        $sedes = $request->user()->empleado->sedes;
+        $sede = $request->user()->hasRole('admin')
+            ? null
+            : ControlSede::autorizarSedeActiva($request);
+        $sedes = $sede ? collect([$sede]) : Sede::all();
 
         $startDate = $request->input('fecha_inicio', now()->startOfMonth()->toDateString());
         $endDate = $request->input('fecha_fin', now()->endOfMonth()->toDateString());
         $procedimientos = Procedimiento::with(['examen'])
             ->where('fecha', '>=', $startDate)
             ->where('fecha', '<=', $endDate)
-            ->whereIn('sede_id', $sedes->pluck('id'))
+            ->when($sede, fn ($query) => $query->where('sede_id', $sede->id))
             ->selectRaw('examen_id, COUNT(*) as total_procedimientos')
             ->groupBy('examen_id')
             ->orderByDesc('total_procedimientos')
@@ -136,22 +145,24 @@ class ProcedimientoController extends Controller
     }
     public function observaciones(Request $request, Procedimiento $procedimiento)
     {
+        ControlSede::autorizarProcedimiento($request, $procedimiento);
         $request->validate([
             'observacion' => 'required|string|max:255',
             'estado' => 'required|in:pendiente de muestra,anulado',
         ]);
-         $observacion = $request->input('observacion','SIN OBSERVACIÓN'); ;
-         $estado = $request->INPUT('estado', 'pendiente de muestra');
-
-
-        $procedimiento->estado = $estado;
-        $procedimiento->save();
+        DB::transaction(function () use ($procedimiento, $request) {
+            $procedimiento->estado = $request->input('estado');
+            $procedimiento->save();
+            $procedimiento->observaciones()->create([
+                'observacion' => $request->input('observacion'),
+            ]);
+        });
 
 
         return response()->json([
             'message' => 'Observación actualizada correctamente',
             'estado' => $procedimiento->estado,
-            'observacion' => $observacion,
+            'observacion' => $request->input('observacion'),
         ]);
     }
 

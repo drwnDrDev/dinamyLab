@@ -15,6 +15,7 @@ use App\Models\ContactoEmergencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Procedimiento;
+use App\Services\ControlSede;
 use Illuminate\Support\Facades\DB;
 
 class OrdenController extends Controller
@@ -24,18 +25,16 @@ class OrdenController extends Controller
      */
     public function index(Request $request)
     {
+        $sede = $request->user()->hasRole('admin')
+            ? $request->session()->get('sede')
+            : ControlSede::autorizarSedeActiva($request);
         $filters = $request->validate([
             'busqueda' => 'nullable|string|max:100',
             'estado' => 'nullable|in:pendiente,completada',
         ]);
-        $sede = session('sede');
-
-        if (!$sede) {
-            return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
-        }
-
         $busqueda = trim($filters['busqueda'] ?? '');
-        $query = Orden::with('paciente')->where('sede_id', $sede->id);
+        $query = Orden::with('paciente')
+            ->when(! $request->user()->hasRole('admin'), fn ($query) => $query->where('sede_id', $sede->id));
 
         if ($busqueda !== '') {
             $query->where(function ($query) use ($busqueda) {
@@ -84,6 +83,7 @@ class OrdenController extends Controller
         if (!$sede) {
             return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
         }
+        ControlSede::autorizarSedeActiva($request);
 
         $paciente = Persona::findOrFail($request->input('paciente_id'));
 
@@ -173,6 +173,7 @@ class OrdenController extends Controller
      */
     public function show(Orden $orden)
     {
+        ControlSede::autorizarOrden(request(), $orden);
         $orden->load(['paciente','examenes','procedimientos']);
         if (!$orden) {
             return redirect()->route('ordenes')->with('error', 'Orden médica no encontrada');
@@ -186,7 +187,7 @@ class OrdenController extends Controller
      */
     public function edit(Orden $orden)
     {
-
+        ControlSede::autorizarOrden(request(), $orden);
         return view('ordenes.edit', compact('orden'));
     }
 
@@ -195,7 +196,15 @@ class OrdenController extends Controller
      */
     public function update(Request $request, Orden $orden)
     {
-        //
+        ControlSede::autorizarOrden($request, $orden);
+
+        $validated = $request->validate([
+            'observaciones' => ['nullable', 'string', 'max:1000'],
+            'abono' => ['nullable', 'numeric', 'min:0'],
+        ]);
+        $orden->update($validated);
+
+        return redirect()->route('ordenes.show', $orden)->with('success', 'Orden actualizada correctamente.');
     }
 
     public function resultados(Orden $orden,Examen $examen)
@@ -211,10 +220,12 @@ class OrdenController extends Controller
      */
     public function destroy(Orden $orden)
     {
-        if (\Illuminate\Support\Facades\Gate::allows('eliminar_orden_medica')) {
+        ControlSede::autorizarOrden(request(), $orden);
+        DB::transaction(function () use ($orden) {
+            $orden->procedimientos()->get()->each->delete();
             $orden->delete();
-            return redirect()->route('ordenes')->with('success', 'Orden médica eliminada correctamente');
-        }
-        return redirect()->route('ordenes')->with('error', 'No tienes permiso para eliminar esta orden médica');
+        });
+
+        return redirect()->route('ordenes')->with('success', 'Orden médica eliminada correctamente');
     }
 }

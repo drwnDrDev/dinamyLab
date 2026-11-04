@@ -7,6 +7,8 @@ use App\Models\Persona;
 use App\Models\Examen;
 use App\Models\Sede;
 use App\Models\Orden;
+use App\Models\Empleado;
+use Database\Seeders\RolesYPermisosSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -25,9 +27,17 @@ class OrdenesApiTest extends TestCase
         $this->seed(\Database\Seeders\PaisSeeder::class);
         $this->seed(\Database\Seeders\TipoDocumentoSeeder::class);
         $this->seed(\Database\Seeders\TestDataSeeder::class);
+        $this->seed(RolesYPermisosSeeder::class);
 
         $this->user = User::factory()->create();
         $this->sede = Sede::factory()->create();
+        $this->user->assignRole('prestador');
+        $empleado = Empleado::factory()->create([
+            'user_id' => $this->user->id,
+            'empresa_id' => $this->sede->empresa_id,
+            'tipo_documento_id' => 1,
+        ]);
+        $empleado->sedes()->attach($this->sede->id);
         session(['sede' => $this->sede]);
     }
 
