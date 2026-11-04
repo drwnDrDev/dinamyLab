@@ -38,7 +38,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-D7TyGRvP.css",
+    "file": "assets/app-B-4Rxwtk.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -51,7 +51,7 @@
     "src": "resources/css/rips-cargador.png"
   },
   "resources/js/ExamenDetail.jsx": {
-    "file": "assets/ExamenDetail-CQkK4D8H.js",
+    "file": "assets/ExamenDetail-jVwhV3cF.js",
     "name": "ExamenDetail",
     "src": "resources/js/ExamenDetail.jsx",
     "isEntry": true,
@@ -68,7 +68,7 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-lx2ZKVMX.js",
+    "file": "assets/app-BhF0Txt3.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -80,7 +80,7 @@
       "resources/js/components/guest/Typewriter.jsx"
     ],
     "css": [
-      "assets/app-D7TyGRvP.css"
+      "assets/app-B-4Rxwtk.css"
     ],
     "assets": [
       "assets/rips-cargador-DoL-Xzn1.png"

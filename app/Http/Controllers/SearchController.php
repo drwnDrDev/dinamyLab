@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ControlSede;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
     public function search(Request $request)
     {
+        $sedeId = $request->user()->hasRole('admin')
+            ? null
+            : (int) ControlSede::autorizarSedeActiva($request)->id;
         $query = $request->input('search');
 
         // Validación
@@ -22,22 +26,22 @@ class SearchController extends Controller
 
         if (is_numeric($query)) {
             if (strlen($query) < 6) {
-                $result = $this->buscarOrden($query)
-                    ?? $this->buscarFactura($query)
+                $result = $this->buscarOrden($query, $sedeId)
+                    ?? $this->buscarFactura($query, $sedeId)
                     ?? $this->buscarPersonaPorDocumento($query);
                 return $result ?: view('search.busqueda_avanzada', compact('query'))
             ->with('error', 'No results found for the search query');
             } elseif (strlen($query) == 6) {
                 $result = $this->buscarPersonaPorDocumento($query)
                     ?? $this->buscarExamenPorCup($query)
-                    ?? $this->buscarFactura($query)
-                    ?? $this->buscarOrden($query);
+                    ?? $this->buscarFactura($query, $sedeId)
+                    ?? $this->buscarOrden($query, $sedeId);
                 return $result ?: view('search.busqueda_avanzada', compact('query'))
             ->with('error', 'No results found for the search query');
             } else {
                 $result = $this->buscarPersonaPorDocumento($query)
-                    ?? $this->buscarFactura($query)
-                    ?? $this->buscarOrden($query);
+                    ?? $this->buscarFactura($query, $sedeId)
+                    ?? $this->buscarOrden($query, $sedeId);
                 return $result ?: view('search.busqueda_avanzada', compact('query'))
             ->with('error', 'No results found for the search query');
             }
@@ -54,18 +58,22 @@ class SearchController extends Controller
             ->with('error', __('No results found for the search query'));
     }
 
-    private function buscarOrden($query)
+    private function buscarOrden($query, ?int $sedeId)
     {
-        $orden = \App\Models\Orden::where('numero', $query)->first();
+        $orden = \App\Models\Orden::where('numero', $query)
+            ->when($sedeId !== null, fn ($orden) => $orden->where('sede_id', $sedeId))
+            ->first();
         if ($orden) {
             return redirect()->route('ordenes.show', $orden->id);
         }
         return null;
     }
 
-    private function buscarFactura($query)
+    private function buscarFactura($query, ?int $sedeId)
     {
-        $factura = \App\Models\Factura::find($query);
+        $factura = \App\Models\Factura::query()
+            ->when($sedeId !== null, fn ($facturas) => $facturas->where('sede_id', $sedeId))
+            ->find($query);
         if ($factura) {
             return redirect()->route('facturas.show', $factura->id);
         }

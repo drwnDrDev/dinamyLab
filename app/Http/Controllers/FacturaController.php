@@ -9,6 +9,7 @@ use App\Models\Procedimiento;
 use App\Models\Persona;
 
 use App\Estado;
+use App\Services\ControlSede;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -20,9 +21,15 @@ class FacturaController extends Controller
      */
     public function index(Request $request)
     {
+        $query = Factura::with('pagador');
+        if (! $request->user()->hasRole('admin')) {
+            $sede = ControlSede::autorizarSedeActiva($request);
+            $query->where('sede_id', $sede->id);
+        }
+
         $filters = $request->validate(['busqueda' => 'nullable|string|max:100']);
         $busqueda = trim($filters['busqueda'] ?? '');
-        $facturas = Factura::with('pagador')
+        $facturas = $query
             ->when($busqueda !== '', function ($query) use ($busqueda) {
                 $query->where(function ($query) use ($busqueda) {
                     $query->where('numero', 'like', "%{$busqueda}%")
@@ -102,6 +109,11 @@ class FacturaController extends Controller
      */
     public function show(Factura $factura)
     {
+        if (! request()->user()->hasRole('admin')) {
+            $sede = ControlSede::autorizarSedeActiva(request());
+            abort_unless((int) $factura->sede_id === (int) $sede->id, 403);
+        }
+
         $factura->load(['pagador', 'mediosPago', 'sede', 'resolucion']);
         return view('facturas.show', compact('factura'));
     }
