@@ -25,14 +25,14 @@ Route::get('/', function () {
     return view('welcome');
     
 });
-Route::get('/migracion', function () {
-    Artisan::call('migrate:fresh --seed');
-    Artisan::call('cache:clear');
-    Artisan::call('config:clear');
-    Artisan::call('route:clear');
-    Artisan::call('view:clear');
-    return '¡La migración ha sido ejecutada con éxito!';
-});
+// Route::get('/migracion', function () {
+//     Artisan::call('migrate:fresh --seed');
+//     Artisan::call('cache:clear');
+//     Artisan::call('config:clear');
+//     Artisan::call('route:clear');
+//     Artisan::call('view:clear');
+//     return '¡La migración ha sido ejecutada con éxito!';
+// });
 
 Route::get('/reprocesar', [ReprocesarController::class, 'showUploadForm'])->name('reprocesar.upload');
 Route::post('/reprocesar', [ReprocesarController::class, 'upload'])->name('reprocesar.upload.post');
