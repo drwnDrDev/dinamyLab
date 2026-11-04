@@ -12,6 +12,7 @@ use App\Http\Requests\StorePersonaRequest;
 use App\Models\Eps;
 use App\Models\Procedimiento;
 use App\Services\GuardarPersona;
+use App\Services\ControlSede;
 
 class PersonaController extends Controller
 {
@@ -88,10 +89,9 @@ class PersonaController extends Controller
      */
     public function show(Persona $persona)
     {
-        $sede = session('sede');
-        if (!$sede) {
-            return to_route('dashboard')->with('error', 'No se ha seleccionado una sede');
-        }
+        $sede = request()->user()->hasRole('admin')
+            ? null
+            : ControlSede::autorizarSedeActiva(request());
 
         $persona->load(['direccion.municipio', 'telefonos', 'email', 'redesSociales', 'afiliacionSalud','ordenes']);
         $ordenesIds = $persona->ordenes()->pluck('id');
@@ -99,7 +99,7 @@ class PersonaController extends Controller
         if ($ordenesIds->isEmpty()) {
             $procedimientos = collect(); // Colección vacía
         } else {
-            $procedimientos = Procedimiento::where('sede_id', $sede->id)
+            $procedimientos = Procedimiento::when($sede, fn ($query) => $query->where('sede_id', $sede->id))
                 ->whereIn('orden_id', $ordenesIds)
                 ->with(['orden', 'examen'])
                 ->get()
@@ -116,7 +116,7 @@ class PersonaController extends Controller
      */
     public function edit(Persona $persona)
     {
-        //
+        return view('personas.edidt', compact('persona'));
     }
 
     /**
@@ -124,7 +124,26 @@ class PersonaController extends Controller
      */
     public function update(Request $request, Persona $persona)
     {
-        //
+        $validated = $request->validate([
+            'primer_nombre' => ['required', 'string', 'max:255'],
+            'segundo_nombre' => ['nullable', 'string', 'max:255'],
+            'primer_apellido' => ['required', 'string', 'max:255'],
+            'segundo_apellido' => ['nullable', 'string', 'max:255'],
+            'fecha_nacimiento' => ['nullable', 'date', 'before_or_equal:today'],
+            'sexo' => ['nullable', 'in:H,M,I,F'],
+            'telefono' => ['nullable', 'string', 'size:10'],
+        ]);
+
+        $persona->update($validated);
+
+        if ($request->filled('telefono')) {
+            $persona->telefonos()->updateOrCreate(
+                ['numero' => $validated['telefono']],
+                ['numero' => $validated['telefono']]
+            );
+        }
+
+        return redirect()->route('personas.show', $persona)->with('success', 'Paciente actualizado correctamente.');
     }
 
     /**
@@ -132,6 +151,8 @@ class PersonaController extends Controller
      */
     public function destroy(Persona $persona)
     {
-        //
+        $persona->delete();
+
+        return redirect()->route('personas')->with('success', 'Paciente eliminado correctamente.');
     }
 }

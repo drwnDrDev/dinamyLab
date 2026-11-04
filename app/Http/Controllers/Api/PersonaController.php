@@ -211,7 +211,20 @@ class PersonaController extends Controller
     }
     public function destroy($id)
     {
-        // Lógica para eliminar una persona
+        $persona = Persona::find($id);
+
+        if (! $persona) {
+            return response()->json([
+                'message' => 'Persona no encontrada',
+                'data' => null,
+            ], 404);
+        }
+
+        $persona->delete();
+
+        return response()->json([
+            'message' => 'Persona eliminada correctamente',
+        ], 200);
     }
 
     public function buscar($numero_documento)

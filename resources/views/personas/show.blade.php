@@ -19,15 +19,21 @@
                 </p>
             </div>
             <div class="flex gap-2">
-
-                    <x-primary-button id="editar-button">Editar</x-primary-button>
-
+                    @can('editar_persona')
+                    <a href="{{ route('personas.edit', $persona) }}">
+                        <x-primary-button type="button">Editar</x-primary-button>
+                    </a>
+                    @endcan
+                @can('crear_orden')
                 <a href="{{route('ordenes.create',$persona)}}">
                     <x-secondary-button>Nueva Orden</x-secondary-button>
                 </a>
+                @endcan
+                @can('ver_resultado')
                 <a href="{{route('resultados.historia',$persona)}}">
                     <x-secondary-button>Resultados</x-secondary-button>
                 </a>
+                @endcan
             </div>
         </div>
 
@@ -179,12 +185,21 @@
 
                             <tr class="border-t border-borders hover:bg-secondary">
                                 <td colspan="4" class="p-0">
-                                    <a href="{{ route('resultados.create', $procedimiento) }}" class="flex w-full h-full cursor-pointer px-4 py-2 text-inherit no-underline">
-                                        <span class="w-40">{{ $procedimiento->created_at->format('Y-m-d') }}</span>
-                                        <span class="w-40 text-center">{{ $procedimiento->orden_id }}</span>
-                                        <span class="w-60 text-center">{{ $procedimiento->examen->nombre }}</span>
-                                        <span class="w-40 text-end">{{ $procedimiento->estado }}</span>
-                                    </a>
+                                    @can('registrar_resultado')
+                                        <a href="{{ route('resultados.create', $procedimiento) }}" class="flex w-full h-full cursor-pointer px-4 py-2 text-inherit no-underline">
+                                            <span class="w-40">{{ $procedimiento->created_at->format('Y-m-d') }}</span>
+                                            <span class="w-40 text-center">{{ $procedimiento->orden_id }}</span>
+                                            <span class="w-60 text-center">{{ $procedimiento->examen->nombre }}</span>
+                                            <span class="w-40 text-end">{{ $procedimiento->estado }}</span>
+                                        </a>
+                                    @else
+                                        <div class="flex w-full h-full px-4 py-2">
+                                            <span class="w-40">{{ $procedimiento->created_at->format('Y-m-d') }}</span>
+                                            <span class="w-40 text-center">{{ $procedimiento->orden_id }}</span>
+                                            <span class="w-60 text-center">{{ $procedimiento->examen->nombre }}</span>
+                                            <span class="w-40 text-end">{{ $procedimiento->estado }}</span>
+                                        </div>
+                                    @endcan
                                 </td>
                             </tr>
                             @endforeach

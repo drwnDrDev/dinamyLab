@@ -23,10 +23,34 @@ class RolesYPermisosSeeder extends Seeder
         }
 
         $permisos = [
-            'ver_resultado', 'crear_persona', 'editar_persona', 'ver_persona',
-            'ver_orden', 'eliminar_persona', 'ver_cuentas', 'crear_cuenta',
-            'editar_cuenta', 'ver_examen', 'crear_examen', 'editar_examen',
-            'ver_empresa', 'ver_facturas',
+            'ver_resultado',
+            'crear_persona',
+            'editar_persona',
+            'ver_persona',
+            'eliminar_persona',
+            'ver_orden',
+            'crear_orden',
+            'editar_orden',
+            'eliminar_orden',
+            'ver_procedimiento',
+            'gestionar_procedimiento',
+            'eliminar_procedimiento',
+            'registrar_resultado',
+            'editar_resultado',
+            'ver_examen',
+            'editar_descripcion_examen',
+            'ver_facturas',
+            'ver_reportes',
+            'ver_cuentas',
+            'crear_cuenta',
+            'editar_cuenta',
+            'crear_examen',
+            'editar_examen',
+            'ver_empresa',
+            'editar_empresa',
+            'crear_sedes',
+            'editar_sedes',
+            'eliminar_sedes',
         ];
 
         foreach ($permisos as $permiso) {
@@ -35,10 +59,21 @@ class RolesYPermisosSeeder extends Seeder
 
         Role::findByName('admin')->syncPermissions(Permission::all());
 
-        Role::findByName('prestador')->syncPermissions($permisos);
+        Role::findByName('prestador')->syncPermissions([
+            'ver_resultado',
+            'ver_persona', 'crear_persona', 'editar_persona', 'eliminar_persona',
+            'ver_orden', 'crear_orden', 'editar_orden', 'eliminar_orden',
+            'ver_procedimiento', 'gestionar_procedimiento', 'eliminar_procedimiento',
+            'registrar_resultado', 'editar_resultado',
+            'ver_examen', 'editar_descripcion_examen',
+            'ver_reportes',
+        ]);
 
         Role::findByName('agente')->syncPermissions([
-            'ver_resultado', 'crear_persona', 'editar_persona', 'ver_persona', 'ver_orden',
+            'ver_resultado',
+            'ver_persona', 'crear_persona', 'editar_persona', 'eliminar_persona',
+            'ver_orden',
+            'ver_facturas',
         ]);
 
         Role::findByName('contable')->syncPermissions(['ver_facturas']);

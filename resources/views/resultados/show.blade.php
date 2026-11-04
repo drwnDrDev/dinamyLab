@@ -3,6 +3,10 @@
         resultado_{{$procedimiento->orden->paciente->nombreCompleto()}}
     </x-slot>
 
+    <div class="mx-auto flex max-w-6xl justify-end px-4 pt-4 print:hidden">
+        <x-secondary-button type="button" onclick="window.print()">Imprimir resultado</x-secondary-button>
+    </div>
+
     <article class="print_resultado relative max-w-6xl mx-auto sm:p-2 md:p-4 lg:p-6 print:!min-h-screen print:!text-xs print:!p-0 print:!bg-white print:!text-black">
         <table class="resultados-print-table w-full table-fixed border-collapse">
             <colgroup>
@@ -16,7 +20,7 @@
                     <th colspan="4" class="p-0 text-left font-normal">
                         <section class="print_header hidden print:!flex pb-2 items-center w-full">
                             <figure class="w-16 my-auto p-0">
-                                @if (session('sede')->id === $procedimiento->sede->id)
+                                @if (session('sede')?->id === $procedimiento->sede->id)
                                     <img class="fill-current object-contain text-gray-800" src="{{ asset('storage/logos/'.$procedimiento->sede->logo) }}" alt="{{ session('sede')->nombre }}">
                                 @else
                                     <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />

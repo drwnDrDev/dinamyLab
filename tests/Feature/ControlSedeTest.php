@@ -12,6 +12,7 @@ use App\Models\Procedimiento;
 use App\Models\Sede;
 use App\Models\User;
 use Database\Seeders\PaisSeeder;
+use Database\Seeders\RolesYPermisosSeeder;
 use Database\Seeders\TestDataSeeder;
 use Database\Seeders\TipoDocumentoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -42,6 +43,7 @@ class ControlSedeTest extends TestCase
         $this->seed(PaisSeeder::class);
         $this->seed(TipoDocumentoSeeder::class);
         $this->seed(TestDataSeeder::class);
+        $this->seed(RolesYPermisosSeeder::class);
 
         $this->sedeA = Sede::factory()->create();
         $this->sedeB = Sede::factory()->create(['empresa_id' => $this->sedeA->empresa_id]);
@@ -49,6 +51,7 @@ class ControlSedeTest extends TestCase
         // Un usuario previo hace que user_id y empleado_id difieran (detecta si se guarda uno por otro).
         User::factory()->create(['email' => 'previo@example.com']);
         $this->user = User::factory()->create();
+        $this->user->assignRole('prestador');
         $this->empleado = Empleado::factory()->create([
             'user_id' => $this->user->id,
             'empresa_id' => $this->sedeA->empresa_id,

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use App\Services\SugerirNumeroOrden;
+use App\Services\ControlSede;
 
 class OrdenController extends Controller
 {
@@ -35,7 +36,7 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
-
+        $sede = ControlSede::autorizarSedeActiva($request);
 
         $validated = $request->validate([
             'paciente_id' => 'required|exists:personas,id',
@@ -44,7 +45,7 @@ class OrdenController extends Controller
                 'string',
                 'max:255',
                 Rule::unique('ordenes_medicas', 'numero')
-                    ->where('sede_id', $request->session()->get('sede')->id ?? 1),
+                    ->where('sede_id', $sede->id),
             ],
             'fecha_orden' => 'required|date',
             'examenes' => 'required|array',
@@ -65,13 +66,10 @@ class OrdenController extends Controller
         });
 
         $usuario = Auth::user();
-        $sede = $request->session()->get('sede');
-
-
         $ordenCreada =  DB::transaction(function () use ( $usuario, $validated, $total, $sede) {
             // Crear la orden médica
             $orden = Orden::create([
-                'sede_id' => $sede->id ?? 1,
+                'sede_id' => $sede->id,
                 'numero' => $validated['numero_orden'],
                 'user_id' => $usuario ? $usuario->id : 1,
                 'paciente_id' => $validated['paciente_id'],
@@ -100,7 +98,7 @@ class OrdenController extends Controller
                         'codigo_modalidad' => $validated[ 'modalidad']??'01',
                         'codigo_finalidad' => $validated['finalidad']??'15',
                         'codigo_via_ingreso' => $validated['via_ingreso']??'01',
-                        'sede_id' => $sede->id ?? 1,
+                        'sede_id' => $sede->id,
                         'fecha' => now(),
                         'estado' => Estado::PROCESO,
                         'created_at' => now(),
@@ -123,14 +121,14 @@ class OrdenController extends Controller
      */
     public function show(string $id)
     {
-
-        $orden = Orden::where('id', $id)
-                ->with(['paciente', 'procedimientos.examen'])->first();
+        $orden = Orden::find($id);
 
         if (!$orden) {
             return response()->json(['message' => 'Orden no encontrada.'], 404);
         }
 
+        ControlSede::autorizarOrden(request(), $orden);
+        $orden->load(['paciente', 'procedimientos.examen']);
 
         return response()->json($orden);
     }
@@ -154,6 +152,7 @@ class OrdenController extends Controller
     public function add(Request $request, string $id)
     {
         $orden = Orden::findOrFail($id);
+        ControlSede::autorizarOrden($request, $orden);
         $request->validate([
             'examen_id' => 'required|exists:examenes,id',
             'cantidad' => 'required|integer|min:1',
@@ -183,12 +182,11 @@ class OrdenController extends Controller
 
     public function max_numero(Request $request)
     {
-        $sede = $request->session()->get('sede');
-        $sedeId = $sede->id ?? 1;
-        $siguienteNumero = SugerirNumeroOrden::paraSede($sedeId);
+        $sede = ControlSede::autorizarSedeActiva($request);
+        $siguienteNumero = SugerirNumeroOrden::paraSede($sede->id);
         return response()->json([
             'next_numero' => $siguienteNumero,
-            'sesion_sede'=> isset($sede),
+            'sesion_sede' => true,
         ]);
     }
 
@@ -197,8 +195,8 @@ class OrdenController extends Controller
         $validated = $request->validate([
             'numero_orden' => 'required|string|max:255',
         ]);
-        $sede = $request->session()->get('sede');
-        $sedeId = $sede->id ?? 1;
+        $sede = ControlSede::autorizarSedeActiva($request);
+        $sedeId = $sede->id;
         $numero = trim($validated['numero_orden']);
 
         return response()->json([
@@ -211,6 +209,13 @@ class OrdenController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $orden = Orden::findOrFail($id);
+        ControlSede::autorizarOrden(request(), $orden);
+        DB::transaction(function () use ($orden) {
+            $orden->procedimientos()->get()->each->delete();
+            $orden->delete();
+        });
+
+        return response()->json(['message' => 'Orden eliminada correctamente.'], 200);
     }
 }

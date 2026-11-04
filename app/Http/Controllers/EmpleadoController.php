@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empleado;
+use App\Models\Sede;
+use App\Services\ControlSede;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
 
@@ -66,19 +68,22 @@ class EmpleadoController extends Controller
 
     public function dashboard( )
     {
+        $usuario = auth()->user();
         $sede = session('sede');
 
-        if (! $sede) {
+        if (! $sede && ! $usuario->hasRole('admin')) {
             return redirect()->route('dashboard')
                 ->with('error', 'Selecciona una sede para continuar.');
         }
 
-        $usuario = auth()->user();
+        if (! $usuario->hasRole('admin')) {
+            ControlSede::autorizarSedeActiva(request());
+        }
         $empleado = Empleado::where('user_id', $usuario->id)->first();
-        $ordenes = $usuario->hasRole('administrador') ? \App\Models\Orden::all() : \App\Models\Orden::whereHas('procedimientos', function ($query) use ($sede) {
+        $ordenes = $usuario->hasRole('admin') ? \App\Models\Orden::all() : \App\Models\Orden::whereHas('procedimientos', function ($query) use ($sede) {
             $query->where('sede_id', $sede->id);
         })->get()   ;
-        $procedimientos = $usuario->hasRole('administrador') ? \App\Models\Procedimiento::all() :  \App\Models\Procedimiento::where('sede_id', $sede->id)->get();
+        $procedimientos = $usuario->hasRole('admin') ? \App\Models\Procedimiento::all() :  \App\Models\Procedimiento::where('sede_id', $sede->id)->get();
 
         $procedimientosByExamen = $procedimientos->groupBy('examen_id')->map(function ($group) {
             return [
@@ -103,7 +108,10 @@ class EmpleadoController extends Controller
     {
         $usuario = auth()->user();
         $empleado = Empleado::where('user_id', $usuario->id)->first();
+        $sedes = $usuario->hasRole('admin')
+            ? Sede::orderBy('nombre')->get()
+            : $empleado->sedes;
 
-        return view('sedes.select', compact('empleado'));
+        return view('sedes.select', compact('empleado', 'sedes'));
     }
 }

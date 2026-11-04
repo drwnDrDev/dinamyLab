@@ -75,7 +75,8 @@ class ExamenController extends Controller
         }
 
         $empleado = $request->user()?->empleado;
-        if (! $empleado || ! $empleado->sedes()->whereKey($sede->id)->exists()) {
+        if (! $request->user()->hasRole('admin')
+            && (! $empleado || ! $empleado->sedes()->whereKey($sede->id)->exists())) {
             abort(403, 'No tiene acceso a la sede seleccionada.');
         }
 
@@ -140,7 +141,8 @@ class ExamenController extends Controller
 
         $sede = $request->session()->get('sede');
         $empleado = $request->user()?->empleado;
-        if (! $sede || ! $empleado || ! $empleado->sedes()->whereKey($sede->id)->exists()) {
+        if (! $sede || ! $empleado || (! $request->user()->hasRole('admin')
+            && ! $empleado->sedes()->whereKey($sede->id)->exists())) {
             abort(403, 'No tiene una sede válida seleccionada para registrar resultados.');
         }
 
