@@ -18,7 +18,9 @@ use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\SedeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => view('welcome'));
+Route::get('/', fn () => auth()->check()
+    ? redirect()->to(route('dashboard', absolute: false))
+    : view('welcome'));
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/reprocesar', [ReprocesarController::class, 'showUploadForm'])->name('reprocesar.upload');
@@ -114,7 +116,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/examenes/{examen}', [ExamenController::class, 'show'])->name('examenes.show');
     });
 
-    Route::middleware('can:ver_reportes')->group(function () {
+    Route::middleware('role_or_permission:admin|ver_reportes')->group(function () {
         Route::get('reportes', [ProcedimientoController::class, 'reportes'])->name('reportes');
     });
 

@@ -16,6 +16,7 @@ use Database\Seeders\TestDataSeeder;
 use Database\Seeders\TipoDocumentoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class PermissionProfilesTest extends TestCase
@@ -284,6 +285,24 @@ class PermissionProfilesTest extends TestCase
             ->get(route('ordenes'))
             ->assertOk()
             ->assertSee((string) $orden->numero);
+    }
+
+    public function test_admin_y_prestador_pueden_ver_reportes_y_agente_no(): void
+    {
+        Role::findByName('admin')->revokePermissionTo('ver_reportes');
+
+        $this->actingAs($this->admin)
+            ->get(route('reportes'))
+            ->assertOk();
+
+        $this->actingAs($this->prestador)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('reportes'))
+            ->assertOk();
+
+        $this->actingAs($this->agente)
+            ->get(route('reportes'))
+            ->assertForbidden();
     }
 
     private function userForRole(string $role): User
