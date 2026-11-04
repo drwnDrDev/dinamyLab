@@ -105,7 +105,7 @@ class EscogerPrecioExamen
         return Tarifa::query()
             ->where('tarifable_type', 'App\\Models\\Examen')
             ->where('tarifable_id', $examen->id)
-            ->where('sede_id', $sede->id)
+            ->whereHas('sedes', fn ($query) => $query->where('sedes.id', $sede->id))
             ->whereHas('convenios', function ($query) use ($convenio) {
                 $query->where('convenios.id', $convenio->id);
             })
@@ -113,7 +113,8 @@ class EscogerPrecioExamen
     }
 
     /**
-     * Busca una tarifa para un examen en una sede (sin validar convenio).
+     * Busca una tarifa general de un examen en una sede: la que no está vinculada a
+     * ningún convenio (una tarifa de convenio no debe aplicarse a otros convenios).
      *
      * @param Examen $examen
      * @param Sede $sede
@@ -124,7 +125,8 @@ class EscogerPrecioExamen
         return Tarifa::query()
             ->where('tarifable_type', 'App\\Models\\Examen')
             ->where('tarifable_id', $examen->id)
-            ->where('sede_id', $sede->id)
+            ->whereHas('sedes', fn ($query) => $query->where('sedes.id', $sede->id))
+            ->whereDoesntHave('convenios')
             ->first();
     }
 

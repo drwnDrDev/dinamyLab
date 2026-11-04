@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Procedimiento;
 use App\Models\Resultado;
 use App\Http\Controllers\Controller;
+use App\Services\ControlSede;
 use App\Services\EscogerReferencia;
 use Symfony\Component\Console\Input\Input;
 
@@ -44,6 +45,11 @@ public function show($id)
 
     public function store(Request $request, Procedimiento $procedimiento)
     {
+        // C-05: mismo control de sede que la edición web
+        ControlSede::autorizarProcedimiento($request, $procedimiento);
+        // El empleado siempre es el autenticado; nunca el enviado por el cliente
+        $empleadoId = $request->user()->empleado->id;
+
         // Verificar si es una solicitud JSON (desde el formulario de lotes)
         if ($request->isJson()) {
             $datos = $request->json()->all();
@@ -53,7 +59,7 @@ public function show($id)
                 EscogerReferencia::guardaResultado($datos['resultados'], $procedimiento);
                 $procedimiento->estado = Estado::TERMINADO;
                 $procedimiento->fecha = now();
-                $procedimiento->empleado_id = auth()->user()->id ?? 1;
+                $procedimiento->empleado_id = $empleadoId;
                 $procedimiento->save();
 
                 return response()->json([
@@ -68,7 +74,7 @@ public function show($id)
         EscogerReferencia::guardaResultado($request->except(['_token', 'submit']), $procedimiento);
         $procedimiento->estado = Estado::TERMINADO;
         $procedimiento->fecha = $request->input('fecha_procedimiento', now());
-        $procedimiento->empleado_id = $request->input('empleado_id', auth()->user()->id ?? 1);
+        $procedimiento->empleado_id = $empleadoId;
         $procedimiento->save();
 
         return redirect()->route('resultados.show', $procedimiento)->with('success', 'Resultados guardados correctamente.');
