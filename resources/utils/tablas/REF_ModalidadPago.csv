@@ -1,0 +1,6 @@
+Id|Codigo|Nombre|Habilitado|ExtraI|ExtraII|ExtraIII|ExtraIV
+01|01|Pago individual por caso / Conjunto integral de atenciones / Paquete / Canasta.|SI||||
+02|02|Pago global prospectivo.|SI||||
+03|03|Pago por capitación.|SI||||
+04|04|Pago por evento.|SI||||
+05|05|Otra modalidad (específica)|NO||||
