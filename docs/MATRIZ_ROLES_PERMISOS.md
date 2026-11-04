@@ -44,7 +44,7 @@ La descripción del examen vive en el catálogo global compartido. Se confirmó 
 | `ver_resultado`, `registrar_resultado`, `editar_resultado` | Consulta/impresión/historia, registro y corrección auditada |
 | `ver_examen`, `editar_descripcion_examen` | Consulta de exámenes y edición limitada a `descripcion` por API |
 | `ver_facturas` | Listado y lectura de factura de la sede (admin puede acceder globalmente) |
-| `ver_reportes` | Reporte de procedimientos de la sede activa |
+| `ver_reportes` | Reporte de procedimientos de la sede activa; `admin` también puede acceder por rol |
 
 Además hay permisos heredados de áreas administrativas que se asignan solo al administrador (por ejemplo, permisos de empresa, sedes y cuentas). Los endpoints de mutación de catálogos usan rol `admin` de forma explícita.
 

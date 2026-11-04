@@ -54,11 +54,11 @@
         @endcan
 
 
-        @can('ver_reportes')
+        @if(auth()->user()->hasRole('admin') || auth()->user()->can('ver_reportes'))
             <x-nav-link :href="route('reportes')" icono="reportes" :active="request()->routeIs('reportes*')">
                 {{ __('Reportes') }}
             </x-nav-link>
-        @endcan
+        @endif
 
         
         @if(auth()->user()?->hasRole('admin'))
