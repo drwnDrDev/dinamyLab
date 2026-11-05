@@ -2,7 +2,11 @@
     <x-slot name="title">
         {{ __('Medical Reports') }}
     </x-slot>
-<x-slot name="header">
+<x-slot name="header" >
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Medical Reports') }}
+    </h2>
+</x-slot>
 <div class="max-w-7xl mx-auto flex items-center justify-between py-4">
 
 <div class="w-full md:w-1/2 grid sm:grid-cols-2 justify-center p-3 mx-auto bg-white rounded-lg border border-gray-200 shadow-md print:hidden">
@@ -42,8 +46,9 @@
     <div class="form-group w-full">
         <x-input-label for="sede_id" :value="__('Headquarter')" />
         <select name="sede_id" id="sede_id" class="block mt-1 w-full border-gray-300 focus:border-violet-500 focus:ring-violet-500 rounded-md shadow-sm">
+            @php($sedeActivaId = session('sede')?->id)
             @foreach($sedes as $sede)
-                <option value="{{$sede->id}}" @if($sede->id == session('sede')->id) selected @endif>{{$sede->nombre}}</option>
+                <option value="{{$sede->id}}" @selected($sede->id == $sedeActivaId)>{{$sede->nombre}}</option>
             @endforeach
         </select>
     </div>
