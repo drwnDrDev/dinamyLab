@@ -3,9 +3,11 @@
 use App\Models\Empleado;
 use App\Models\Empresa;
 use App\Models\Sede;
+use App\Models\ServicioHabilitado;
 use App\Models\User;
 use Database\Seeders\ClienteSeeder;
 use Database\Seeders\RolesYPermisosSeeder;
+use Database\Seeders\ServicioHabilitadoSeeder;
 use Database\Seeders\TipoDocumentoSeeder;
 use Spatie\Permission\Models\Role;
 
@@ -14,6 +16,35 @@ test('el seeder de roles es idempotente', function () {
     $this->seed(RolesYPermisosSeeder::class);
 
     expect(Role::count())->toBe(5);
+});
+
+test('el seeder de servicios habilitados carga el catalogo y es idempotente', function () {
+    $this->seed(ServicioHabilitadoSeeder::class);
+    $cantidadInicial = ServicioHabilitado::count();
+
+    $this->seed(ServicioHabilitadoSeeder::class);
+
+    expect($cantidadInicial)->toBe(157)
+        ->and(ServicioHabilitado::count())->toBe($cantidadInicial);
+
+    $this->assertDatabaseHas('servicios_habilitados', [
+        'codigo' => 706,
+        'nombre' => 'LABORATORIO CLINICO',
+        'grupo' => 'APOYO DIAGNOSTICO Y COMPLEMENTACION TERAPEUTICA',
+        'codigo_grupo' => '02',
+        'activo' => true,
+    ]);
+    $this->assertDatabaseHas('servicios_habilitados', [
+        'codigo' => 712,
+        'nombre' => 'TOMA DE MUESTRAS DE LABORATORIO CLINICO',
+        'activo' => true,
+    ]);
+    $this->assertDatabaseHas('servicios_habilitados', [
+        'codigo' => 105,
+        'activo' => false,
+    ]);
+    expect(ServicioHabilitado::where('activo', true)->pluck('codigo')->all())
+        ->toBe([706, 712]);
 });
 
 test('el seeder de cliente crea empresa, sede y empleado del admin', function () {
