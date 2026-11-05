@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ServicioHabilitado;
 use App\Models\User;
 use App\Support\CatalogsCache;
 use Database\Seeders\RolesYPermisosSeeder;
@@ -87,4 +88,43 @@ it('marca la respuesta como privada y revalidable', function () {
         ->toContain('private')
         ->toContain('max-age=0')
         ->toContain('must-revalidate');
+});
+
+it('invalida la caché al activar un catálogo desde la API', function () {
+    Cache::flush();
+    $admin = User::factory()->create(['email' => 'admin@example.com']);
+    $admin->assignRole('admin');
+
+    $this->actingAs($admin)->getJson('/api/static-data-for-frontend')->assertOk();
+    expect(Cache::has(CatalogsCache::KEY))->toBeTrue();
+
+    $servicio = ServicioHabilitado::firstOrFail();
+    $this->actingAs($admin)
+        ->patchJson("/api/servicios-habilitados/{$servicio->codigo}/activar")
+        ->assertOk();
+
+    expect(Cache::has(CatalogsCache::KEY))->toBeFalse();
+});
+
+it('invalida la caché cuando cambia el nombre de un catálogo', function () {
+    Cache::flush();
+    $this->actingAs($this->prestador)->getJson('/api/static-data-for-frontend')->assertOk();
+
+    $servicio = ServicioHabilitado::firstOrFail();
+    $servicio->nombre = 'LABORATORIO CLINICO ACTUALIZADO';
+    $servicio->save();
+
+    expect(Cache::has(CatalogsCache::KEY))->toBeFalse();
+});
+
+it('no invalida la caché cuando solo cambia el nivel', function () {
+    Cache::flush();
+    $this->actingAs($this->prestador)->getJson('/api/static-data-for-frontend')->assertOk();
+    expect(Cache::has(CatalogsCache::KEY))->toBeTrue();
+
+    $servicio = ServicioHabilitado::firstOrFail();
+    $servicio->nivel = 250;
+    $servicio->save();
+
+    expect(Cache::has(CatalogsCache::KEY))->toBeTrue();
 });
