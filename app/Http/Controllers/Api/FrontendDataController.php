@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
-use App\Models\CodigoCup;
 use App\Models\TipoDocumento;
 use App\Models\Pais;
 use App\Models\Municipio;
@@ -13,12 +12,8 @@ use App\Models\ModalidadAtencion;
 use App\Models\TipoAfiliacion;
 use App\Models\CausaExterna;
 use App\Models\Finalidad;
-use App\Models\FinalidadConsulta;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Cache; // Si usas caché con el Job
-
-use function Pest\Laravel\get;
 
 class FrontendDataController extends Controller
 {
@@ -68,20 +63,12 @@ class FrontendDataController extends Controller
             ->where('habilitada', true) // Solo EPS verificadas
             ->orderBy('nivel','desc')->get();
 
-            $cupsActivos = CodigoCup::where('activo', true)->get();
-            $defaultCies = \App\Models\CodigoDiagnostico::where('activo', true)->get();
-            if($defaultCies->isEmpty()) {
-                $defaultCies =\App\Models\CodigoDiagnostico::orderBy('nivel','desc')->limit(12)->get();
-            }
-
             $data = [
                 'documentos_paciente' => $tiposDocumentoPaciente,
                 'documentos_pagador' => $tiposDocumentoPagador,
                 'paises' => $paises,
                 'municipios' => $municipios,
                 'eps' => $eps,
-                'cups' => $cupsActivos,
-                'defaultCies' => $defaultCies,
                 'servicios_habilitados' => $servicosHabilitados,
                 'via_ingreso' => $viaIngreso,
                 'modalidad_atencion' => $modalidadAtencion,
