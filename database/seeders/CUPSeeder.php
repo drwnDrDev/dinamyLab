@@ -14,7 +14,7 @@ class CUPSeeder extends Seeder
      */
     public function run(): void
     {
-        $filePath = base_path('resources/utils/tablas_de_referencia/cups.csv');
+        $filePath = base_path('resources/utils/tablas/cups.csv');
         $chunkSize = 1000; // Define your chunk size
 
         if (!file_exists($filePath)) {
@@ -79,7 +79,7 @@ class CUPSeeder extends Seeder
             $this->command->error("Rolling back changes.");
         }
 
-        $filePath = base_path('resources/utils/tablas_de_referencia/CIE10.csv');
+        $filePath = base_path('resources/utils/tablas/CIE10.csv');
         $chunkSize = 2000; // Define your chunk size
         if (!file_exists($filePath)) {
             Log::error("CSV file not found at: {$filePath}");

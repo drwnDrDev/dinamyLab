@@ -30,6 +30,11 @@ test('el seeder de cliente crea empresa, sede y empleado del admin', function ()
 });
 
 test('el admin sembrado inicia sesion y llega al dashboard', function () {
+    config([
+        'instancias.cliente.admin_email' => 'admin-seeder@example.test',
+        'instancias.cliente.admin_password' => 'password-seeder-test',
+    ]);
+
     $this->seed(RolesYPermisosSeeder::class);
     $this->seed(TipoDocumentoSeeder::class);
     $this->seed(ClienteSeeder::class);

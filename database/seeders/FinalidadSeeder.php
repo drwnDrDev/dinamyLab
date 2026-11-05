@@ -13,7 +13,7 @@ class FinalidadSeeder extends Seeder
      */
     public function run(): void
     {
-        $filePath = base_path('resources/utils/tablas_de_referencia/TablaReferencia_RIPSFinalidadConsultaVersion2__1.csv');
+        $filePath = base_path('resources/utils/tablas/REF_FinalidadTecnologiaSalud.csv');
         if (!file_exists($filePath)) {
              $this->command->error("CSV file not found. Please check the path: {$filePath}");
             return;
@@ -28,15 +28,15 @@ class FinalidadSeeder extends Seeder
 
 
 
-        while (($line = fgetcsv($file, 1000, ";")) !== false) {
+        while (($line = fgetcsv($file, 1000, "|")) !== false) {
             // Asegúrate de que la línea tenga el formato esperado
             if (count($line) < 2) {
                 continue;
             }
 
             Finalidad::create([
-                'codigo' => $line[0],
-                'nombre' => $line[1]
+                'codigo' => $line[1],
+                'nombre' => $line[2]
             ]);
         }
 
