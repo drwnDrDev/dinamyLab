@@ -53,8 +53,17 @@ class CupsController extends Controller
 
     public function buscarPorNombre(Request $request)
     {
-        $nombre = $request->query('nombre');
-        return CodigoCup::where('nombre', 'like', "%$nombre%")->get();
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        $cups = CodigoCup::query()
+            ->where('nombre', 'like', '%' . $validated['nombre'] . '%')
+            ->orderBy('nombre')
+            ->limit(20)
+            ->get(['codigo', 'nombre']);
+
+        return response()->json(['data' => $cups]);
     }
 
     public function activar($id)

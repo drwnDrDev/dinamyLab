@@ -144,22 +144,31 @@ class CodigoDiagnosticoController extends Controller
         );
     }
 
-     public function search(Request $request)
+    public function search(Request $request)
     {
-        $query = $request->input('query');
-        $codigoDiagnostico = CodigoDiagnostico::where('nombre', 'like', "%$query%")
-        ->orWhere('descripcion', 'like', "%$query%")
-        ->orWhere('grupo', 'like', "%$query%")
-        ->orWhere('sub_grupo', 'like', "%$query%")
-        ->orWhere('codigo', 'like', "%$query%")
-        ->orderBy('nivel', 'DESC')
-        ->get();
-        return response()->json(
-            [
-                'message' => 'Resultados de búsqueda',
-                'data' =>  $codigoDiagnostico
-                
-            ]
-        );
+        $validated = $request->validate([
+            'query' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        $query = $validated['query'];
+
+        // No se filtra por activo: el frontend resuelve nombres de CIE ya
+        // guardados en órdenes y esos códigos pueden estar inactivos.
+        $resultados = CodigoDiagnostico::query()
+            ->where(function ($consulta) use ($query) {
+                $consulta->where('nombre', 'like', "%{$query}%")
+                    ->orWhere('descripcion', 'like', "%{$query}%")
+                    ->orWhere('grupo', 'like', "%{$query}%")
+                    ->orWhere('sub_grupo', 'like', "%{$query}%")
+                    ->orWhere('codigo', 'like', "%{$query}%");
+            })
+            ->orderByDesc('nivel')
+            ->limit(20)
+            ->get(['codigo', 'nombre', 'descripcion', 'grupo', 'sub_grupo', 'nivel']);
+
+        return response()->json([
+            'message' => 'Resultados de búsqueda',
+            'data' => $resultados,
+        ]);
     }
 }

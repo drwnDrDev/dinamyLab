@@ -49,9 +49,9 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
 
     Route::middleware('can:ver_examen')->group(function () {
         Route::get('cups', [CupsController::class, 'index']);
-        Route::get('cups/{codigo}', [CupsController::class, 'show']);
         Route::get('cups/buscar/{codigo}', [CupsController::class, 'buscarPorCodigo']);
         Route::get('cups/buscar', [CupsController::class, 'buscarPorNombre']);
+        Route::get('cups/{codigo}', [CupsController::class, 'show']);
         Route::get('examenes', [ExamenesController::class, 'index']);
         Route::get('examenes/{id}', [ExamenesController::class, 'show']);
     });
