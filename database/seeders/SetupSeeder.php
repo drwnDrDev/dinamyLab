@@ -33,6 +33,9 @@ class SetupSeeder extends Seeder
             'Z13',  // Pesquisa esp. otras enf. especificadas
             'Z12',  // Pesquisa esp. neoplasia de próstata
             'Z13',  // Pesquisa esp. tr. cardiovasculares
+            'Z017',  // EXAMEN DE LABORATORIO
+            'Z320',  // EMBARAZO (AUN) NO CONFIRMADO
+
         ];
 
         // Eliminar duplicados
