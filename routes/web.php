@@ -126,7 +126,6 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['verified', 'role:admin'])->group(function () {
         Route::get('/caja', [AdministracionController::class, 'caja'])->name('caja');
-        Route::get('/caja/ingresos', [AdministracionController::class, 'rips'])->name('rips');
         Route::post('reportes/rips', [ProcedimientoController::class, 'json_rips'])->name('descargar.rips');
         Route::get('parametros', [App\Http\Controllers\ParametroController::class, 'index'])->name('parametros.index');
         Route::get('admin/empresa', [App\Http\Controllers\EmpresaController::class, 'show'])->name('empresa.show');
