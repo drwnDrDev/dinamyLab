@@ -1,20 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useAxiosAuth from './hooks/useAxiosAuth';
+import { cieRecents } from '../lib/cieRecents';
 
-const RECENT_KEY = 'default_cies_data';
-const MAX_RECENT = 10;
 const MIN_CHARS = 3;
 const DEBOUNCE_MS = 300;
-
-function getStoredRecents() {
-    try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); }
-    catch { return []; }
-}
-
-function pushToRecents(item) {
-    const list = getStoredRecents().filter(r => r.codigo !== item.codigo);
-    localStorage.setItem(RECENT_KEY, JSON.stringify([item, ...list].slice(0, MAX_RECENT)));
-}
 
 const Spinner = () => (
     <svg className="animate-spin w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24">
@@ -48,7 +37,7 @@ const CieSearchInput = ({ label, name, value, onChange, error }) => {
     const inputRef = useRef(null);
 
     // Cargar recientes al montar
-    useEffect(() => setRecents(getStoredRecents()), []);
+    useEffect(() => setRecents(cieRecents.list()), []);
 
     // Sincronizar display cuando cambia el value prop externamente
     useEffect(() => {
@@ -60,7 +49,7 @@ const CieSearchInput = ({ label, name, value, onChange, error }) => {
         if (selected && String(selected.codigo) === String(value)) return;
 
         // Buscar en recientes primero (sin llamada API)
-        const fromRecents = getStoredRecents().find(r => String(r.codigo) === String(value));
+        const fromRecents = cieRecents.list().find(r => String(r.codigo) === String(value));
         if (fromRecents) {
             setSelected(fromRecents);
             setInputText(fromRecents.nombre);
@@ -117,7 +106,7 @@ const CieSearchInput = ({ label, name, value, onChange, error }) => {
     }, [selected]);
 
     const handleFocus = () => {
-        setRecents(getStoredRecents());
+        setRecents(cieRecents.list());
         setIsOpen(true);
     };
 
@@ -133,8 +122,7 @@ const CieSearchInput = ({ label, name, value, onChange, error }) => {
         setSearchQuery(null);
         setResults([]);
         setIsOpen(false);
-        pushToRecents(item);
-        setRecents(getStoredRecents());
+        setRecents(cieRecents.add(item));
         onChange({ target: { name, value: item.codigo } });
     };
 
