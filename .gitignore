@@ -29,3 +29,7 @@ yarn-error.log
 
 
 /.pnpm-store
+
+# Firmas escaneadas de profesionales: no versionar (C-03)
+/public/storage/firmas/
+/storage/app/public/firmas/
