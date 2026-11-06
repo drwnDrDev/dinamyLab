@@ -181,9 +181,19 @@ Son un paso **manual y explícito**, nunca parte del deploy automático.
 cd ~/apps/<cliente>
 php artisan down
 php artisan migrate --force
+# Los catálogos se cachean 1 hora. Si el despliegue cambia catálogos por
+# seeders o SQL directo (no por la UI), hay que invalidar la caché.
+php artisan cache:clear
 php artisan config:cache
 php artisan up
 ```
+
+Los seeders de catálogo de §1, paso 7, deben ejecutarse después de `migrate` y
+antes del `cache:clear`. El `cache:clear` cubre los cambios de catálogos
+aplicados por esos seeders o por SQL directo.
+
+> `CACHE_STORE` debe ser propio de cada instancia. Nunca compartir la misma
+> base de datos ni el mismo servidor de caché entre dos clientes.
 
 Ejecutar primero en una instancia, verificar, y luego en la otra.
 
