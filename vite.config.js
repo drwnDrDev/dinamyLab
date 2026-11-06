@@ -16,18 +16,12 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/main.js',
-                'resources/js/buscarPersona.js',
-                'resources/js/crearOrdenes.js',
-                'resources/js/obtenerStaticos.js',
-                'resources/js/crearPersona.js',
                 'resources/js/app.jsx',
                 'resources/js/appOrden.jsx',
                 'resources/js/appPersona.jsx',
                 'resources/js/ExamenDetail.jsx',
                 'resources/js/components/guest/Typewriter.jsx',
                 'resources/js/convenioCreate.jsx'
-
             ],
             refresh: true,
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AutocompleteInput from './AutocompleteInput';
+import { getCatalogs, loadCatalogs } from '../lib/catalogs';
 
 export default function ConvenioForm({ documentos = [], onSubmit = null }) {
   const [formData, setFormData] = useState({
@@ -24,32 +25,27 @@ export default function ConvenioForm({ documentos = [], onSubmit = null }) {
     },
   });
 
-  const [paises, setPaises] = useState([]);
-  const [municipios, setMunicipios] = useState([]);
+  const [paises, setPaises] = useState(() => getCatalogs().paises ?? []);
+  const [municipios, setMunicipios] = useState(() => getCatalogs().municipios ?? []);
+  const [documentosState, setDocumentosState] = useState(documentos);
 
-  // Cargar países y municipios del localStorage al montar el componente
+  // Cargar países, municipios y documentos desde el módulo de catálogos al montar
   useEffect(() => {
-    const paisesLocal = localStorage.getItem('paises_data');
-    if (paisesLocal) {
-      try {
-        const paisesData = JSON.parse(paisesLocal);
-        setPaises(paisesData);
-      } catch (error) {
-        console.error('Error al parsear países del localStorage:', error);
-        setPaises([]);
-      }
-    }
+    let cancelled = false;
 
-    const municipiosLocal = localStorage.getItem('municipios_data');
-    if (municipiosLocal) {
-      try {
-        const municipiosData = JSON.parse(municipiosLocal);
-        setMunicipios(municipiosData);
-      } catch (error) {
-        console.error('Error al parsear municipios del localStorage:', error);
-        setMunicipios([]);
-      }
-    }
+    loadCatalogs()
+      .then(({ data }) => {
+        if (cancelled) return;
+        setPaises(data.paises ?? []);
+        setMunicipios(data.municipios ?? []);
+        // El fallback asíncrono solo aplica cuando no llegaron documentos embebidos.
+        if (documentos.length === 0) {
+          setDocumentosState(data.documentos_pagador ?? []);
+        }
+      })
+      .catch(() => {});
+
+    return () => { cancelled = true; };
   }, []);
 
   // Manejar cambios en campos simples
@@ -168,7 +164,7 @@ export default function ConvenioForm({ documentos = [], onSubmit = null }) {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
               >
-                {documentos.map((doc) => (
+                {documentosState.map((doc) => (
                   <option key={doc.id} value={doc.cod_dian}>
                     {doc.nombre}
                   </option>

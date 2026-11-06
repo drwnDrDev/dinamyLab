@@ -274,6 +274,4 @@
 
     </x-canva>
 
-    @vite('resources/js/obtenerStaticos.js')
-
 </x-app-layout>

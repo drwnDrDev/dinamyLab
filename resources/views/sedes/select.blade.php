@@ -16,7 +16,6 @@
                 </a>
                 @endforeach
             </section>
-            @vite('resources/js/obtenerStaticos.js')
     </x-guest-layout>
 
 

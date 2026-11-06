@@ -46,3 +46,32 @@ jobs:
 
       - name: Execute tests
         run: php artisan test
+
+  javascript:
+    runs-on: ubuntu-latest
+
+    name: JavaScript
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Reads the pnpm version from package.json "packageManager"; do not add a
+      # "version" input here, it conflicts with the pinned sha512 value.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build assets
+        run: pnpm build

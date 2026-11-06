@@ -13,9 +13,10 @@ use App\Http\Controllers\Api\ResultadosController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData']);
-
 Route::middleware(['auth:sanctum', 'api'])->group(function () {
+    Route::get('/static-data-for-frontend', [FrontendDataController::class, 'getStaticData'])
+        ->middleware('throttle:60,1');
+
     Route::middleware('can:ver_persona')->group(function () {
         Route::get('personas', [PersonaController::class, 'index']);
         Route::get('personas/{id}', [PersonaController::class, 'show']);
@@ -48,9 +49,9 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
 
     Route::middleware('can:ver_examen')->group(function () {
         Route::get('cups', [CupsController::class, 'index']);
-        Route::get('cups/{codigo}', [CupsController::class, 'show']);
         Route::get('cups/buscar/{codigo}', [CupsController::class, 'buscarPorCodigo']);
         Route::get('cups/buscar', [CupsController::class, 'buscarPorNombre']);
+        Route::get('cups/{codigo}', [CupsController::class, 'show']);
         Route::get('examenes', [ExamenesController::class, 'index']);
         Route::get('examenes/{id}', [ExamenesController::class, 'show']);
     });

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import useAxiosAuth from '../hooks/useAxiosAuth';
+import { invalidateCatalogs } from '../../lib/catalogs';
 
 const initialCategorias = {
-    serviciosHabilitados: { nombre: 'Servicios Habilitados', clases: 'bg-blue-200 text-blue-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/servicios-habilitados', localStorageKey: 'servicios_habilitados_data', endpoint: '/api/servicios-habilitados', dataKey: 'data' },
-    viasIngreso: { nombre: 'Vías de Ingreso', clases: 'bg-green-200 text-green-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/via-ingreso', localStorageKey: 'vias_ingreso_data', endpoint: '/api/via-ingreso', dataKey: 'data' },
-    diagnosticos: { nombre: 'Diagnósticos', clases: 'bg-stone-200 text-stone-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/cie10', localStorageKey: 'default_cies_data', endpoint: '/api/cie10/gestion', dataKey: 'data' },
-    finalidades: { nombre: 'Finalidades', clases: 'bg-yellow-200 text-yellow-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/finalidades', localStorageKey: 'finalidad_consulta_data', endpoint: '/api/finalidades', dataKey: 'data.finalidades' },
-    causasExternas: { nombre: 'Causas Externas', clases: 'bg-purple-200 text-purple-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/causa-atencion', localStorageKey: 'causas_externas_data', endpoint: '/api/causa-atencion', dataKey: 'data.causas_externas' },
-    tiposAtencion: { nombre: 'Modalidades de Atención', clases: 'bg-teal-200 text-teal-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/modalidades-atencion', localStorageKey: 'tipos_atencion_data', endpoint: '/api/modalidades-atencion', dataKey: 'data.modalidades_atencion' },
-    tiposAfiliacion: { nombre: 'Tipos de Afiliación', clases: 'bg-pink-200 text-pink-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/tipos-afiliacion', localStorageKey: 'tipos_afiliacion_data', endpoint: '/api/tipos-afiliacion', dataKey: 'data' },
+    serviciosHabilitados: { nombre: 'Servicios Habilitados', clases: 'bg-blue-200 text-blue-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/servicios-habilitados', endpoint: '/api/servicios-habilitados', dataKey: 'data' },
+    viasIngreso: { nombre: 'Vías de Ingreso', clases: 'bg-green-200 text-green-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/via-ingreso', endpoint: '/api/via-ingreso', dataKey: 'data' },
+    diagnosticos: { nombre: 'Diagnósticos', clases: 'bg-stone-200 text-stone-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/cie10', endpoint: '/api/cie10/gestion', dataKey: 'data' },
+    finalidades: { nombre: 'Finalidades', clases: 'bg-yellow-200 text-yellow-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/finalidades', endpoint: '/api/finalidades', dataKey: 'data.finalidades' },
+    causasExternas: { nombre: 'Causas Externas', clases: 'bg-purple-200 text-purple-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/causa-atencion', endpoint: '/api/causa-atencion', dataKey: 'data.causas_externas' },
+    tiposAtencion: { nombre: 'Modalidades de Atención', clases: 'bg-teal-200 text-teal-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/modalidades-atencion', endpoint: '/api/modalidades-atencion', dataKey: 'data.modalidades_atencion' },
+    tiposAfiliacion: { nombre: 'Tipos de Afiliación', clases: 'bg-pink-200 text-pink-900', datos: [], visibles: [], activo: false, loaded: false, activeChange: 'api/tipos-afiliacion', endpoint: '/api/tipos-afiliacion', dataKey: 'data' },
 };
 
 const getNestedData = (obj, path) => {
@@ -114,17 +115,6 @@ const Setup = () => {
         setError('');
     };
 
-    const sincronizarLocalStorage = (categoria, actualizado) => {
-        try {
-            const guardados = JSON.parse(localStorage.getItem(categoria.localStorageKey) || '[]');
-            const siguientes = guardados.filter(item => item.codigo !== actualizado.codigo);
-            if (actualizado.activo) siguientes.push(actualizado);
-            localStorage.setItem(categoria.localStorageKey, JSON.stringify(siguientes));
-        } catch (storageError) {
-            console.error(`No fue posible actualizar ${categoria.localStorageKey}:`, storageError);
-        }
-    };
-
     const toggleActivarItem = async (item) => {
         if (!activeKey || !activa) return;
         setError('');
@@ -137,7 +127,7 @@ const Setup = () => {
                 throw new Error('El servidor no devolvió el estado actualizado del catálogo.');
             }
 
-            sincronizarLocalStorage(activa, actualizado);
+            invalidateCatalogs();
             setCategorias(prev => ({
                 ...prev,
                 [activeKey]: {

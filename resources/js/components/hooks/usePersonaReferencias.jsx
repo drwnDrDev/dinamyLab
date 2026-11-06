@@ -1,29 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { getCatalogs, loadCatalogs } from '../../lib/catalogs';
+
+const mapReferencias = (data) => ({
+    tiposDocumento: data.documentos_paciente ?? [],
+    paises: data.paises ?? [],
+    municipios: data.municipios ?? [],
+    epsList: data.eps ?? [],
+});
 
 export const usePersonaReferencias = () => {
-  const [referencias, setReferencias] = useState({
-    tiposDocumento: [],
-    paises: [],
-    municipios: [],
-    epsList: [],
-  });
+    const [referencias, setReferencias] = useState(() => mapReferencias(getCatalogs()));
 
-  useEffect(() => {
-    const cargar = () => {
-      try {
-        setReferencias({
-          tiposDocumento: JSON.parse(localStorage.getItem('documentos_paciente_data')) || [],
-          paises: JSON.parse(localStorage.getItem('paises_data')) || [],
-          municipios: JSON.parse(localStorage.getItem('municipios_data')) || [],
-          epsList: JSON.parse(localStorage.getItem('eps_data')) || [],
-        });
-      } catch (error) {
-        console.error('Error al cargar las referencias:', error);
-        // En caso de error, mantenemos los arrays vacíos por defecto
-      }
-    };
-    cargar();
-  }, []);
+    useEffect(() => {
+        let cancelled = false;
 
-  return referencias;
+        loadCatalogs()
+            .then(({ data }) => {
+                if (!cancelled) setReferencias(mapReferencias(data));
+            })
+            .catch(() => {});
+
+        return () => { cancelled = true; };
+    }, []);
+
+    return referencias;
 };
