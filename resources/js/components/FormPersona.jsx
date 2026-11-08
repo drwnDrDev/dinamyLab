@@ -410,7 +410,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             value={formData.tipo_afiliacion}
                             onChange={handleInputChange}
                             codigo={true}
-                            options={tiposAfiliacion.data}
+                            options={tiposAfiliacion}
                             error={fe('tipo_afiliacion')}
                         />
                     )}
