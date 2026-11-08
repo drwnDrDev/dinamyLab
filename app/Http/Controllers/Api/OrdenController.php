@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Orden;
 use App\Estado;
+use App\Http\Controllers\Controller;
+use App\Models\Examen;
+use App\Models\Orden;
 use App\Models\Sede;
+use App\Services\ControlSede;
+use App\Services\SugerirNumeroOrden;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use App\Services\SugerirNumeroOrden;
-use App\Services\ControlSede;
+use Illuminate\Validation\ValidationException;
 
 class OrdenController extends Controller
 {
@@ -38,7 +40,7 @@ class OrdenController extends Controller
     {
         $sede = ControlSede::autorizarSedeActiva($request);
 
-        $validated = $request->validate([
+        $rules = [
             'paciente_id' => 'required|exists:personas,id',
             'numero_orden' => [
                 'required',
@@ -48,56 +50,83 @@ class OrdenController extends Controller
                     ->where('sede_id', $sede->id),
             ],
             'fecha_orden' => 'required|date',
-            'examenes' => 'required|array',
+            'examenes' => 'required_without:remisiones|array',
             'examenes.*.id' => 'required|exists:examenes,id',
             'examenes.*.cantidad' => 'required|integer|min:1',
-            'modalidad' => 'required|string',
-            'finalidad' => 'required|string',
-            'via_ingreso' => 'required|string',
-            'cie_principal' => 'nullable|string',
-            'cie_relacionado' => 'nullable|string',
-        ]);
+            'remisiones' => 'sometimes|array',
+            'remisiones.*.cup' => 'required|string|max:20',
+            'remisiones.*.nombre' => 'required|string|max:255',
+            'remisiones.*.valor' => 'required|numeric|min:0',
+            'remisiones.*.destino_sede_id' => 'nullable|integer|exists:sedes,id',
+            'remisiones.*.destino' => 'required|string|max:255',
+            'abono' => 'nullable|numeric|min:0',
+        ];
 
+        if (empty($request->input('remisiones'))) {
+            $rules += [
+                'modalidad' => 'required|string',
+                'finalidad' => 'required|string',
+                'via_ingreso' => 'required|string',
+                'cie_principal' => 'nullable|string',
+                'cie_relacionado' => 'nullable|string',
+            ];
+        }
 
+        $validated = $request->validate($rules);
+        $examenes = $validated['examenes'] ?? [];
+        $remisiones = $validated['remisiones'] ?? [];
 
-        // Calcular el total de la orden
-        $total = collect($request->input('examenes'))->sum(function ($examen) {
-            return $examen['valor'] * $examen['cantidad'];
-        });
+        if ($examenes === [] && $remisiones === []) {
+            throw ValidationException::withMessages([
+                'examenes' => 'Debe agregar al menos un examen o una remisión.',
+            ]);
+        }
+
+        $examenesData = Examen::whereIn('id', collect($examenes)->pluck('id'))->get()->keyBy('id');
+        $totalExamenes = collect($examenes)->sum(
+            fn ($examen) => $examenesData[$examen['id']]->valor * $examen['cantidad']
+        );
+        $totalRemisiones = collect($remisiones)->sum('valor');
+        $total = $totalExamenes + $totalRemisiones;
+        $abono = $validated['abono'] ?? 0;
+
+        if ($abono > $total) {
+            throw ValidationException::withMessages([
+                'abono' => 'El abono no puede ser mayor que el total de la orden.',
+            ]);
+        }
 
         $usuario = Auth::user();
-        $ordenCreada =  DB::transaction(function () use ( $usuario, $validated, $total, $sede) {
+        $ordenCreada = DB::transaction(function () use ($usuario, $validated, $examenes, $remisiones, $total, $abono, $sede) {
             // Crear la orden médica
             $orden = Orden::create([
                 'sede_id' => $sede->id,
                 'numero' => $validated['numero_orden'],
-                'user_id' => $usuario ? $usuario->id : 1,
+                'user_id' => $usuario->id,
                 'paciente_id' => $validated['paciente_id'],
                 'codigo_recaudo' => '05', // Consulta externa
                 'observaciones' => $validated['observaciones'] ?? null,
-                'abono' => $validated['abono'] ?? 0,
+                'abono' => $abono,
                 'total' => $total,
             ]);
 
             // Asociar los exámenes a la orden y crear los procedimientos
-            foreach ($validated['examenes'] as $examenData) {
+            $procedimientos = [];
+            foreach ($examenes as $examenData) {
                 $orden->examenes()->attach(
                     $examenData['id'],
                     ['cantidad' => $examenData['cantidad']]
                 );
 
-
-            // Crear los procedimientos asociados a la orden
-            $procedimientos = [];
-            for ($i = 0; $i < $examenData['cantidad']; $i++) {
-                $procedimientos[] = [
-                    'orden_id' => $orden->id,
+                for ($i = 0; $i < $examenData['cantidad']; $i++) {
+                    $procedimientos[] = [
+                        'orden_id' => $orden->id,
                         'examen_id' => $examenData['id'],
                         'diagnostico_principal' => $validated['cie_principal'] ?? 'Z017', // Asignar un valor por defecto si no se proporciona
                         'diagnostico_relacionado' => $validated['cie_relacionado'] ?? null,
-                        'codigo_modalidad' => $validated[ 'modalidad']??'01',
-                        'codigo_finalidad' => $validated['finalidad']??'15',
-                        'codigo_via_ingreso' => $validated['via_ingreso']??'01',
+                        'codigo_modalidad' => $validated['modalidad'] ?? '01',
+                        'codigo_finalidad' => $validated['finalidad'] ?? '15',
+                        'codigo_via_ingreso' => $validated['via_ingreso'] ?? '01',
                         'sede_id' => $sede->id,
                         'fecha' => now(),
                         'estado' => Estado::PROCESO,
@@ -105,9 +134,16 @@ class OrdenController extends Controller
                         'updated_at' => now(),
                     ];
                 }
-
-            DB::table('procedimientos')->insert($procedimientos);
             }
+
+            if ($procedimientos !== []) {
+                DB::table('procedimientos')->insert($procedimientos);
+            }
+
+            if ($remisiones !== []) {
+                $orden->remisiones()->createMany($remisiones);
+            }
+
             return $orden; // Retorna la orden creada para usarla fuera de la transacción
 
         });
@@ -128,7 +164,7 @@ class OrdenController extends Controller
         }
 
         ControlSede::autorizarOrden(request(), $orden);
-        $orden->load(['paciente', 'procedimientos.examen']);
+        $orden->load(['paciente', 'procedimientos.examen', 'remisiones.destinoSede']);
 
         return response()->json($orden);
     }

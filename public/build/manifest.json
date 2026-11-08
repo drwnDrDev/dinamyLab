@@ -1,11 +1,16 @@
 {
-  "_FormPersona-d4XaI-d_.js": {
-    "file": "assets/FormPersona-d4XaI-d_.js",
+  "_FormPersona-2_E5nal6.js": {
+    "file": "assets/FormPersona-2_E5nal6.js",
     "name": "FormPersona",
     "imports": [
       "_index-C2KC86Ta.js",
+      "_catalogs-dLhvgoD4.js",
       "_index-B9ygI19o.js"
     ]
+  },
+  "_catalogs-dLhvgoD4.js": {
+    "file": "assets/catalogs-dLhvgoD4.js",
+    "name": "catalogs"
   },
   "_client-DCM6oUEP.js": {
     "file": "assets/client-DCM6oUEP.js",
@@ -22,13 +27,6 @@
     "file": "assets/index-C2KC86Ta.js",
     "name": "index"
   },
-  "_manejadorEventos-COZSVYWs.js": {
-    "file": "assets/manejadorEventos-COZSVYWs.js",
-    "name": "manejadorEventos",
-    "imports": [
-      "_index-B9ygI19o.js"
-    ]
-  },
   "_useAxiosAuth-JGr_IZ3E.js": {
     "file": "assets/useAxiosAuth-JGr_IZ3E.js",
     "name": "useAxiosAuth",
@@ -38,7 +36,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-B-4Rxwtk.css",
+    "file": "assets/app-BbViPpp6.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -68,7 +66,7 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-BhF0Txt3.js",
+    "file": "assets/app-B3cd1JKD.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -76,46 +74,43 @@
       "_index-C2KC86Ta.js",
       "_client-DCM6oUEP.js",
       "_useAxiosAuth-JGr_IZ3E.js",
+      "_catalogs-dLhvgoD4.js",
       "_index-B9ygI19o.js",
       "resources/js/components/guest/Typewriter.jsx"
     ],
     "css": [
-      "assets/app-B-4Rxwtk.css"
+      "assets/app-BbViPpp6.css"
     ],
     "assets": [
       "assets/rips-cargador-DoL-Xzn1.png"
     ]
   },
   "resources/js/appOrden.jsx": {
-    "file": "assets/appOrden-D2UQDMxo.js",
+    "file": "assets/appOrden-VwQOV4F-.js",
     "name": "appOrden",
     "src": "resources/js/appOrden.jsx",
     "isEntry": true,
     "imports": [
       "_index-C2KC86Ta.js",
       "_client-DCM6oUEP.js",
-      "_FormPersona-d4XaI-d_.js",
+      "_FormPersona-2_E5nal6.js",
       "_index-B9ygI19o.js",
-      "_useAxiosAuth-JGr_IZ3E.js"
+      "_useAxiosAuth-JGr_IZ3E.js",
+      "_catalogs-dLhvgoD4.js"
     ]
   },
   "resources/js/appPersona.jsx": {
-    "file": "assets/appPersona-2DLZjo2y.js",
+    "file": "assets/appPersona-azNk8ub5.js",
     "name": "appPersona",
     "src": "resources/js/appPersona.jsx",
     "isEntry": true,
     "imports": [
       "_index-C2KC86Ta.js",
       "_client-DCM6oUEP.js",
-      "_FormPersona-d4XaI-d_.js",
+      "_FormPersona-2_E5nal6.js",
+      "_catalogs-dLhvgoD4.js",
       "_index-B9ygI19o.js"
     ]
-  },
-  "resources/js/buscarPersona.js": {
-    "file": "assets/buscarPersona-Bar_teVD.js",
-    "name": "buscarPersona",
-    "src": "resources/js/buscarPersona.js",
-    "isEntry": true
   },
   "resources/js/components/guest/Typewriter.jsx": {
     "file": "assets/Typewriter-DpIIvn7w.js",
@@ -127,45 +122,14 @@
     ]
   },
   "resources/js/convenioCreate.jsx": {
-    "file": "assets/convenioCreate-BhhRvI3V.js",
+    "file": "assets/convenioCreate-D-rwFGAH.js",
     "name": "convenioCreate",
     "src": "resources/js/convenioCreate.jsx",
     "isEntry": true,
     "imports": [
       "_index-C2KC86Ta.js",
-      "_client-DCM6oUEP.js"
+      "_client-DCM6oUEP.js",
+      "_catalogs-dLhvgoD4.js"
     ]
-  },
-  "resources/js/crearOrdenes.js": {
-    "file": "assets/crearOrdenes-Dpuaiq7E.js",
-    "name": "crearOrdenes",
-    "src": "resources/js/crearOrdenes.js",
-    "isEntry": true
-  },
-  "resources/js/crearPersona.js": {
-    "file": "assets/crearPersona-DVd9Xovs.js",
-    "name": "crearPersona",
-    "src": "resources/js/crearPersona.js",
-    "isEntry": true,
-    "imports": [
-      "_manejadorEventos-COZSVYWs.js",
-      "_index-B9ygI19o.js"
-    ]
-  },
-  "resources/js/main.js": {
-    "file": "assets/main-BOIdc0TS.js",
-    "name": "main",
-    "src": "resources/js/main.js",
-    "isEntry": true,
-    "imports": [
-      "_manejadorEventos-COZSVYWs.js",
-      "_index-B9ygI19o.js"
-    ]
-  },
-  "resources/js/obtenerStaticos.js": {
-    "file": "assets/obtenerStaticos-Dfa6TH3C.js",
-    "name": "obtenerStaticos",
-    "src": "resources/js/obtenerStaticos.js",
-    "isEntry": true
   }
 }

@@ -41,6 +41,10 @@ class Orden extends Model
     {
         return $this->hasMany(Procedimiento::class);
     }
+    public function remisiones()
+    {
+        return $this->hasMany(OrdenRemision::class);
+    }
     public function examenes()
     {
         return $this->belongsToMany(Examen::class, 'orden_examen', 'orden_medica_id', 'examen_id')

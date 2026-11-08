@@ -1,7 +1,9 @@
 <x-guest-layout>
     <h1 class="text-2xl font-bold leading-tight tracking-[-0.015em] p-4 pl-0">
-            Hola {{ $empleado->user->name}}
-            <span class="text-titles font-normal text-lg">({{ $empleado->cargo }})</span>
+            Hola {{ auth()->user()->name }}
+            @if ($empleado)
+                <span class="text-titles font-normal text-lg">({{ $empleado->cargo }})</span>
+            @endif
         </h1>
 
             <p class="text-lg mb-4">Para continuar, por favor selecciona una sede:</p>
@@ -17,5 +19,4 @@
                 @endforeach
             </section>
     </x-guest-layout>
-
 
