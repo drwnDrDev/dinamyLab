@@ -82,6 +82,34 @@
             </div>
         </div>
 
+        @if ($orden->remisiones->isNotEmpty())
+        <div class="py-2">
+            <h3 class="px-1 py-2 font-semibold text-titles">Remisiones</h3>
+            <div class="flex overflow-hidden rounded-xl border border-borders">
+                <table class="flex-1">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-text text-sm font-medium">CUP</th>
+                            <th class="px-4 py-3 text-left text-text text-sm font-medium">Examen / procedimiento</th>
+                            <th class="px-4 py-3 text-left text-text text-sm font-medium">Destino</th>
+                            <th class="px-4 py-3 text-right text-text text-sm font-medium">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($orden->remisiones as $remision)
+                        <tr class="border-t border-borders hover:bg-secondary">
+                            <td class="px-3 py-4">{{ $remision->cup }}</td>
+                            <td class="px-3 py-4">{{ $remision->nombre }}</td>
+                            <td class="px-3 py-4">{{ $remision->destinoSede?->nombre ?? $remision->destino }}</td>
+                            <td class="px-3 py-4 text-right">${{ number_format($remision->valor, 2) }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @endif
+
         <div class="flex w-full gap-2 py-2">
             <div class="p-4 w-full overflow-hidden rounded-xl border border-borders">
                 <p class="font-semibold">Observaciones:</p>
@@ -190,6 +218,21 @@
                         </td>
                         <td class="content-start p1 w-40 text-xs font-light leading-normal">
                             {{ number_format($examen->valor*$examen->pivot->cantidad, 2) }}
+                        </td>
+                    </tr>
+                    @endforeach
+                    @foreach ($orden->remisiones as $remision)
+                    <tr>
+                        <td class="content-start p1 w-60 text-xs font-light leading-normal">
+                            {{ $remision->nombre }} (CUP: {{ $remision->cup }})<br>
+                            Remitido a: {{ $remision->destinoSede?->nombre ?? $remision->destino }}
+                        </td>
+                        <td class="content-start p1 w-16 text-xs font-light leading-normal">1</td>
+                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
+                            {{ number_format($remision->valor, 2) }}
+                        </td>
+                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
+                            {{ number_format($remision->valor, 2) }}
                         </td>
                     </tr>
                     @endforeach

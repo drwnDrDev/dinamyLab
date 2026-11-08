@@ -12,7 +12,7 @@ import { useOrderValidation } from './hooks/useOrdenValidation';
 const formatCOP = (value) =>
     new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 
-const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
+const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefault }) => {
     const { axiosInstance, csrfLoaded } = useAxiosAuth();
     const [next_numero, setNextNumero] = useState(null);
     const [numeroOrdenDuplicado, setNumeroOrdenDuplicado] = useState(false);
@@ -37,6 +37,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
         numero_orden: next_numero || '',
         paciente_id: null,
         examenes: [],
+        remisiones: [],
         cod_servicio: null,
         via_ingreso: '',
         cie_principal: null,
@@ -144,8 +145,11 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
             case 1:
                 return !persona ? 'Debe seleccionar o registrar un paciente para continuar.' : null;
             case 2:
-                return formOrden.examenes.length === 0 ? 'Debe agregar al menos un examen para continuar.' : null;
+                return formOrden.examenes.length === 0 && formOrden.remisiones.length === 0
+                    ? 'Debe agregar al menos un examen o una remisión para continuar.'
+                    : null;
             case 3: {
+                if (formOrden.examenes.length === 0) return null;
                 const campos = [
                     ['modalidad', 'Modalidad de atención'],
                     ['cod_servicio', 'Servicio habilitado'],
@@ -239,7 +243,11 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                 const invalidFields = Object.keys(validationErrors);
                 const paso = invalidFields.some(campo => campo === 'paciente_id')
                     ? 1
-                    : invalidFields.some(campo => campo.startsWith('examenes') || ['abono', 'total'].includes(campo))
+                    : invalidFields.some(campo =>
+                        campo.startsWith('examenes')
+                        || campo.startsWith('remisiones')
+                        || ['abono', 'total'].includes(campo)
+                    )
                         ? 2
                         : invalidFields.some(campo => ['modalidad', 'cod_servicio', 'cie_principal', 'cie_relacionado', 'finalidad', 'via_ingreso', 'numero_orden'].includes(campo))
                             ? 3
@@ -377,8 +385,13 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                         {currentStep === 2 && (
                             <DatosExamenes
                                 formExamenes={formOrden.examenes}
+                                remisiones={formOrden.remisiones}
+                                sedes={sedes}
                                 onUpdate={(nuevosExamenes) =>
                                     setFormOrden(prev => ({ ...prev, examenes: nuevosExamenes }))
+                                }
+                                onRemisionesUpdate={(nuevasRemisiones) =>
+                                    setFormOrden(prev => ({ ...prev, remisiones: nuevasRemisiones }))
                                 }
                                 persona={persona}
                                 onChangeValores={handleValoresUpdate}
@@ -403,7 +416,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                                 </div>
                                 <div className="p-4 bg-white border border-secondary rounded-lg">
                                     <h3 className="text-sm font-semibold text-titles mb-2">
-                                        Exámenes ({formOrden.examenes.length})
+                                        Exámenes ({formOrden.examenes.length}) y remisiones ({formOrden.remisiones.length})
                                     </h3>
                                     <ul className="text-sm text-text space-y-1">
                                         {formOrden.examenes.map((ex, i) => (
@@ -413,6 +426,24 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                                             </li>
                                         ))}
                                     </ul>
+                                    {formOrden.remisiones.length > 0 && (
+                                        <>
+                                            <h4 className="text-sm font-semibold text-titles mt-4 mb-2">Remisiones</h4>
+                                            <ul className="text-sm text-text space-y-1">
+                                                {formOrden.remisiones.map((remision, index) => (
+                                                        <li key={`${remision.cup}-${index}`} className="flex justify-between gap-4">
+                                                            <span>
+                                                                {remision.nombre} · CUP {remision.cup}
+                                                                <span className="block text-xs text-gray-500">
+                                                                    Destino: {remision.destino}
+                                                                </span>
+                                                            </span>
+                                                            <span>{formatCOP(remision.valor)}</span>
+                                                        </li>
+                                                ))}
+                                            </ul>
+                                        </>
+                                    )}
                                 </div>
                                 <div className="p-4 bg-white border border-secondary rounded-lg">
                                     <h3 className="text-sm font-semibold text-titles mb-2">Total a cobrar</h3>
@@ -443,48 +474,42 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                             Anterior
                         </button>
 
-                        <button
-                            type="button"
-                            onClick={handleNext}
-                            disabled={currentStep === 4}
-                            aria-hidden={currentStep === 4}
-                            className={`inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-titles transition-colors disabled:opacity-50 ${
-                                currentStep === 4 ? 'hidden' : ''
-                            }`}
-                        >
-                            Siguiente
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleSubmit}
-                            disabled={loading || currentStep !== 4}
-                            aria-hidden={currentStep !== 4}
-                            className={`inline-flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-titles transition-colors disabled:opacity-50 ${
-                                currentStep !== 4 ? 'hidden' : ''
-                            }`}
-                        >
-                            <span
-                                aria-hidden="true"
-                                className={`h-4 w-4 rounded-full border-b-2 border-white ${
-                                    loading ? 'inline-block animate-spin' : 'hidden'
-                                }`}
-                            />
-                            <svg
-                                className={`h-4 w-4 ${loading ? 'hidden' : ''}`}
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                                aria-hidden="true"
+                        {currentStep < 4 ? (
+                            <button
+                                type="button"
+                                onClick={handleNext}
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-titles transition-colors"
                             >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span className={loading ? 'hidden' : ''}>Crear Orden</span>
-                            <span className={loading ? '' : 'hidden'}>Creando orden...</span>
-                        </button>
+                                Siguiente
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={handleSubmit}
+                                disabled={loading}
+                                className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-titles transition-colors disabled:opacity-50"
+                            >
+                                {loading ? (
+                                    <>
+                                        <span
+                                            aria-hidden="true"
+                                            className="h-4 w-4 rounded-full border-b-2 border-white animate-spin"
+                                        />
+                                        <span>Creando orden...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span>Crear Orden</span>
+                                    </>
+                                )}
+                            </button>
+                        )}
                     </div>
 
                 </div>

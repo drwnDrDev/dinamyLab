@@ -96,6 +96,116 @@ class OrdenesApiTest extends TestCase
         ]);
     }
 
+    public function test_can_create_order_with_internal_and_external_remissions(): void
+    {
+        $paciente = Persona::factory()->create();
+
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->postJson('/api/ordenes', [
+                'paciente_id' => $paciente->id,
+                'numero_orden' => 'REM-001',
+                'fecha_orden' => now()->format('Y-m-d'),
+                'remisiones' => [
+                    [
+                        'cup' => '890201',
+                        'nombre' => 'Consulta externa',
+                        'valor' => 45000,
+                        'destino_sede_id' => $this->sede->id,
+                        'destino' => $this->sede->nombre,
+                    ],
+                    [
+                        'cup' => '902210',
+                        'nombre' => 'Estudio remitido',
+                        'valor' => 25000,
+                        'destino_sede_id' => null,
+                        'destino' => 'IPS Externa',
+                    ],
+                ],
+            ]);
+
+        $response->assertCreated();
+
+        $orden = Orden::where('numero', 'REM-001')->firstOrFail();
+        $this->assertDatabaseHas('ordenes_medicas', [
+            'id' => $orden->id,
+            'total' => 70000,
+        ]);
+        $this->assertDatabaseCount('orden_remisiones', 2);
+        $this->assertDatabaseHas('orden_remisiones', [
+            'orden_id' => $orden->id,
+            'cup' => '890201',
+            'destino_sede_id' => $this->sede->id,
+            'valor' => 45000,
+        ]);
+        $this->assertDatabaseHas('orden_remisiones', [
+            'orden_id' => $orden->id,
+            'cup' => '902210',
+            'destino' => 'IPS Externa',
+            'valor' => 25000,
+        ]);
+        $this->assertDatabaseCount('procedimientos', 0);
+    }
+
+    public function test_order_create_redirects_to_sede_selection_when_no_sede_is_active(): void
+    {
+        $this->actingAs($this->user)
+            ->withSession(['sede' => null])
+            ->get(route('ordenes.create'))
+            ->assertRedirect(route('dashboard'))
+            ->assertSessionHas('error', 'Selecciona una sede antes de crear una orden médica.');
+    }
+
+    public function test_remission_requires_a_destination(): void
+    {
+        $paciente = Persona::factory()->create();
+
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->postJson('/api/ordenes', [
+                'paciente_id' => $paciente->id,
+                'numero_orden' => 'REM-002',
+                'fecha_orden' => now()->format('Y-m-d'),
+                'remisiones' => [
+                    [
+                        'cup' => '890201',
+                        'nombre' => 'Consulta externa',
+                        'valor' => 45000,
+                    ],
+                ],
+            ]);
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors(['remisiones.0.destino']);
+    }
+
+    public function test_remission_value_is_added_to_exam_total(): void
+    {
+        $paciente = Persona::factory()->create();
+        $examen = Examen::factory()->create(['valor' => 100]);
+
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->postJson('/api/ordenes', [
+                'paciente_id' => $paciente->id,
+                'numero_orden' => 'REM-003',
+                'fecha_orden' => now()->format('Y-m-d'),
+                'examenes' => [['id' => $examen->id, 'cantidad' => 1]],
+                'remisiones' => [[
+                    'cup' => '902210',
+                    'nombre' => 'Estudio remitido',
+                    'valor' => 25000,
+                    'destino' => 'IPS Externa',
+                ]],
+                'modalidad' => '01',
+                'finalidad' => '15',
+                'via_ingreso' => '01',
+            ]);
+
+        $response->assertCreated();
+        $this->assertDatabaseHas('ordenes_medicas', [
+            'numero' => 'REM-003',
+            'total' => 25100,
+        ]);
+    }
+
     public function test_cannot_create_orden_without_authentication(): void
     {
         $paciente = Persona::factory()->create();

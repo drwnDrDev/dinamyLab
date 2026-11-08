@@ -9,6 +9,7 @@ use App\Models\Persona;
 use App\Services\ElegirEmpresa;
 use App\Services\SugerirNumeroOrden;
 use App\Models\MetodoPago;
+use App\Models\Sede;
 use App\Models\TipoDocumento;
 use App\Http\Requests\OrdenStoreRequest;
 use App\Models\ContactoEmergencia;
@@ -64,11 +65,13 @@ class OrdenController extends Controller
 
         $sede = ElegirEmpresa::elegirSede();
         if (!$sede) {
-            return redirect()->back()->withErrors(['sede' => 'No se ha seleccionado una sede.'])->withInput();
+            return redirect()->route('dashboard')
+                ->with('error', 'Selecciona una sede antes de crear una orden médica.');
         }
         $examenes = Examen::all();
+        $sedes = Sede::query()->orderBy('nombre')->get(['id', 'nombre']);
         $orden_numero = SugerirNumeroOrden::paraSede($sede->id);
-        return view('ordenes.create', compact('examenes', 'orden_numero', 'persona'));
+        return view('ordenes.create', compact('examenes', 'orden_numero', 'persona', 'sedes'));
     }
 
     /**
@@ -174,7 +177,7 @@ class OrdenController extends Controller
     public function show(Orden $orden)
     {
         ControlSede::autorizarOrden(request(), $orden);
-        $orden->load(['paciente','examenes','procedimientos']);
+        $orden->load(['paciente','examenes','procedimientos', 'remisiones.destinoSede']);
         if (!$orden) {
             return redirect()->route('ordenes')->with('error', 'Orden médica no encontrada');
         }

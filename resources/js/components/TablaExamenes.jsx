@@ -11,7 +11,7 @@ const TrashIcon = () => (
 const formatCOP = (value) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 
-const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }) => {
+const TablaExamenes = ({ examenes, remisiones = [], onRemove, onCantidadChange, onChangeValores }) => {
   const [abono, setAbono] = useState(0);
   const [descuento, setDescuento] = useState(0);
   const [abonoActive, setAbonoActive] = useState(false);
@@ -25,10 +25,12 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
     return 0;
   };
 
-  const subtotal = examenes.reduce((sum, ex) => {
+  const subtotalExamenes = examenes.reduce((sum, ex) => {
     return sum + ((ex.cantidad || 1) * parseValor(ex.valor));
   }, 0);
 
+  const subtotalRemisiones = remisiones.reduce((sum, remision) => sum + parseValor(remision.valor), 0);
+  const subtotal = subtotalExamenes + subtotalRemisiones;
   const descuentoAplicado = descuentoActive ? descuento : 0;
   const total = subtotal - descuentoAplicado;
   const saldo = abonoActive ? total - abono : total;
@@ -38,7 +40,7 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
   useEffect(() => {
     onChangeValores('total', total);
     onChangeValores('abono', abonoActive ? abono : 0);
-  }, [total, abono, abonoActive, descuentoActive]);
+  }, [total, abono, abonoActive]);
 
   const chipClass = (active) =>
     `px-3 py-1.5 text-sm rounded-md border font-medium transition-colors ${
@@ -49,7 +51,7 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full mt-2 text-sm">
+      {examenes.length > 0 && <table className="w-full mt-2 text-sm">
         <thead>
           <tr className="bg-secondary text-titles">
             <th className="px-4 py-2.5 text-left font-semibold rounded-tl-md">Código</th>
@@ -95,7 +97,7 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
             );
           })}
         </tbody>
-      </table>
+      </table>}
 
       {/* Panel de resumen financiero — separado visualmente de la tabla */}
       <div className="mt-4 flex items-start justify-between gap-6 bg-secondary rounded-lg p-4">
@@ -116,9 +118,15 @@ const TablaExamenes = ({ examenes, onRemove, onCantidadChange, onChangeValores }
 
           {/* Subtotal */}
           <div className="flex items-center justify-between gap-8">
-            <span className="text-sm text-gray-500">Subtotal</span>
-            <span className="text-sm text-text tabular-nums">{formatCOP(subtotal)}</span>
+            <span className="text-sm text-gray-500">Subtotal exámenes</span>
+            <span className="text-sm text-text tabular-nums">{formatCOP(subtotalExamenes)}</span>
           </div>
+          {subtotalRemisiones > 0 && (
+            <div className="flex items-center justify-between gap-8">
+              <span className="text-sm text-gray-500">Subtotal remisiones</span>
+              <span className="text-sm text-text tabular-nums">{formatCOP(subtotalRemisiones)}</span>
+            </div>
+          )}
 
           {/* Descuento (solo si activo) */}
           {descuentoActive && (

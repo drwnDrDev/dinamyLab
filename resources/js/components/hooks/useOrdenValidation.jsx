@@ -17,36 +17,37 @@ const validationRules = {
   
   examenes: {
     required: true,
-    validate: (examenes) => {
-      if (examenes.length === 0) return false;
-      
-      return true;
-    },
-    message: "Debe seleccionar al menos un examen"
+    validate: (_, formData) => Boolean(formData.examenes?.length || formData.remisiones?.length),
+    message: "Debe agregar al menos un examen o una remisión"
   },
   
   cod_servicio: {
     required: true,
+    validate: (value, formData) => !formData.examenes?.length || Boolean(value),
     message: "Debe seleccionar un servicio válido"
   },
 
   via_ingreso: {
     required: true,
+    validate: (value, formData) => !formData.examenes?.length || Boolean(value),
     message: "Debe seleccionar una vía de ingreso válida"
   },
   
   cie_principal: {
     required: true,
+    validate: (value, formData) => !formData.examenes?.length || Boolean(value),
     message: "El diagnóstico principal es obligatorio",
   },
 
   finalidad: {
     required: true,
+    validate: (value, formData) => !formData.examenes?.length || Boolean(value),
     message: "Debe seleccionar una finalidad válida"
   },
 
   modalidad: {
     required: true,
+    validate: (value, formData) => !formData.examenes?.length || Boolean(value),
     message: "Debe seleccionar una modalidad válida"
   },
 
