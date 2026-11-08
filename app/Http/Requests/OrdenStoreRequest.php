@@ -31,8 +31,6 @@ class OrdenStoreRequest extends FormRequest
                     ->where('sede_id', session('sede')->id ?? 1),
             ],
             'paciente_id' => 'required|exists:personas,id',
-            'fecha' => 'nullable|date',
-            'sede_id' => 'required|exists:sedes,id',
             'examenes' => 'required|array',
             'examenes.*.id' => 'required|exists:examenes,id',
             'examenes.*.cantidad' => 'required|integer|min:1',
