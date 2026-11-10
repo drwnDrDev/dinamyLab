@@ -17,6 +17,10 @@ return new class extends Migration
             return;
         }
 
+        DB::table('personas')
+            ->whereNotNull('sexo')
+            ->update(['sexo' => DB::raw('UPPER(TRIM(sexo))')]);
+
         DB::table('personas')->where('sexo', 'H')->update(['sexo' => 'M']);
         DB::table('personas')
             ->whereNotNull('sexo')

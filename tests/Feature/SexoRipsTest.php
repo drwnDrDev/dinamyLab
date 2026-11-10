@@ -60,10 +60,12 @@ it('exporta codSexo RIPS para personas M F e I', function () {
     $personaM = Persona::factory()->create(['sexo' => 'M', 'fecha_nacimiento' => '1990-01-01']);
     $personaF = Persona::factory()->create(['sexo' => 'F', 'fecha_nacimiento' => '1990-01-01']);
     $personaI = Persona::factory()->create(['sexo' => 'I', 'fecha_nacimiento' => '1990-01-01']);
+    $personaInvalida = Persona::factory()->create(['sexo' => 'X', 'fecha_nacimiento' => '1990-01-01']);
 
     crearProcedimientoRips($personaM, $examen, $this->sede, $this->user, 901);
     crearProcedimientoRips($personaF, $examen, $this->sede, $this->user, 902);
     crearProcedimientoRips($personaI, $examen, $this->sede, $this->user, 903);
+    crearProcedimientoRips($personaInvalida, $examen, $this->sede, $this->user, 904);
 
     $response = $this->actingAs($this->user)->post(route('descargar.rips'), [
         'sede_id' => $this->sede->id,
@@ -79,4 +81,6 @@ it('exporta codSexo RIPS para personas M F e I', function () {
     expect($usuarios[$personaM->numero_documento]['codSexo'])->toBe('H');
     expect($usuarios[$personaF->numero_documento]['codSexo'])->toBe('M');
     expect($usuarios[$personaI->numero_documento]['codSexo'])->toBe('I');
+    expect($personaInvalida->fresh()->sexo_rips)->toBe('I');
+    expect($usuarios[$personaInvalida->numero_documento]['codSexo'])->toBe('I');
 });

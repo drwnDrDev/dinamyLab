@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use App\Services\NombreParser;
 
 
@@ -149,18 +150,48 @@ class Persona extends Model
             return 'No especificado';
         }
 
+        try {
+            $codigo = Sexo::normalizar($this->sexo);
+        } catch (\InvalidArgumentException) {
+            return 'No especificado';
+        }
+
+        if ($codigo === null) {
+            return 'No especificado';
+        }
+
         return $this->sexoCatalogo?->nombre
-            ?? Sexo::FALLBACK[$this->sexo]
+            ?? Sexo::FALLBACK[$codigo]
             ?? 'No especificado';
     }
 
     public function getSexoRipsAttribute(): ?string
     {
-        try {
-            return Sexo::aRips($this->sexo);
-        } catch (\InvalidArgumentException) {
+        if ($this->sexo === null) {
             return null;
         }
+
+        try {
+            $codigo = Sexo::normalizar($this->sexo);
+        } catch (\InvalidArgumentException) {
+            Log::warning('Sexo no válido; se exporta como indeterminado.', [
+                'persona_id' => $this->id,
+                'sexo' => $this->sexo,
+            ]);
+
+            return 'I';
+        }
+
+        if ($codigo === null) {
+            Log::warning('Sexo vacío; se exporta como indeterminado.', [
+                'persona_id' => $this->id,
+                'sexo' => $this->sexo,
+            ]);
+
+            return 'I';
+        }
+
+        return Sexo::aRips($codigo);
     }
 
     public function scopeNacional($query)

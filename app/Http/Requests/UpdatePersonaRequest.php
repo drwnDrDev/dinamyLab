@@ -12,6 +12,15 @@ class UpdatePersonaRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $sexo = $this->input('sexo');
+
+        if (is_string($sexo)) {
+            $this->merge(['sexo' => strtoupper(trim($sexo))]);
+        }
+    }
+
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
      */

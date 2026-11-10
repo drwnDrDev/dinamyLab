@@ -15,6 +15,15 @@ class StorePersonaRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $sexo = $this->input('sexo');
+
+        if (is_string($sexo)) {
+            $this->merge(['sexo' => strtoupper(trim($sexo))]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

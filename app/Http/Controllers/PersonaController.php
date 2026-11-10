@@ -22,6 +22,12 @@ class PersonaController extends Controller
      */
     public function index(Request $request)
     {
+        $sexo = $request->input('sexo');
+
+        if (is_string($sexo)) {
+            $request->merge(['sexo' => strtoupper(trim($sexo))]);
+        }
+
         $filters = $request->validate([
             'busqueda' => 'nullable|string|max:100',
             'sexo' => 'nullable|exists:sexos,codigo',
