@@ -120,7 +120,7 @@ Ya existen: `empresa.show` (solo lectura), `admin/sedes` y `admin/empleados` (si
 
 | Estado | ID | Carril | Issue | Ubicación | Esfuerzo | Prio | Notas |
 |---|---|---|---|---|---|---|---|
-| `[?]` | NT-01 | FE | Toasts en lugar de los avisos fijos del encabezado: un solo módulo para los flash de Blade (`success`, `error`, `warning`, `info`) y para las islas React (función `toast()` o evento en `window`). Mantener `role` y `aria-live`; los errores de validación siguen junto a cada campo; los errores no se cierran solos | `layouts/notifications.blade.php`, `resources/js/` | 4–6h | 🟡 | Decisión D-07 (librería o propio). Actualizar `UiNotificationsTest` en el mismo PR |
+| `[x]` | NT-01 | FE | Toasts en lugar de los avisos fijos del encabezado: un solo módulo para los flash de Blade (`success`, `error`, `warning`, `info`) y para las islas React (función `toast()` o evento en `window`). Mantener `role` y `aria-live`; los errores de validación siguen junto a cada campo; los errores no se cierran solos | `layouts/notifications.blade.php`, `resources/js/` | 4–6h | 🟡 | 2026-11-09: módulo propio (`lib/toast.js`, `lib/toastDom.js`, `components/toast`); migrados los flash de Blade, `ExamenDetail`, `FormPersona`, `CrearOrdenComponent` y `TarifasExamenesSede`. `UiNotificationsTest` ampliado |
 | `[~]` | NT-02 | Infra | Un mailer para 2 instancias con 1 repo: **sí se puede.** El código es el mismo y cada instancia tiene su `.env` con `MAIL_*`; pueden compartir la cuenta SMTP o el proveedor y cambiar `MAIL_FROM_NAME`. Falta comprobar: SPF, DKIM y DMARC del dominio remitente, límite de envíos por hora del hosting (se comparte), y colas sin worker (`QUEUE_CONNECTION=database` más un cron con `queue:work --stop-when-empty`) | `.env.example`, `DESPLIEGUE_INSTANCIAS.md` | 3–4h | 🟡 | Hacerlo junto con DT-01 |
 | `[?]` | NT-03 | Decisión | Qué se notifica y a quién. Propuesta: "resultados listos" al paciente, con un enlace firmado y con vencimiento al PDF; sin datos clínicos en el asunto ni en el cuerpo, sin adjuntos | — | 1h | 🟡 | Decisión D-03. Depende de IM-01 |
 | `[ ]` | NT-04 | BE | Notification y Mailable, ruta firmada de descarga, cola y tests con `Mail::fake()` | `app/Notifications/`, `routes/web.php` | 8–10h | 🟡 | Antes C-08. WhatsApp queda para una fase posterior |
@@ -173,7 +173,7 @@ Ya existen: `empresa.show` (solo lectura), `admin/sedes` y `admin/empleados` (si
 | D-04 | Política de auditoría y retención | AU-01, AU-02, AU-08 | Responsable funcional + legal |
 | D-05 | ¿Se imprimen solo algunos exámenes de una orden? | IM-03 | Responsable funcional |
 | D-06 | Valores válidos de `sexo` | ED-03 | BE |
-| D-07 | Toasts: librería (necesita aprobación) o módulo propio (~100 líneas, sin dependencias). Recomendación: propio | NT-01 | Ambos |
+| D-07 | ~~Toasts: librería o módulo propio~~ **Resuelta 2026-11-09: módulo propio** | NT-01 | Ambos |
 | D-08 | Auditoría: `spatie/laravel-activitylog` (necesita aprobación) o tabla propia | AU-02 | Ambos |
 
 ---

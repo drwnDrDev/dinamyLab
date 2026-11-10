@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import { toast } from '../lib/toast';
+
+const TOAST_TARIFAS = 'tarifas-examenes';
 
 const getCsrfToken = () => {
     return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -69,8 +72,6 @@ const TarifasExamenesSede = ({ sedeId }) => {
     const [initialPrecios, setInitialPrecios] = useState({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
 
     const cambios = useMemo(() => {
         return Object.keys(precios).filter((id) => {
@@ -82,14 +83,13 @@ const TarifasExamenesSede = ({ sedeId }) => {
 
     const cargarDatos = async () => {
         if (!sedeId) {
-            setError('No se encontro la sede.');
+            toast.error('No se encontró la sede.', { key: TOAST_TARIFAS });
             setLoading(false);
             return;
         }
 
         setLoading(true);
-        setError('');
-        setSuccess('');
+        toast.dismiss(TOAST_TARIFAS);
 
         try {
             const [examenesResponse, tarifasResponse] = await Promise.all([
@@ -120,7 +120,7 @@ const TarifasExamenesSede = ({ sedeId }) => {
             setInitialPrecios(initial);
         } catch (err) {
             console.error('Error cargando examenes o tarifas:', err);
-            setError('No se pudieron cargar los examenes.');
+            toast.error('No se pudieron cargar los exámenes.', { key: TOAST_TARIFAS });
         } finally {
             setLoading(false);
         }
@@ -143,8 +143,7 @@ const TarifasExamenesSede = ({ sedeId }) => {
         }
 
         setSaving(true);
-        setError('');
-        setSuccess('');
+        toast.dismiss(TOAST_TARIFAS);
 
         try {
             const requests = cambios.map((examenId) => {
@@ -174,10 +173,10 @@ const TarifasExamenesSede = ({ sedeId }) => {
 
             await Promise.all(requests.filter(Boolean));
             await cargarDatos();
-            setSuccess('Tarifas guardadas correctamente.');
+            toast.success('Tarifas guardadas correctamente.', { key: TOAST_TARIFAS });
         } catch (err) {
             console.error('Error guardando tarifas:', err);
-            setError('No se pudieron guardar las tarifas.');
+            toast.error('No se pudieron guardar las tarifas.', { key: TOAST_TARIFAS });
         } finally {
             setSaving(false);
         }
@@ -196,9 +195,6 @@ const TarifasExamenesSede = ({ sedeId }) => {
                     {saving ? 'Guardando...' : 'Guardar cambios'}
                 </button>
             </div>
-
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            {success && <p className="text-sm text-green-600">{success}</p>}
 
             {loading ? (
                 <p className="text-sm text-gray-600">Cargando examenes...</p>
