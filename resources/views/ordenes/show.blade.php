@@ -23,6 +23,16 @@
                         <x-primary-button>Nueva Orden</x-primary-button>
                     </a>
                 @endcan
+                @can('editar_orden')
+                    <a href="{{ route('ordenes.edit', $orden) }}">
+                        <x-primary-button>Editar orden</x-primary-button>
+                    </a>
+                @endcan
+                @can('ver_resultado')
+                    <a href="{{ route('resultados.reporte_orden', $orden) }}">
+                        <x-secondary-button>Imprimir resultados terminados</x-secondary-button>
+                    </a>
+                @endcan
 
                 <x-secondary-button onclick="window.print()">{{__('Ticket')}}</x-secondary-button>
             </div>
@@ -69,7 +79,11 @@
                         <tr class="border-t border-borders hover:bg-secondary">
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->fecha->format('d-m-Y H:i')   }}</span></td>
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->id }}</span></td>
-                            <td class="px-3 py-4"><span class="w-60">{{ $procedimiento->examen->nombre }}</span></td>
+                            <td class="px-3 py-4">
+                                <a class="w-60 text-primary underline" href="{{ route('resultados.show', $procedimiento) }}">
+                                    {{ $procedimiento->examen->nombre }}
+                                </a>
+                            </td>
                             <td class="px-3 py-4">
                                 <a href="{{ route('resultados.show', $procedimiento) }}">
                                     <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
@@ -224,8 +238,7 @@
                     @foreach ($orden->remisiones as $remision)
                     <tr>
                         <td class="content-start p1 w-60 text-xs font-light leading-normal">
-                            {{ $remision->nombre }} (CUP: {{ $remision->cup }})<br>
-                            Remitido a: {{ $remision->destinoSede?->nombre ?? $remision->destino }}
+                            {{ $remision->nombre }} (CUP: {{ $remision->cup }}) (R)
                         </td>
                         <td class="content-start p1 w-16 text-xs font-light leading-normal">1</td>
                         <td class="content-start p1 w-40 text-xs font-light leading-normal">

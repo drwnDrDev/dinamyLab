@@ -94,6 +94,8 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('can:ver_resultado')->group(function () {
         Route::get('/resultados', [ResultadosController::class, 'index'])->name('resultados');
+        Route::get('/ordenes-medicas/{orden}/reporte-resultados', [ResultadosController::class, 'reporteOrden'])
+            ->name('resultados.reporte_orden');
         Route::get('/resultados/{procedimiento}/ver', [ResultadosController::class, 'show'])->name('resultados.show');
         Route::get('/resultados/{persona}/historia', [ResultadosController::class, 'historia'])->name('resultados.historia');
         Route::post('/resultados/{persona}/historia', [ResultadosController::class, 'historia_show'])->name('resultados.historia_show');
