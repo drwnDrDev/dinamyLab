@@ -112,47 +112,9 @@ Ya existen: `empresa.show` (solo lectura), `admin/sedes` y `admin/empleados` (si
 | Estado | ID | Carril | Issue | Ubicación | Esfuerzo | Prio | Notas |
 |---|---|---|---|---|---|---|---|
 | `[ ]` | IM-01 ⇄ IM-02 | BE | Service que arma los datos del reporte (paciente, orden, exámenes agrupados, resultados con referencia, firmas, remisiones) y ruta `GET /resultados/orden/{orden}/pdf` con permiso, `ControlSede` y registro de auditoría | `app/Services/`, `ResultadosController`, `routes/web.php` | 6–8h | 🔴 | Publicar la estructura de `$reporte`. Reemplaza el antiguo C-07. Las firmas no están en git: copiar a mano en cada instancia |
-| `[x]` | IM-02 | FE | Plantilla `resultados/reporte.blade.php` en tablas con CSS compatible con DomPDF y las reglas de paginación | `resources/views/resultados/` | 8–10h | 🔴 | 2026-11-10: `reporte.blade.php`, `reporte/_examen`, `reporte/_parametro` y datos ficticios en `reporte/ejemplo.php`. Sirve para una orden, un examen o varios de distintas órdenes (historia). Contrato `$reporte` abajo |
-| `[?]` | IM-03 | FE | Botones "Descargar PDF" e "Imprimir" en el resultado y en la orden; migrar `resultados/show` y `resultados/historia_show` a `resultados.reporte`; retirar el layout `print:` de Tailwind cuando el PDF esté validado | `resultados/show.blade.php`, `resultados/historia_show.blade.php`, `ordenes/show.blade.php` | 3–4h | 🟡 | Decisión D-05 (imprimir solo algunos exámenes; `historia_show` ya lo hace) |
+| `[ ]` | IM-02 | FE | Plantilla `resultados/reporte.blade.php` en tablas con CSS compatible con DomPDF y las reglas de paginación | `resources/views/resultados/` | 8–10h | 🔴 | Puede empezar ya con datos de ejemplo |
+| `[?]` | IM-03 | FE | Botones "Descargar PDF" e "Imprimir" en el resultado y en la orden; retirar el layout `print:` de Tailwind cuando el PDF esté validado | `resultados/show.blade.php`, `ordenes/show.blade.php` | 2–3h | 🟡 | Decisión D-05 (imprimir solo algunos exámenes) |
 | `[ ]` | IM-04 | BE | Tests: el PDF se genera (200 y `application/pdf`) y respeta la sede y los permisos | `tests/Feature/` | 2h | 🟡 | |
-
-**Contrato `$reporte` (IM-01 ⇄ IM-02, propuesto por FE el 2026-11-10).** La plantilla recibe `$reporte` y `$enPdf`; sin `$reporte` usa `resources/views/resultados/reporte/ejemplo.php`.
-
-```php
-$reporte = [
-    'laboratorio' => [
-        'nombre_comercial', 'sede', 'nit',
-        'telefonos' => ['...'],          // todos los de la sede
-        'direccion',
-        'email' => ?string,              // de la sede o, si no tiene, de la empresa
-        'logo_src' => ?string,           // data URI (DomPDF no descarga asset() sin isRemoteEnabled)
-    ],
-    'paciente' => ['nombre', 'documento', 'sexo', 'edad', 'fecha_nacimiento'], // sexo en texto: Masculino/Femenino/Indeterminado
-    'orden' => ['numero', 'fecha_atencion'] | null,  // null cuando el reporte mezcla órdenes (historia)
-    'fecha_emision', 'total_examenes',
-    'examenes' => [[
-        'nombre', 'orden_numero', 'fecha_validacion',
-        'bacteriologo' => ['nombre', 'documento', 'firma_src' => ?string], // firma en data URI
-        'grupos' => [[
-            'nombre' => ?string,         // Parametro::grupo; null para parámetros sin grupo
-            'parametros' => [[
-                'nombre', 'metodo' => ?string, 'resultado', 'unidades', 'referencia',
-                'fuera_de_rango' => bool, 'tipo' => 'valor' | 'texto', // texto = textarea/observaciones, a todo el ancho
-            ]],
-        ]],
-    ]],
-    'remisiones' => [['cup', 'nombre', 'destino']],
-];
-```
-
-Notas para el BE:
-
-- Un solo service que arme `$reporte` desde una lista de procedimientos, para IM-01 (orden completa) y luego para `show` y `historia_show` (IM-03). Partir de `EscogerReferencia::obtenerResultados()`, agrupando los parámetros por `grupo` en orden de `posicion` y pasando `es_normal` a `fuera_de_rango`.
-- Render: `Pdf::loadView('resultados.reporte', ['reporte' => $reporte, 'enPdf' => true])->setPaper('letter')`.
-- La plantilla usa Helvetica (fuente base de PDF, Latin-1): tildes, ñ, µ y ³ salen bien; caracteres como ≤, ≥ o ⁶ no. Si los catálogos los tienen, cambiar a DejaVu Sans.
-- El pie muestra "Página N". Para "Página N de M", DomPDF necesita `$pdf->getDomPDF()->getCanvas()->page_text(...)` con `{PAGE_NUM}` y `{PAGE_COUNT}` desde el controller (`counter(pages)` no existe en DomPDF); si se hace, avisar a FE para quitar el número del HTML.
-- Paginación: un examen nunca se parte salvo que no quepa en una página; entonces se parte entre grupos (y, como último recurso, por filas) con "(continuación)" y la firma en el último trozo. Las alturas están calibradas en `reporte.blade.php` para carta con los márgenes actuales.
-- En el navegador (`$enPdf = false`) el encabezado y el pie salen una vez por documento: Chrome no repite bien los `position: fixed` al imprimir. El encabezado en cada página es del PDF.
 
 ## NT — Notificaciones (toasts y correo)
 
