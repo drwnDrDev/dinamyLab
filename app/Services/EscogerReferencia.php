@@ -23,7 +23,11 @@ class EscogerReferencia
         }
 
         return [
-            'sexo'   => $paciente->sexo === 'M' ? 'hombres' : 'mujeres',
+            'sexo'   => match ($paciente->sexo) {
+                'M' => 'hombres',
+                'F' => 'mujeres',
+                default => null,
+            },
             'etario' => $edad < 5 ? 'menores' : 'adultos',
         ];
     }
@@ -33,21 +37,55 @@ class EscogerReferencia
      */
     public static function estableceReferencia(array $datosDemograficos, Parametro $parametro): ?ValorReferencia
     {
-        $referencias = $parametro->valoresReferencia;
+        $original = $parametro->valoresReferencia;
 
-        if ($referencias->isEmpty()) return null;
-        if ($referencias->count() === 1) return $referencias->first();
+        if ($original->isEmpty()) return null;
+        if ($original->count() === 1) return $original->first();
 
-        // Filtrar acumulativamente según criterios demográficos disponibles
-        foreach (['etario', 'sexo'] as $clave) {
-            $valor = $datosDemograficos[$clave] ?? null;
-            if ($valor) {
-                $referencias = $referencias->where('demografia', $valor);
-                if ($referencias->count() === 1) return $referencias->first();
+        $etario = $datosDemograficos['etario'] ?? null;
+        $sexo = $datosDemograficos['sexo'] ?? null;
+
+        $referencias = collect();
+        $aplicoFiltro = false;
+
+        if ($etario) {
+            $aplicoFiltro = true;
+            $porEtario = $original->where('demografia', $etario);
+            if ($porEtario->isNotEmpty()) {
+                $referencias = $porEtario;
             }
         }
 
-        return $referencias->first();
+        if ($sexo) {
+            $aplicoFiltro = true;
+            // Si el filtro etario no encontró coincidencias, se parte de la
+            // colección original para no perder las referencias solo por sexo.
+            $base = $referencias->isNotEmpty() ? $referencias : $original;
+            $porSexo = $base->where('demografia', $sexo);
+
+            if ($porSexo->isNotEmpty()) {
+                $referencias = $porSexo;
+            }
+        }
+
+        if ($referencias->isNotEmpty()) {
+            return $referencias->first();
+        }
+
+        if (! $aplicoFiltro) {
+            return $original->first();
+        }
+
+        // Referencias generales (sin demografía etaria ni por sexo).
+        $generales = $original->filter(
+            fn (ValorReferencia $referencia) => ! in_array(
+                $referencia->demografia,
+                ['menores', 'adultos', 'hombres', 'mujeres'],
+                true
+            )
+        );
+
+        return $generales->first();
     }
 
     /**

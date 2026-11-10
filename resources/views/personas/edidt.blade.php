@@ -32,7 +32,7 @@
                 <label for="sexo">Sexo</label>
                 <select id="sexo" name="sexo" class="block w-full rounded border-gray-300">
                     <option value="">Sin especificar</option>
-                    @foreach (['H' => 'Hombre', 'M' => 'Mujer', 'I' => 'Intersexual', 'F' => 'Femenino'] as $valor => $etiqueta)
+                    @foreach (\App\Models\Sexo::opciones() as $valor => $etiqueta)
                         <option value="{{ $valor }}" @selected(old('sexo', $persona->sexo) === $valor)>{{ $etiqueta }}</option>
                     @endforeach
                 </select>

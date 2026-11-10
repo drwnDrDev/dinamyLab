@@ -62,6 +62,22 @@ test('guarda y devuelve los catálogos', async () => {
     assert.ok(storage.getItem(STORAGE_KEYS.savedAt) !== null);
 });
 
+test('expone el catálogo de sexos cuando el payload lo incluye', async () => {
+    const sexos = [
+        { codigo: 'F', nombre: 'Femenino', cod_sexo: '02' },
+        { codigo: 'I', nombre: 'Indeterminado o Intersexual', cod_sexo: '03' },
+        { codigo: 'M', nombre: 'Masculino', cod_sexo: '01' },
+    ];
+    const cache = createCatalogCache({
+        storage: createMemoryStorage(),
+        fetchImpl: async () => ok({ ...payload, sexos }),
+    });
+
+    await cache.load();
+
+    assert.deepEqual(cache.getCatalog('sexos'), sexos);
+});
+
 test('no vuelve a pedir dentro de la ventana de revalidación', async () => {
     let llamadas = 0;
     const cache = createCatalogCache({

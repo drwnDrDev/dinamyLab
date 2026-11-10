@@ -5,7 +5,8 @@ const ModalExamenes = ({ disponibles, onAgregar, examenesActuales, onClose, sexo
   const yaAgregados = new Set(examenesActuales.map(e => e.id));
   const [disponiblesFiltrados, setDisponiblesFiltrados] = useState(disponibles);
 
-  // Filtrar exámenes según el sexo del paciente
+  // Filtrar exámenes según el sexo del paciente.
+  // I/null/A no restringen: A en sexo_aplicable significa "ambos".
   React.useEffect(() => {
     if (sexoPaciente === 'M') {
       setDisponiblesFiltrados(disponibles.filter(ex => ex.sexo_aplicable !== 'F'));

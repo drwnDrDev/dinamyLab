@@ -96,7 +96,7 @@ public function json_rips(Request $request)
             "numDocumentoIdentificacion" =>  $usuario->first()->persona->numero_doc,
             "tipoUsuario" => "04",
             "fechaNacimiento" => $usuario->first()->persona->fecha_nacimiento,
-            "codSexo" => $usuario->first()->persona->sexo,
+            "codSexo" => $usuario->first()->persona->sexo_rips,
             "codPaisResidencia" => "170",
             "codMunicipioResidencia" => "11007",
             "codZonaTerritorialResidencia" => "07",

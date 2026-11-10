@@ -9,6 +9,7 @@ use App\Models\Municipio;
 use App\TipoDocumento;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePersonaRequest;
+use App\Http\Requests\UpdatePersonaRequest;
 use App\Models\Eps;
 use App\Models\Procedimiento;
 use App\Services\GuardarPersona;
@@ -21,9 +22,15 @@ class PersonaController extends Controller
      */
     public function index(Request $request)
     {
+        $sexo = $request->input('sexo');
+
+        if (is_string($sexo)) {
+            $request->merge(['sexo' => strtoupper(trim($sexo))]);
+        }
+
         $filters = $request->validate([
             'busqueda' => 'nullable|string|max:100',
-            'sexo' => 'nullable|in:M,F,I',
+            'sexo' => 'nullable|exists:sexos,codigo',
             'municipio_id' => 'nullable|integer|exists:municipios,id',
             'eps' => 'nullable|string|max:255',
         ]);
@@ -122,17 +129,9 @@ class PersonaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Persona $persona)
+    public function update(UpdatePersonaRequest $request, Persona $persona)
     {
-        $validated = $request->validate([
-            'primer_nombre' => ['required', 'string', 'max:255'],
-            'segundo_nombre' => ['nullable', 'string', 'max:255'],
-            'primer_apellido' => ['required', 'string', 'max:255'],
-            'segundo_apellido' => ['nullable', 'string', 'max:255'],
-            'fecha_nacimiento' => ['nullable', 'date', 'before_or_equal:today'],
-            'sexo' => ['nullable', 'in:H,M,I,F'],
-            'telefono' => ['nullable', 'string', 'size:10'],
-        ]);
+        $validated = $request->validated();
 
         $persona->update($validated);
 
