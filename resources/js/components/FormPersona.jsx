@@ -7,6 +7,7 @@ import Loader from "./Loader";
 import CompletedCheck from "./CompletedCheck";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
 import axios from "axios";
+import { toast } from "../lib/toast";
 
 const TIPO_AFILIACION_PARTICULAR = '12';
 
@@ -24,9 +25,7 @@ const inputClass = (hasError = false) =>
 const FormPersona = ({ persona, setPersona, perfil }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [fieldErrors, setFieldErrors] = useState({});
-    const [successMessage, setSuccessMessage] = useState(null);
     const [formData, setFormData] = useState({
         id: null,
         perfil: '',
@@ -148,7 +147,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
         setFieldErrors({});
 
         try {
@@ -170,8 +168,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 setPersona(personaActualizada);
             }
 
-            setSuccessMessage(esActualizacion ? 'Persona actualizada exitosamente.' : 'Paciente registrado exitosamente.');
-            setError(null);
+            toast.success(esActualizacion ? 'Persona actualizada exitosamente.' : 'Paciente registrado exitosamente.', { key: 'form-persona' });
 
             setFormData({
                 id: null,
@@ -197,13 +194,13 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
         } catch (err) {
             if (err.response?.status === 422) {
                 setFieldErrors(err.response.data.errors || {});
-                setError('Por favor corrija los errores en el formulario.');
+                toast.error('Revisa los mensajes junto a los campos e inténtalo de nuevo.', { title: 'Hay errores en el formulario', key: 'form-persona' });
             } else if (err.response?.status === 401 || err.response?.status === 419) {
-                setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+                toast.error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.', { key: 'form-persona' });
             } else if (err.response?.data?.message) {
-                setError(err.response.data.message);
+                toast.error(err.response.data.message, { key: 'form-persona' });
             } else {
-                setError('Error al procesar la solicitud');
+                toast.error('Error al procesar la solicitud', { key: 'form-persona' });
             }
         } finally {
             setLoading(false);
@@ -216,24 +213,6 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
     return (
         <>
         {loading && <Loader />}
-
-        {successMessage && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm flex items-start gap-2">
-            <svg className="w-4 h-4 mt-0.5 shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            {successMessage}
-          </div>
-        )}
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-start gap-2">
-            <svg className="w-4 h-4 mt-0.5 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-            </svg>
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="max-w-screen-lg mx-auto">
             <div className="flex gap-4">

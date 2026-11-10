@@ -1,9 +1,4 @@
 <x-app-layout>
-    @if(session('success'))
-    <div class="bg-green-100 text-green-800 p-4 rounded-md mb-4">
-        {{ session('success') }}
-    </div>
-    @endif
     <x-slot name="header">
         <h2 class="font-bold text-2xl text-text leading-tight">
             {{ __('Historia') }}

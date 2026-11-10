@@ -10,6 +10,12 @@ import DropdownComponent from './components/DropdownComponent';
 import Typewriter from './components/guest/Typewriter';
 import TarifasExamenesSede from './components/TarifasExamenesSede';
 import ResultadosLote from './components/resultados/ResultadosLote';
+import { toast } from './lib/toast';
+import { mountToasts } from './lib/toastDom';
+
+// Toasts: flash de Blade y window.toast() para el JS de las vistas.
+window.toast = toast;
+mountToasts();
 
 // Renderizado condicional basado en la presencia de elementos en el DOM
 

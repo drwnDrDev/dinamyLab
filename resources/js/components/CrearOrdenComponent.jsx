@@ -8,6 +8,9 @@ import StepperOrden from './StepperOrden';
 import useAxiosAuth from './hooks/useAxiosAuth';
 import ordenDataDefault from './ordenDataDefault';
 import { useOrderValidation } from './hooks/useOrdenValidation';
+import { toast } from '../lib/toast';
+
+const TOAST_ORDEN = 'crear-orden';
 
 const formatCOP = (value) =>
     new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
@@ -52,7 +55,6 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
     const [persona, setPersona] = useState(paciente || null);
     const [loading, setLoading] = useState(false);
     const [completeMessage, setCompleteMessage] = useState(false);
-    const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
     const [currentStep, setCurrentStep] = useState(1);
     const [stepError, setStepError] = useState(null);
@@ -170,7 +172,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
     };
 
     const handleNext = () => {
-        setError(null);
+        toast.dismiss(TOAST_ORDEN);
         const err = getStepError(currentStep);
         if (err) {
             setStepError(err);
@@ -182,7 +184,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
 
     const handlePrev = () => {
         setStepError(null);
-        setError(null);
+        toast.dismiss(TOAST_ORDEN);
         setCurrentStep(prev => Math.max(prev - 1, 1));
     };
 
@@ -190,7 +192,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
         e.preventDefault();
 
         if (!csrfLoaded) {
-            setError('Autenticación en progreso, intente de nuevo.');
+            toast.warning('Autenticación en progreso, intente de nuevo.', { key: TOAST_ORDEN });
             return;
         }
 
@@ -220,12 +222,12 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
 
         if (numeroOrdenDuplicado) {
             setCurrentStep(3);
-            setError('Ese número de orden ya fue usado en esta sede. Ingrese otro número antes de continuar.');
+            toast.error('Ese número de orden ya fue usado en esta sede. Ingrese otro número antes de continuar.', { key: TOAST_ORDEN });
             return;
         }
 
         setLoading(true);
-        setError(null);
+        toast.dismiss(TOAST_ORDEN);
 
         try {
             const response = await axiosInstance.post('/api/ordenes', formOrden);
@@ -254,9 +256,9 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
                             : 4;
 
                 setCurrentStep(paso);
-                setError(`No se pudo crear la orden. ${validationMessages.join(' ')}`);
+                toast.error(validationMessages.join(' '), { title: 'No se pudo crear la orden', key: TOAST_ORDEN });
             } else {
-                setError(err.response?.data?.message || 'Error al crear la orden. Intente nuevamente.');
+                toast.error(err.response?.data?.message || 'Error al crear la orden. Intente nuevamente.', { key: TOAST_ORDEN });
             }
         } finally {
             setLoading(false);
@@ -340,20 +342,6 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                                 </svg>
                                 {stepError}
-                            </div>
-                        )}
-
-                        {/* Banner de error de API */}
-                        {error && (
-                            <div
-                                className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-start gap-2"
-                                role="alert"
-                                aria-live="assertive"
-                            >
-                                <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                {error}
                             </div>
                         )}
 

@@ -25,8 +25,34 @@ class UiNotificationsTest extends TestCase
         $this->followingRedirects()
             ->get('/_test/success-redirect')
             ->assertOk()
+            ->assertSee('id="toast-root"', false)
+            ->assertSee('data-toast-type="success"', false)
             ->assertSee('Operación completada')
             ->assertSee('La operación se completó correctamente.');
+    }
+
+    public function test_flash_errors_and_warnings_are_announced_as_alerts(): void
+    {
+        Route::middleware('web')->get('/_test/error-redirect', function () {
+            return redirect('/login')
+                ->with('error', 'No se pudo guardar la orden.')
+                ->with('warning', 'Revisa el valor del examen.');
+        });
+
+        $this->followingRedirects()
+            ->get('/_test/error-redirect')
+            ->assertOk()
+            ->assertSeeInOrder(['data-toast-type="error"', 'role="alert"', 'No se pudo guardar la orden.'], false)
+            ->assertSeeInOrder(['data-toast-type="warning"', 'role="alert"', 'Revisa el valor del examen.'], false);
+    }
+
+    public function test_renders_toast_templates_for_javascript(): void
+    {
+        $response = $this->get('/login')->assertOk();
+
+        foreach (['success', 'info', 'warning', 'error'] as $tipo) {
+            $response->assertSee('data-toast-template="'.$tipo.'"', false);
+        }
     }
 
     public function test_announces_validation_errors_without_repeating_field_messages(): void
@@ -37,7 +63,7 @@ class UiNotificationsTest extends TestCase
         $this->withSession(['errors' => $errors])
             ->get('/login')
             ->assertOk()
-            ->assertSee('No se pudo completar la solicitud.')
+            ->assertSeeInOrder(['data-toast-type="error"', 'No se pudo completar la solicitud.'], false)
             ->assertSee('Revisa los mensajes junto a los campos')
             ->assertSee('El correo es obligatorio.');
     }
