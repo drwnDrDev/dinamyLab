@@ -23,7 +23,7 @@ class UpdatePersonaRequest extends FormRequest
             'primer_apellido' => ['required', 'string', 'max:255'],
             'segundo_apellido' => ['nullable', 'string', 'max:255'],
             'fecha_nacimiento' => ['nullable', 'date', 'before_or_equal:today'],
-            'sexo' => ['nullable', 'in:H,M,I,F'],
+            'sexo' => ['nullable', 'exists:sexos,codigo'],
             'telefono' => ['nullable', 'string', 'size:10'],
         ];
     }

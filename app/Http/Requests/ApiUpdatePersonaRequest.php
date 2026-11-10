@@ -28,7 +28,7 @@ class ApiUpdatePersonaRequest extends FormRequest
             'segundo_apellido' => ['sometimes', 'nullable', 'string', 'max:255'],
             'tipo_documento' => ['sometimes', 'required', 'string', 'exists:tipo_documentos,cod_rips'],
             'fecha_nacimiento' => ['sometimes', 'nullable', 'date', 'before_or_equal:today'],
-            'sexo' => ['sometimes', 'nullable', 'in:H,M,I,F'],
+            'sexo' => ['sometimes', 'nullable', 'exists:sexos,codigo'],
             'pais' => ['sometimes', 'required', 'string', 'exists:paises,codigo_iso'],
             'pais_origen' => ['sometimes', 'required', 'string', 'exists:paises,codigo_iso'],
             'telefono' => ['sometimes', 'nullable', 'string', 'size:10'],

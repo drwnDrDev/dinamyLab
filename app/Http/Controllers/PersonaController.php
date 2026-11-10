@@ -24,7 +24,7 @@ class PersonaController extends Controller
     {
         $filters = $request->validate([
             'busqueda' => 'nullable|string|max:100',
-            'sexo' => 'nullable|in:M,F,I',
+            'sexo' => 'nullable|exists:sexos,codigo',
             'municipio_id' => 'nullable|integer|exists:municipios,id',
             'eps' => 'nullable|string|max:255',
         ]);

@@ -138,6 +138,31 @@ class Persona extends Model
         return $this->belongsTo(TipoDocumento::class);
     }
 
+    public function sexoCatalogo()
+    {
+        return $this->belongsTo(Sexo::class, 'sexo', 'codigo');
+    }
+
+    public function getSexoNombreAttribute(): string
+    {
+        if ($this->sexo === null || $this->sexo === '') {
+            return 'No especificado';
+        }
+
+        return $this->sexoCatalogo?->nombre
+            ?? Sexo::FALLBACK[$this->sexo]
+            ?? 'No especificado';
+    }
+
+    public function getSexoRipsAttribute(): ?string
+    {
+        try {
+            return Sexo::aRips($this->sexo);
+        } catch (\InvalidArgumentException) {
+            return null;
+        }
+    }
+
     public function scopeNacional($query)
     {
         return $query->where('nacional', true);
