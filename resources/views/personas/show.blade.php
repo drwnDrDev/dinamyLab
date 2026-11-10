@@ -55,18 +55,7 @@
             <div class="flex flex-col gap-1 border-b border-borders py-4 pl-2">
                 <p class="text-titles  font-normal leading-normal">Sexo</p>
                 <p class=" font-normal leading-normal" id="sexo">
-                    @switch($persona->sexo)
-                        @case('M')
-                            Masculino
-                            @break
-
-                        @case('F')
-                            Femenino
-                            @break
-
-                        @default
-                            Intesexual
-                    @endswitch
+                    {{ $persona->sexo_nombre }}
                 </p>
             </div>
             <div class="flex flex-col gap-1 border-b border-borders py-4 pr-2">

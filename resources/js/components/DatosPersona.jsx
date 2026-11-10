@@ -1,5 +1,8 @@
 
 import React from 'react';
+import { getCatalogs } from '../lib/catalogs';
+
+const SEXOS_FALLBACK = { M: 'Masculino', F: 'Femenino', I: 'Indeterminado o Intersexual' };
 
 const DatosPersona = ({ persona }) => {
     if (!persona) return null;
@@ -27,7 +30,11 @@ const DatosPersona = ({ persona }) => {
         persona.segundo_apellido,
     ].filter(Boolean).join(' ');
 
-    const sexos = { M: 'Masculino', F: 'Femenino', I: 'Intersexual' };
+    const sexosCatalogo = Array.isArray(getCatalogs().sexos) ? getCatalogs().sexos : [];
+    const sexoCatalogo = sexosCatalogo.find((sexo) => sexo.codigo === persona.sexo);
+    const nombreSexo = sexoCatalogo?.nombre
+        || SEXOS_FALLBACK[persona.sexo]
+        || 'No especificado';
 
     return (
         <section className="print_paciente py-2 w-full">
@@ -56,7 +63,7 @@ const DatosPersona = ({ persona }) => {
                 </div>
                 <div className="flex gap-1.5">
                     <span className="text-gray-500 shrink-0">Sexo:</span>
-                    <span className="text-text">{sexos[persona.sexo] || 'No especificado'}</span>
+                    <span className="text-text">{nombreSexo}</span>
                 </div>
                 <div className="flex gap-1.5">
                     <span className="text-gray-500 shrink-0">Nacimiento:</span>

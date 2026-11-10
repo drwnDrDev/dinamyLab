@@ -21,9 +21,9 @@
                 <span class="sr-only">Filtrar por sexo</span>
                 <select name="sexo" class="w-full rounded-lg border-borders bg-background text-text">
                     <option value="">Todos los sexos</option>
-                    <option value="M" @selected(request('sexo') === 'M')>Masculino</option>
-                    <option value="F" @selected(request('sexo') === 'F')>Femenino</option>
-                    <option value="I" @selected(request('sexo') === 'I')>Intersexual</option>
+                    @foreach (\App\Models\Sexo::opciones() as $codigo => $nombre)
+                        <option value="{{ $codigo }}" @selected(request('sexo') === $codigo)>{{ $nombre }}</option>
+                    @endforeach
                 </select>
             </label>
             <label>

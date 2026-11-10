@@ -46,12 +46,13 @@
                 </div>
                 <div class="w-full pb-2 flex gap-2 items-center">
                     <span class="font-semibold">Sexo</span>
-                    <x-input-label for="sexo_femenino" class="font-semibold text-2xl">F</x-input-label>
-                    <input type="radio" id="sexo_femenino" name="sexo" value="F">
-                    <x-input-label for="sexo_masculino" class="font-semibold text-2xl">M</x-input-label>
-                    <input type="radio" id="sexo_masculino" name="sexo" value="M">
-                    <x-input-label for="sexo_indeterminado" class="font-semibold text-2xl">I</x-input-label>
-                    <input type="radio" id="sexo_indeterminado" name="sexo" value="I">
+                    @php
+                        $idsSexo = ['F' => 'sexo_femenino', 'M' => 'sexo_masculino', 'I' => 'sexo_indeterminado'];
+                    @endphp
+                    @foreach (\App\Models\Sexo::opciones() as $codigo => $nombre)
+                        <x-input-label for="{{ $idsSexo[$codigo] ?? 'sexo_'.strtolower($codigo) }}" class="font-semibold text-2xl">{{ $codigo }}</x-input-label>
+                        <input type="radio" id="{{ $idsSexo[$codigo] ?? 'sexo_'.strtolower($codigo) }}" name="sexo" value="{{ $codigo }}">
+                    @endforeach
                 </div>
                 <div>
                     <x-input-label for="tipo_afiliacion">Tipo de afiliación</x-input-label>

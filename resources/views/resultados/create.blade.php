@@ -21,7 +21,7 @@
                 <span class="font-normal ">Identificación: </span>
                 <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->tipo_documento->cod_rips}}{{$procedimiento->orden->paciente->numero_documento}}</h3>
                 <span class="font-normal ">Sexo: </span>
-                <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->sexo==="M" ? 'Masculino':'Femenino'}} </h3>
+                <h3 class="text-titles font-light">{{ $procedimiento->orden->paciente->sexo_nombre }} </h3>
                 <span class="font-normal ">Edad: </span>
                 <h3 class="text-titles font-light">{{$procedimiento->orden->paciente->edad()}}</h3>
             </div>

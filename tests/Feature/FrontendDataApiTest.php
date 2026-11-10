@@ -35,7 +35,12 @@ it('entrega los catálogos livianos sin CUPS ni CIE', function () {
             'tipo_afiliacion',
             'causa_externa',
             'finalidad_consulta',
+            'sexos',
         ])
+        ->assertJsonCount(3, 'sexos')
+        ->assertJsonFragment(['codigo' => 'F', 'nombre' => 'Femenino', 'cod_sexo' => '02'])
+        ->assertJsonFragment(['codigo' => 'I', 'nombre' => 'Indeterminado o Intersexual', 'cod_sexo' => '03'])
+        ->assertJsonFragment(['codigo' => 'M', 'nombre' => 'Masculino', 'cod_sexo' => '01'])
         ->assertJsonMissingPath('cups')
         ->assertJsonMissingPath('defaultCies');
 });

@@ -74,7 +74,7 @@
                                 <div class="grid grid-cols-2 gap-x-6 gap-y-1 border-y border-gray-300 py-2">
                                     <p class="col-span-2"><strong>Paciente:</strong> {{ $paciente->nombreCompleto() }}</p>
                                     <p><strong>Identificación:</strong> {{ $paciente->tipo_documento->cod_rips }}{{ $paciente->numero_documento }}</p>
-                                    <p><strong>Sexo:</strong> {{ $paciente->sexo === 'M' ? 'Masculino' : 'Femenino' }}</p>
+                                    <p><strong>Sexo:</strong> {{ $paciente->sexo_nombre }}</p>
                                     <p><strong>Edad:</strong> {{ $paciente->edad() }}</p>
                                     <p><strong>Fecha de nacimiento:</strong> {{ $paciente->fecha_nacimiento?->format('d-m-Y') }}</p>
                                     <p><strong>Orden Nº:</strong> {{ $orden->numero }}</p>

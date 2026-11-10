@@ -77,7 +77,7 @@
                                     <span class="font-normal text-start">Identificación: </span>
                                     <h3 class="text-titles font-light text-start">{{$persona->tipo_documento->cod_rips}}{{$persona->numero_documento}}</h3>
                                     <span class="font-normal text-start">Sexo: </span>
-                                    <h3 class="text-titles font-light text-start">{{$persona->sexo==="M" ? 'Masculino':'Femenino'}} </h3>
+                                    <h3 class="text-titles font-light text-start">{{ $persona->sexo_nombre }} </h3>
                                     <span class="font-normal text-start">Edad: </span>
                                     <h3 class="text-titles font-light text-start">{{$persona->edad()}}</h3>
 
