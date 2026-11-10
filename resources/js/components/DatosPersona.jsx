@@ -30,7 +30,8 @@ const DatosPersona = ({ persona }) => {
         persona.segundo_apellido,
     ].filter(Boolean).join(' ');
 
-    const sexosCatalogo = Array.isArray(getCatalogs().sexos) ? getCatalogs().sexos : [];
+    const catalogs = getCatalogs();
+    const sexosCatalogo = Array.isArray(catalogs.sexos) ? catalogs.sexos : [];
     const sexoCatalogo = sexosCatalogo.find((sexo) => sexo.codigo === persona.sexo);
     const nombreSexo = sexoCatalogo?.nombre
         || SEXOS_FALLBACK[persona.sexo]

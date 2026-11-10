@@ -50,7 +50,7 @@
                         $idsSexo = ['F' => 'sexo_femenino', 'M' => 'sexo_masculino', 'I' => 'sexo_indeterminado'];
                     @endphp
                     @foreach (\App\Models\Sexo::opciones() as $codigo => $nombre)
-                        <x-input-label for="{{ $idsSexo[$codigo] ?? 'sexo_'.strtolower($codigo) }}" class="font-semibold text-2xl">{{ $codigo }}</x-input-label>
+                        <x-input-label for="{{ $idsSexo[$codigo] ?? 'sexo_'.strtolower($codigo) }}" class="font-semibold text-2xl">{{ $nombre }}</x-input-label>
                         <input type="radio" id="{{ $idsSexo[$codigo] ?? 'sexo_'.strtolower($codigo) }}" name="sexo" value="{{ $codigo }}">
                     @endforeach
                 </div>
