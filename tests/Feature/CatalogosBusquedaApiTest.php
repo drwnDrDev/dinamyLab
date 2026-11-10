@@ -24,6 +24,40 @@ it('busca CUPS por nombre y no cae en la ruta show', function () {
         ->assertJsonMissingPath('data.0.descripcion');
 });
 
+it('busca CUPS tanto por nombre como por código', function () {
+    DB::table('codigo_cups')->insert([
+        ['codigo' => '90.03.01', 'nombre' => 'ECOGRAFÍA ABDOMINAL', 'activo' => true, 'nivel' => 1],
+        ['codigo' => '91.04.02', 'nombre' => 'HEMOGRAMA', 'activo' => true, 'nivel' => 1],
+    ]);
+
+    $this->actingAs($this->prestador)
+        ->getJson('/api/cups/buscar?query=ECOGRAFÍA')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonFragment(['codigo' => '90.03.01']);
+
+    $this->actingAs($this->prestador)
+        ->getJson('/api/cups/buscar?query=91.04')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonFragment(['codigo' => '91.04.02']);
+});
+
+it('acepta codigo_cup como parámetro de búsqueda', function () {
+    DB::table('codigo_cups')->insert([
+        'codigo' => '92.05.01',
+        'nombre' => 'RADIOGRAFÍA DE TÓRAX',
+        'activo' => true,
+        'nivel' => 1,
+    ]);
+
+    $this->actingAs($this->prestador)
+        ->getJson('/api/cups/buscar?codigo_cup=92.05')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonFragment(['codigo' => '92.05.01']);
+});
+
 it('limita la búsqueda de CUPS a 20 resultados', function () {
     $rows = [];
     for ($i = 1; $i <= 25; $i++) {

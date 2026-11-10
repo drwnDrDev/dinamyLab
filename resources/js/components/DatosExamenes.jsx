@@ -1,6 +1,7 @@
 // ExamenesSection.jsx
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useExamenes } from './hooks/useExamenes';
 import TablaExamenes from './TablaExamenes';
 import ModalExamenes from './ModalExamenes';
@@ -28,6 +29,11 @@ const DatosExamenes = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sexoPaciente] = useState(persona?.sexo || 'A');
   const [mostrarFormularioRemision, setMostrarFormularioRemision] = useState(false);
+  const [busquedaCup, setBusquedaCup] = useState('');
+  const [sugerenciasCup, setSugerenciasCup] = useState([]);
+  const [cargandoSugerenciasCup, setCargandoSugerenciasCup] = useState(false);
+  const [errorSugerenciasCup, setErrorSugerenciasCup] = useState('');
+  const [mostrarSugerenciasCup, setMostrarSugerenciasCup] = useState(false);
   const [remisionForm, setRemisionForm] = useState({
     cup: '',
     nombre: '',
@@ -36,6 +42,41 @@ const DatosExamenes = ({
     destinoSedeId: '',
     destinoExterno: '',
   });
+
+  useEffect(() => {
+    const termino = busquedaCup.trim();
+    if (termino.length < 2) {
+      setSugerenciasCup([]);
+      setCargandoSugerenciasCup(false);
+      setErrorSugerenciasCup('');
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    setCargandoSugerenciasCup(true);
+    setErrorSugerenciasCup('');
+    const timer = setTimeout(() => {
+      axios.get('/api/cups/buscar', {
+        params: { query: termino },
+        signal: controller.signal,
+      })
+        .then(response => setSugerenciasCup(response.data?.data || []))
+        .catch(error => {
+          if (!axios.isCancel(error)) {
+            console.error('Error al buscar procedimientos CUP', error);
+            setErrorSugerenciasCup('No fue posible buscar procedimientos. Intenta de nuevo.');
+          }
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setCargandoSugerenciasCup(false);
+        });
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [busquedaCup]);
 
   const handleAgregar = (nuevoExamen) => {
     const yaExiste = formExamenes.some(e => e.id === nuevoExamen.id);
@@ -80,6 +121,12 @@ const DatosExamenes = ({
     onRemisionesUpdate(remisiones.filter((_, itemIndex) => itemIndex !== index));
   };
 
+  const handleSeleccionarCup = (cup) => {
+    setRemisionForm(prev => ({ ...prev, cup: cup.codigo, nombre: cup.nombre }));
+    setBusquedaCup(`${cup.codigo} - ${cup.nombre}`);
+    setMostrarSugerenciasCup(false);
+  };
+
   return (
     <section>
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
@@ -116,6 +163,50 @@ const DatosExamenes = ({
           onSubmit={handleAgregarRemision}
           className="mb-5 grid grid-cols-1 md:grid-cols-2 gap-3 p-4 border border-secondary rounded-lg bg-white"
         >
+          <div className="relative text-sm text-titles md:col-span-2">
+            <label htmlFor="buscar-cup-remision">Buscar procedimiento por nombre o código CUP</label>
+            <input
+              id="buscar-cup-remision"
+              type="search"
+              autoComplete="off"
+              value={busquedaCup}
+              onChange={event => {
+                setBusquedaCup(event.target.value);
+                setSugerenciasCup([]);
+                setMostrarSugerenciasCup(true);
+              }}
+              onFocus={() => setMostrarSugerenciasCup(true)}
+              className="mt-1 w-full border border-borders rounded-md px-3 py-2"
+              placeholder="Escribe el nombre o código CUP"
+              aria-autocomplete="list"
+              aria-expanded={mostrarSugerenciasCup && sugerenciasCup.length > 0}
+            />
+            {mostrarSugerenciasCup && busquedaCup.trim().length >= 2 && (
+              <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-borders bg-white shadow-lg">
+                {cargandoSugerenciasCup && (
+                  <p className="px-3 py-2 text-gray-500" role="status">Buscando procedimientos...</p>
+                )}
+                {!cargandoSugerenciasCup && errorSugerenciasCup && (
+                  <p className="px-3 py-2 text-red-600" role="alert">{errorSugerenciasCup}</p>
+                )}
+                {!cargandoSugerenciasCup && !errorSugerenciasCup && sugerenciasCup.length === 0 && (
+                  <p className="px-3 py-2 text-gray-500">No se encontraron procedimientos.</p>
+                )}
+                {sugerenciasCup.map(cup => (
+                  <button
+                    key={cup.codigo}
+                    type="button"
+                    onMouseDown={event => event.preventDefault()}
+                    onClick={() => handleSeleccionarCup(cup)}
+                    className="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-secondary"
+                  >
+                    <span className="shrink-0 font-mono text-xs">{cup.codigo}</span>
+                    <span>{cup.nombre}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <label className="text-sm text-titles">
             CUP
             <input

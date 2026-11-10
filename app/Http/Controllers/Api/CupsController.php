@@ -54,11 +54,17 @@ class CupsController extends Controller
     public function buscarPorNombre(Request $request)
     {
         $validated = $request->validate([
-            'nombre' => ['required', 'string', 'min:2', 'max:100'],
+            'query' => ['required_without_all:nombre,codigo_cup', 'string', 'min:2', 'max:100', 'regex:/\S/'],
+            'nombre' => ['nullable', 'string', 'min:2', 'max:100', 'regex:/\S/'],
+            'codigo_cup' => ['nullable', 'string', 'min:2', 'max:20', 'regex:/\S/'],
         ]);
+        $termino = trim($validated['query'] ?? $validated['nombre'] ?? $validated['codigo_cup'] ?? '');
 
         $cups = CodigoCup::query()
-            ->where('nombre', 'like', '%' . $validated['nombre'] . '%')
+            ->where(function ($query) use ($termino) {
+                $query->where('nombre', 'like', '%' . $termino . '%')
+                    ->orWhere('codigo', 'like', '%' . $termino . '%');
+            })
             ->orderBy('nombre')
             ->limit(20)
             ->get(['codigo', 'nombre']);
