@@ -15,6 +15,15 @@ class StorePersonaRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $sexo = $this->input('sexo');
+
+        if (is_string($sexo)) {
+            $this->merge(['sexo' => strtoupper(trim($sexo))]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -48,7 +57,7 @@ class StorePersonaRequest extends FormRequest
                     $fail('La fecha de nacimiento no puede ser anterior al 1 de enero de 1900.');
                 }
             }],
-            'sexo' => ['nullable', 'in:H,M,I,F'],
+            'sexo' => ['nullable', 'exists:sexos,codigo'],
             'pais' => ['nullable', 'exists:paises,codigo_iso'],
             'perfil' => ['required',
                 function ($attribute, $value, $fail) {

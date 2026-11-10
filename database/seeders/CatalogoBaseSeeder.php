@@ -18,6 +18,7 @@ class CatalogoBaseSeeder extends Seeder
             // MunicipioSeeder inserta también el catálogo de países; no llamar
             // a PaisSeeder por separado (viola paises.codigo_iso_2 único).
             MunicipioSeeder::class,
+            SexoSeeder::class,
             TipoDocumentoSeeder::class,
             EPSsedeer::class,
             FinalidadSeeder::class,

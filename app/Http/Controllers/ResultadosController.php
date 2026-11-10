@@ -63,6 +63,27 @@ class ResultadosController extends Controller
 
         return view('resultados.show', compact('procedimiento', 'parametros', 'cambios'));
     }
+
+    public function reporteOrden(Orden $orden)
+    {
+        ControlSede::autorizarOrden(request(), $orden);
+        $orden->load(['paciente.tipo_documento', 'sede.empresa']);
+
+        $procedimientos = Procedimiento::query()
+            ->where('orden_id', $orden->id)
+            ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
+            ->whereHas('resultado')
+            ->with(['orden.paciente.tipo_documento', 'examen', 'sede.empresa', 'empleado.user'])
+            ->orderBy('id')
+            ->get()
+            ->map(fn (Procedimiento $procedimiento) => [
+                'procedimiento' => $procedimiento,
+                'parametros' => EscogerReferencia::obtenerResultados($procedimiento),
+            ]);
+
+        return view('resultados.reporte_orden', compact('orden', 'procedimientos'));
+    }
+
     public function create(Procedimiento $procedimiento)
     {
         $this->autorizarSede(request(), $procedimiento);

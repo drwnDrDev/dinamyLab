@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ApiUpdatePersonaRequest;
 use App\Http\Requests\StorePersonaRequest;
-use Illuminate\Http\Request;
 use App\Models\Persona;
+use App\Models\TipoDocumento;
 use App\Services\GuardarPersona;
-use Illuminate\Support\Facades\Auth;
-use App\Services\NombreParser;
-use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PersonaController extends Controller
 {
@@ -82,9 +82,8 @@ class PersonaController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(ApiUpdatePersonaRequest $request, $id)
     {
-
         $persona = Persona::find($id);
 
         if (!$persona) {
@@ -93,121 +92,149 @@ class PersonaController extends Controller
                 'data' => null
             ], 404);
         }
-        if ($persona->numero_documento !== $request->input('numero_documento')) {
+        $validated = $request->validated();
+
+        if (
+            array_key_exists('numero_documento', $validated)
+            && $persona->numero_documento !== $validated['numero_documento']
+        ) {
             return response()->json([
                 'message' => 'El número de documento no puede ser modificado',
                 'data' => null
             ], 400);
         }
 
+        DB::transaction(function () use ($persona, $validated): void {
+            $this->updatePersonaProperties($persona, $validated);
+            $this->updateContactProperties($persona, $validated);
+        });
 
-        $request->validate([
-            'nombres' => 'required|string|max:255',
-            'apellidos' => 'required|string|max:255',
-            'fecha_nacimiento' => 'nullable|date',
-            'sexo' => 'nullable|string|max:10',
-            'telefono' => 'nullable|string|size:10',
-            'municipio' => 'required|exists:municipios,id',
+        $persona->load([
+            'tipo_documento',
+            'telefonos',
+            'direccion',
+            'email',
+            'afiliacionSalud',
+            'contactoEmergencia.acompanante',
         ]);
 
-        // Actualizar los campos de la persona
-        if($request->input('nombres')!==$persona->nombres()){
-             $nombres = explode(' ', trim($request->input('nombres')), 2);
-                $persona->primer_nombre = $nombres[0];
-                $persona->segundo_nombre = $nombres[1] ?? '';
-        }
-        if($request->input('apellidos')!==$persona->apellidos()){
-            $apellidos = explode(' ', trim($request->input('apellidos')), 2);
-            $persona->primer_apellido = $apellidos[0];
-            $persona->segundo_apellido = $apellidos[1] ?? '';
-        }
-        if($request->input('tipo_documento')!==$persona->tipo_documento->cod_rips){
-            $persona->tipo_documento_id = \App\Models\TipoDocumento::idPorCodigoRips($request->input('tipo_documento'));
-        }
-        if($request->input('fecha_nacimiento')!==$persona->fecha_nacimiento){
-            $persona->fecha_nacimiento = $request->input('fecha_nacimiento');
-        }
-        if($request->input('sexo')!==$persona->sexo){
-            $persona->sexo = $request->input('sexo');
-        }
-        if($request->has('pais')){
-            if($request->input('pais') !== $persona->pais_origen && $request->input('pais')!==''){
-                $persona->procedencia()->updateOrCreate(
-                    ['procedencia_id' => $persona->id, 'procedencia_type' => Persona::class],
-                    ['pais_codigo_iso' => $request->input('pais')]
-                );
-            }
-
-        }
-
-        // Actualizar los datos de contacto
-        if (
-            $request->has('telefono') &&
-            $request->input('telefono') !== '' &&
-            $request->input('telefono') !== null
-            && !$persona->telefonos()->where('numero', $request->input('telefono'))->exists()
-        ) {
-            $persona->telefonos()->updateOrCreate([
-                'numero' => $request->input('telefono'),
-            ]);
-        } elseif ($request->has('telefono') && $request->input('telefono') === '') {
-            $persona->telefonos()->delete(); // Eliminar el teléfono si se envía vacío
-        }
-        // Actualizar la dirección
-            $persona->direccion()->updateOrCreate(
-                ['direccionable_id' => $persona->id, 'direccionable_type' => Persona::class],
-                [
-                    'direccion' => $request->input('direccion', ''),
-                    'municipio_id' => $request->input('municipio', 11001) ,
-                    'pais_id' => $request->input('pais_residencia', 170),
-                    'codigo_postal' => $request->input('codigo_postal', ''),
-                    'zona' => $request->input('zona', '02'),
-                ]
-            );
-        // Actualizar el correo electrónico
-            // Verificar si el correo electrónico ya existe
-            if ($request->has('correo') && $request->input('correo') === '') {
-                // Si el correo está vacío, eliminar el correo existente
-                $persona->email()->delete();
-            } elseif ($request->has('correo') && $request->input('correo')) {
-                // Si el correo es diferente, actualizar o crear el correo
-                $persona->email()->updateOrCreate(
-                    ['emailable_id' => $persona->id, 'emailable_type' => Persona::class],
-                    ['email' => $request->input('correo')]
-                );
-            }
-        // Actualizar la afiliación a salud
-        if ($request->has('eps') && $request->input('eps') !== '' && $request->input('eps') !== null) {
-            $persona->afiliacionSalud()->updateOrCreate(
-                ['persona_id' => $persona->id],
-                [
-                    'eps' => $request->input('eps','Sin EPS'),
-                    'tipo_afiliacion' => $request->input('tipo_afiliacion', 'subsidiado')
-                ]
-            );
-        }
-        // Actualizar el contacto de emergencia
-        if ($request->has('contacto_emergencia')) {
-            $contactoData = $request->input('contacto_emergencia');
-            $contacto = $persona->contactoEmergencia()->updateOrCreate(
-                ['paciente_id' => $persona->id],
-                [
-                    'nombre' => $contactoData['nombre'] ?? '',
-                    'telefono' => $contactoData['telefono'] ?? '',
-                    'parentesco' => $contactoData['parentesco'] ?? '',
-                ]
-            );
-        }
-
-
-
-        // Guardar los cambios en la persona
-
-        $persona->save();
         return response()->json([
             'message' => 'Persona actualizada con éxito',
             'data' => $persona
         ]);
+    }
+
+    private function updatePersonaProperties(Persona $persona, array $data): void
+    {
+        $attributes = [];
+
+        if (array_key_exists('nombres', $data)) {
+            $parts = preg_split('/\s+/', trim($data['nombres']), 2);
+            $attributes['primer_nombre'] = $parts[0];
+            $attributes['segundo_nombre'] = $parts[1] ?? null;
+        }
+
+        if (array_key_exists('apellidos', $data)) {
+            $parts = preg_split('/\s+/', trim($data['apellidos']), 2);
+            $attributes['primer_apellido'] = $parts[0];
+            $attributes['segundo_apellido'] = $parts[1] ?? null;
+        }
+
+        foreach ([
+            'primer_nombre',
+            'segundo_nombre',
+            'primer_apellido',
+            'segundo_apellido',
+            'fecha_nacimiento',
+            'sexo',
+        ] as $field) {
+            if (array_key_exists($field, $data)) {
+                $attributes[$field] = $data[$field];
+            }
+        }
+
+        if (array_key_exists('tipo_documento', $data)) {
+            $attributes['tipo_documento_id'] = TipoDocumento::idPorCodigoRips($data['tipo_documento']);
+        }
+
+        if (array_key_exists('pais_origen', $data) || array_key_exists('pais', $data)) {
+            $attributes['pais_origen'] = $data['pais_origen'] ?? $data['pais'];
+        }
+
+        if ($attributes !== []) {
+            $persona->update($attributes);
+        }
+    }
+
+    private function updateContactProperties(Persona $persona, array $data): void
+    {
+        if (array_key_exists('telefono', $data)) {
+            $telefono = $data['telefono'];
+            if ($telefono === null || $telefono === '') {
+                $persona->telefonos()->delete();
+            } else {
+                $actual = $persona->telefonos()->first();
+                if ($actual) {
+                    $actual->update(['numero' => $telefono]);
+                } else {
+                    $persona->telefonos()->create(['numero' => $telefono]);
+                }
+            }
+        }
+
+        $direccionFields = [
+            'direccion' => 'direccion',
+            'municipio' => 'municipio_id',
+            'pais_residencia' => 'pais_id',
+            'codigo_postal' => 'codigo_postal',
+            'zona' => 'zona',
+        ];
+        $direccion = [];
+        foreach ($direccionFields as $input => $column) {
+            if (array_key_exists($input, $data)) {
+                $direccion[$column] = $data[$input];
+            }
+        }
+        if ($direccion !== []) {
+            $persona->direccion()->updateOrCreate([], $direccion);
+        }
+
+        if (array_key_exists('correo', $data)) {
+            if ($data['correo'] === null || $data['correo'] === '') {
+                $persona->email()->delete();
+            } else {
+                $persona->email()->updateOrCreate([], ['email' => $data['correo']]);
+            }
+        }
+
+        if (array_key_exists('eps', $data) || array_key_exists('tipo_afiliacion', $data)) {
+            $afiliacion = $persona->afiliacionSalud()->first();
+            if (array_key_exists('eps', $data) && ($data['eps'] === null || $data['eps'] === '')) {
+                $persona->afiliacionSalud()->delete();
+            } elseif ($afiliacion) {
+                $afiliacion->update(array_intersect_key($data, array_flip(['eps', 'tipo_afiliacion'])));
+            } elseif (array_key_exists('eps', $data)) {
+                $persona->afiliacionSalud()->create([
+                    'eps' => $data['eps'],
+                    'tipo_afiliacion' => $data['tipo_afiliacion'] ?? '12',
+                ]);
+            }
+        }
+
+        if (array_key_exists('contacto_emergencia', $data)) {
+            $contactoData = $data['contacto_emergencia'];
+            if ($contactoData === null) {
+                $persona->contactoEmergencia()->delete();
+                return;
+            }
+
+            $contacto = $persona->contactoEmergencia()->first();
+            if ($contacto) {
+                $contacto->update($contactoData);
+            } else {
+                $persona->contactoEmergencia()->create($contactoData);
+            }
+        }
     }
     public function destroy($id)
     {

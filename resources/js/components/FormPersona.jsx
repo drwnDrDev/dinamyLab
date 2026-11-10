@@ -6,9 +6,22 @@ import SelectField from "./SelectField";
 import Loader from "./Loader";
 import CompletedCheck from "./CompletedCheck";
 import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
+import { getCatalogs } from "../lib/catalogs";
 import axios from "axios";
 
 const TIPO_AFILIACION_PARTICULAR = '12';
+
+const SEXOS_FALLBACK = [
+    { codigo: 'F', nombre: 'Femenino' },
+    { codigo: 'M', nombre: 'Masculino' },
+    { codigo: 'I', nombre: 'Indeterminado o Intersexual' },
+];
+
+const IDS_SEXO = {
+    F: 'sexo_femenino',
+    M: 'sexo_masculino',
+    I: 'sexo_otro',
+};
 
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 axios.defaults.withCredentials = true;
@@ -49,6 +62,11 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
 
     const { tiposDocumento, paises, municipios, epsList } = usePersonaReferencias();
     const { tiposAfiliacion } = useTablasRef();
+
+    const sexosCatalogo = getCatalogs().sexos;
+    const sexos = Array.isArray(sexosCatalogo) && sexosCatalogo.length > 0
+        ? sexosCatalogo
+        : SEXOS_FALLBACK;
 
     // 1. Obtener la cookie CSRF de Sanctum al montar el componente
     useEffect(() => {
@@ -343,42 +361,24 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         <div>
                             <label className="block font-medium text-sm text-text mb-1">Sexo</label>
                             <div className="flex gap-4 items-center">
-                                <label htmlFor="sexo_femenino" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
-                                    <input
-                                        type="radio"
-                                        id="sexo_femenino"
-                                        name="sexo"
-                                        value="F"
-                                        checked={formData.sexo === 'F'}
-                                        onChange={handleInputChange}
-                                        className="h-4 w-4 accent-primary"
-                                    />
-                                    Femenino
-                                </label>
-                                <label htmlFor="sexo_masculino" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
-                                    <input
-                                        type="radio"
-                                        id="sexo_masculino"
-                                        name="sexo"
-                                        value="M"
-                                        checked={formData.sexo === 'M'}
-                                        onChange={handleInputChange}
-                                        className="h-4 w-4 accent-primary"
-                                    />
-                                    Masculino
-                                </label>
-                                <label htmlFor="sexo_otro" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
-                                    <input
-                                        type="radio"
-                                        id="sexo_otro"
-                                        name="sexo"
-                                        value="I"
-                                        checked={formData.sexo === 'I'}
-                                        onChange={handleInputChange}
-                                        className="h-4 w-4 accent-primary"
-                                    />
-                                    Intersexual
-                                </label>
+                                {sexos.map(({ codigo, nombre }) => {
+                                    const id = IDS_SEXO[codigo] ?? `sexo_${String(codigo).toLowerCase()}`;
+
+                                    return (
+                                        <label key={codigo} htmlFor={id} className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
+                                            <input
+                                                type="radio"
+                                                id={id}
+                                                name="sexo"
+                                                value={codigo}
+                                                checked={formData.sexo === codigo}
+                                                onChange={handleInputChange}
+                                                className="h-4 w-4 accent-primary"
+                                            />
+                                            {nombre}
+                                        </label>
+                                    );
+                                })}
                             </div>
                             {fe('sexo') && <p className="text-sm text-red-500 mt-1">{fe('sexo')}</p>}
                         </div>

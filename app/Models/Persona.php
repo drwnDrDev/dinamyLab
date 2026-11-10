@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use App\Services\NombreParser;
 
 
@@ -136,6 +137,61 @@ class Persona extends Model
     public function tipo_documento()
     {
         return $this->belongsTo(TipoDocumento::class);
+    }
+
+    public function sexoCatalogo()
+    {
+        return $this->belongsTo(Sexo::class, 'sexo', 'codigo');
+    }
+
+    public function getSexoNombreAttribute(): string
+    {
+        if ($this->sexo === null || $this->sexo === '') {
+            return 'No especificado';
+        }
+
+        try {
+            $codigo = Sexo::normalizar($this->sexo);
+        } catch (\InvalidArgumentException) {
+            return 'No especificado';
+        }
+
+        if ($codigo === null) {
+            return 'No especificado';
+        }
+
+        return $this->sexoCatalogo?->nombre
+            ?? Sexo::FALLBACK[$codigo]
+            ?? 'No especificado';
+    }
+
+    public function getSexoRipsAttribute(): ?string
+    {
+        if ($this->sexo === null) {
+            return null;
+        }
+
+        try {
+            $codigo = Sexo::normalizar($this->sexo);
+        } catch (\InvalidArgumentException) {
+            Log::warning('Sexo no válido; se exporta como indeterminado.', [
+                'persona_id' => $this->id,
+                'sexo' => $this->sexo,
+            ]);
+
+            return 'I';
+        }
+
+        if ($codigo === null) {
+            Log::warning('Sexo vacío; se exporta como indeterminado.', [
+                'persona_id' => $this->id,
+                'sexo' => $this->sexo,
+            ]);
+
+            return 'I';
+        }
+
+        return Sexo::aRips($codigo);
     }
 
     public function scopeNacional($query)

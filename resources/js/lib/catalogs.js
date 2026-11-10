@@ -2,7 +2,7 @@
 // Mantiene una copia en localStorage (o memoria si no está disponible) y
 // revalida contra el servidor usando ETag para abaratar la comprobación.
 
-export const CATALOG_SCHEMA_VERSION = 2;
+export const CATALOG_SCHEMA_VERSION = 3;
 
 export const CATALOG_ENDPOINT = '/api/static-data-for-frontend';
 

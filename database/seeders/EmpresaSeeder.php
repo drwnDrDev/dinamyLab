@@ -34,7 +34,7 @@ class EmpresaSeeder extends Seeder
            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123466789',
             'fecha_nacimiento'=>'1929-01-11',
-            'sexo'=>'H',
+            'sexo'=>'M',
              'pais_origen'=>'840'
         ]);
 

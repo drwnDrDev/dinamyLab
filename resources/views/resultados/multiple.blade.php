@@ -33,7 +33,7 @@
 
                     <div class="flex gap-2">
                         <span class="font-bold ">Sexo: </span>
-                        <h3>{{$procedimiento->orden->paciente->sexo}} </h3>
+                        <h3>{{ $procedimiento->orden->paciente->sexo_nombre }} </h3>
                     </div>
                     <div class="flex gap-2">
                         <span class="font-bold ">Edad: </span>

@@ -10,6 +10,7 @@ use App\Models\ModalidadAtencion;
 use App\Models\Municipio;
 use App\Models\Pais;
 use App\Models\ServicioHabilitado;
+use App\Models\Sexo;
 use App\Models\TipoAfiliacion;
 use App\Models\TipoDocumento;
 use App\Models\ViaIngreso;
@@ -82,6 +83,8 @@ class FrontendDataController extends Controller
         ->where('habilitada', true) // Solo EPS verificadas
         ->orderBy('nivel','desc')->get();
 
+        $sexos = Sexo::orderBy('nombre')->get(['codigo', 'nombre', 'cod_sexo']);
+
         return [
             'documentos_paciente' => $tiposDocumentoPaciente,
             'documentos_pagador' => $tiposDocumentoPagador,
@@ -94,6 +97,7 @@ class FrontendDataController extends Controller
             'tipo_afiliacion' => $tipoAfiliacion,
             'causa_externa' => $causaExterna,
             'finalidad_consulta' => $finaalidad,
+            'sexos' => $sexos,
         ];
     }
 }
