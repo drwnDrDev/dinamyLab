@@ -19,6 +19,7 @@
 --}}
 @php
     $enPdf = $enPdf ?? false;
+    $cambios = $cambios ?? collect();
     $reporte = $reporte ?? (function () use (&$modoEjemplo) {
         $modoEjemplo = $modoEjemplo ?? 'orden';
 
@@ -28,6 +29,9 @@
     $lab = $reporte['laboratorio'];
     $paciente = $reporte['paciente'];
     $orden = $reporte['orden'] ?? null;
+    $tituloReporte = $tituloReporte ?? ($orden ? 'Resultados de orden '.$orden['numero'] : 'Reporte de resultados');
+    $urlVolver = $urlVolver ?? null;
+    $urlPdf = $urlPdf ?? null;
 
     /*
      * Paginación determinista, en puntos (pt). DomPDF solo respeta page-break-inside: avoid si el
@@ -130,6 +134,10 @@
             ];
         }
     }
+
+    $bloquesPorOrden = collect($bloques)->groupBy(
+        fn (array $bloque) => $bloque['examen']['orden_id'] ?? $bloque['examen']['orden_numero'] ?? 'sin-orden'
+    );
 @endphp
 <!DOCTYPE html>
 <html lang="es">
@@ -483,6 +491,70 @@
             color: #5b6b6e;
             margin-top: 1mm;
         }
+
+        .historial-cambios {
+            margin-top: 8mm;
+        }
+
+        .historial-cambios th,
+        .historial-cambios td {
+            padding: 1.5mm 2mm;
+            border-bottom: 0.4pt solid #cfe4e8;
+            vertical-align: top;
+        }
+
+        .historial-cambios th {
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .acciones-reporte {
+            display: flex;
+            justify-content: flex-end;
+            gap: 3mm;
+            margin-bottom: 6mm;
+        }
+
+        .acciones-reporte a,
+        .acciones-reporte button {
+            border: 0.5pt solid #4b8f9b;
+            background: #ffffff;
+            color: #0d191c;
+            padding: 2mm 4mm;
+            text-decoration: none;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .orden-seccion + .orden-seccion {
+            page-break-before: always;
+            break-before: page;
+        }
+
+        .orden-seccion-encabezado {
+            margin-bottom: 4mm;
+            padding: 2mm 2.5mm;
+            border-top: 0.6pt solid #0d191c;
+            border-bottom: 0.6pt solid #cfe4e8;
+            font-size: 9pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .orden-seccion-encabezado span {
+            margin-left: 4mm;
+            font-size: 7pt;
+            font-weight: normal;
+            text-transform: none;
+            color: #5b6b6e;
+        }
+
+        @media print {
+            .acciones-reporte,
+            .historial-cambios {
+                display: none;
+            }
+        }
     </style>
     @unless ($enPdf)
         {{--
@@ -536,6 +608,17 @@
     @endunless
 </head>
 <body>
+    @unless ($enPdf)
+        <nav class="acciones-reporte">
+            @if ($urlVolver)
+                <a href="{{ $urlVolver }}">Volver</a>
+            @endif
+            <button type="button" onclick="window.print()">Imprimir</button>
+            @if ($urlPdf)
+                <a href="{{ $urlPdf }}">Descargar PDF</a>
+            @endif
+        </nav>
+    @endunless
     <header class="encabezado">
         <table>
             <tr>
@@ -548,7 +631,7 @@
                     <div class="lab-nit">NIT {{ $lab['nit'] }}</div>
                 </td>
                 <td class="doc-meta">
-                    <div class="doc-titulo">Reporte de resultados</div>
+                    <div class="doc-titulo">{{ $tituloReporte }}</div>
                     @if ($orden)
                         <div class="doc-dato">Orden Nº <strong>{{ $orden['numero'] }}</strong></div>
                         <div class="doc-dato">Fecha de atención <strong>{{ $orden['fecha_atencion'] }}</strong></div>
@@ -609,10 +692,21 @@
 
     <main>
         @if (empty($bloques))
-            <p class="nota">Esta orden aún no tiene exámenes terminados con resultados para incluir en el reporte.</p>
+            <p class="nota">No hay exámenes terminados con resultados para incluir en el reporte.</p>
         @else
-            @foreach ($bloques as $bloque)
-                @include('resultados.reporte._examen', ['bloque' => $bloque])
+            @foreach ($bloquesPorOrden as $bloquesOrden)
+                @php($primerExamenOrden = $bloquesOrden->first()['examen'])
+                <section class="orden-seccion">
+                    @if ($mostrarOrden)
+                        <div class="orden-seccion-encabezado">
+                            Orden Nº {{ $primerExamenOrden['orden_numero'] }}
+                            <span>Fecha de atención {{ $primerExamenOrden['fecha_atencion'] }}</span>
+                        </div>
+                    @endif
+                    @foreach ($bloquesOrden as $bloque)
+                        @include('resultados.reporte._examen', ['bloque' => $bloque])
+                    @endforeach
+                </section>
             @endforeach
         @endif
 
@@ -643,6 +737,36 @@
 
         @if ($hayFueraDeRango)
             <p class="nota">* Valor fuera del rango de referencia. La interpretación de los resultados corresponde al médico tratante.</p>
+        @endif
+
+        @if ($cambios->isNotEmpty())
+            <section class="historial-cambios">
+                <div class="seccion-titulo">Historial de modificaciones</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Parámetro</th>
+                            <th>Valor anterior</th>
+                            <th>Valor nuevo</th>
+                            <th>Modificado por</th>
+                            <th>Observación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($cambios as $cambio)
+                            <tr>
+                                <td>{{ $cambio->created_at->format('d/m/Y H:i') }}</td>
+                                <td>{{ $cambio->parametro_nombre }}</td>
+                                <td>{{ $cambio->valor_anterior ?? 'Vacío' }}</td>
+                                <td>{{ $cambio->valor_nuevo ?? 'Vacío' }}</td>
+                                <td>{{ $cambio->usuario_nombre }}</td>
+                                <td>{{ $cambio->observacion }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </section>
         @endif
     </main>
 </body>
