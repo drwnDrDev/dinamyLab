@@ -283,3 +283,46 @@ it('deniega la descarga a usuarios sin permiso para ver resultados', function ()
         ->get(route('resultados.reporte_pdf', $orden))
         ->assertForbidden();
 });
+
+it('conserva las columnas de resultados de texto y carga firmas y logos por nombre de archivo', function () {
+    \Illuminate\Support\Facades\Storage::fake('public');
+    $imagen = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=');
+    $disco = \Illuminate\Support\Facades\Storage::disk('public');
+    $disco->put('firmas/profesional.png', $imagen);
+    $disco->put('logos/laboratorio.png', $imagen);
+    $this->sede->update(['logo' => 'laboratorio.png']);
+    $empleado = $this->user->empleado;
+    $empleado->update(['firma' => 'profesional.png']);
+    $examen = Examen::factory()->create();
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $procedimiento = $orden->procedimientos()->firstOrFail();
+    $procedimiento->update(['empleado_id' => $empleado->id]);
+    foreach (['text' => 'Aspecto', 'textarea' => 'Comentario'] as $tipo => $nombre) {
+        $parametro = Parametro::create([
+            'nombre' => $nombre,
+            'slug' => strtolower($nombre),
+            'tipo_dato' => $tipo,
+            'unidades' => 'unidad',
+            'examen_id' => $examen->id,
+        ]);
+        Resultado::create([
+            'parametro_id' => $parametro->id,
+            'procedimiento_id' => $procedimiento->id,
+            'resultado' => 'Transparente',
+        ]);
+    }
+
+    $servicio = app(\App\Services\ConstruirReporteResultados::class);
+    $reporte = $servicio->paraOrden($orden);
+    $uri = 'data:image/png;base64,'.base64_encode($imagen);
+    expect($reporte['laboratorio']['logo_src'])->toBe($uri);
+    expect($reporte['examenes'][0]['bacteriologo']['firma_src'])->toBe($uri);
+    expect($reporte['examenes'][0]['grupos'][0]['parametros'][0]['tipo'])->toBe('valor');
+    expect($reporte['examenes'][0]['grupos'][0]['parametros'][1]['tipo'])->toBe('texto');
+
+    $this->actingAs($this->user)->get(route('resultados.show', $procedimiento))
+        ->assertOk()->assertSee($uri, false)->assertSee('col-unidades', false);
+
+    $empleado->update(['firma' => 'firmas/profesional.png']);
+    expect($servicio->paraOrden($orden)['examenes'][0]['bacteriologo']['firma_src'])->toBe($uri);
+});

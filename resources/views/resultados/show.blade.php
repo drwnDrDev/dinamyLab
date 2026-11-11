@@ -27,7 +27,7 @@
                                 @endif
                             </figure>
                             <div class="pl-4">
-                                <h2 class="font-semibold text-xl">{{$procedimiento->sede->empresa->nombre_comercial}}</h2>
+                                <h2 class="font-semibold text-xl">{{$procedimiento->sede->empresa->razon_social}}</h2>
                                 <p>{{$procedimiento->sede->nombre}}</p>
                                 <p class="font-light">NIT. {{$procedimiento->sede->empresa->nit}}</p>
                             </div>

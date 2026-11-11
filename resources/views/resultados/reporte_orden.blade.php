@@ -70,7 +70,7 @@
                                         @endif
                                     </figure>
                                     <div>
-                                        <h2 class="text-lg font-semibold">{{ $orden->sede->empresa->nombre_comercial }}</h2>
+                                        <h2 class="text-lg font-semibold">{{ $orden->sede->empresa->razon_social }}</h2>
                                         <p>{{ $orden->sede->nombre }} · NIT {{ $orden->sede->empresa->nit }}</p>
                                     </div>
                                 </div>

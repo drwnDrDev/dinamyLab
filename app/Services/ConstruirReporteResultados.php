@@ -124,7 +124,7 @@ class ConstruirReporteResultados
                 'bacteriologo' => [
                     'nombre' => $empleado?->user?->name ?? 'Profesional no registrado',
                     'documento' => $empleado?->numero_documento ?? '',
-                    'firma_src' => $this->imagenComoDataUri($empleado?->firma),
+                    'firma_src' => $this->imagenComoDataUri($empleado?->firma, 'firmas'),
                 ],
                 'grupos' => $grupos,
             ];
@@ -174,7 +174,7 @@ class ConstruirReporteResultados
             'telefonos' => $sede->telefonos()->pluck('numero')->all(),
             'direccion' => $sede->direccion()->first()?->direccion ?? '',
             'email' => $sede->emails()->first()?->email,
-            'logo_src' => $this->imagenComoDataUri($sede->logo),
+            'logo_src' => $this->imagenComoDataUri($sede->logo, 'logos'),
         ];
     }
 
@@ -185,10 +185,11 @@ class ConstruirReporteResultados
 
     private function esTexto(array $parametro): bool
     {
-        return in_array(Str::lower((string) ($parametro['tipo_dato'] ?? '')), ['texto', 'text', 'string'], true);
+        return Str::lower((string) ($parametro['tipo_dato'] ?? '')) === 'textarea'
+            || Str::lower(trim((string) ($parametro['nombre'] ?? ''))) === 'observaciones';
     }
 
-    private function imagenComoDataUri(?string $ruta): ?string
+    private function imagenComoDataUri(?string $ruta, string $carpeta): ?string
     {
         if (! filled($ruta)) {
             return null;
@@ -203,7 +204,10 @@ class ConstruirReporteResultados
         $disco = Storage::disk('public');
 
         if (! $disco->exists($ruta)) {
-            return null;
+            $ruta = $carpeta.'/'.$ruta;
+            if (! $disco->exists($ruta)) {
+                return null;
+            }
         }
 
         $contenido = $disco->get($ruta);
