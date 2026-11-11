@@ -608,9 +608,13 @@
     </footer>
 
     <main>
-        @foreach ($bloques as $bloque)
-            @include('resultados.reporte._examen', ['bloque' => $bloque])
-        @endforeach
+        @if (empty($bloques))
+            <p class="nota">Esta orden aún no tiene exámenes terminados con resultados para incluir en el reporte.</p>
+        @else
+            @foreach ($bloques as $bloque)
+                @include('resultados.reporte._examen', ['bloque' => $bloque])
+            @endforeach
+        @endif
 
         @if (! empty($reporte['remisiones']))
             <div class="bloque">

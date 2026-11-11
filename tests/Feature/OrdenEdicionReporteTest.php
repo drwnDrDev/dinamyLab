@@ -148,3 +148,50 @@ it('muestra el reporte agrupado de una orden', function () {
         ->assertSee('13.5')
         ->assertSee(route('resultados.show', $procedimiento));
 });
+
+it('genera un PDF con los resultados terminados de una orden', function () {
+    $examen = Examen::factory()->create();
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $procedimiento = $orden->procedimientos()->firstOrFail();
+    $parametro = Parametro::create([
+        'nombre' => 'Hemoglobina',
+        'slug' => 'hemoglobina',
+        'tipo_dato' => 'number',
+        'examen_id' => $examen->id,
+    ]);
+    Resultado::create([
+        'parametro_id' => $parametro->id,
+        'procedimiento_id' => $procedimiento->id,
+        'resultado' => '13.5',
+    ]);
+
+    $response = $this->actingAs($this->user)
+        ->get(route('resultados.reporte_pdf', $orden));
+
+    $response->assertOk()
+        ->assertHeader('content-type', 'application/pdf')
+        ->assertHeader('content-disposition', 'attachment; filename="resultados-orden-872.pdf"');
+
+    expect(substr($response->getContent(), 0, 5))->toBe('%PDF-');
+});
+
+it('impide descargar un reporte desde una sede no autorizada', function () {
+    $examen = Examen::factory()->create();
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $otraSede = Sede::factory()->create();
+    $this->withSession(['sede' => $otraSede]);
+
+    $this->actingAs($this->user)
+        ->get(route('resultados.reporte_pdf', $orden))
+        ->assertForbidden();
+});
+
+it('deniega la descarga a usuarios sin permiso para ver resultados', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $usuarioContable = User::factory()->create();
+    $usuarioContable->assignRole('contable');
+
+    $this->actingAs($usuarioContable)
+        ->get(route('resultados.reporte_pdf', $orden))
+        ->assertForbidden();
+});
