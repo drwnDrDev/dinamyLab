@@ -549,6 +549,12 @@
             color: #5b6b6e;
         }
 
+        .orden-seccion-sede {
+            margin: 0 0 3mm;
+            font-size: 7pt;
+            color: #5b6b6e;
+        }
+
         @media print {
             .acciones-reporte,
             .historial-cambios {
@@ -623,10 +629,10 @@
         <table>
             <tr>
                 @if (filled($lab['logo_src'] ?? null))
-                    <td class="marca-logo"><img src="{{ $lab['logo_src'] }}" alt="Logo de {{ $lab['nombre_comercial'] }}"></td>
+                    <td class="marca-logo"><img src="{{ $lab['logo_src'] }}" alt="Logo de {{ $lab['razon_social'] }}"></td>
                 @endif
                 <td class="marca-texto">
-                    <div class="lab-nombre">{{ $lab['nombre_comercial'] }}</div>
+                    <div class="lab-nombre">{{ $lab['razon_social'] }}</div>
                     <div class="lab-sede">{{ $lab['sede'] }}</div>
                     <div class="lab-nit">NIT {{ $lab['nit'] }}</div>
                 </td>
@@ -702,6 +708,15 @@
                             Orden Nº {{ $primerExamenOrden['orden_numero'] }}
                             <span>Fecha de atención {{ $primerExamenOrden['fecha_atencion'] }}</span>
                         </div>
+                    @endif
+                    @if (isset($primerExamenOrden['laboratorio']))
+                        <p class="orden-seccion-sede">
+                            {{ $primerExamenOrden['laboratorio']['razon_social'] }}
+                            · {{ $primerExamenOrden['laboratorio']['sede'] }}
+                            @if (filled($primerExamenOrden['laboratorio']['nit'] ?? null))
+                                · NIT {{ $primerExamenOrden['laboratorio']['nit'] }}
+                            @endif
+                        </p>
                     @endif
                     @foreach ($bloquesOrden as $bloque)
                         @include('resultados.reporte._examen', ['bloque' => $bloque])

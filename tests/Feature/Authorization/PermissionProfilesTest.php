@@ -3,11 +3,14 @@
 namespace Tests\Feature\Authorization;
 
 use App\Estado;
+use App\Jobs\RevertirEstadoProcedimientos;
 use App\Models\Empleado;
 use App\Models\Examen;
 use App\Models\Orden;
+use App\Models\Parametro;
 use App\Models\Persona;
 use App\Models\Procedimiento;
+use App\Models\Resultado;
 use App\Models\Sede;
 use App\Models\User;
 use Database\Seeders\PaisSeeder;
@@ -46,7 +49,7 @@ class PermissionProfilesTest extends TestCase
         $this->agente = $this->userForRole('agente');
     }
 
-    public function test_agente_puede_consultar_pacientes_ordenes_resultados_y_facturas_pero_no_operar_ordenes(): void
+    public function test_agente_puede_consultar_personas_ordenes_procedimientos_y_resultados(): void
     {
         $persona = Persona::factory()->create();
         $orden = $this->crearOrden($persona, $this->sede, $this->agente);
@@ -73,28 +76,170 @@ class PermissionProfilesTest extends TestCase
 
         $this->actingAs($this->agente)
             ->withSession(['sede' => $this->sede])
-            ->get(route('facturas'))
+            ->get(route('procedimientos'))
             ->assertOk();
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('personas.create'))
+            ->assertOk();
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('personas.edit', $persona))
+            ->assertOk();
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('ordenes.create', $persona))
+            ->assertOk();
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('ordenes.edit', $orden))
+            ->assertOk();
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('resultados.reporte_pdf', $orden))
+            ->assertRedirect(route('resultados.reporte_orden', $orden));
 
         $this->actingAs($this->agente, 'sanctum')
             ->postJson('/api/ordenes', [])
-            ->assertForbidden();
+            ->assertUnprocessable();
 
         $this->actingAs($this->agente, 'sanctum')
             ->patchJson('/api/ordenes-medicas/'.$orden->id, [])
+            ->assertUnprocessable();
+    }
+
+    public function test_agente_puede_ver_examenes_reportes_y_descargar_rips(): void
+    {
+        $examen = Examen::factory()->create();
+        $orden = $this->crearOrden(Persona::factory()->create(), $this->sede, $this->agente);
+        $procedimiento = $this->crearProcedimiento($orden, $examen, $this->sede);
+        $procedimiento->update(['estado' => Estado::TERMINADO->value]);
+        $parametro = Parametro::create([
+            'nombre' => 'Hemoglobina',
+            'slug' => 'hemoglobina-agente',
+            'tipo_dato' => 'number',
+            'examen_id' => $examen->id,
+        ]);
+        Resultado::create([
+            'parametro_id' => $parametro->id,
+            'procedimiento_id' => $procedimiento->id,
+            'resultado' => '13.5',
+        ]);
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('examenes'))
+            ->assertOk();
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('examenes.show', $examen))
+            ->assertOk();
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('reportes'))
+            ->assertOk();
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('resultados.show', $procedimiento))
+            ->assertOk()
+            ->assertSee('Hemoglobina');
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('resultados.reporte_pdf', $orden))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+
+        $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
+            ->post(route('descargar.rips'), [
+                'sede_id' => $this->sede->id,
+                'fecha_inicio' => now()->startOfMonth()->toDateString(),
+                'fecha_fin' => now()->endOfMonth()->toDateString(),
+            ])
+            ->assertOk()
+            ->assertHeader('Content-Disposition');
+    }
+
+    public function test_admin_y_agente_no_pueden_crear_ni_editar_resultados(): void
+    {
+        $orden = $this->crearOrden(Persona::factory()->create(), $this->sede, $this->prestador);
+        $examen = Examen::factory()->create();
+        $procedimiento = $this->crearProcedimiento($orden, $examen, $this->sede);
+
+        foreach ([$this->admin, $this->agente] as $user) {
+            $this->assertFalse($user->can('registrar_resultado'));
+            $this->assertFalse($user->can('editar_resultado'));
+
+            $this->actingAs($user)
+                ->withSession(['sede' => $this->sede])
+                ->get(route('resultados.create', $procedimiento))
+                ->assertForbidden();
+
+            $this->actingAs($user)
+                ->withSession(['sede' => $this->sede])
+                ->post(route('resultados.store', $procedimiento), [])
+                ->assertForbidden();
+
+            $this->actingAs($user)
+                ->withSession(['sede' => $this->sede])
+                ->get(route('resultados.edit', $procedimiento))
+                ->assertForbidden();
+
+            $this->actingAs($user)
+                ->withSession(['sede' => $this->sede])
+                ->put(route('resultados.update', $procedimiento), [])
+                ->assertForbidden();
+
+            $this->actingAs($user, 'sanctum')
+                ->postJson("/api/resultados/{$procedimiento->id}", [])
+                ->assertForbidden();
+
+            $this->actingAs($user)
+                ->withSession(['sede' => $this->sede])
+                ->get(route('examenes.lote', $examen))
+                ->assertForbidden();
+
+            $this->actingAs($user)
+                ->withSession(['sede' => $this->sede])
+                ->post(route('examenes.lote.store', $examen), [])
+                ->assertForbidden();
+        }
+
+        $this->admin->assignRole('prestador');
+        $this->admin->givePermissionTo(['registrar_resultado', 'editar_resultado']);
+
+        $this->actingAs($this->admin)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('resultados.create', $procedimiento))
+            ->assertForbidden();
+
+        $this->actingAs($this->admin)
+            ->withSession(['sede' => $this->sede])
+            ->put(route('resultados.update', $procedimiento), [])
+            ->assertForbidden();
+
+        $this->actingAs($this->admin, 'sanctum')
+            ->postJson("/api/resultados/{$procedimiento->id}", [])
             ->assertForbidden();
     }
 
-    public function test_agente_puede_borrar_logicamente_pacientes_y_no_editar_examenes(): void
+    public function test_agente_no_puede_eliminar_personas_ni_editar_examenes(): void
     {
         $persona = Persona::factory()->create();
         $examen = Examen::factory()->create();
 
         $this->actingAs($this->agente, 'sanctum')
             ->deleteJson("/api/personas/{$persona->id}")
-            ->assertOk();
-
-        $this->assertSoftDeleted('personas', ['id' => $persona->id]);
+            ->assertForbidden();
 
         $this->actingAs($this->agente, 'sanctum')
             ->patchJson("/api/examenes/{$examen->id}/update", ['descripcion' => 'Cambio no autorizado'])
@@ -285,9 +430,20 @@ class PermissionProfilesTest extends TestCase
             ->get(route('ordenes'))
             ->assertOk()
             ->assertSee((string) $orden->numero);
+
+        $procedimiento = $this->crearProcedimiento($orden, Examen::factory()->create(), $otraSede);
+        $this->actingAs($this->admin)
+            ->withSession(['sede' => null])
+            ->get(route('resultados.reporte_pdf', $orden))
+            ->assertRedirect(route('resultados.reporte_orden', $orden));
+
+        $this->actingAs($this->admin)
+            ->withSession(['sede' => null])
+            ->get(route('procedimientos.show', $procedimiento))
+            ->assertOk();
     }
 
-    public function test_admin_y_prestador_pueden_ver_reportes_y_agente_no(): void
+    public function test_admin_prestador_y_agente_pueden_ver_reportes(): void
     {
         Role::findByName('admin')->revokePermissionTo('ver_reportes');
 
@@ -301,8 +457,102 @@ class PermissionProfilesTest extends TestCase
             ->assertOk();
 
         $this->actingAs($this->agente)
+            ->withSession(['sede' => $this->sede])
             ->get(route('reportes'))
-            ->assertForbidden();
+            ->assertOk();
+    }
+
+    public function test_la_orden_se_cierra_solo_cuando_todos_sus_procedimientos_terminan(): void
+    {
+        $persona = Persona::factory()->create();
+        $examen = Examen::factory()->create();
+        $orden = $this->crearOrden($persona, $this->sede, $this->prestador);
+        $primero = $this->crearProcedimiento($orden, $examen, $this->sede);
+        $segundo = $this->crearProcedimiento($orden, $examen, $this->sede);
+
+        $primero->update(['estado' => Estado::TERMINADO->value]);
+        $this->assertNull($orden->fresh()->terminada);
+
+        $segundo->update(['estado' => Estado::ENTREGADO->value]);
+        $this->assertNotNull($orden->fresh()->terminada);
+
+        $segundo->update(['estado' => Estado::PROCESO->value]);
+        $this->assertNull($orden->fresh()->terminada);
+
+        $segundo->update(['estado' => Estado::ANULADO->value]);
+        $this->assertNotNull($orden->fresh()->terminada);
+
+        $nuevo = $this->crearProcedimiento($orden, $examen, $this->sede);
+        $this->assertNull($orden->fresh()->terminada);
+
+        $nuevo->update(['estado' => Estado::ANULADO->value]);
+        $this->assertNotNull($orden->fresh()->terminada);
+    }
+
+    public function test_admin_puede_imprimir_historia_de_todas_las_sedes_sin_sede_activa(): void
+    {
+        $persona = Persona::factory()->create();
+        $examen = Examen::factory()->create();
+        $otraSede = Sede::factory()->create();
+        $ordenes = [
+            $this->crearOrden($persona, $this->sede, $this->admin),
+            $this->crearOrden($persona, $otraSede, $this->admin),
+        ];
+        $procedimientos = collect($ordenes)->map(function (Orden $orden) use ($examen) {
+            $procedimiento = $this->crearProcedimiento($orden, $examen, $orden->sede);
+            $procedimiento->update(['estado' => Estado::TERMINADO->value]);
+            $parametro = Parametro::create([
+                'nombre' => 'Hemoglobina '.$orden->id,
+                'slug' => 'hemoglobina-'.$orden->id,
+                'tipo_dato' => 'number',
+                'examen_id' => $examen->id,
+            ]);
+            Resultado::create([
+                'parametro_id' => $parametro->id,
+                'procedimiento_id' => $procedimiento->id,
+                'resultado' => '13.5',
+            ]);
+
+            return $procedimiento;
+        });
+
+        $response = $this->actingAs($this->admin)
+            ->withSession(['sede' => null])
+            ->post(route('resultados.historia_show', $persona), [
+                'procedimientos' => $procedimientos->pluck('id')->all(),
+            ])
+            ->assertOk()
+            ->assertSee('Hemoglobina '.$ordenes[0]->id)
+            ->assertSee('Hemoglobina '.$ordenes[1]->id)
+            ->assertSee('Reporte consolidado')
+            ->assertSee('Varias sedes')
+            ->assertSee('page-break-before: always');
+
+        $this->assertSame(2, substr_count($response->getContent(), 'class="orden-seccion"'));
+    }
+
+    public function test_el_job_sincroniza_la_orden_al_marcar_procedimientos_con_resultados(): void
+    {
+        $persona = Persona::factory()->create();
+        $examen = Examen::factory()->create();
+        $orden = $this->crearOrden($persona, $this->sede, $this->prestador);
+        $procedimiento = $this->crearProcedimiento($orden, $examen, $this->sede);
+        $parametro = Parametro::create([
+            'nombre' => 'Hemoglobina',
+            'slug' => 'hemoglobina-job',
+            'tipo_dato' => 'number',
+            'examen_id' => $examen->id,
+        ]);
+        Resultado::create([
+            'parametro_id' => $parametro->id,
+            'procedimiento_id' => $procedimiento->id,
+            'resultado' => '13.5',
+        ]);
+
+        (new RevertirEstadoProcedimientos)->handle();
+
+        $this->assertSame(Estado::TERMINADO->value, $procedimiento->fresh()->estado);
+        $this->assertNotNull($orden->fresh()->terminada);
     }
 
     private function userForRole(string $role): User

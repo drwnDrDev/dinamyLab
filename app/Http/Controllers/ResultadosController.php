@@ -57,8 +57,12 @@ class ResultadosController extends Controller
         $procedimiento->load(['orden.paciente', 'resultado', 'sede']);
 
         if ($procedimiento->resultado->isEmpty()) {
-            return redirect()->route('resultados.create', $procedimiento)
-                ->with('warning', 'Resultados no encontrados para este procedimiento. Por favor, completa los campos de los parametros');
+            $destino = request()->user()->hasRole('prestador')
+                ? 'resultados.create'
+                : 'procedimientos.show';
+
+            return redirect()->route($destino, $procedimiento)
+                ->with('warning', 'Resultados no encontrados para este procedimiento.');
         }
 
         $reporte = $construirReporte->paraProcedimientos(
@@ -246,21 +250,22 @@ class ResultadosController extends Controller
 
     public function historia(Persona $persona)
     {
-        $sede = request()->user()->hasRole('admin')
+        $esAdmin = request()->user()->hasRole('admin');
+        $sede = $esAdmin
             ? request()->session()->get('sede')
             : ControlSede::autorizarSedeActiva(request());
-        if (! $sede) {
+        if (! $sede && ! $esAdmin) {
             return redirect()->route('dashboard')
                 ->with('error', 'Selecciona una sede para imprimir el historial clínico.');
         }
         $ordenes = Orden::where('paciente_id', $persona->id)
-                       ->where('sede_id', $sede->id)
-                       ->with(['procedimientos' => fn ($query) => $query
-                           ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
-                           ->whereHas('resultado')
-                           ->with(['examen', 'empleado.user'])])
-                       ->orderBy('updated_at', 'desc')
-                       ->get();
+            ->when($sede, fn ($query) => $query->where('sede_id', $sede->id))
+            ->with(['procedimientos' => fn ($query) => $query
+                ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
+                ->whereHas('resultado')
+                ->with(['examen', 'empleado.user'])])
+            ->orderBy('updated_at', 'desc')
+            ->get();
         return view(
             'resultados.historia',
             compact('persona', 'ordenes')
@@ -281,10 +286,11 @@ class ResultadosController extends Controller
         Persona $persona,
         ConstruirReporteResultados $construirReporte
     ) {
-        $sede = $request->user()->hasRole('admin')
+        $esAdmin = $request->user()->hasRole('admin');
+        $sede = $esAdmin
             ? $request->session()->get('sede')
             : ControlSede::autorizarSedeActiva($request);
-        if (! $sede) {
+        if (! $sede && ! $esAdmin) {
             return redirect()->route('dashboard')
                 ->with('error', 'Selecciona una sede para imprimir el historial clínico.');
         }
@@ -294,7 +300,7 @@ class ResultadosController extends Controller
             'procedimientos.*' => ['required', 'integer', 'distinct'],
         ]);
 
-        $procedimientos = Procedimiento::where('sede_id', $sede->id)
+        $procedimientos = Procedimiento::when($sede, fn ($query) => $query->where('sede_id', $sede->id))
             ->whereHas('orden', fn ($orden) => $orden->where('paciente_id', $persona->id))
             ->whereIn('id', $validated['procedimientos'])
             ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])

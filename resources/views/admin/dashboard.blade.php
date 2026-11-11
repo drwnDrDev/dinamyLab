@@ -18,7 +18,7 @@
             @foreach ($pendientes as $procedimiento)
             <div class="grid grid-cols-7">
                 <p class="p-1 col-span-3 bg-slate-100 hover:bg-violet-300 rounded-md" >{{ $procedimiento->examen->nombre }} - {{ $procedimiento->fecha}}</p>
-                <a class="bg-green-100 hover:bg-green-300 p-2" href="{{route('resultados.create',$procedimiento)}}">Ir a reultado</a>
+                <a class="bg-green-100 hover:bg-green-300 p-2" href="{{route('resultados.show',$procedimiento)}}">Ver resultado</a>
 
                 <details class="col-span-3">
                     <summary class="bg-blue-100 hover:bg-blue-300 p-2">Cambiar estado manualmente</summary>

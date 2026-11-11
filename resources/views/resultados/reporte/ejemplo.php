@@ -192,7 +192,7 @@ $examenes = [
 
 $base = [
     'laboratorio' => [
-        'nombre_comercial' => 'Laboratorio Clínico Demo',
+        'razon_social' => 'Laboratorio Clínico Demo S.A.S.',
         'sede' => 'Sede Centro',
         'nit' => '900.000.000-0',
         'telefonos' => ['601 000 0000', '300 000 0000'],

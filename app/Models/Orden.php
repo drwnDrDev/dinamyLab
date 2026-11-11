@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Estado;
 
 class Orden extends Model
 {
@@ -26,6 +27,7 @@ class Orden extends Model
         return [
             'abono' => 'decimal:2',
             'total' => 'decimal:2',
+            'terminada' => 'datetime',
         ];
     }
     public function paciente()
@@ -40,6 +42,26 @@ class Orden extends Model
     public function procedimientos()
     {
         return $this->hasMany(Procedimiento::class);
+    }
+
+    public function sincronizarEstado(): void
+    {
+        $estadosFinales = [
+            Estado::TERMINADO->value,
+            Estado::ENTREGADO->value,
+            Estado::ANULADO->value,
+        ];
+
+        $pendientes = $this->procedimientos()->where(function ($query) use ($estadosFinales) {
+            $query->whereNotIn('estado', $estadosFinales)->orWhereNull('estado');
+        });
+        $completada = $this->procedimientos()->exists() && ! $pendientes->exists();
+
+        if ($completada && $this->terminada === null) {
+            $this->forceFill(['terminada' => now()])->saveQuietly();
+        } elseif (! $completada && $this->terminada !== null) {
+            $this->forceFill(['terminada' => null])->saveQuietly();
+        }
     }
     public function remisiones()
     {

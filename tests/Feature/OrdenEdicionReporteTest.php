@@ -125,6 +125,10 @@ it('impide quitar un procedimiento terminado y conserva sus resultados', functio
 
 it('muestra el reporte agrupado de una orden', function () {
     $examen = Examen::factory()->create();
+    $this->sede->empresa->update([
+        'razon_social' => 'Laboratorio Legal S.A.S.',
+        'nombre_comercial' => 'Marca del Laboratorio',
+    ]);
     $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
     $procedimiento = $orden->procedimientos()->firstOrFail();
     $parametro = Parametro::create([
@@ -143,6 +147,8 @@ it('muestra el reporte agrupado de una orden', function () {
         ->get(route('resultados.reporte_orden', $orden))
         ->assertOk()
         ->assertSee("Resultados de orden {$orden->numero}")
+        ->assertSee('Laboratorio Legal S.A.S.')
+        ->assertDontSee('Marca del Laboratorio')
         ->assertSee($examen->nombre)
         ->assertSee('Hemoglobina')
         ->assertSee('13.5')
@@ -150,6 +156,10 @@ it('muestra el reporte agrupado de una orden', function () {
 });
 
 it('reutiliza el contenido del reporte para resultados individuales e historia', function () {
+    $this->sede->empresa->update([
+        'razon_social' => 'Razón Social Legal S.A.S.',
+        'nombre_comercial' => 'Marca Comercial',
+    ]);
     $examen = Examen::factory()->create(['nombre' => 'Examen individual']);
     $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
     $procedimiento = $orden->procedimientos()->firstOrFail();
@@ -199,6 +209,8 @@ it('reutiliza el contenido del reporte para resultados individuales e historia',
         ->get(route('resultados.show', $procedimiento))
         ->assertOk()
         ->assertSee('Resultados de orden 872')
+        ->assertSee('Razón Social Legal S.A.S.')
+        ->assertDontSee('Marca Comercial')
         ->assertSee('Resultado individual')
         ->assertSee('13.5');
 
@@ -211,6 +223,8 @@ it('reutiliza el contenido del reporte para resultados individuales e historia',
         ->assertSee('Resultado individual')
         ->assertSee('13.5')
         ->assertSee('Resultado histórico')
+        ->assertSee('Razón Social Legal S.A.S.')
+        ->assertDontSee('Marca Comercial')
         ->assertSee('21')
         ->assertSee('Orden Nº 872')
         ->assertSee('Orden Nº 873')
@@ -260,7 +274,9 @@ it('impide descargar un reporte desde una sede no autorizada', function () {
 
 it('deniega la descarga a usuarios sin permiso para ver resultados', function () {
     $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
-    $usuarioContable = User::factory()->create();
+    $usuarioContable = User::factory()->create([
+        'email' => \Illuminate\Support\Str::uuid().'@example.test',
+    ]);
     $usuarioContable->assignRole('contable');
 
     $this->actingAs($usuarioContable)

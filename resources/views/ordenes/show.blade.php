@@ -83,14 +83,26 @@
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->fecha->format('d-m-Y H:i')   }}</span></td>
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->id }}</span></td>
                             <td class="px-3 py-4">
-                                <a class="w-60 text-primary underline" href="{{ route('resultados.show', $procedimiento) }}">
-                                    {{ $procedimiento->examen->nombre }}
-                                </a>
+                                @can('ver_resultado')
+                                    <a class="w-60 text-primary underline" href="{{ route('resultados.show', $procedimiento) }}">
+                                        {{ $procedimiento->examen->nombre }}
+                                    </a>
+                                @else
+                                    <a class="w-60 text-primary underline" href="{{ route('procedimientos.show', $procedimiento) }}">
+                                        {{ $procedimiento->examen->nombre }}
+                                    </a>
+                                @endcan
                             </td>
                             <td class="px-3 py-4">
-                                <a href="{{ route('resultados.show', $procedimiento) }}">
+                                @can('ver_resultado')
+                                    <a href="{{ route('resultados.show', $procedimiento) }}">
+                                        <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
+                                    </a>
+                                @else
+                                    <a href="{{ route('procedimientos.show', $procedimiento) }}">
                                     <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
-                                </a>
+                                    </a>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach

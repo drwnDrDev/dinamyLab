@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Estado;
 use App\Models\Orden;
 use App\Models\Procedimiento;
+use App\Models\Sede;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -57,20 +58,34 @@ class ConstruirReporteResultados
         $sede = $primerProcedimiento?->sede ?? $ordenPaciente->sede;
 
         foreach ($procedimientos as $procedimiento) {
-            if ((int) $procedimiento->orden->paciente_id !== (int) $persona->id
-                || (int) $procedimiento->sede_id !== (int) $sede->id) {
-                throw new \InvalidArgumentException('Los procedimientos del reporte deben pertenecer al mismo paciente y sede.');
+            if ((int) $procedimiento->orden->paciente_id !== (int) $persona->id) {
+                throw new \InvalidArgumentException('Los procedimientos del reporte deben pertenecer al mismo paciente.');
             }
         }
 
-        $sede->loadMissing('empresa');
-        $empresa = $sede->empresa;
         $persona->loadMissing(['tipo_documento', 'sexoCatalogo']);
-        $direccion = $sede->direccion()->first();
-        $correo = $sede->emails()->first();
-        $telefono = $sede->telefonos()->pluck('numero')->all();
+        $sedesParaReporte = $procedimientos->pluck('sede')->filter()->unique('id');
+        if ($sedesParaReporte->isEmpty()) {
+            $sedesParaReporte = collect([$sede]);
+        }
+        $laboratoriosPorSede = $sedesParaReporte->mapWithKeys(
+            fn (Sede $sedeReporte) => [$sedeReporte->id => $this->datosSede($sedeReporte)]
+        );
+        $laboratorioPrincipal = $laboratoriosPorSede->first();
+        $laboratorioEncabezado = $laboratoriosPorSede->count() > 1
+            ? [
+                ...$laboratorioPrincipal,
+                'razon_social' => 'Reporte consolidado',
+                'sede' => 'Varias sedes',
+                'nit' => '',
+                'telefonos' => [],
+                'direccion' => '',
+                'email' => null,
+                'logo_src' => null,
+            ]
+            : $laboratorioPrincipal;
 
-        $examenes = $procedimientos->map(function (Procedimiento $procedimiento): array {
+        $examenes = $procedimientos->map(function (Procedimiento $procedimiento) use ($laboratoriosPorSede): array {
             $parametros = EscogerReferencia::obtenerResultados($procedimiento);
 
             if (isset($parametros['info'])) {
@@ -101,6 +116,7 @@ class ConstruirReporteResultados
             return [
                 'procedimiento_id' => $procedimiento->id,
                 'orden_id' => $procedimiento->orden->id,
+                'laboratorio' => $laboratoriosPorSede->get($procedimiento->sede_id),
                 'nombre' => $procedimiento->examen->nombre,
                 'orden_numero' => $procedimiento->orden->numero,
                 'fecha_atencion' => $procedimiento->orden->created_at?->format('d-m-Y') ?? '',
@@ -127,15 +143,7 @@ class ConstruirReporteResultados
             ->all();
 
         return [
-            'laboratorio' => [
-                'nombre_comercial' => $empresa->nombre_comercial ?: $empresa->razon_social,
-                'sede' => $sede->nombre,
-                'nit' => $empresa->nit,
-                'telefonos' => $telefono,
-                'direccion' => $direccion?->direccion ?? '',
-                'email' => $correo?->email,
-                'logo_src' => $this->imagenComoDataUri($sede->logo),
-            ],
+            'laboratorio' => $laboratorioEncabezado,
             'paciente' => [
                 'nombre' => $persona->nombreCompleto(),
                 'documento' => trim(($persona->tipo_documento?->cod_rips ?? '').' '.$persona->numero_documento),
@@ -151,6 +159,22 @@ class ConstruirReporteResultados
             'total_examenes' => count($examenes),
             'examenes' => $examenes,
             'remisiones' => $remisiones,
+        ];
+    }
+
+    private function datosSede(Sede $sede): array
+    {
+        $sede->loadMissing('empresa');
+        $empresa = $sede->empresa;
+
+        return [
+            'razon_social' => $empresa->razon_social,
+            'sede' => $sede->nombre,
+            'nit' => $empresa->nit,
+            'telefonos' => $sede->telefonos()->pluck('numero')->all(),
+            'direccion' => $sede->direccion()->first()?->direccion ?? '',
+            'email' => $sede->emails()->first()?->email,
+            'logo_src' => $this->imagenComoDataUri($sede->logo),
         ];
     }
 
