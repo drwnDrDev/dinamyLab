@@ -1,8 +1,7 @@
 <?php
 
 /**
- * Datos ficticios para maquetar resultados/reporte.blade.php mientras el BE
- * entrega el service de IM-01. Siguen el contrato $reporte propuesto en
+ * Datos ficticios para maquetar resultados/reporte.blade.php. Siguen el contrato $reporte definido en
  * docs/CHECKLIST_DEUDA_TECNICA.md (IM-01 ⇄ IM-02).
  *
  * Ningún dato corresponde a una persona real.

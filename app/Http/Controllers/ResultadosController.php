@@ -10,8 +10,12 @@ use App\Models\Procedimiento;
 use App\Services\ControlSede;
 use App\Services\EscogerReferencia;
 use App\Services\ActualizarResultados;
+use App\Services\ConstruirReporteResultados;
 use App\Models\Persona;
 use App\Models\Orden;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ResultadosController extends Controller
 {
@@ -56,7 +60,7 @@ class ResultadosController extends Controller
         // Verifica si el procedimiento ya tiene resultados
         if ($procedimiento->resultado->isEmpty()) {
             return redirect()->route('resultados.create', $procedimiento)
-                ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
+                ->with('warning', 'Resultados no encontrados para este procedimiento. Por favor, completa los campos de los parametros');
         }
         $parametros = EscogerReferencia::obtenerResultados($procedimiento);
         $cambios = $procedimiento->cambiosResultado;
@@ -82,6 +86,36 @@ class ResultadosController extends Controller
             ]);
 
         return view('resultados.reporte_orden', compact('orden', 'procedimientos'));
+    }
+
+    public function reporteOrdenPdf(Orden $orden, ConstruirReporteResultados $construirReporte)
+    {
+        ControlSede::autorizarOrden(request(), $orden);
+        $reporte = $construirReporte->paraOrden($orden);
+
+        if ($reporte['total_examenes'] === 0) {
+            return redirect()->route('resultados.reporte_orden', $orden)
+                ->with('warning', 'Esta orden aún no tiene exámenes terminados con resultados para descargar.');
+        }
+
+        $contenidoPdf = Pdf::loadView('resultados.reporte', [
+            'reporte' => $reporte,
+            'enPdf' => true,
+        ])->setPaper('letter')->output();
+
+        Log::info('Reporte de resultados generado.', [
+            'usuario_id' => request()->user()?->id,
+            'orden_id' => $orden->id,
+            'sede_id' => $orden->sede_id,
+            'total_examenes' => $reporte['total_examenes'],
+        ]);
+
+        $numeroOrden = Str::slug((string) $orden->numero) ?: (string) $orden->id;
+
+        return response($contenidoPdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="resultados-orden-'.$numeroOrden.'.pdf"',
+        ]);
     }
 
     public function create(Procedimiento $procedimiento)
@@ -227,6 +261,15 @@ class ResultadosController extends Controller
             'resultados.historia',
             compact('persona', 'ordenes')
         );
+    }
+
+    public function print_resultado(Procedimiento $procedimiento)
+    {
+        ControlSede::autorizarProcedimiento(request(), $procedimiento);
+        $procedimiento->load(['orden.paciente', 'resultado', 'sede', 'examen.parametros.opciones']);
+        $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+
+        return view('resultados.print_resultado', compact('procedimiento', 'parametros'));
     }
 
     public function historia_show(Request $request, Persona $persona)

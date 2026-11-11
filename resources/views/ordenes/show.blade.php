@@ -32,6 +32,9 @@
                     <a href="{{ route('resultados.reporte_orden', $orden) }}">
                         <x-secondary-button>Imprimir resultados terminados</x-secondary-button>
                     </a>
+                    <a href="{{ route('resultados.reporte_pdf', $orden) }}">
+                        <x-primary-button>Descargar reporte PDF</x-primary-button>
+                    </a>
                 @endcan
 
                 <x-secondary-button onclick="window.print()">{{__('Ticket')}}</x-secondary-button>
