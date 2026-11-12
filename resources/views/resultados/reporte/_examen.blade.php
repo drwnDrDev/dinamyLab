@@ -8,7 +8,12 @@
     <table class="titulo">
         <tr>
             <td class="titulo-nombre">
-                {{ $examen['nombre'] }}@if ($bloque['continuacion'])<span class="continuacion"> (continuación)</span>@endif
+                @if (! $enPdf && isset($examen['procedimiento_id']))
+                    <a href="{{ route('resultados.show', $examen['procedimiento_id']) }}">{{ $examen['nombre'] }}</a>
+                @else
+                    {{ $examen['nombre'] }}
+                @endif
+                @if ($bloque['continuacion'])<span class="continuacion"> (continuación)</span>@endif
             </td>
             <td class="titulo-meta">
                 @if ($bloque['mostrar_orden'])Orden {{ $examen['orden_numero'] }} · @endif

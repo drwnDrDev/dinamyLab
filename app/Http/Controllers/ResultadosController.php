@@ -50,42 +50,42 @@ class ResultadosController extends Controller
             ->withQueryString();
         return view('resultados.index', compact('resultados'));
     }
-    public function show(Procedimiento $procedimiento)
+    public function show(Procedimiento $procedimiento, ConstruirReporteResultados $construirReporte)
     {
         $this->autorizarSede(request(), $procedimiento);
 
-        // Carga el procedimiento con sus relaciones necesarias
         $procedimiento->load(['orden.paciente', 'resultado', 'sede']);
 
-        // Verifica si el procedimiento ya tiene resultados
         if ($procedimiento->resultado->isEmpty()) {
             return redirect()->route('resultados.create', $procedimiento)
                 ->with('warning', 'Resultados no encontrados para este procedimiento. Por favor, completa los campos de los parametros');
         }
-        $parametros = EscogerReferencia::obtenerResultados($procedimiento);
+
+        $reporte = $construirReporte->paraProcedimientos(
+            collect([$procedimiento]),
+            $procedimiento->orden
+        );
         $cambios = $procedimiento->cambiosResultado;
 
-        return view('resultados.show', compact('procedimiento', 'parametros', 'cambios'));
+        return view('resultados.reporte', [
+            'reporte' => $reporte,
+            'enPdf' => false,
+            'cambios' => $cambios,
+            'urlVolver' => route('resultados.reporte_orden', $procedimiento->orden),
+        ]);
     }
 
-    public function reporteOrden(Orden $orden)
+    public function reporteOrden(Orden $orden, ConstruirReporteResultados $construirReporte)
     {
         ControlSede::autorizarOrden(request(), $orden);
-        $orden->load(['paciente.tipo_documento', 'sede.empresa']);
+        $reporte = $construirReporte->paraOrden($orden);
 
-        $procedimientos = Procedimiento::query()
-            ->where('orden_id', $orden->id)
-            ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
-            ->whereHas('resultado')
-            ->with(['orden.paciente.tipo_documento', 'examen', 'sede.empresa', 'empleado.user'])
-            ->orderBy('id')
-            ->get()
-            ->map(fn (Procedimiento $procedimiento) => [
-                'procedimiento' => $procedimiento,
-                'parametros' => EscogerReferencia::obtenerResultados($procedimiento),
-            ]);
-
-        return view('resultados.reporte_orden', compact('orden', 'procedimientos'));
+        return view('resultados.reporte', [
+            'reporte' => $reporte,
+            'enPdf' => false,
+            'urlVolver' => route('ordenes.show', $orden),
+            'urlPdf' => route('resultados.reporte_pdf', $orden),
+        ]);
     }
 
     public function reporteOrdenPdf(Orden $orden, ConstruirReporteResultados $construirReporte)
@@ -255,6 +255,10 @@ class ResultadosController extends Controller
         }
         $ordenes = Orden::where('paciente_id', $persona->id)
                        ->where('sede_id', $sede->id)
+                       ->with(['procedimientos' => fn ($query) => $query
+                           ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
+                           ->whereHas('resultado')
+                           ->with(['examen', 'empleado.user'])])
                        ->orderBy('updated_at', 'desc')
                        ->get();
         return view(
@@ -272,9 +276,11 @@ class ResultadosController extends Controller
         return view('resultados.print_resultado', compact('procedimiento', 'parametros'));
     }
 
-    public function historia_show(Request $request, Persona $persona)
-    {
-
+    public function historia_show(
+        Request $request,
+        Persona $persona,
+        ConstruirReporteResultados $construirReporte
+    ) {
         $sede = $request->user()->hasRole('admin')
             ? $request->session()->get('sede')
             : ControlSede::autorizarSedeActiva($request);
@@ -282,22 +288,34 @@ class ResultadosController extends Controller
             return redirect()->route('dashboard')
                 ->with('error', 'Selecciona una sede para imprimir el historial clínico.');
         }
+
+        $validated = $request->validate([
+            'procedimientos' => ['required', 'array', 'min:1'],
+            'procedimientos.*' => ['required', 'integer', 'distinct'],
+        ]);
+
         $procedimientos = Procedimiento::where('sede_id', $sede->id)
             ->whereHas('orden', fn ($orden) => $orden->where('paciente_id', $persona->id))
-            ->whereIn('id', array_keys($request->except(['_token'])))
-            ->get()
-            ->map(
-            function ($procedimiento) {
-                ControlSede::autorizarProcedimiento(request(), $procedimiento);
-                return [
-                    'procedimiento' => $procedimiento,
-                    'resultado' => EscogerReferencia::obtenerResultados($procedimiento)
-                ];
-            }
-        );
+            ->whereIn('id', $validated['procedimientos'])
+            ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
+            ->whereHas('resultado')
+            ->with(['orden', 'examen', 'empleado.user'])
+            ->orderBy('id')
+            ->get();
 
-        return view(
-            'resultados.historia_show', compact('persona', 'procedimientos', 'sede')
-        );
+        if ($procedimientos->isEmpty()) {
+            return redirect()->route('resultados.historia', $persona)
+                ->with('warning', 'Selecciona procedimientos terminados con resultados para imprimir.');
+        }
+
+        $procedimientos->each(fn (Procedimiento $procedimiento) => ControlSede::autorizarProcedimiento($request, $procedimiento));
+        $reporte = $construirReporte->paraProcedimientos($procedimientos);
+
+        return view('resultados.reporte', [
+            'reporte' => $reporte,
+            'enPdf' => false,
+            'tituloReporte' => 'Historia clínica',
+            'urlVolver' => route('resultados.historia', $persona),
+        ]);
     }
 }

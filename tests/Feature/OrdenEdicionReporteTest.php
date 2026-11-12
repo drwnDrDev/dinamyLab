@@ -149,6 +149,78 @@ it('muestra el reporte agrupado de una orden', function () {
         ->assertSee(route('resultados.show', $procedimiento));
 });
 
+it('reutiliza el contenido del reporte para resultados individuales e historia', function () {
+    $examen = Examen::factory()->create(['nombre' => 'Examen individual']);
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $procedimiento = $orden->procedimientos()->firstOrFail();
+    $parametro = Parametro::create([
+        'nombre' => 'Resultado individual',
+        'slug' => 'resultado-individual',
+        'tipo_dato' => 'number',
+        'examen_id' => $examen->id,
+    ]);
+    Resultado::create([
+        'parametro_id' => $parametro->id,
+        'procedimiento_id' => $procedimiento->id,
+        'resultado' => '13.5',
+    ]);
+
+    $examenAdicional = Examen::factory()->create(['nombre' => 'Examen histórico']);
+    $ordenAdicional = Orden::create([
+        'sede_id' => $this->sede->id,
+        'numero' => 873,
+        'paciente_id' => $orden->paciente_id,
+        'user_id' => $this->user->id,
+        'total' => $examenAdicional->valor,
+    ]);
+    $procedimientoAdicional = $ordenAdicional->procedimientos()->create([
+        'examen_id' => $examenAdicional->id,
+        'fecha' => now(),
+        'sede_id' => $this->sede->id,
+        'diagnostico_principal' => 'Z017',
+        'codigo_finalidad' => '15',
+        'codigo_modalidad' => '01',
+        'codigo_via_ingreso' => '01',
+        'estado' => Estado::ENTREGADO->value,
+    ]);
+    $parametroAdicional = Parametro::create([
+        'nombre' => 'Resultado histórico',
+        'slug' => 'resultado-historico',
+        'tipo_dato' => 'number',
+        'examen_id' => $examenAdicional->id,
+    ]);
+    Resultado::create([
+        'parametro_id' => $parametroAdicional->id,
+        'procedimiento_id' => $procedimientoAdicional->id,
+        'resultado' => '21',
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('resultados.show', $procedimiento))
+        ->assertOk()
+        ->assertSee('Resultados de orden 872')
+        ->assertSee('Resultado individual')
+        ->assertSee('13.5');
+
+    $response = $this->actingAs($this->user)
+        ->post(route('resultados.historia_show', $orden->paciente), [
+            'procedimientos' => [$procedimientoAdicional->id, $procedimiento->id],
+        ])
+        ->assertOk()
+        ->assertSee('Historia clínica')
+        ->assertSee('Resultado individual')
+        ->assertSee('13.5')
+        ->assertSee('Resultado histórico')
+        ->assertSee('21')
+        ->assertSee('Orden Nº 872')
+        ->assertSee('Orden Nº 873')
+        ->assertSee('page-break-before: always');
+
+    expect(substr_count($response->getContent(), 'class="orden-seccion"'))->toBe(2);
+    expect(strpos($response->getContent(), 'Examen individual'))
+        ->toBeLessThan(strpos($response->getContent(), 'Examen histórico'));
+});
+
 it('genera un PDF con los resultados terminados de una orden', function () {
     $examen = Examen::factory()->create();
     $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Estado;
 use App\Models\Orden;
 use App\Models\Procedimiento;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -27,14 +28,49 @@ class ConstruirReporteResultados
             ->orderBy('id')
             ->get();
 
-        $sede = $orden->sede;
+        return $this->paraProcedimientos($procedimientos, $orden);
+    }
+
+    public function paraProcedimientos(Collection $procedimientos, ?Orden $orden = null): array
+    {
+        $ordenReporte = $orden;
+
+        $procedimientos->each(fn (Procedimiento $procedimiento) => $procedimiento->loadMissing([
+            'orden.paciente.tipo_documento',
+            'orden.paciente.sexoCatalogo',
+            'orden.sede.empresa',
+            'orden.remisiones.destinoSede',
+            'sede.empresa',
+            'examen',
+            'empleado.user',
+        ]));
+
+        $primerProcedimiento = $procedimientos->first();
+        $orden ??= $primerProcedimiento?->orden;
+
+        if (! $orden && ! $primerProcedimiento) {
+            throw new \InvalidArgumentException('Se requiere una orden o al menos un procedimiento para construir el reporte.');
+        }
+
+        $ordenPaciente = $orden ?? $primerProcedimiento->orden;
+        $persona = $ordenPaciente->paciente;
+        $sede = $primerProcedimiento?->sede ?? $ordenPaciente->sede;
+
+        foreach ($procedimientos as $procedimiento) {
+            if ((int) $procedimiento->orden->paciente_id !== (int) $persona->id
+                || (int) $procedimiento->sede_id !== (int) $sede->id) {
+                throw new \InvalidArgumentException('Los procedimientos del reporte deben pertenecer al mismo paciente y sede.');
+            }
+        }
+
+        $sede->loadMissing('empresa');
         $empresa = $sede->empresa;
-        $paciente = $orden->paciente;
+        $persona->loadMissing(['tipo_documento', 'sexoCatalogo']);
         $direccion = $sede->direccion()->first();
         $correo = $sede->emails()->first();
         $telefono = $sede->telefonos()->pluck('numero')->all();
 
-        $examenes = $procedimientos->map(function (Procedimiento $procedimiento) use ($orden): array {
+        $examenes = $procedimientos->map(function (Procedimiento $procedimiento): array {
             $parametros = EscogerReferencia::obtenerResultados($procedimiento);
 
             if (isset($parametros['info'])) {
@@ -63,8 +99,11 @@ class ConstruirReporteResultados
             $empleado = $procedimiento->empleado;
 
             return [
+                'procedimiento_id' => $procedimiento->id,
+                'orden_id' => $procedimiento->orden->id,
                 'nombre' => $procedimiento->examen->nombre,
-                'orden_numero' => $orden->numero,
+                'orden_numero' => $procedimiento->orden->numero,
+                'fecha_atencion' => $procedimiento->orden->created_at?->format('d-m-Y') ?? '',
                 'fecha_validacion' => $procedimiento->updated_at?->format('d-m-Y H:i') ?? '',
                 'bacteriologo' => [
                     'nombre' => $empleado?->user?->name ?? 'Profesional no registrado',
@@ -74,6 +113,18 @@ class ConstruirReporteResultados
                 'grupos' => $grupos,
             ];
         })->all();
+
+        $ordenesConResultados = $procedimientos->isEmpty()
+            ? collect([$orden])->filter()
+            : $procedimientos->pluck('orden')->unique('id');
+        $remisiones = $ordenesConResultados
+            ->flatMap(fn (Orden $ordenProcedimiento) => $ordenProcedimiento->remisiones)
+            ->map(fn ($remision) => [
+                'cup' => $remision->cup,
+                'nombre' => $remision->nombre,
+                'destino' => $remision->destinoSede?->nombre ?? $remision->destino,
+            ])
+            ->all();
 
         return [
             'laboratorio' => [
@@ -86,24 +137,20 @@ class ConstruirReporteResultados
                 'logo_src' => $this->imagenComoDataUri($sede->logo),
             ],
             'paciente' => [
-                'nombre' => $paciente->nombreCompleto(),
-                'documento' => trim(($paciente->tipo_documento?->cod_rips ?? '').' '.$paciente->numero_documento),
-                'sexo' => $paciente->sexo_nombre,
-                'edad' => $paciente->edad($orden->created_at) ?? 'No especificada',
-                'fecha_nacimiento' => $paciente->fecha_nacimiento?->format('d-m-Y') ?? 'No especificada',
+                'nombre' => $persona->nombreCompleto(),
+                'documento' => trim(($persona->tipo_documento?->cod_rips ?? '').' '.$persona->numero_documento),
+                'sexo' => $persona->sexo_nombre,
+                'edad' => $persona->edad($ordenPaciente->created_at) ?? 'No especificada',
+                'fecha_nacimiento' => $persona->fecha_nacimiento?->format('d-m-Y') ?? 'No especificada',
             ],
-            'orden' => [
-                'numero' => $orden->numero,
-                'fecha_atencion' => $orden->created_at?->format('d-m-Y') ?? '',
-            ],
+            'orden' => $ordenReporte ? [
+                'numero' => $ordenReporte->numero,
+                'fecha_atencion' => $ordenReporte->created_at?->format('d-m-Y') ?? '',
+            ] : null,
             'fecha_emision' => now()->format('d-m-Y H:i'),
             'total_examenes' => count($examenes),
             'examenes' => $examenes,
-            'remisiones' => $orden->remisiones->map(fn ($remision) => [
-                'cup' => $remision->cup,
-                'nombre' => $remision->nombre,
-                'destino' => $remision->destinoSede?->nombre ?? $remision->destino,
-            ])->all(),
+            'remisiones' => $remisiones,
         ];
     }
 
