@@ -474,22 +474,6 @@
             border-left: 1.4mm solid #cfe4e8;
         }
 
-        .remisiones th {
-            font-size: 6.8pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5pt;
-            color: #4b8f9b;
-            padding: 1.2mm 2mm;
-            border-top: 0.6pt solid #0d191c;
-            border-bottom: 0.6pt solid #0d191c;
-        }
-
-        .remisiones td {
-            padding: 1.1mm 2mm;
-            border-bottom: 0.4pt dotted #b9d3d8;
-        }
-
         .nota {
             font-size: 7pt;
             color: #5b6b6e;
@@ -727,31 +711,6 @@
                     @endforeach
                 </section>
             @endforeach
-        @endif
-
-        @if (! empty($reporte['remisiones']))
-            <div class="bloque">
-                <div class="seccion-titulo">Exámenes remitidos</div>
-                <table class="remisiones" style="table-layout: fixed">
-                    <thead>
-                        <tr>
-                            <th style="width: 16%">CUP</th>
-                            <th style="width: 50%">Examen</th>
-                            <th style="width: 34%">Laboratorio de destino</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($reporte['remisiones'] as $remision)
-                            <tr>
-                                <td>{{ $remision['cup'] }}</td>
-                                <td>{{ $remision['nombre'] }}</td>
-                                <td>{{ $remision['destino'] }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <p class="nota">Los resultados de los exámenes remitidos se entregan por separado.</p>
-            </div>
         @endif
 
         @if ($hayFueraDeRango)
