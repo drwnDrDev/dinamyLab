@@ -28,9 +28,9 @@ class Examen extends Model
             ->withTimestamps();
     }
 
-    public function procedimiento()
+    public function procedimientos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(Procedimiento::class);
+        return $this->hasMany(Procedimiento::class);
     }
 
     public function parametros()
