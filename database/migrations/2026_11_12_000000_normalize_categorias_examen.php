@@ -29,8 +29,8 @@ return new class extends Migration
         }
 
         Schema::create('categoria_examen_pivot', function (Blueprint $table) {
-            $table->foreignId('categoria_id')->constrained('categorias')->cascadeOnDelete();
-            $table->foreignId('examen_id')->constrained('examenes')->cascadeOnDelete();
+            $table->foreignId('categoria_id')->constrained('categorias')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('examen_id')->constrained('examenes')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
             $table->primary(['categoria_id', 'examen_id']);
         });
@@ -50,19 +50,26 @@ return new class extends Migration
         Schema::rename('categoria_examen_pivot', 'categoria_examen');
     }
 
+    /**
+     * Reversión con pérdida de información: el esquema legacy solo admite un
+     * examen por categoría, así que se conserva el primero y se descartan las
+     * demás asociaciones muchos-a-muchos.
+     */
     public function down(): void
     {
         Schema::create('categoria_examen_legacy', function (Blueprint $table) {
             $table->id();
             $table->string('nombre')->unique();
             $table->string('descripcion')->nullable();
-            $table->foreignId('examen_id')->constrained('examenes')->cascadeOnDelete();
+            $table->foreignId('examen_id')->constrained('examenes')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
 
         foreach (DB::table('categorias')->orderBy('id')->get() as $categoria) {
             $examenId = DB::table('categoria_examen')
                 ->where('categoria_id', $categoria->id)
+                ->orderBy('created_at')
+                ->orderBy('examen_id')
                 ->value('examen_id');
 
             if ($examenId) {
