@@ -57,7 +57,7 @@
                         @else
                          @foreach ($procedimientos as $procedimiento)
 
-                        <tr data-url="{{ route('resultados.create', $procedimiento) }}" onclick="window.location.href=this.dataset.url" class="cursor-pointer border-t border-borders hover:bg-secondary">
+                        <tr data-url="{{ auth()->user()->hasRole('prestador') && auth()->user()->can('registrar_resultado') ? route('resultados.create', $procedimiento) : route('procedimientos.show', $procedimiento) }}" onclick="window.location.href=this.dataset.url" class="cursor-pointer border-t border-borders hover:bg-secondary">
                             <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
                                 {{ $procedimiento->created_at->format('Y-m-d') }}
                             </td>

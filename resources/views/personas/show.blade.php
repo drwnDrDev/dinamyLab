@@ -131,9 +131,15 @@
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->orden_id }}</span></td>
                             <td class="px-3 py-4"><span class="w-60">{{ $procedimiento->examen->nombre }}</span></td>
                             <td class="px-3 py-4">
-                                <a href="{{ route('resultados.show', $procedimiento) }}">
-                                    <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
-                                </a>
+                                @can('ver_resultado')
+                                    <a href="{{ route('resultados.show', $procedimiento) }}">
+                                        <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
+                                    </a>
+                                @else
+                                    <a href="{{ route('procedimientos.show', $procedimiento) }}">
+                                        <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
+                                    </a>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach
@@ -169,7 +175,7 @@
 
                             <tr class="border-t border-borders hover:bg-secondary">
                                 <td colspan="4" class="p-0">
-                                    @can('registrar_resultado')
+                                    @if(auth()->user()->hasRole('prestador') && auth()->user()->can('registrar_resultado'))
                                         <a href="{{ route('resultados.create', $procedimiento) }}" class="flex w-full h-full cursor-pointer px-4 py-2 text-inherit no-underline">
                                             <span class="w-40">{{ $procedimiento->created_at->format('Y-m-d') }}</span>
                                             <span class="w-40 text-center">{{ $procedimiento->orden_id }}</span>
@@ -183,7 +189,7 @@
                                             <span class="w-60 text-center">{{ $procedimiento->examen->nombre }}</span>
                                             <span class="w-40 text-end">{{ $procedimiento->estado }}</span>
                                         </div>
-                                    @endcan
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach

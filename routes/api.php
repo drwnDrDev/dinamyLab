@@ -68,7 +68,7 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
     Route::delete('procedimientos/{procedimiento}', [\App\Http\Controllers\Api\ProcedimientosController::class, 'destroy'])
         ->middleware('can:eliminar_procedimiento');
     Route::post('resultados/{procedimiento}', [ResultadosController::class, 'store'])
-        ->middleware('can:registrar_resultado');
+        ->middleware([\App\Http\Middleware\EnsurePrestador::class, 'can:registrar_resultado']);
 
     Route::middleware('can:ver_examen')->group(function () {
         Route::get('servicios-habilitados', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'index']);
