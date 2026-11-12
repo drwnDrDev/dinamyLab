@@ -130,6 +130,15 @@ it('muestra el reporte agrupado de una orden', function () {
         'nombre_comercial' => 'Marca del Laboratorio',
     ]);
     $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $orden->remisiones()->create([
+        'cup' => '902299',
+        'nombre' => 'Examen externo reservado',
+        'valor' => 25,
+        'destino' => 'Laboratorio externo reservado',
+    ]);
+    expect(app(\App\Services\ConstruirReporteResultados::class)->paraOrden($orden))
+        ->not->toHaveKey('remisiones');
+
     $procedimiento = $orden->procedimientos()->firstOrFail();
     $parametro = Parametro::create([
         'nombre' => 'Hemoglobina',
@@ -151,6 +160,9 @@ it('muestra el reporte agrupado de una orden', function () {
         ->assertDontSee('Marca del Laboratorio')
         ->assertSee($examen->nombre)
         ->assertSee('Hemoglobina')
+        ->assertDontSee('Examen externo reservado')
+        ->assertDontSee('Laboratorio externo reservado')
+        ->assertDontSee('Exámenes remitidos')
         ->assertSee('13.5')
         ->assertSee(route('resultados.show', $procedimiento));
 });
@@ -326,3 +338,32 @@ it('conserva las columnas de resultados de texto y carga firmas y logos por nomb
     $empleado->update(['firma' => 'firmas/profesional.png']);
     expect($servicio->paraOrden($orden)['examenes'][0]['bacteriologo']['firma_src'])->toBe($uri);
 });
+
+it('reserva el destino de remisiones al personal y conserva el examen en el ticket', function (string $rol, bool $verDestino) {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $orden->remisiones()->create([
+        'cup' => '902299',
+        'nombre' => 'Examen remitido en ticket',
+        'valor' => 25,
+        'destino' => 'Destino exclusivo del personal',
+    ]);
+    $this->user->syncRoles([$rol]);
+    $this->user->givePermissionTo('ver_orden');
+
+    $response = $this->actingAs($this->user)
+        ->get(route('ordenes.show', $orden))
+        ->assertOk()
+        ->assertSee('Examen remitido en ticket (CUP: 902299) (R)');
+
+    if ($verDestino) {
+        $response->assertSee('Destino exclusivo del personal');
+    } else {
+        $response->assertDontSee('Destino exclusivo del personal');
+    }
+})->with([
+    ['prestador', true],
+    ['agente', true],
+    ['admin', true],
+    ['contable', false],
+    ['paciente', false],
+]);

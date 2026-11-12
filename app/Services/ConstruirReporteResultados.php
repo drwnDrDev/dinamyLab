@@ -18,7 +18,6 @@ class ConstruirReporteResultados
             'paciente.tipo_documento',
             'paciente.sexoCatalogo',
             'sede.empresa',
-            'remisiones.destinoSede',
         ]);
 
         $procedimientos = Procedimiento::query()
@@ -40,7 +39,6 @@ class ConstruirReporteResultados
             'orden.paciente.tipo_documento',
             'orden.paciente.sexoCatalogo',
             'orden.sede.empresa',
-            'orden.remisiones.destinoSede',
             'sede.empresa',
             'examen',
             'empleado.user',
@@ -130,18 +128,6 @@ class ConstruirReporteResultados
             ];
         })->all();
 
-        $ordenesConResultados = $procedimientos->isEmpty()
-            ? collect([$orden])->filter()
-            : $procedimientos->pluck('orden')->unique('id');
-        $remisiones = $ordenesConResultados
-            ->flatMap(fn (Orden $ordenProcedimiento) => $ordenProcedimiento->remisiones)
-            ->map(fn ($remision) => [
-                'cup' => $remision->cup,
-                'nombre' => $remision->nombre,
-                'destino' => $remision->destinoSede?->nombre ?? $remision->destino,
-            ])
-            ->all();
-
         return [
             'laboratorio' => $laboratorioEncabezado,
             'paciente' => [
@@ -158,7 +144,6 @@ class ConstruirReporteResultados
             'fecha_emision' => now()->format('d-m-Y H:i'),
             'total_examenes' => count($examenes),
             'examenes' => $examenes,
-            'remisiones' => $remisiones,
         ];
     }
 

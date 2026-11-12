@@ -111,7 +111,7 @@
             </div>
         </div>
 
-        @if ($orden->remisiones->isNotEmpty())
+        @if (auth()->user()?->hasAnyRole(['prestador', 'agente', 'admin']) && $orden->remisiones->isNotEmpty())
         <div class="py-2">
             <h3 class="px-1 py-2 font-semibold text-titles">Remisiones</h3>
             <div class="flex overflow-hidden rounded-xl border border-borders">
