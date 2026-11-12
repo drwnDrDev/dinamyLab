@@ -398,6 +398,10 @@
             font-size: 9pt;
         }
 
+        .fila td { overflow-wrap: break-word; word-wrap: break-word; }
+
+        .col-unidades, .col-referencia { padding-left: 2mm; }
+
         .fila .col-unidades,
         .fila .col-referencia {
             color: #3a4a4d;
