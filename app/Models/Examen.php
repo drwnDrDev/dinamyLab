@@ -57,9 +57,10 @@ class Examen extends Model
         return $this->morphMany(Tarifa::class, 'tarifable');
     }
 
-    public function categoria()
+    public function categorias(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsTo(Categoria::class, 'categoria_id');
+        return $this->belongsToMany(Categoria::class, 'categoria_examen', 'examen_id', 'categoria_id')
+            ->withTimestamps();
     }
 
 
