@@ -57,7 +57,8 @@ if (document.getElementById('tarifas-examenes-root')) {
     const element = document.getElementById('tarifas-examenes-root');
     const sedeId = parseInt(element.getAttribute('data-sede-id') || '0', 10);
     const root = createRoot(element);
-    root.render(<TarifasExamenesSede sedeId={sedeId} />);
+    const canEdit = element.getAttribute('data-can-edit') === 'true';
+    root.render(<TarifasExamenesSede sedeId={sedeId} canEdit={canEdit} />);
 }
 
 if (document.getElementById('resultados-lote-root')) {
