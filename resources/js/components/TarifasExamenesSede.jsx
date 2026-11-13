@@ -65,7 +65,7 @@ const buildInitialPrecios = (examenes, tarifasMap) => {
     return initial;
 };
 
-const TarifasExamenesSede = ({ sedeId }) => {
+const TarifasExamenesSede = ({ sedeId, canEdit = false }) => {
     const [examenes, setExamenes] = useState([]);
     const [tarifasByExamen, setTarifasByExamen] = useState({});
     const [precios, setPrecios] = useState({});
@@ -138,7 +138,7 @@ const TarifasExamenesSede = ({ sedeId }) => {
     };
 
     const guardarCambios = async () => {
-        if (cambios.length === 0) {
+        if (!canEdit || cambios.length === 0) {
             return;
         }
 
@@ -186,14 +186,14 @@ const TarifasExamenesSede = ({ sedeId }) => {
         <div className="space-y-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Tarifas por examen</h3>
-                <button
+                {canEdit && <button
                     type="button"
                     onClick={guardarCambios}
                     disabled={saving || cambios.length === 0}
                     className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     {saving ? 'Guardando...' : 'Guardar cambios'}
-                </button>
+                </button>}
             </div>
 
             {loading ? (
@@ -214,6 +214,7 @@ const TarifasExamenesSede = ({ sedeId }) => {
                                 <label className="text-sm font-medium text-gray-800">{examen.nombre}</label>
                                 <input
                                     type="number"
+                                    readOnly={!canEdit}
                                     min="0"
                                     step="0.01"
                                     value={precioValue}

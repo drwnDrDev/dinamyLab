@@ -53,6 +53,7 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
         Route::get('cups/buscar', [CupsController::class, 'buscarPorNombre']);
         Route::get('cups/{codigo}', [CupsController::class, 'show']);
         Route::get('examenes', [ExamenesController::class, 'index']);
+        Route::get('examenes/precio', [ExamenesController::class, 'obtenerPrecio']);
         Route::get('examenes/{id}', [ExamenesController::class, 'show']);
     });
 
@@ -96,6 +97,9 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
         Route::post('cie10/buscar', [CodigoDiagnosticoController::class, 'search']);
     });
 
+    Route::apiResource('tarifas', \App\Http\Controllers\Api\TarifaController::class)
+        ->only(['index', 'show'])->middleware('can:ver_examen');
+
     Route::middleware('role:admin')->group(function () {
         Route::patch('servicios-habilitados/{codigo}/activar', [\App\Http\Controllers\Api\ServicioHabilitadoController::class, 'activar'])
             ->name('servicios-habilitados.activar');
@@ -111,7 +115,8 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
         Route::post('cie10', [CodigoDiagnosticoController::class, 'store']);
         Route::patch('cie10/{codigo}/activar', [CodigoDiagnosticoController::class, 'activar']);
 
-        Route::resource('tarifas', \App\Http\Controllers\Api\TarifaController::class);
+        Route::apiResource('tarifas', \App\Http\Controllers\Api\TarifaController::class)
+            ->only(['store', 'update', 'destroy']);
     });
 
     Route::get('municipios', [MunicipioController::class, 'index']);

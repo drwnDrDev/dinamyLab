@@ -9,7 +9,7 @@ class Sexo extends Model
 {
     public const FALLBACK = [
         'F' => 'Femenino',
-        'I' => 'Indeterminado o Intersexual',
+        'I' => 'Intersexual',
         'M' => 'Masculino',
     ];
 

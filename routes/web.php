@@ -131,13 +131,17 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:ver_persona')
         ->name('search');
 
+    Route::get('/admin/sedes/{sede}', [SedeController::class, 'show'])
+        ->whereNumber('sede')
+        ->middleware('can:ver_examen')->name('sedes.show');
+
     Route::middleware(['verified', 'role:admin'])->group(function () {
         Route::get('/caja', [AdministracionController::class, 'caja'])->name('caja');
         Route::get('parametros', [App\Http\Controllers\ParametroController::class, 'index'])->name('parametros.index');
         Route::get('admin/empresa', [App\Http\Controllers\EmpresaController::class, 'show'])->name('empresa.show');
         Route::get('/admin/dashboard', [EmpleadoController::class, 'dashboard'])->name('admin.dashboard');
         Route::resource('/admin/empleados', EmpleadoController::class)->except(['index']);
-        Route::resource('/admin/sedes', SedeController::class)->except(['index']);
+        Route::resource('/admin/sedes', SedeController::class)->except(['index', 'show']);
         Route::get('/cups', [CodigoCupController::class, 'index'])->name('cups.index');
         Route::post('/cups/buscar', [CodigoCupController::class, 'search'])->name('cups.search');
         Route::get('/cups/{codigoCup}', [CodigoCupController::class, 'show'])->name('cups.show');
