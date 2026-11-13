@@ -16,6 +16,7 @@
                 se usan los datos ficticios de resultados/reporte/ejemplo.php.
       $enPdf    true cuando lo renderiza DomPDF: activa la numeración "Página X de Y" y quita los
                 estilos de pantalla.
+      $urlEditar  enlace a resultados.edit; solo llega cuando el usuario puede corregir el resultado.
 --}}
 @php
     $enPdf = $enPdf ?? false;
@@ -32,6 +33,7 @@
     $tituloReporte = $tituloReporte ?? ($orden ? 'Resultados de orden '.$orden['numero'] : 'Reporte de resultados');
     $urlVolver = $urlVolver ?? null;
     $urlPdf = $urlPdf ?? null;
+    $urlEditar = $urlEditar ?? null;
 
     /*
      * Paginación determinista, en puntos (pt). DomPDF solo respeta page-break-inside: avoid si el
@@ -514,6 +516,24 @@
             cursor: pointer;
         }
 
+        .aviso-flash {
+            margin: 0 0 4mm;
+            padding: 2mm 3mm;
+            border-left: 1mm solid #4b8f9b;
+            background: #eef6f7;
+            color: #0d191c;
+        }
+
+        .aviso-warning {
+            border-left-color: #b45309;
+            background: #fff7ed;
+        }
+
+        .aviso-error {
+            border-left-color: #b91c1c;
+            background: #fef2f2;
+        }
+
         .orden-seccion + .orden-seccion {
             page-break-before: always;
             break-before: page;
@@ -545,6 +565,7 @@
 
         @media print {
             .acciones-reporte,
+            .aviso-flash,
             .historial-cambios {
                 display: none;
             }
@@ -607,11 +628,20 @@
             @if ($urlVolver)
                 <a href="{{ $urlVolver }}">Volver</a>
             @endif
+            @if ($urlEditar)
+                <a href="{{ $urlEditar }}">Editar resultado</a>
+            @endif
             <button type="button" onclick="window.print()">Imprimir</button>
             @if ($urlPdf)
                 <a href="{{ $urlPdf }}">Descargar PDF</a>
             @endif
         </nav>
+        {{-- Esta plantilla no usa el layout de la app: los flash (p. ej. tras editar) se muestran aquí. --}}
+        @foreach (['success' => 'status', 'info' => 'status', 'warning' => 'alert', 'error' => 'alert'] as $tipoAviso => $rolAviso)
+            @if (session()->has($tipoAviso))
+                <p class="aviso-flash aviso-{{ $tipoAviso }}" role="{{ $rolAviso }}">{{ session($tipoAviso) }}</p>
+            @endif
+        @endforeach
     @endunless
     <header class="encabezado">
         <table>
