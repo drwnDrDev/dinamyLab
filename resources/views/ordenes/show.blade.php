@@ -174,7 +174,7 @@
                 </div>
             </div>
             <div class="px-4 text-center">
-                <p class="font-medium">{{$orden->sede->direccion->direccion}}</p>
+                <p class="font-medium">{{$orden->sede->direccion?->direccion}}</p>
                 <p class="font-light"> Tels:
                     @php
                     $telefonos = $orden->sede->telefonos->slice(0, 2);
@@ -187,7 +187,7 @@
                         @endforeach
                 </p>
                 <p>
-                    {{$orden->sede->direccion->municipio->municipio}}
+                    {{$orden->sede->direccion?->municipio?->municipio}}
                 </p>
             </div>
         </div>
