@@ -1,4 +1,15 @@
-<?php
+Attempt to read property "direccion" on null (View: /var/www/html/resources/views/ordenes/show.blade.php)
+
+  at tests/Feature/OrdenEdicionReporteTest.php:355
+    351▕     $this->user->givePermissionTo('ver_orden');
+    352▕ 
+    353▕     $response = $this->actingAs($this->user)
+    354▕         ->get(route('ordenes.show', $orden))
+  ➜ 355▕         ->assertOk()
+    356▕         ->assertSee('Examen remitido en ticket (CUP: 902299) (R)');
+    357▕ 
+    358▕     if ($verDestino) {
+    359▕         $response->assertSee('Destino exclusivo del personal');<?php
 
 /**
  * Datos ficticios para maquetar resultados/reporte.blade.php. Siguen el contrato $reporte definido en
