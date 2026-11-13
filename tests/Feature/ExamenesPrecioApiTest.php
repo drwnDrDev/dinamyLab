@@ -27,7 +27,7 @@ class ExamenesPrecioApiTest extends TestCase
         // routes/api.php. Si se publica: registrar la ruta, crear las tarifas con
         // $tarifa->sedes()->attach() y enviar los parámetros en la URL (getJson recibe headers,
         // no query params). Ver docs/CHECKLIST_DEUDA_TECNICA.md.
-        $this->markTestSkipped('I-11: endpoint obtenerPrecio sin ruta; pendiente de decidir si se publica.');
+        //$this->markTestSkipped('I-11: endpoint obtenerPrecio sin ruta; pendiente de decidir si se publica.');
 
         // Ejecutar seeders necesarios
         $this->seed(\Database\Seeders\PaisSeeder::class);
