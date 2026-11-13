@@ -70,12 +70,18 @@ class ResultadosController extends Controller
             $procedimiento->orden
         );
         $cambios = $procedimiento->cambiosResultado;
+        $usuario = request()->user();
+        // Misma regla que las rutas de edición: EnsurePrestador + can:editar_resultado.
+        $puedeEditar = $usuario->hasRole('prestador')
+            && ! $usuario->hasRole('admin')
+            && $usuario->can('editar_resultado');
 
         return view('resultados.reporte', [
             'reporte' => $reporte,
             'enPdf' => false,
             'cambios' => $cambios,
             'urlVolver' => route('resultados.reporte_orden', $procedimiento->orden),
+            'urlEditar' => $puedeEditar ? route('resultados.edit', $procedimiento) : null,
         ]);
     }
 
@@ -204,7 +210,7 @@ class ResultadosController extends Controller
         $this->autorizarSede(request(), $procedimiento);
 
         // Carga el procedimiento con sus relaciones necesarias
-        $procedimiento->load(['orden.paciente', 'resultado', 'sede', 'examen.parametros.opciones']);
+        $procedimiento->load(['orden.paciente.tipo_documento', 'resultado', 'sede', 'examen.parametros.opciones', 'cambiosResultado']);
 
         // Verifica si el procedimiento ya tiene resultados
         if ($procedimiento->resultado->isEmpty()) {
@@ -215,8 +221,11 @@ class ResultadosController extends Controller
         // Combina parámetros del examen con resultados en una sola colección
         $parametros = collect(EscogerReferencia::obtenerResultados($procedimiento));
 
-
-        return view('resultados.edit', compact('procedimiento', 'parametros'));
+        return view('resultados.edit', [
+            'procedimiento' => $procedimiento,
+            'parametros' => $parametros,
+            'cambios' => $procedimiento->cambiosResultado,
+        ]);
     }
     public function update(Request $request, Procedimiento $procedimiento, ActualizarResultados $actualizarResultados)
     {

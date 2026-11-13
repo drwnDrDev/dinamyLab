@@ -190,6 +190,8 @@ class EscogerReferencia
                     'metodo' => $parametroBase->metodo,
                     'unidades' => $parametroBase->unidades,
                     'referencia' => $referencia?->salida,
+                    'referencia_min' => self::limite($referencia?->min),
+                    'referencia_max' => self::limite($referencia?->max),
                     'opciones' => $parametroBase->opciones->pluck('valor')->all(),
                 ];
                 continue;
@@ -239,10 +241,20 @@ class EscogerReferencia
                 'metodo'    => $resultado->parametro->metodo,
                 'unidades'  => $resultado->parametro->unidades,
                 'referencia'=> optional($referencia)->salida,
+                'referencia_min' => self::limite($referencia?->min),
+                'referencia_max' => self::limite($referencia?->max),
                 'opciones'  => $resultado->parametro->opciones->pluck('valor')->all()
             ];
         }
 
         return $parametros ?? [];
+    }
+
+    /**
+     * Límite del rango de referencia como número, o null si no está definido.
+     */
+    private static function limite(mixed $valor): ?float
+    {
+        return is_numeric($valor) ? (float) $valor : null;
     }
 }

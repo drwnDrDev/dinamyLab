@@ -12,10 +12,14 @@ import TarifasExamenesSede from './components/TarifasExamenesSede';
 import ResultadosLote from './components/resultados/ResultadosLote';
 import { toast } from './lib/toast';
 import { mountToasts } from './lib/toastDom';
+import { montarEdicionesResultados } from './lib/edicionResultadosDom';
 
 // Toasts: flash de Blade y window.toast() para el JS de las vistas.
 window.toast = toast;
 mountToasts();
+
+// Edición de resultados (resultados.edit): cambios resaltados, rango en vivo y diálogo de revisión.
+montarEdicionesResultados();
 
 // Renderizado condicional basado en la presencia de elementos en el DOM
 
