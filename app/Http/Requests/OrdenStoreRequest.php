@@ -30,6 +30,7 @@ class OrdenStoreRequest extends FormRequest
                 Rule::unique('ordenes_medicas', 'numero')
                     ->where('sede_id', session('sede')->id ?? 1),
             ],
+            'pendiente_muestra' => ['sometimes', 'boolean'],
             'paciente_id' => 'required|exists:personas,id',
             'examenes' => 'required|array',
             'examenes.*.id' => 'required|exists:examenes,id',

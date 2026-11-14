@@ -41,6 +41,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
         paciente_id: null,
         examenes: [],
         remisiones: [],
+        pendiente_muestra: false,
         cod_servicio: null,
         via_ingreso: '',
         cie_principal: null,
@@ -128,8 +129,8 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
     };
 
     const handleTablasRefUpdate = (e) => {
-        const { name, value } = e.target;
-        setFormOrden(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setFormOrden(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
         if (name === 'numero_orden') {
             setNumeroOrdenDuplicado(false);
             setErrorVerificacionNumero('');
@@ -406,6 +407,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
                                     <h3 className="text-sm font-semibold text-titles mb-2">
                                         Exámenes ({formOrden.examenes.length}) y remisiones ({formOrden.remisiones.length})
                                     </h3>
+                                    <p className="mb-2 text-sm text-text">Estado inicial: {formOrden.pendiente_muestra ? 'Pendiente por muestra' : 'En proceso'}</p>
                                     <ul className="text-sm text-text space-y-1">
                                         {formOrden.examenes.map((ex, i) => (
                                             <li key={i} className="flex justify-between">

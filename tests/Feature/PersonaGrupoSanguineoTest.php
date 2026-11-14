@@ -63,6 +63,12 @@ class PersonaGrupoSanguineoTest extends TestCase
 
     public function test_edicion_web_guarda_la_sangre_y_el_telefono_en_su_relacion(): void
     {
+        // La edición web necesita el enlace de modelos de ruta y la conversión de vacíos a null.
+        $this->withMiddleware();
+        $this->seed(\Database\Seeders\RolesYPermisosSeeder::class);
+        $usuario = \App\Models\User::factory()->create();
+        $usuario->assignRole('prestador');
+        $this->actingAs($usuario);
         $persona = Persona::factory()->create();
         $persona->telefonos()->create(['numero' => '3001112233']);
         $datos = [
