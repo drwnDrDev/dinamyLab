@@ -26,6 +26,8 @@ class PersonaFactory extends Factory
             'fecha_nacimiento' => fake()->date(),
             'sexo' => fake()->optional()->randomElement(['M', 'F']),
             'pais_origen' => '170',
+            'grupo_sanguineo' => fake()->randomElement(['A', 'B', 'AB', 'O']),
+            'factor_rh' => fake()->randomElement(['positivo', 'negativo']),
         ];
     }
 

@@ -40,6 +40,8 @@ class ApiUpdatePersonaRequest extends FormRequest
             'sexo' => ['sometimes', 'nullable', 'exists:sexos,codigo'],
             'pais' => ['sometimes', 'required', 'string', 'exists:paises,codigo_iso'],
             'pais_origen' => ['sometimes', 'required', 'string', 'exists:paises,codigo_iso'],
+            'grupo_sanguineo' => ['sometimes', 'nullable', 'string', 'in:A,B,AB,O'],
+            'factor_rh' => ['sometimes', 'nullable', 'string', 'in:positivo,negativo'],
             'telefono' => ['sometimes', 'nullable', 'string', 'size:10'],
             'correo' => ['sometimes', 'nullable', 'email', 'max:255'],
             'direccion' => ['sometimes', 'nullable', 'string', 'max:255'],

@@ -33,6 +33,8 @@ class UpdatePersonaRequest extends FormRequest
             'segundo_apellido' => ['nullable', 'string', 'max:255'],
             'fecha_nacimiento' => ['nullable', 'date', 'before_or_equal:today'],
             'sexo' => ['nullable', 'exists:sexos,codigo'],
+            'grupo_sanguineo' => ['nullable', 'string', 'in:A,B,AB,O'],
+            'factor_rh' => ['nullable', 'string', 'in:positivo,negativo'],
             'telefono' => ['nullable', 'string', 'size:10'],
         ];
     }

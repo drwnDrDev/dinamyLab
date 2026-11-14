@@ -45,6 +45,28 @@
                 @error('telefono')<p class="text-red-600">{{ $message }}</p>@enderror
             </div>
 
+            <div>
+                <label for="grupo_sanguineo">Grupo sanguíneo</label>
+                <select id="grupo_sanguineo" name="grupo_sanguineo" class="block w-full rounded border-gray-300">
+                    <option value="">Sin especificar</option>
+                    @foreach (['A', 'B', 'AB', 'O'] as $grupo)
+                        <option value="{{ $grupo }}" @selected(old('grupo_sanguineo', $persona->grupo_sanguineo) === $grupo)>{{ $grupo }}</option>
+                    @endforeach
+                </select>
+                @error('grupo_sanguineo')<p class="text-red-600">{{ $message }}</p>@enderror
+            </div>
+
+            <div>
+                <label for="factor_rh">Factor Rh</label>
+                <select id="factor_rh" name="factor_rh" class="block w-full rounded border-gray-300">
+                    <option value="">Sin especificar</option>
+                    @foreach (['positivo' => 'Positivo (+)', 'negativo' => 'Negativo (−)'] as $valor => $etiqueta)
+                        <option value="{{ $valor }}" @selected(old('factor_rh', $persona->factor_rh) === $valor)>{{ $etiqueta }}</option>
+                    @endforeach
+                </select>
+                @error('factor_rh')<p class="text-red-600">{{ $message }}</p>@enderror
+            </div>
+
             <x-primary-button>Guardar cambios</x-primary-button>
         </form>
     </x-canva>

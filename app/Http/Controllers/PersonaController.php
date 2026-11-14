@@ -133,7 +133,7 @@ class PersonaController extends Controller
     {
         $validated = $request->validated();
 
-        $persona->update($validated);
+        $persona->update(\Illuminate\Support\Arr::except($validated, ['telefono']));
 
         if ($request->filled('telefono')) {
             $persona->telefonos()->updateOrCreate(

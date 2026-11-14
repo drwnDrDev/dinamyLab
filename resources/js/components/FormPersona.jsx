@@ -48,6 +48,8 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
         apellidos: '',
         fecha_nacimiento: '',
         sexo: '',
+        grupo_sanguineo: '',
+        factor_rh: '',
         pais_nacimiento: '170',
         municipio: '11001',
         direccion: '',
@@ -136,6 +138,8 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 apellidos: persona.apellido || '',
                 fecha_nacimiento: persona.fecha_nacimiento || '',
                 sexo: persona.sexo || '',
+                grupo_sanguineo: persona.grupo_sanguineo || '',
+                factor_rh: persona.factor_rh || '',
                 pais_nacimiento: persona.pais_origen || '',
                 municipio: persona.municipio || '',
                 direccion: persona.direccion || '',
@@ -197,6 +201,8 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                 apellidos: '',
                 fecha_nacimiento: '',
                 sexo: '',
+                grupo_sanguineo: '',
+                factor_rh: '',
                 pais_nacimiento: '170',
                 municipio: '11001',
                 direccion: '',
@@ -362,6 +368,23 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             {fe('sexo') && <p className="text-sm text-red-500 mt-1">{fe('sexo')}</p>}
                         </div>
                     )}
+                    <div>
+                        <label htmlFor="grupo_sanguineo" className="block font-medium text-sm text-text mb-1">Grupo sanguíneo</label>
+                        <select id="grupo_sanguineo" name="grupo_sanguineo" value={formData.grupo_sanguineo} onChange={handleInputChange} className={inputClass(fe('grupo_sanguineo'))}>
+                            <option value="">Sin especificar</option>
+                            {['A', 'B', 'AB', 'O'].map(grupo => <option key={grupo} value={grupo}>{grupo}</option>)}
+                        </select>
+                        {fe('grupo_sanguineo') && <p className="text-sm text-red-500 mt-1">{fe('grupo_sanguineo')}</p>}
+                    </div>
+                    <div>
+                        <label htmlFor="factor_rh" className="block font-medium text-sm text-text mb-1">Factor Rh</label>
+                        <select id="factor_rh" name="factor_rh" value={formData.factor_rh} onChange={handleInputChange} className={inputClass(fe('factor_rh'))}>
+                            <option value="">Sin especificar</option>
+                            <option value="positivo">Positivo (+)</option>
+                            <option value="negativo">Negativo (−)</option>
+                        </select>
+                        {fe('factor_rh') && <p className="text-sm text-red-500 mt-1">{fe('factor_rh')}</p>}
+                    </div>
                     {perfil === 'Paciente' && (
                         <div>
                             <label className="block font-medium text-sm text-text mb-1">
