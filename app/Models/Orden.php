@@ -49,13 +49,16 @@ class Orden extends Model
         $estadosFinales = [
             Estado::TERMINADO->value,
             Estado::ENTREGADO->value,
-            Estado::ANULADO->value,
         ];
 
         $pendientes = $this->procedimientos()->where(function ($query) use ($estadosFinales) {
             $query->whereNotIn('estado', $estadosFinales)->orWhereNull('estado');
         });
-        $completada = $this->procedimientos()->exists() && ! $pendientes->exists();
+        $remisionesPendientes = $this->remisiones()->where(function ($query) use ($estadosFinales) {
+            $query->whereNotIn('estado', $estadosFinales)->orWhereNull('estado');
+        });
+        $completada = ($this->procedimientos()->exists() || $this->remisiones()->exists())
+            && ! $pendientes->exists() && ! $remisionesPendientes->exists();
 
         if ($completada && $this->terminada === null) {
             $this->forceFill(['terminada' => now()])->saveQuietly();

@@ -15,6 +15,16 @@ class ExamenCategoriasTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_seeder_json_agrupa_alias_sin_duplicar_relaciones(): void
+    {
+        $examen = Examen::factory()->create(['nombre' => 'Colesterol', 'nombre_alternativo' => null]);
+        $this->seed(\Database\Seeders\ExamenCategoriaSeeder::class);
+        $this->seed(\Database\Seeders\ExamenCategoriaSeeder::class);
+        $this->assertDatabaseCount('categorias', 4);
+        $this->assertCount(1, $examen->fresh()->categorias);
+        $this->assertSame('Perfil Lipidico', $examen->fresh()->categorias->first()->nombre);
+    }
+
     public function test_las_categorias_usan_un_pivote_muchos_a_muchos(): void
     {
         $this->assertTrue(Schema::hasTable('categorias'));

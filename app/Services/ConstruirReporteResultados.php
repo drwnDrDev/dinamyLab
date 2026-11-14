@@ -186,13 +186,16 @@ class ConstruirReporteResultados
             return null;
         }
 
-        $disco = Storage::disk('public');
-
+        $disco = Storage::disk($carpeta === 'firmas' ? 'local' : 'public');
+        if ($carpeta === 'logos' && ! Str::startsWith($ruta, 'logos/')) {
+            $ruta = 'logos/'.$ruta;
+        }
+        // Las firmas se buscan exclusivamente en storage/app/private.
         if (! $disco->exists($ruta)) {
-            $ruta = $carpeta.'/'.$ruta;
-            if (! $disco->exists($ruta)) {
+            if ($carpeta !== 'firmas' || ! $disco->exists('firmas/'.$ruta)) {
                 return null;
             }
+            $ruta = 'firmas/'.$ruta;
         }
 
         $contenido = $disco->get($ruta);

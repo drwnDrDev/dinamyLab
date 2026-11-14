@@ -120,6 +120,13 @@
                 <h3 class="text-lg font-semibold text-titles">Remisiones existentes</h3>
                 @forelse ($orden->remisiones as $remision)
                     <div class="grid grid-cols-1 gap-3 rounded-lg border border-borders p-4 md:grid-cols-2" data-remision-row>
+                        <label class="text-sm text-titles">Estado
+                            <select name="remisiones[{{ $remision->id }}][estado]" class="mt-1 w-full rounded-md border border-borders px-3 py-2">
+                                @foreach (\App\Estado::cases() as $estado)
+                                    <option value="{{ $estado->value }}" @selected(old("remisiones.{$remision->id}.estado", $remision->estado->value) === $estado->value)>{{ $estado->nombre() }}</option>
+                                @endforeach
+                            </select>
+                        </label>
                         <input type="hidden" name="remisiones[{{ $remision->id }}][id]" value="{{ $remision->id }}">
                         <p class="text-sm text-titles md:col-span-2">{{ $remision->nombre }} (CUP: {{ $remision->cup }}) — ${{ number_format($remision->valor, 2) }}</p>
                         <label class="text-sm text-titles md:col-span-2">
