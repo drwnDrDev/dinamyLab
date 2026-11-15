@@ -217,7 +217,7 @@
             margin-top: 0.6mm;
         }
 
-        .lab-nit {
+        .lab-registro-medico {
             font-size: 8pt;
             color: #5b6b6e;
             margin-top: 0.4mm;
@@ -652,7 +652,9 @@
                 <td class="marca-texto">
                     <div class="lab-nombre">{{ $lab['razon_social'] }}</div>
                     <div class="lab-sede">{{ $lab['sede'] }}</div>
-                    <div class="lab-nit">NIT {{ $lab['nit'] }}</div>
+                    @if (filled($lab['registro_medico'] ?? null))
+                        <div class="lab-registro-medico">Registro médico {{ $lab['registro_medico'] }}</div>
+                    @endif
                 </td>
                 <td class="doc-meta">
                     <div class="doc-titulo">{{ $tituloReporte }}</div>
@@ -731,8 +733,8 @@
                         <p class="orden-seccion-sede">
                             {{ $primerExamenOrden['laboratorio']['razon_social'] }}
                             · {{ $primerExamenOrden['laboratorio']['sede'] }}
-                            @if (filled($primerExamenOrden['laboratorio']['nit'] ?? null))
-                                · NIT {{ $primerExamenOrden['laboratorio']['nit'] }}
+                            @if (filled($primerExamenOrden['laboratorio']['registro_medico'] ?? null))
+                                · Registro médico {{ $primerExamenOrden['laboratorio']['registro_medico'] }}
                             @endif
                         </p>
                     @endif
