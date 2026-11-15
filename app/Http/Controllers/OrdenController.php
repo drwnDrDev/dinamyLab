@@ -237,6 +237,7 @@ class OrdenController extends Controller
             ],
             'remisiones.*.destino_sede_id' => ['nullable', 'integer', 'exists:sedes,id'],
             'remisiones.*.destino' => ['nullable', 'string', 'max:255'],
+            'remisiones.*.estado' => ['sometimes', \Illuminate\Validation\Rule::enum(\App\Estado::class)],
             'remisiones.*.eliminar' => ['nullable', 'boolean'],
             'nuevas_remisiones' => ['nullable', 'array'],
             'nuevas_remisiones.*.cup' => ['required', 'string', 'max:20'],
@@ -346,6 +347,7 @@ class OrdenController extends Controller
                 }
 
                 $remision->update([
+                    'estado' => $datos['estado'] ?? $remision->estado,
                     'destino_sede_id' => $destinoSede?->id,
                     'destino' => $destino,
                 ]);

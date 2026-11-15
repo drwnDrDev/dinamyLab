@@ -128,7 +128,7 @@
                         @foreach ($orden->remisiones as $remision)
                         <tr class="border-t border-borders hover:bg-secondary">
                             <td class="px-3 py-4">{{ $remision->cup }}</td>
-                            <td class="px-3 py-4">{{ $remision->nombre }}</td>
+                            <td class="px-3 py-4">{{ $remision->nombre }} <span class="text-sm">({{ $remision->estado->nombre() }})</span></td>
                             <td class="px-3 py-4">{{ $remision->destinoSede?->nombre ?? $remision->destino }}</td>
                             <td class="px-3 py-4 text-right">${{ number_format($remision->valor, 2) }}</td>
                         </tr>

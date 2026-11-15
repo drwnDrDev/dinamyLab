@@ -300,7 +300,8 @@ it('conserva las columnas de resultados de texto y carga firmas y logos por nomb
     \Illuminate\Support\Facades\Storage::fake('public');
     $imagen = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=');
     $disco = \Illuminate\Support\Facades\Storage::disk('public');
-    $disco->put('firmas/profesional.png', $imagen);
+    \Illuminate\Support\Facades\Storage::fake('local');
+    \Illuminate\Support\Facades\Storage::disk('local')->put('firmas/profesional.png', $imagen);
     $disco->put('logos/laboratorio.png', $imagen);
     $this->sede->update(['logo' => 'laboratorio.png']);
     $empleado = $this->user->empleado;
@@ -367,3 +368,31 @@ it('reserva el destino de remisiones al personal y conserva el examen en el tick
     ['contable', false],
     ['paciente', false],
 ]);
+
+it('espera a las remisiones y reabre la orden cuando una vuelve a pendiente', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create(), Estado::TERMINADO->value);
+    expect($orden->fresh()->terminada)->not->toBeNull();
+    $remision = $orden->remisiones()->create([
+        'cup' => '903895', 'nombre' => 'Creatinina', 'valor' => 20000, 'destino' => 'Laboratorio externo',
+    ]);
+    expect($orden->fresh()->terminada)->toBeNull();
+    $remision->update(['estado' => Estado::TERMINADO]);
+    expect($orden->fresh()->terminada)->not->toBeNull();
+    $remision->update(['estado' => Estado::PROCESO]);
+    expect($orden->fresh()->terminada)->toBeNull();
+    $remision->delete();
+    expect($orden->fresh()->terminada)->not->toBeNull();
+});
+
+it('termina una orden de solo remisiones cuando todas finalizan', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $orden->procedimientos->each->delete();
+    $remision = $orden->remisiones()->create([
+        'cup' => '903895', 'nombre' => 'Creatinina', 'valor' => 20000, 'destino' => 'Laboratorio externo',
+    ]);
+    expect($orden->fresh()->terminada)->toBeNull();
+    $remision->update(['estado' => Estado::ANULADO]);
+    expect($orden->fresh()->terminada)->toBeNull();
+    $remision->update(['estado' => Estado::ENTREGADO]);
+    expect($orden->fresh()->terminada)->not->toBeNull();
+});
