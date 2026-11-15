@@ -18,6 +18,9 @@ class EmpresaSeeder extends Seeder
 
 
     $persona = Persona::create([
+            // Datos de demostración.
+            'grupo_sanguineo' => 'O',
+            'factor_rh' => 'positivo',
             'primer_nombre'=>'Claudia',
             'segundo_nombre'=>'Patricia',
             'primer_apellido'=>'Buitrago',
@@ -29,6 +32,9 @@ class EmpresaSeeder extends Seeder
             'pais_origen'=>'170'
         ]);
         $extranjero = Persona::create([
+            // Datos de demostración.
+            'grupo_sanguineo' => 'O',
+            'factor_rh' => 'positivo',
             'primer_nombre'=>'Ronaldo',
             'primer_apellido'=>'Nazario',
            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
@@ -176,6 +182,9 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $coordi =  Persona::create([
+            // Datos de demostración.
+            'grupo_sanguineo' => 'O',
+            'factor_rh' => 'positivo',
             'primer_nombre'=>'Diana',
             'segundo_nombre'=>'Carolina',
             'primer_apellido'=>'Arboleda',
@@ -188,6 +197,9 @@ class EmpresaSeeder extends Seeder
 
         ]);
         $agente =  Persona::create([
+            // Datos de demostración.
+            'grupo_sanguineo' => 'O',
+            'factor_rh' => 'positivo',
             'primer_nombre'=>'Ronald',
             'primer_apellido'=>'McDonald',
            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),

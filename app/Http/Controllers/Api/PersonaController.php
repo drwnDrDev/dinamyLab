@@ -35,6 +35,8 @@ class PersonaController extends Controller
                     "nombre" => implode(' ',[$persona['primer_nombre'],$persona['segundo_nombre']?? '']),
                     "apellido" => implode(' ',[$persona['primer_apellido'],$persona['segundo_apellido']?? '']),
                     "sexo" => $persona['sexo'],
+                    "grupo_sanguineo" => $persona['grupo_sanguineo'],
+                    "factor_rh" => $persona['factor_rh'],
                     "fecha_nacimiento" => $persona['fecha_nacimiento'] ?? null,
                     "tipo_documento" => $persona['tipo_documento']['cod_rips'],
                     "numero_documento" => $persona['numero_documento'],
@@ -147,6 +149,8 @@ class PersonaController extends Controller
             'segundo_apellido',
             'fecha_nacimiento',
             'sexo',
+            'grupo_sanguineo',
+            'factor_rh',
         ] as $field) {
             if (array_key_exists($field, $data)) {
                 $attributes[$field] = $data[$field];
@@ -273,6 +277,8 @@ class PersonaController extends Controller
                 "numero_documento" => $persona->numero_documento,
                 "fecha_nacimiento" => $persona->fecha_nacimiento? $persona->fecha_nacimiento->format('Y-m-d') : null,
                 "sexo" => $persona->sexo,
+                "grupo_sanguineo" => $persona->grupo_sanguineo,
+                "factor_rh" => $persona->factor_rh,
                 "pais_origen" => $persona->pais_origen ?? 170,
                 "telefono" => $persona->telefonos?->first()->numero ?? null,
                 "direccion" => $persona->direccion?->direccion ?? null,

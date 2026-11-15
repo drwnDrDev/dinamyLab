@@ -50,6 +50,7 @@ class OrdenController extends Controller
                     ->where('sede_id', $sede->id),
             ],
             'fecha_orden' => 'required|date',
+            'pendiente_muestra' => 'sometimes|boolean',
             'examenes' => 'required_without:remisiones|array',
             'examenes.*.id' => 'required|exists:examenes,id',
             'examenes.*.cantidad' => 'required|integer|min:1',
@@ -129,7 +130,7 @@ class OrdenController extends Controller
                         'codigo_via_ingreso' => $validated['via_ingreso'] ?? '01',
                         'sede_id' => $sede->id,
                         'fecha' => now(),
-                        'estado' => Estado::PROCESO,
+                        'estado' => ! empty($validated['pendiente_muestra']) ? Estado::PENDIENTE->value : Estado::PROCESO->value,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
@@ -141,7 +142,11 @@ class OrdenController extends Controller
             }
 
             if ($remisiones !== []) {
-                $orden->remisiones()->createMany($remisiones);
+                $estadoInicial = ! empty($validated['pendiente_muestra']) ? Estado::PENDIENTE : Estado::PROCESO;
+                $orden->remisiones()->createMany(array_map(
+                    fn ($remision) => array_merge($remision, ['estado' => $estadoInicial]),
+                    $remisiones
+                ));
             }
 
             return $orden; // Retorna la orden creada para usarla fuera de la transacción

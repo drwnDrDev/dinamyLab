@@ -396,3 +396,46 @@ it('termina una orden de solo remisiones cuando todas finalizan', function () {
     $remision->update(['estado' => Estado::ENTREGADO]);
     expect($orden->fresh()->terminada)->not->toBeNull();
 });
+
+it('permite controlar las remisiones desde el detalle y sincroniza el cierre', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create(), Estado::TERMINADO->value);
+    $remision = $orden->remisiones()->create([
+        'cup' => '903895', 'nombre' => 'Creatinina remitida', 'valor' => 20000, 'destino' => 'Laboratorio externo',
+    ]);
+    $url = route('ordenes.remisiones.estado', [$orden, $remision]);
+    $this->actingAs($this->user)->get(route('ordenes.show', $orden))
+        ->assertOk()->assertSee($url, false)->assertSee('0 de 1 finalizadas');
+
+    foreach ([Estado::MUESTRA, Estado::PROCESO, Estado::TERMINADO] as $estado) {
+        $this->patch($url, ['estado' => $estado->value])->assertRedirect(route('ordenes.show', $orden));
+        expect($remision->fresh()->estado)->toBe($estado);
+    }
+    expect($orden->fresh()->terminada)->not->toBeNull();
+    $this->get(route('ordenes.show', $orden))->assertSee('1 de 1 finalizadas');
+    $this->patch($url, ['estado' => Estado::PENDIENTE->value])->assertRedirect();
+    expect($orden->fresh()->terminada)->toBeNull();
+    $this->patch($url, ['estado' => 'inexistente'])->assertSessionHasErrors('estado');
+});
+
+it('rechaza cambiar una remision de otra orden o sede y exige permiso', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $otra = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $remision = $otra->remisiones()->create([
+        'cup' => '903895', 'nombre' => 'Creatinina', 'valor' => 20000, 'destino' => 'Laboratorio externo',
+    ]);
+    $this->actingAs($this->user)->patch(route('ordenes.remisiones.estado', [$orden, $remision]), [
+        'estado' => Estado::TERMINADO->value,
+    ])->assertNotFound();
+
+    $otra->update(['sede_id' => Sede::factory()->create()->id]);
+    $this->patch(route('ordenes.remisiones.estado', [$otra, $remision]), [
+        'estado' => Estado::TERMINADO->value,
+    ])->assertForbidden();
+
+    $otra->update(['sede_id' => $this->sede->id]);
+    $this->user->syncRoles(['paciente']);
+    $this->patch(route('ordenes.remisiones.estado', [$otra, $remision]), [
+        'estado' => Estado::TERMINADO->value,
+    ])->assertForbidden();
+    expect($remision->fresh()->estado)->toBe(Estado::PENDIENTE);
+});

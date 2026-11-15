@@ -35,6 +35,8 @@ class GuardarPersona
             'numero_documento' => $datos['numero_documento'],
             'fecha_nacimiento' => Carbon::parse($datos['fecha_nacimiento']),
             'sexo' => $datos['sexo'],
+            'grupo_sanguineo' => $datos['grupo_sanguineo'] ?? null,
+            'factor_rh' => $datos['factor_rh'] ?? null,
             'pais_origen' => $datos['pais_nacimiento'] ?? 170,
         ]);
 

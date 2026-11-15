@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('can:editar_orden')->group(function () {
         Route::get('/ordenes-medicas/{orden}/edit', [OrdenController::class, 'edit'])->name('ordenes.edit');
+        Route::patch('/ordenes-medicas/{orden}/remisiones/{remision}/estado', [OrdenController::class, 'actualizarEstadoRemision'])->name('ordenes.remisiones.estado');
         Route::put('/ordenes-medicas/{orden}', [OrdenController::class, 'update'])->name('ordenes.update');
     });
 

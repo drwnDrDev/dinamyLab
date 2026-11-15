@@ -72,6 +72,8 @@ class StorePersonaRequest extends FormRequest
                 },
 
             ],
+            'grupo_sanguineo' => ['nullable', 'string', 'in:A,B,AB,O'],
+            'factor_rh' => ['nullable', 'string', 'in:positivo,negativo'],
             'telefono' => ['nullable', 'string', 'size:10'],
             'correo' => ['nullable', 'string', 'email', 'max:255'],
             'direccion' => ['nullable', 'string', 'max:255'],

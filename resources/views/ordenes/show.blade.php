@@ -114,6 +114,10 @@
         @if (auth()->user()?->hasAnyRole(['prestador', 'agente', 'admin']) && $orden->remisiones->isNotEmpty())
         <div class="py-2">
             <h3 class="px-1 py-2 font-semibold text-titles">Remisiones</h3>
+            <p class="px-1 pb-2 text-sm text-text">
+                {{ $orden->remisiones->filter(fn ($remision) => in_array($remision->estado, [\App\Estado::TERMINADO, \App\Estado::ENTREGADO], true))->count() }} de {{ $orden->remisiones->count() }} finalizadas
+            </p>
+            @error('estado')<p class="px-1 pb-2 text-sm text-red-600">{{ $message }}</p>@enderror
             <div class="flex overflow-hidden rounded-xl border border-borders">
                 <table class="flex-1">
                     <thead>
@@ -121,6 +125,7 @@
                             <th class="px-4 py-3 text-left text-text text-sm font-medium">CUP</th>
                             <th class="px-4 py-3 text-left text-text text-sm font-medium">Examen / procedimiento</th>
                             <th class="px-4 py-3 text-left text-text text-sm font-medium">Destino</th>
+                            <th class="px-4 py-3 text-left text-text text-sm font-medium">Progreso</th>
                             <th class="px-4 py-3 text-right text-text text-sm font-medium">Valor</th>
                         </tr>
                     </thead>
@@ -128,8 +133,25 @@
                         @foreach ($orden->remisiones as $remision)
                         <tr class="border-t border-borders hover:bg-secondary">
                             <td class="px-3 py-4">{{ $remision->cup }}</td>
-                            <td class="px-3 py-4">{{ $remision->nombre }} <span class="text-sm">({{ $remision->estado->nombre() }})</span></td>
+                            <td class="px-3 py-4">{{ $remision->nombre }}</td>
                             <td class="px-3 py-4">{{ $remision->destinoSede?->nombre ?? $remision->destino }}</td>
+                            <td class="px-3 py-4">
+                                @can('editar_orden')
+                                    <form method="POST" action="{{ route('ordenes.remisiones.estado', [$orden, $remision]) }}" class="flex flex-wrap items-center gap-2">
+                                        @csrf
+                                        @method('PATCH')
+                                        <label for="estado-remision-{{ $remision->id }}" class="sr-only">Estado de {{ $remision->nombre }}</label>
+                                        <select id="estado-remision-{{ $remision->id }}" name="estado" class="rounded-md border-borders text-sm">
+                                            @foreach (\App\Estado::cases() as $estado)
+                                                <option value="{{ $estado->value }}" @selected($remision->estado === $estado)>{{ ucfirst($estado->nombre()) }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="submit" class="rounded-md bg-primary px-3 py-2 text-sm text-white">Guardar</button>
+                                    </form>
+                                @else
+                                    <span>{{ ucfirst($remision->estado->nombre()) }}</span>
+                                @endcan
+                            </td>
                             <td class="px-3 py-4 text-right">${{ number_format($remision->valor, 2) }}</td>
                         </tr>
                         @endforeach
