@@ -34,6 +34,7 @@
     $urlVolver = $urlVolver ?? null;
     $urlPdf = $urlPdf ?? null;
     $urlEditar = $urlEditar ?? null;
+    $navegacion = $navegacion ?? [];
 
     /*
      * Paginación determinista, en puntos (pt). DomPDF solo respeta page-break-inside: avoid si el
@@ -217,7 +218,7 @@
             margin-top: 0.6mm;
         }
 
-        .lab-nit {
+        .lab-registro-medico {
             font-size: 8pt;
             color: #5b6b6e;
             margin-top: 0.4mm;
@@ -631,6 +632,16 @@
             @if ($urlEditar)
                 <a href="{{ $urlEditar }}">Editar resultado</a>
             @endif
+            @if (! $enPdf && ($navegacion['anterior'] ?? null))
+                <a href="{{ route('resultados.show', $navegacion['anterior']) }}">
+                    &larr; Anterior: {{ $navegacion['anterior']->examen->nombre }}
+                </a>
+            @endif
+            @if (! $enPdf && ($navegacion['siguiente'] ?? null))
+                <a href="{{ route('resultados.show', $navegacion['siguiente']) }}">
+                    Siguiente: {{ $navegacion['siguiente']->examen->nombre }} &rarr;
+                </a>
+            @endif
             <button type="button" onclick="window.print()">Imprimir</button>
             @if ($urlPdf)
                 <a href="{{ $urlPdf }}">Descargar PDF</a>
@@ -652,7 +663,9 @@
                 <td class="marca-texto">
                     <div class="lab-nombre">{{ $lab['razon_social'] }}</div>
                     <div class="lab-sede">{{ $lab['sede'] }}</div>
-                    <div class="lab-nit">NIT {{ $lab['nit'] }}</div>
+                    @if (filled($lab['registro_medico'] ?? null))
+                        <div class="lab-registro-medico">Registro médico {{ $lab['registro_medico'] }}</div>
+                    @endif
                 </td>
                 <td class="doc-meta">
                     <div class="doc-titulo">{{ $tituloReporte }}</div>
@@ -731,8 +744,8 @@
                         <p class="orden-seccion-sede">
                             {{ $primerExamenOrden['laboratorio']['razon_social'] }}
                             · {{ $primerExamenOrden['laboratorio']['sede'] }}
-                            @if (filled($primerExamenOrden['laboratorio']['nit'] ?? null))
-                                · NIT {{ $primerExamenOrden['laboratorio']['nit'] }}
+                            @if (filled($primerExamenOrden['laboratorio']['registro_medico'] ?? null))
+                                · Registro médico {{ $primerExamenOrden['laboratorio']['registro_medico'] }}
                             @endif
                         </p>
                     @endif

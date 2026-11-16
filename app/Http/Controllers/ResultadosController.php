@@ -65,6 +65,7 @@ class ResultadosController extends Controller
                 ->with('warning', 'Resultados no encontrados para este procedimiento.');
         }
 
+        $navegacion = $procedimiento->procedimientosAdyacentesEnOrden();
         $reporte = $construirReporte->paraProcedimientos(
             collect([$procedimiento]),
             $procedimiento->orden
@@ -82,6 +83,7 @@ class ResultadosController extends Controller
             'cambios' => $cambios,
             'urlVolver' => route('resultados.reporte_orden', $procedimiento->orden),
             'urlEditar' => $puedeEditar ? route('resultados.edit', $procedimiento) : null,
+            'navegacion' => $navegacion,
         ]);
     }
 

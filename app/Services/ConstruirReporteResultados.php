@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Cargo;
 use App\Estado;
 use App\Models\Orden;
 use App\Models\Procedimiento;
@@ -75,7 +76,7 @@ class ConstruirReporteResultados
                 ...$laboratorioPrincipal,
                 'razon_social' => 'Reporte consolidado',
                 'sede' => 'Varias sedes',
-                'nit' => '',
+                'registro_medico' => '',
                 'telefonos' => [],
                 'direccion' => '',
                 'email' => null,
@@ -155,7 +156,10 @@ class ConstruirReporteResultados
         return [
             'razon_social' => $empresa->razon_social,
             'sede' => $sede->nombre,
-            'nit' => $empresa->nit,
+            'registro_medico' => $empresa->empleados()
+                ->where('cargo', Cargo::PRESTADOR->value)
+                ->orderBy('id')
+                ->value('numero_documento'),
             'telefonos' => $sede->telefonos()->pluck('numero')->all(),
             'direccion' => $sede->direccion()->first()?->direccion ?? '',
             'email' => $sede->emails()->first()?->email,

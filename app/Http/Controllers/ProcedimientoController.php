@@ -74,8 +74,9 @@ class ProcedimientoController extends Controller
     public function show(Procedimiento $procedimiento)
     {
         ControlSede::autorizarProcedimiento(request(), $procedimiento);
+        $navegacion = $procedimiento->procedimientosAdyacentesEnOrden();
 
-        return view('procedimientos.show', compact('procedimiento'));
+        return view('procedimientos.show', compact('procedimiento', 'navegacion'));
     }
 
     /**
