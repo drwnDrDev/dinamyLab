@@ -89,7 +89,7 @@
 </section>
 
         <x-primary-button type="submit" class="mt-4">
-            {{ __('Crear Factura') }}
+            {{ 'Crear Factura' }}
         </x-primary-button>
     </form>
 

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ __('Historia') }}
+            {{ 'Historia' }}
         </h2>
     </x-slot>
     <x-canva>
@@ -117,10 +117,10 @@
                 <table class="flex-1">
                     <thead>
                         <tr class="">
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Test')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Result')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Fecha'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Examen'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Estado'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Resultado'}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -164,10 +164,10 @@
                     <table class="flex-1">
                         <thead>
                             <tr class="">
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Order')}}</th>
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Procedure')}}</th>
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
+                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{'Fecha'}}</th>
+                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{'Orden'}}</th>
+                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{'Procedimiento'}}</th>
+                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{'Estado'}}</th>
                             </tr>
                         </thead>
                         <tbody>
