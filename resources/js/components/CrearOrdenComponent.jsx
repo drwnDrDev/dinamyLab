@@ -366,6 +366,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
                                     persona={null}
                                     setPersona={handlePersonaUpdate}
                                     perfil="Paciente"
+                                    showTitle={false}
                                 />
                             )
                         )}
