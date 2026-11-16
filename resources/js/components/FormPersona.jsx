@@ -9,13 +9,16 @@ import { useValidacionNormativa } from "./hooks/useValidacionNormativa";
 import { getCatalogs } from "../lib/catalogs";
 import axios from "axios";
 import { toast } from "../lib/toast";
+import TextField from "./ui/TextField";
+import FormSection from "./ui/FormSection";
+import { inputClass, labelClass, errorClass, toErrorList } from "./ui/formStyles";
 
 const TIPO_AFILIACION_PARTICULAR = '12';
 
 const SEXOS_FALLBACK = [
     { codigo: 'F', nombre: 'Femenino' },
     { codigo: 'M', nombre: 'Masculino' },
-    { codigo: 'I', nombre: 'Indeterminado o Intersexual' },
+    { codigo: 'I', nombre: 'Indeterminado' },
 ];
 
 const IDS_SEXO = {
@@ -27,15 +30,7 @@ const IDS_SEXO = {
 // Configuración global de Axios para que funcione con las sesiones de Laravel
 axios.defaults.withCredentials = true;
 
-// Clase base para inputs de texto — usa ring (box-shadow) para evitar el borde nativo del navegador
-const inputClass = (hasError = false) =>
-    `h-9 w-full px-3 text-sm text-text bg-white rounded-md border-0 focus:outline-none transition-colors ${
-        hasError
-            ? 'ring-1 ring-red-400 focus:ring-2 focus:ring-red-500'
-            : 'ring-1 ring-borders focus:ring-2 focus:ring-primary'
-    }`;
-
-const FormPersona = ({ persona, setPersona, perfil }) => {
+const FormPersona = ({ persona, setPersona, perfil, showTitle = true }) => {
     const [personaExistente, setPersonaExistente] = useState(null);
     const [loading, setLoading] = useState(false);
     const [fieldErrors, setFieldErrors] = useState({});
@@ -234,200 +229,209 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
     // Helper para mostrar el primer error de un campo
     const fe = (name) => fieldErrors[name]?.[0];
 
+    const esPaciente = perfil === 'Paciente';
+    const muestraFecha = perfil !== 'Pagador';
+
+    // Anchos (12 columnas en md+) según los campos visibles en cada perfil
+    const spanTipoDoc = esPaciente ? 'md:col-span-3' : 'md:col-span-4';
+    const spanNumeroDoc = esPaciente ? 'md:col-span-3' : (muestraFecha ? 'md:col-span-4' : 'md:col-span-8');
+    const spanFecha = esPaciente ? 'md:col-span-3' : 'md:col-span-4';
+    const spanTelefono = esPaciente ? 'md:col-span-3' : 'md:col-span-6';
+
+    const radioClass = 'inline-flex items-center gap-1.5 cursor-pointer text-sm text-text';
+    const erroresSangre = toErrorList([fe('grupo_sanguineo'), fe('factor_rh')]);
+
     return (
         <>
         {loading && <Loader />}
 
-        <form onSubmit={handleSubmit} className="max-w-screen-lg mx-auto">
-            <div className="flex gap-4">
-                <h2 className="font-bold mb-4 text-xl text-titles">Nuevo registro de {perfil} </h2>
-            </div>
+        <form onSubmit={handleSubmit} className="max-w-screen-lg mx-auto space-y-5">
+            {showTitle && (
+                <h2 className="font-bold text-lg text-titles">Nuevo registro de {perfil}</h2>
+            )}
 
             {persona && (
-                <div className="mb-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded">
+                <div className="p-3 text-sm bg-green-100 border border-green-300 text-green-800 rounded-md">
                     <strong>{perfil} seleccionado:</strong> {persona.data.primer_nombre} {persona.data.primer_apellido} - Documento: {persona.data.numero_documento}
                 </div>
             )}
 
-            <div className="inputs_container md:grid md:grid-cols-2 gap-8 w-full min-w-80 p-4">
-                <div className="flex flex-col gap-4 mb-4 md:m-0">
+            <FormSection title="Datos personales">
+                <SelectField
+                    className={spanTipoDoc}
+                    label="Tipo de documento"
+                    name="tipo_documento"
+                    value={formData.tipo_documento}
+                    onChange={handleInputChange}
+                    codigo={true}
+                    options={tiposDocumento.map(doc => ({ key: doc.id, codigo: doc.cod_rips, nombre: doc.nombre }))}
+                />
+                <TextField
+                    className={spanNumeroDoc}
+                    label="Número de documento"
+                    name="numero_documento"
+                    value={formData.numero_documento}
+                    onChange={handleInputChange}
+                    onBlur={handleDocumentoBlur}
+                    error={[erroresValidacion.numero_documento, fe('numero_documento')]}
+                    adornment={loading && (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    )}
+                />
+                {muestraFecha && (
+                    <TextField
+                        className={spanFecha}
+                        type="date"
+                        label="Fecha de nacimiento"
+                        name="fecha_nacimiento"
+                        value={formData.fecha_nacimiento}
+                        onChange={handleInputChange}
+                        error={[erroresValidacion.fecha_nacimiento, fe('fecha_nacimiento')]}
+                    />
+                )}
+                {esPaciente && (
                     <SelectField
-                        label="Tipo de Documento"
-                        name="tipo_documento"
-                        value={formData.tipo_documento}
+                        className="md:col-span-3"
+                        label="País de nacimiento"
+                        name="pais_nacimiento"
+                        value={formData.pais_nacimiento}
+                        onChange={handleInputChange}
+                        codigo={false}
+                        options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
+                        error={fe('pais_nacimiento')}
+                    />
+                )}
+
+                <TextField
+                    className="md:col-span-6"
+                    label="Nombres"
+                    name="nombres"
+                    value={formData.nombres}
+                    onChange={handleInputChange}
+                    error={fe('nombres')}
+                />
+                <TextField
+                    className="md:col-span-6"
+                    label="Apellidos"
+                    name="apellidos"
+                    value={formData.apellidos}
+                    onChange={handleInputChange}
+                    error={fe('apellidos')}
+                />
+
+                {esPaciente && (
+                    <div className="md:col-span-7">
+                        <span id="sexo_label" className={labelClass}>Sexo</span>
+                        <div role="radiogroup" aria-labelledby="sexo_label" className="flex flex-wrap items-center gap-x-4 gap-y-1 min-h-9">
+                            {sexos.map(({ codigo, nombre }) => {
+                                const id = IDS_SEXO[codigo] ?? `sexo_${String(codigo).toLowerCase()}`;
+
+                                return (
+                                    <label key={codigo} htmlFor={id} className={radioClass}>
+                                        <input
+                                            type="radio"
+                                            id={id}
+                                            name="sexo"
+                                            value={codigo}
+                                            checked={formData.sexo === codigo}
+                                            onChange={handleInputChange}
+                                            className="h-4 w-4 accent-primary"
+                                        />
+                                        {nombre}
+                                    </label>
+                                );
+                            })}
+                        </div>
+                        {fe('sexo') && <p className={errorClass}>{fe('sexo')}</p>}
+                    </div>
+                )}
+                <div className="md:col-span-5">
+                    <span id="sangre_label" className={labelClass}>Grupo sanguíneo y Rh</span>
+                    <div role="group" aria-labelledby="sangre_label" className="grid grid-cols-2 gap-2">
+                        <select
+                            id="grupo_sanguineo"
+                            name="grupo_sanguineo"
+                            aria-label="Grupo sanguíneo"
+                            value={formData.grupo_sanguineo}
+                            onChange={handleInputChange}
+                            className={inputClass(fe('grupo_sanguineo'))}
+                        >
+                            <option value="">Sin especificar</option>
+                            {['A', 'B', 'AB', 'O'].map(grupo => <option key={grupo} value={grupo}>{grupo}</option>)}
+                        </select>
+                        <select
+                            id="factor_rh"
+                            name="factor_rh"
+                            aria-label="Factor Rh"
+                            value={formData.factor_rh}
+                            onChange={handleInputChange}
+                            className={inputClass(fe('factor_rh'))}
+                        >
+                            <option value="">Sin especificar</option>
+                            <option value="positivo">Positivo (+)</option>
+                            <option value="negativo">Negativo (−)</option>
+                        </select>
+                    </div>
+                    {erroresSangre.map((msg, i) => <p key={i} className={errorClass}>{msg}</p>)}
+                </div>
+            </FormSection>
+
+            <FormSection title={esPaciente ? 'Afiliación y contacto' : 'Contacto'}>
+                {esPaciente && (
+                    <TextField
+                        className="md:col-span-7"
+                        label="EPS"
+                        name="eps"
+                        list="eps_list"
+                        value={formData.eps}
+                        onChange={handleInputChange}
+                        error={fe('eps')}
+                    >
+                        <datalist id="eps_list">
+                            {epsList.map(e => (
+                                <option key={e.id} value={e.nombre} />
+                            ))}
+                        </datalist>
+                    </TextField>
+                )}
+                {esPaciente && (
+                    <SelectField
+                        className="md:col-span-5"
+                        label="Tipo de afiliación"
+                        name="tipo_afiliacion"
+                        value={formData.tipo_afiliacion}
                         onChange={handleInputChange}
                         codigo={true}
-                        options={tiposDocumento.map(doc => ({ key: doc.id, codigo: doc.cod_rips, nombre: doc.nombre }))}
+                        options={tiposAfiliacion}
+                        error={fe('tipo_afiliacion')}
                     />
-                    <div>
-                        <label className="block font-medium text-sm text-text mb-1">
-                            Número de Documento
-                        </label>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                name="numero_documento"
-                                value={formData.numero_documento}
-                                onChange={handleInputChange}
-                                onBlur={handleDocumentoBlur}
-                                className={inputClass(erroresValidacion.numero_documento || fe('numero_documento'))}
-                            />
-                            {loading && (
-                                <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
-                                </div>
-                            )}
-                        </div>
-                        {erroresValidacion.numero_documento && (
-                            <p className="text-sm text-red-500 mt-1">{erroresValidacion.numero_documento}</p>
-                        )}
-                        {fe('numero_documento') && (
-                            <p className="text-sm text-red-500 mt-1">{fe('numero_documento')}</p>
-                        )}
-                    </div>
-                    {perfil === 'Paciente' && (
-                        <SelectField
-                            label="Pais de Nacimiento"
-                            name="pais_nacimiento"
-                            value={formData.pais_nacimiento}
-                            onChange={handleInputChange}
-                            codigo={false}
-                            options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
-                            error={fe('pais_nacimiento')}
-                        />
-                    )}
-                    <div>
-                        <label className="block font-medium text-sm text-text mb-1">
-                            Nombres
-                        </label>
-                        <input
-                            type="text"
-                            name="nombres"
-                            value={formData.nombres}
-                            onChange={handleInputChange}
-                            className={inputClass(fe('nombres'))}
-                        />
-                        {fe('nombres') && <p className="text-sm text-red-500 mt-1">{fe('nombres')}</p>}
-                    </div>
-                    <div>
-                        <label className="block font-medium text-sm text-text mb-1">
-                            Apellidos
-                        </label>
-                        <input
-                            type="text"
-                            name="apellidos"
-                            value={formData.apellidos}
-                            onChange={handleInputChange}
-                            className={inputClass(fe('apellidos'))}
-                        />
-                        {fe('apellidos') && <p className="text-sm text-red-500 mt-1">{fe('apellidos')}</p>}
-                    </div>
-                    {perfil !== 'Pagador' && (
-                    <div>
-                        <label className="block font-medium text-sm text-text mb-1">
-                            Fecha de Nacimiento
-                        </label>
-                        <input
-                            type="date"
-                            name="fecha_nacimiento"
-                            value={formData.fecha_nacimiento}
-                            onChange={handleInputChange}
-                            className={inputClass(erroresValidacion.fecha_nacimiento || fe('fecha_nacimiento'))}
-                        />
-                        {erroresValidacion.fecha_nacimiento && (
-                            <p className="text-sm text-red-500 mt-1">{erroresValidacion.fecha_nacimiento}</p>
-                        )}
-                        {fe('fecha_nacimiento') && (
-                            <p className="text-sm text-red-500 mt-1">{fe('fecha_nacimiento')}</p>
-                        )}
-                    </div>
-                    )}
-                    {perfil === 'Paciente' && (
-                        <div>
-                            <label className="block font-medium text-sm text-text mb-1">Sexo</label>
-                            <div className="flex gap-4 items-center">
-                                {sexos.map(({ codigo, nombre }) => {
-                                    const id = IDS_SEXO[codigo] ?? `sexo_${String(codigo).toLowerCase()}`;
+                )}
 
-                                    return (
-                                        <label key={codigo} htmlFor={id} className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
-                                            <input
-                                                type="radio"
-                                                id={id}
-                                                name="sexo"
-                                                value={codigo}
-                                                checked={formData.sexo === codigo}
-                                                onChange={handleInputChange}
-                                                className="h-4 w-4 accent-primary"
-                                            />
-                                            {nombre}
-                                        </label>
-                                    );
-                                })}
-                            </div>
-                            {fe('sexo') && <p className="text-sm text-red-500 mt-1">{fe('sexo')}</p>}
-                        </div>
-                    )}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="grupo_sanguineo" className="block font-medium text-sm text-text mb-1">Grupo sanguíneo</label>
-                            <select id="grupo_sanguineo" name="grupo_sanguineo" value={formData.grupo_sanguineo} onChange={handleInputChange} className={inputClass(fe('grupo_sanguineo'))}>
-                                <option value="">Sin especificar</option>
-                                {['A', 'B', 'AB', 'O'].map(grupo => <option key={grupo} value={grupo}>{grupo}</option>)}
-                            </select>
-                            {fe('grupo_sanguineo') && <p className="text-sm text-red-500 mt-1">{fe('grupo_sanguineo')}</p>}
-                        </div>
-                        <div>
-                            <label htmlFor="factor_rh" className="block font-medium text-sm text-text mb-1">Factor Rh</label>
-                            <select id="factor_rh" name="factor_rh" value={formData.factor_rh} onChange={handleInputChange} className={inputClass(fe('factor_rh'))}>
-                                <option value="">Sin especificar</option>
-                                <option value="positivo">Positivo (+)</option>
-                                <option value="negativo">Negativo (−)</option>
-                            </select>
-                            {fe('factor_rh') && <p className="text-sm text-red-500 mt-1">{fe('factor_rh')}</p>}
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-col gap-4 mb-4 md:m-0">
-                    {perfil === 'Paciente' && (
-                        <div>
-                            <label className="block font-medium text-sm text-text mb-1">
-                                EPS
-                            </label>
-                            <input
-                                list="eps_list"
-                                name="eps"
-                                value={formData.eps}
-                                onChange={handleInputChange}
-                                className={inputClass(fe('eps'))}
-                            />
-                            <datalist id="eps_list">
-                                {epsList.map(e => (
-                                    <option key={e.id} value={e.nombre} />
-                                ))}
-                            </datalist>
-                            {fe('eps') && <p className="text-sm text-red-500 mt-1">{fe('eps')}</p>}
-                        </div>
-                    )}
-                    {perfil === 'Paciente' && (
-                        <SelectField
-                            label="Tipo de Afiliación"
-                            name="tipo_afiliacion"
-                            value={formData.tipo_afiliacion}
-                            onChange={handleInputChange}
-                            codigo={true}
-                            options={tiposAfiliacion}
-                            error={fe('tipo_afiliacion')}
-                        />
-                    )}
-                    <div>
-                        <h3 className="font-medium text-normal text-titles my-4">Información de contacto</h3>
-                    </div>
-                    {perfil === 'Paciente' && (
-                    <div>
-                        <label className="block font-medium text-sm text-text mb-1">Zona de Residencia</label>
-                        <div className="flex gap-4 items-center">
-                            <label htmlFor="zona_urbana" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
+                <TextField
+                    className={spanTelefono}
+                    type="tel"
+                    label="Teléfono"
+                    name="telefono"
+                    value={formData.telefono}
+                    onChange={handleInputChange}
+                    error={fe('telefono')}
+                />
+                {esPaciente && (
+                    <TextField
+                        className="md:col-span-5"
+                        type="email"
+                        label="Email"
+                        name="correo"
+                        value={formData.correo}
+                        onChange={handleInputChange}
+                        error={fe('correo')}
+                    />
+                )}
+                {esPaciente && (
+                    <div className="md:col-span-4">
+                        <span id="zona_label" className={labelClass}>Zona de residencia</span>
+                        <div role="radiogroup" aria-labelledby="zona_label" className="flex flex-wrap items-center gap-x-4 gap-y-1 min-h-9">
+                            <label htmlFor="zona_urbana" className={radioClass}>
                                 <input
                                     type="radio"
                                     id="zona_urbana"
@@ -439,7 +443,7 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                                 />
                                 Urbana
                             </label>
-                            <label htmlFor="zona_rural" className="inline-flex items-center gap-1.5 cursor-pointer text-sm">
+                            <label htmlFor="zona_rural" className={radioClass}>
                                 <input
                                     type="radio"
                                     id="zona_rural"
@@ -453,63 +457,21 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                             </label>
                         </div>
                     </div>
-                    )}
-                    {perfil === 'Paciente' && (
-                    <div>
-                        <label className="block font-medium text-sm text-text mb-1">
-                            Dirección
-                        </label>
-                        <input
-                            type="text"
-                            name="direccion"
-                            value={formData.direccion}
-                            onChange={handleInputChange}
-                            className={inputClass(fe('direccion'))}
-                        />
-                        {fe('direccion') && <p className="text-sm text-red-500 mt-1">{fe('direccion')}</p>}
-                    </div>
-                    )}
-                    <div>
-                        <label className="block font-medium text-sm text-text mb-1">
-                            Teléfono
-                        </label>
-                        <input
-                            type="text"
-                            name="telefono"
-                            value={formData.telefono}
-                            onChange={handleInputChange}
-                            className={inputClass(fe('telefono'))}
-                        />
-                        {fe('telefono') && <p className="text-sm text-red-500 mt-1">{fe('telefono')}</p>}
-                    </div>
-                    {perfil === 'Paciente' && (
-                    <div>
-                        <label className="block font-medium text-sm text-text mb-1">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            name="correo"
-                            value={formData.correo}
-                            onChange={handleInputChange}
-                            className={inputClass(fe('correo'))}
-                        />
-                        {fe('correo') && <p className="text-sm text-red-500 mt-1">{fe('correo')}</p>}
-                    </div>
-                    )}
-                    {perfil === 'Paciente' && (
-                    <SelectField
-                        label="Pais de Residencia"
-                        name="pais_residencia"
-                        value={formData.pais_residencia}
+                )}
+
+                {esPaciente && (
+                    <TextField
+                        className="md:col-span-5"
+                        label="Dirección"
+                        name="direccion"
+                        value={formData.direccion}
                         onChange={handleInputChange}
-                        codigo={false}
-                        options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
-                        error={fe('pais_residencia')}
+                        error={fe('direccion')}
                     />
-                    )}
-                    {perfil === 'Paciente' && (
+                )}
+                {esPaciente && (
                     <SelectField
+                        className="md:col-span-4"
                         label="Municipio"
                         name="municipio"
                         value={formData.municipio}
@@ -521,32 +483,43 @@ const FormPersona = ({ persona, setPersona, perfil }) => {
                         }))}
                         error={fe('municipio')}
                     />
-                    )}
-                    {perfil === 'Acompaniante' && (
-                        <div>
-                            <label className="block font-medium text-sm text-text mb-1">
-                                Parentesco
-                            </label>
-                            <input
-                                list="parentesco_list"
-                                name="Parentesco"
-                                value={formData.parentesco}
-                                onChange={handleInputChange}
-                                className={inputClass(false)}
-                            />
-                            <datalist id="parentesco_list">
-                                <option value="Madre" />
-                                <option value="Padre" />
-                                <option value="Hermano(a)" />
-                                <option value="Hijo(a)" />
-                                <option value="Esposo(a)" />
-                                <option value="Amigo(a)" />
-                            </datalist>
-                        </div>
-                    )}
-                </div>
-            </div>
-            <div className="flex justify-end space-x-3">
+                )}
+                {esPaciente && (
+                    <SelectField
+                        className="md:col-span-3"
+                        label="País de residencia"
+                        name="pais_residencia"
+                        value={formData.pais_residencia}
+                        onChange={handleInputChange}
+                        codigo={false}
+                        options={paises.map(p => ({ codigo: p.codigo_iso, nombre: p.nombre }))}
+                        error={fe('pais_residencia')}
+                    />
+                )}
+
+                {perfil === 'Acompaniante' && (
+                    <TextField
+                        className="md:col-span-6"
+                        label="Parentesco"
+                        id="parentesco"
+                        name="Parentesco"
+                        list="parentesco_list"
+                        value={formData.parentesco}
+                        onChange={handleInputChange}
+                    >
+                        <datalist id="parentesco_list">
+                            <option value="Madre" />
+                            <option value="Padre" />
+                            <option value="Hermano(a)" />
+                            <option value="Hijo(a)" />
+                            <option value="Esposo(a)" />
+                            <option value="Amigo(a)" />
+                        </datalist>
+                    </TextField>
+                )}
+            </FormSection>
+
+            <div className="flex justify-end">
                 <button
                     type="submit"
                     disabled={loading}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { labelClass, errorClass } from './ui/formStyles';
 
 const ChevronDown = () => (
   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -16,6 +17,7 @@ const SelectField = ({
   disabled = false,
   error,
   codigo = false,
+  className = '',
 }) => {
   const selectedOption = options.find(opt => String(opt.codigo) === String(value));
 
@@ -28,8 +30,8 @@ const SelectField = ({
   ].join(' ');
 
   return (
-    <div>
-      <label htmlFor={name} className="block font-medium text-sm text-text mb-1">
+    <div className={className}>
+      <label htmlFor={name} className={labelClass}>
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
@@ -73,7 +75,7 @@ const SelectField = ({
         </span>
       </div>
 
-      {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+      {error && <p className={errorClass}>{error}</p>}
     </div>
   );
 };
