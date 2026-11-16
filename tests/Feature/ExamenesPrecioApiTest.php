@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Convenio;
+use App\Models\Categoria;
 use App\Models\Examen;
 use App\Models\Sede;
 use App\Models\Tarifa;
@@ -96,6 +97,17 @@ class ExamenesPrecioApiTest extends TestCase
                     'tipo_tarifa' => 'precio_base',
                 ]
             ]);
+    }
+
+    public function test_lista_de_examenes_incluye_sus_grupos(): void
+    {
+        $categoria = Categoria::create(['nombre' => 'Perfil metabólico']);
+        $categoria->examenes()->attach($this->examen);
+
+        $response = $this->actingAs($this->user, 'sanctum')->getJson('/api/examenes');
+
+        $response->assertOk()
+            ->assertJsonFragment(['nombre' => 'Perfil metabólico']);
     }
 
     /**

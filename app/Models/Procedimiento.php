@@ -31,6 +31,27 @@ class Procedimiento extends Model
     {
         return $this->belongsTo(Orden::class);
     }
+
+    public function procedimientosAdyacentesEnOrden(): array
+    {
+        $procedimientos = self::query()
+            ->where('orden_id', $this->orden_id)
+            ->where('id', '<>', $this->id);
+
+        return [
+            'anterior' => (clone $procedimientos)
+                ->where('id', '<', $this->id)
+                ->with('examen:id,nombre')
+                ->orderByDesc('id')
+                ->first(),
+            'siguiente' => (clone $procedimientos)
+                ->where('id', '>', $this->id)
+                ->with('examen:id,nombre')
+                ->orderBy('id')
+                ->first(),
+        ];
+    }
+
     public function empleado()
     {
         return $this->belongsTo(Empleado::class);

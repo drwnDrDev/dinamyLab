@@ -34,6 +34,7 @@
     $urlVolver = $urlVolver ?? null;
     $urlPdf = $urlPdf ?? null;
     $urlEditar = $urlEditar ?? null;
+    $navegacion = $navegacion ?? [];
 
     /*
      * Paginación determinista, en puntos (pt). DomPDF solo respeta page-break-inside: avoid si el
@@ -630,6 +631,16 @@
             @endif
             @if ($urlEditar)
                 <a href="{{ $urlEditar }}">Editar resultado</a>
+            @endif
+            @if (! $enPdf && ($navegacion['anterior'] ?? null))
+                <a href="{{ route('resultados.show', $navegacion['anterior']) }}">
+                    &larr; Anterior: {{ $navegacion['anterior']->examen->nombre }}
+                </a>
+            @endif
+            @if (! $enPdf && ($navegacion['siguiente'] ?? null))
+                <a href="{{ route('resultados.show', $navegacion['siguiente']) }}">
+                    Siguiente: {{ $navegacion['siguiente']->examen->nombre }} &rarr;
+                </a>
             @endif
             <button type="button" onclick="window.print()">Imprimir</button>
             @if ($urlPdf)

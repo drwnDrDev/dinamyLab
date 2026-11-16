@@ -85,6 +85,17 @@ const DatosExamenes = ({
     }
   };
 
+  const handleAgregarGrupo = (examenesGrupo) => {
+    const idsAgregados = new Set(formExamenes.map(examen => examen.id));
+    const nuevosExamenes = examenesGrupo
+      .filter(examen => !idsAgregados.has(examen.id))
+      .map(examen => ({ ...examen, cantidad: 1 }));
+
+    if (nuevosExamenes.length > 0) {
+      onUpdate([...formExamenes, ...nuevosExamenes]);
+    }
+  };
+
   const handleRemove = (index) => {
     const nuevosExamenes = [...formExamenes];
     nuevosExamenes.splice(index, 1);
@@ -351,6 +362,7 @@ const DatosExamenes = ({
           disponibles={disponibles}
           examenesActuales={formExamenes}
           onAgregar={handleAgregar}
+          onAgregarGrupo={handleAgregarGrupo}
           onClose={() => setIsModalOpen(false)}
           sexoPaciente={sexoPaciente}
         />
