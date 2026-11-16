@@ -66,7 +66,7 @@ class EmpresaSeeder extends Seeder
 
         $empresa = \App\Models\Empresa::create([
             'nit'=>'51934571-8',
-            'razon_social'=>'Laboratorio Claudia Buitrago',
+            'razon_social'=>'LABORATORIO CLINICO CLAUDIA PATRICIA BUITRAGO HERNANDEZ',
             'nombre_comercial'=>'Biotek',
 
         ]);
@@ -96,9 +96,9 @@ class EmpresaSeeder extends Seeder
 
 
         $sede = \App\Models\Sede::create([
-            'nombre'=>'Biotek Bosa',
+            'nombre'=>'Laboratorio',
             'codigo_prestador'=>'110010822701',
-            'logo'=>'biotek_logo.png',
+            'logo'=>'014.svg',
             'empresa_id'=>$empresa->id,
 
         ]);
@@ -111,9 +111,9 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $sede2 = \App\Models\Sede::create([
-            'nombre'=>'IPS Bosa',
+            'nombre'=>'Toma de muestras',
             'codigo_prestador'=>'110010822703',
-            'logo'=>'ryc.png',
+            'logo'=>'015.svg',
             'empresa_id'=>$empresa->id,
 
         ]);

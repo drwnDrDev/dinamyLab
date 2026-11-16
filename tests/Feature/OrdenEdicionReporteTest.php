@@ -273,6 +273,20 @@ it('genera un PDF con los resultados terminados de una orden', function () {
     expect(substr($response->getContent(), 0, 5))->toBe('%PDF-');
 });
 
+it('muestra el registro médico con la cédula del empleado prestador de la empresa', function () {
+    $this->user->empleado->update([
+        'cargo' => \App\Cargo::PRESTADOR->value,
+        'numero_documento' => '12345678',
+    ]);
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+
+    $this->actingAs($this->user)
+        ->get(route('resultados.reporte_orden', $orden))
+        ->assertOk()
+        ->assertSee('Registro médico 12345678')
+        ->assertDontSee('NIT ');
+});
+
 it('impide descargar un reporte desde una sede no autorizada', function () {
     $examen = Examen::factory()->create();
     $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
