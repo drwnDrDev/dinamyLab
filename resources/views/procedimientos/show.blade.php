@@ -11,6 +11,22 @@
         <div class="flex justify-around">
             <h2>Numero de orden <span class="font-semibold">{{$procedimiento->orden->numero}}</span></h2>
         </div>
+        @if ($navegacion['anterior'] || $navegacion['siguiente'])
+            <nav class="my-4 flex flex-wrap items-center justify-between gap-3" aria-label="Navegar por los exámenes de la orden">
+                @if ($navegacion['anterior'])
+                    <a class="text-primary underline" href="{{ route('procedimientos.show', $navegacion['anterior']) }}">
+                        ← Anterior: {{ $navegacion['anterior']->examen->nombre }}
+                    </a>
+                @else
+                    <span></span>
+                @endif
+                @if ($navegacion['siguiente'])
+                    <a class="text-primary underline" href="{{ route('procedimientos.show', $navegacion['siguiente']) }}">
+                        Siguiente: {{ $navegacion['siguiente']->examen->nombre }} →
+                    </a>
+                @endif
+            </nav>
+        @endif
         <div>
             <h2 class="font-bold mb-4 text-xl text-secondary">Resultados del Examen</h2>
             <p class="text-gray-600 mb-4">Examen: {{ $procedimiento->examen->nombre }}</p>
