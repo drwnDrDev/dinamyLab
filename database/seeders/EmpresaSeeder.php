@@ -98,7 +98,7 @@ class EmpresaSeeder extends Seeder
         $sede = \App\Models\Sede::create([
             'nombre'=>'Laboratorio',
             'codigo_prestador'=>'110010822701',
-            'logo'=>'014.svg',
+            'logo'=>'014.png',
             'empresa_id'=>$empresa->id,
 
         ]);
@@ -113,7 +113,7 @@ class EmpresaSeeder extends Seeder
         $sede2 = \App\Models\Sede::create([
             'nombre'=>'Toma de muestras',
             'codigo_prestador'=>'110010822703',
-            'logo'=>'015.svg',
+            'logo'=>'015.png',
             'empresa_id'=>$empresa->id,
 
         ]);
@@ -158,6 +158,7 @@ class EmpresaSeeder extends Seeder
             'numero_documento'=>'51712439',
             'fecha_nacimiento'=>'1963-05-20',
             'user_id'=>5,
+            'firma'=>'firma_pilar.png',
             'empresa_id'=>$sanPablo->id,
 
         ]);
@@ -202,7 +203,7 @@ class EmpresaSeeder extends Seeder
             'factor_rh' => 'positivo',
             'primer_nombre'=>'Ronald',
             'primer_apellido'=>'McDonald',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
+            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
             'sexo'=>'I',
