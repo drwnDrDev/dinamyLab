@@ -55,7 +55,7 @@ class SearchController extends Controller
 
 
         return view('search.busqueda_avanzada', compact('query'))
-            ->with('error', __('No results found for the search query'));
+            ->with('error', 'No se encontraron resultados para la búsqueda.');
     }
 
     private function buscarOrden($query, ?int $sedeId)
