@@ -9,7 +9,7 @@
         <tr>
             <td class="titulo-nombre">
                 @if (! $enPdf && isset($examen['procedimiento_id']))
-                    <a href="{{ route('resultados.show', $examen['procedimiento_id']) }}">{{ $examen['nombre'] }}</a>
+                    {{ $examen['nombre'] }}
                 @else
                     {{ $examen['nombre'] }}
                 @endif
