@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Sede') }}
+            {{ 'Sede' }}
         </h2>
     </x-slot>
 <x-canva>
@@ -22,7 +22,7 @@
     <section>
         <header>
                 <h2 class="text-lg font-medium text-gray-900">
-                    {{ __('Profesionales disponibles en esta sede') }}
+                    {{ 'Profesionales disponibles en esta sede' }}
                 </h2>
 
                 @foreach ($sede->empleados as $empleado)
@@ -33,7 +33,7 @@
     <section>
         <header>
                 <h2 class="text-lg font-medium text-gray-900">
-                    {{ __('Exams available at this location') }}
+                    {{ 'Exámenes disponibles en esta sede' }}
                 </h2>
         </header>
 

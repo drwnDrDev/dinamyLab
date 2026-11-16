@@ -13,42 +13,42 @@
     <div class="flex flex-col gap-1 p-2 bg-background overflow-hidden">
 
         <x-nav-link :href="route('inicio')" icono="panel" :active="request()->routeIs('inicio')">
-            {{ __('Dashboard') }}
+            {{ 'Panel' }}
         </x-nav-link>
 
         @can('ver_persona')
             <x-nav-link :href="route('personas')" icono="personas" :active="request()->routeIs('personas*')">
-                {{ __('People') }}
+                {{ 'Personas' }}
             </x-nav-link>
         @endcan
 
         @can('ver_orden')
             <x-nav-link :href="route('ordenes')" icono="ordenes" :active="request()->routeIs('ordenes*')">
-                {{ __('Medical order') }}
+                {{ 'Orden médica' }}
             </x-nav-link>
         @endcan
 
         @can('ver_procedimiento')
             <x-nav-link :href="route('procedimientos')" icono="procedimientos" :active="request()->routeIs('procedimientos*')">
-                {{ __('Procedures') }}
+                {{ 'Procedimientos' }}
             </x-nav-link>
         @endcan
 
         @can('ver_resultado')
             <x-nav-link :href="route('resultados')" icono="resultados" :active="request()->routeIs('resultados*')">
-                {{ __('Results') }}
+                {{ 'Resultados' }}
             </x-nav-link>
         @endcan
 
         @role('admin')
             <x-nav-link :href="route('caja')" icono="caja" :active="request()->routeIs('caja*')">
-                {{ __('Cash register') }}
+                {{ 'Caja' }}
             </x-nav-link>
         @endrole
 
         @can('ver_facturas')
         <x-nav-link :href="route('facturas')" icono="facturas" :active="request()->routeIs('facturas*')">
-            {{ __('Invoices') }}
+            {{ 'Facturas' }}
         </x-nav-link>
 
         @endcan
@@ -56,14 +56,14 @@
 
         @if(auth()->user()->hasRole('admin') || auth()->user()->can('ver_reportes'))
             <x-nav-link :href="route('reportes')" icono="reportes" :active="request()->routeIs('reportes*')">
-                {{ __('Reportes') }}
+                {{ 'Reportes' }}
             </x-nav-link>
         @endif
 
         
         @if(auth()->user()?->hasRole('admin'))
         <x-nav-link :href="route('empresa.show')" icono="admin" :active="request()->routeIs('empresa.show*')">
-            {{ __('Adminstration') }}
+            {{ 'Administración' }}
         </x-nav-link>
         @endif
 

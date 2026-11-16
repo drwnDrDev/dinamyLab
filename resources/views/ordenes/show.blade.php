@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ __('Orden Medica') }}
+            {{ 'Orden médica' }}
         </h2>
     </x-slot>
 
@@ -37,7 +37,7 @@
                     </a>
                 @endcan
 
-                <x-secondary-button onclick="window.print()">{{__('Ticket')}}</x-secondary-button>
+                <x-secondary-button onclick="window.print()">{{'Comprobante'}}</x-secondary-button>
             </div>
         </div>
 
@@ -70,10 +70,10 @@
                 <table class="flex-1">
                     <thead>
                         <tr class="">
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Procedimiento')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Test')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Fecha'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Procedimiento'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Examen'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Estado'}}</th>
                         </tr>
                     </thead>
                     <tbody>

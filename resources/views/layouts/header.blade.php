@@ -41,7 +41,7 @@
                                 </svg>
                             </div>
                             <input
-                                placeholder="{{__('Search')}}"
+                                placeholder="{{'Buscar'}}"
                                 name="search"
                                 type="text"
                                 id="search"

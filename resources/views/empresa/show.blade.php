@@ -2,7 +2,7 @@
 
     <x-slot name="header">
         <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ __('Company') }}
+            {{ 'Empresa' }}
         </h2>
     </x-slot>
     <x-canva>
