@@ -36,6 +36,7 @@ class CatalogoBaseSeeder extends Seeder
             DefaultOptionSeeder::class,
             SetupSeeder::class,
             ExamenSeeder::class,
+            ActualizarPreciosExamenesSeeder::class,
             ExamenCategoriaSeeder::class,
         ]);
     }

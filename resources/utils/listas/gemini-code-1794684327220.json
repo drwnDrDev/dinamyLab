@@ -40,7 +40,9 @@
     },
     {
       "nombre": "Curva De Tolerancia A La Glucosa 3 Muestras",
-      "examenes": [
+      "precio":75000,
+      
+      "parametros": [
         {
           "nombre": "Glicemia Basal",
           "rango_referencia": "70-100"
