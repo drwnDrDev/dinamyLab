@@ -1,6 +1,6 @@
 # Checklist de trabajo y deuda técnica
 
-**Creado:** 2026-11-01 · **Reorganizado:** 2026-11-09 · **Revisado:** 2026-11-16
+**Creado:** 2026-11-01 · **Reorganizado:** 2026-11-09 · **Revisado:** 2026-11-17
 **Fuentes:** [ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md](./ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md), [MANUAL.md §7](./MANUAL.md#7-roles-permisos-y-sedes), [MATRIZ_ROLES_PERMISOS.md](./MATRIZ_ROLES_PERMISOS.md) y la lista de pendientes del equipo (2026-11-09).
 
 La versión anterior, con el detalle completo de cada ítem cerrado, está en el commit `f48fd679` (`git show f48fd679:docs/CHECKLIST_DEUDA_TECNICA.md`).
@@ -30,6 +30,26 @@ El trabajo se agrupa en **frentes** (ED, OB, EX, IM, NT, AU) y en una lista de *
 3. **No versionar `public/build/` en las ramas de feature.** El PR #57 subió 25 archivos de build; si ambos lo hacen, `manifest.json` choca en cada merge. Hasta cerrar DT-01: los PR no incluyen `public/build/`, y quien hace el merge a `main` corre `npm run build` y sube un commit `chore: build`.
 4. **Archivos compartidos:** `routes/web.php`, `routes/api.php`, `RolesYPermisosSeeder` y los tests son de `BE`. `layouts/app.blade.php` y `layouts/notifications.blade.php` son de `FE`. Un cambio de markup en `FE` que rompa un test (p. ej. `UiNotificationsTest`) se arregla en el mismo PR y lo revisa `BE`.
 5. **Ramas cortas:** `feature/fe-<tema>` y `feature/be-<tema>`, un PR por ítem o par de ítems, y rebase sobre `main` a diario.
+
+---
+
+## Bloqueos para el despliegue a producción (revisión 2026-11-17)
+
+Revisado sobre `main` (`22512a50`) y `desarrollo` (PR #86). **Hoy no se puede desplegar a producción.** Orden de cierre:
+
+| # | Bloqueo | Ítem | Por qué bloquea |
+|---|---|---|---|
+| 1 | Ruta pública `GET /deploytests` en `main` (`22512a50`, `routes/web.php:25`) que ejecuta `migrate:fresh --seed` **sin autenticación** | DT-22 | Cualquiera que abra la URL borra la base del laboratorio y siembra los datos de demostración de `DatabaseSeeder` (usuarios con contraseñas conocidas). Si `main` ya está en el servidor, la ruta está expuesta ahora |
+| 2 | `vendor/` y PHP del hosting sin resolver: `.cpanel.yml` no corre Composer y `composer.json` exige `php ^8.5` | DT-01 | Sin `vendor/` la app no arranca; si el hosting no tiene PHP 8.5, tampoco |
+| 3 | `public/storage` versionado como symlink a `/var/www/html/...` | DT-18 | El paso 5 del runbook (`storage:link`) falla en cPanel porque el archivo ya existe |
+| 4 | RIPS con `codSexo` sin traducir | DT-16 | El JSON de RIPS que se reporta sale con el sexo equivocado o con un código inválido |
+| 5 | Sin autorización de tratamiento de datos en el alta del paciente | AU-05 | Requisito de Ley 1581 para datos sensibles. Mientras no exista: formato en papel firmado (ver [BRIEF_DOCUMENTACION_CUMPLIMIENTO.md](./BRIEF_DOCUMENTACION_CUMPLIMIENTO.md)) |
+| 6 | Backup en el mismo disco, sin cifrar, con la clave en la línea del cron y sin `storage/` | DT-23 | La Secretaría pide frecuencia, retención, lugar, cifrado, RPO y RTO; hoy no se pueden demostrar |
+| 7 | Zona horaria en UTC: `config/app.php` usa `env('APP_TIMEZONE', 'UTC')` y ni `.env.example` ni `.env` la definen | `.env.example` | Fechas de atención, validación y emisión del reporte quedan 5 horas adelante; lo registrado después de las 19:00 sale con fecha del día siguiente. Se corrige con `APP_TIMEZONE=America/Bogota` antes del primer dato real (cambiarla después desfasa lo ya guardado). **2026-11-17: ya está en `.env.example`;** falta ponerla en el `.env` de cada instancia y en el local |
+
+**Bloquean el cumplimiento documental, no el arranque técnico** (se pueden desplegar con control compensatorio y fecha compromiso): AU-02 bitácora de auditoría, D-11 bloqueo del resultado firmado, DT-24 fecha real en la digitación posterior, AU-06 páginas de privacidad. El paquete documental se arma con [BRIEF_DOCUMENTACION_CUMPLIMIENTO.md](./BRIEF_DOCUMENTACION_CUMPLIMIENTO.md).
+
+**No bloquean:** DT-19 (logo SVG de Biotek, el reporte sale sin logo), DT-20 (registro médico), DT-17 (solo afecta los tests). Revisar también que comentar `RelacionesCupSeeder` en `CatalogoBaseSeeder` (`22512a50`) no deje sin datos alguna validación de CUPS.
 
 ---
 
@@ -275,7 +295,10 @@ Notas para el BE:
 | `[ ]` | DT-13 | BE | Lógica de controllers a services y unificar web/API (persona, orden, resultados) | 75 controllers | Continuo | 🟠 | Antes I-09 e I-10. Hacerlo al tocar cada módulo |
 | `[ ]` | DT-16 | BE | `json_rips` envía `$paciente->sexo` (`F`/`M`/`I`) en `codSexo`; RIPS espera `H`/`M`/`I`. Volver a `sexo_rips` y restaurar los tests de `Sexo::aRips()` que se borraron | `ProcedimientoController.php:208`, `tests/Unit/SexoTest.php` | 0.5–1h | 🔴 | Nuevo (`b69f5606`). Confirmar con quien hizo el cambio si fue intencional. Sigue abierto el 2026-11-16 (línea 209) |
 | `[ ]` | DT-17 | Infra | Evitar que los tests corran contra MySQL cuando hay caché de configuración: `.env.testing` propio o un guard en `TestCase` que aborte si `DB_DATABASE` no es la de pruebas | `tests/TestCase.php`, `.env.testing.example` | 1h | 🔴 | Nuevo (2026-11-12): un `php artisan test` con `config.php` en caché vació la base de desarrollo. `.env.testing.example` ya existe (2026-10-31); falta el guard en `TestCase` |
-| `[ ]` | DT-18 | Infra | Sacar `public/storage` de git (symlink absoluto a `/var/www/html/...`) y crearlo con `php artisan storage:link` en cada entorno; agregarlo a `.gitignore` y a `DESPLIEGUE_INSTANCIAS.md` | `public/storage`, `.gitignore` | 0.5h | 🟡 | Nuevo (PR #76). Relacionado con DT-01 |
+| `[ ]` | DT-18 | Infra | Sacar `public/storage` de git (symlink absoluto a `/var/www/html/...`) y crearlo con `php artisan storage:link` en cada entorno; agregarlo a `.gitignore` y a `DESPLIEGUE_INSTANCIAS.md` | `public/storage`, `.gitignore` | 0.5h | 🔴 | Nuevo (PR #76). Relacionado con DT-01. 2026-11-17: sube a 🔴, rompe el paso 5 del runbook |
+| `[ ]` | DT-22 | BE | Borrar la ruta `GET /deploytests` (`migrate:fresh --seed` y `optimize:clear` sin `auth`). Si `main` ya se desplegó: quitarla en el servidor ya, revisar el log de acceso por llamadas a `/deploytests` y, si hubo alguna, tratarlo como incidente. Para pruebas de deploy usar un comando artisan por SSH, nunca una ruta | `routes/web.php:25-29` (`22512a50`, solo en `main`) | 0.5h | 🔴 | Nuevo 2026-11-17. Mismo patrón que C-01 (`/migracion`) |
+| `[ ]` | DT-23 | Infra | Backup real: `mysqldump` con credenciales en `~/.my.cnf` (no en la línea del cron), cifrado (`gpg` o `age`), copia fuera del hosting, incluir `storage/app` (firmas, logos), rotación 7 diarios / 4 semanales / 12 mensuales, backup antes de cada `migrate`, y prueba de restauración mensual con registro | `DESPLIEGUE_INSTANCIAS.md` §1 paso 8, script nuevo | 4–6h | 🔴 | Nuevo 2026-11-17. Lo exige el documento de backup (RPO 24 h, RTO 8 h propuestos) |
+| `[ ]` | DT-24 | BE | Digitación posterior (contingencia): `Api\OrdenController` valida `fecha_orden` pero guarda `procedimientos.fecha = now()`. Usar la fecha de atención real (sin permitir fechas futuras) y marcar los registros digitados por contingencia | `Api\OrdenController:132,214` | 2–3h | 🟡 | Nuevo 2026-11-17. Afecta RIPS y el plan de contingencia |
 | `[ ]` | DT-19 | BE | Logos SVG en el reporte: convertir `014.svg`/`015.svg` a PNG o aceptar SVG en `imagenComoDataUri()` (DomPDF los dibuja con limitaciones) | `ConstruirReporteResultados`, `storage/app/public/logos/` | 1–2h | 🟡 | Nuevo (PR #74/#76): hoy el reporte de Biotek sale sin logo |
 | `[?]` | DT-20 | Decisión + BE | «Registro médico» en el reporte: hoy es la cédula del primer `prestador`. Definir si es el registro profesional (campo nuevo en `empleados`), de quién (¿el bacteriólogo que valida cada examen, que ya sale en la firma?) y si va por sede | `ConstruirReporteResultados::datosSede()` | 1–2h | 🟡 | Nuevo (PR #76). Decisión D-09 |
 | `[?]` | DT-21 | Decisión | Una orden con un examen o remisión `ANULADO` ya no se cierra sola (PR #74/#75). Confirmar que es lo esperado o volver a contar `ANULADO` como final | `Orden::sincronizarEstado()` | 0.5h | 🟠 | Nuevo. Decisión D-10 |
@@ -297,6 +320,7 @@ Notas para el BE:
 | D-08 | Auditoría: `spatie/laravel-activitylog` (necesita aprobación) o tabla propia | AU-02 | Ambos |
 | D-09 | Qué es el «Registro médico» del reporte y de dónde sale | DT-20 | Responsable funcional |
 | D-10 | ¿Un examen o remisión anulado impide cerrar la orden? | DT-21 | Responsable funcional |
+| D-11 | Bloqueo del registro: ¿el resultado queda bloqueado al validarlo o al entregarlo, y desde ahí solo se corrige con una nota aclaratoria (adenda) visible en el reporte? Hoy se puede corregir siempre, con motivo e historial. ¿La firma escaneada basta o se requiere firma electrónica? | Ficha técnica y manual del paquete de cumplimiento | Responsable funcional + legal |
 
 ---
 

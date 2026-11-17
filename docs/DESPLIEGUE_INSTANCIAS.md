@@ -91,8 +91,12 @@ Ejecutar una sola vez por cliente.
    | `APP_URL` | `https://<dominio>` |
    | `APP_INSTANCE` | Nombre corto del cliente (ej. `biotek`) |
    | `APP_HOSTS` | Dominios de esa instancia, separados por comas |
+   | `APP_TIMEZONE` | `America/Bogota` (antes del primer dato real) |
    | `SESSION_DOMAIN` | **vacío** (cookie host-only) |
    | `SESSION_COOKIE` | `<instancia>_session` |
+   | `SESSION_SECURE_COOKIE` | `true` |
+   | `LOG_STACK` / `LOG_LEVEL` | `daily` / `info` |
+   | `MAIL_*` | SMTP compartido; `MAIL_FROM_ADDRESS` y `MAIL_FROM_NAME` propios de la instancia |
    | `DB_*` | Los de su propia BD |
    | `CLIENTE_*` | Razón social, NIT, sede, código de prestador, admin (email, contraseña y documento) |
 
