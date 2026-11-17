@@ -345,8 +345,33 @@ class ExamenSeeder extends Seeder
             $processParam($item, $examen, $orden);
         }
 
+       // 10. Curva De Tolerancia A La Glucosa 2 Muestras
 
-       // 10. Curva De Tolerancia A La Glucosa 3 Muestras
+       $examen = Examen::firstOrCreate(
+            ['nombre' => 'Curva De Tolerancia A La Glucosa 2 Muestras'],
+            [
+                'nombre' => 'Curva De Tolerancia A La Glucosa 2 Muestras',
+                'cup' => '903842',
+                'valor' => '50000.00',
+                'descripcion' => 'La prueba de tolerancia a la glucosa mide la capacidad del cuerpo para metabolizar la glucosa y es útil para diagnosticar diabetes y prediabetes.',
+                'nombre_alternativo' => null,
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Glicemia Basal","resultado":{"tipo":"number","nombre":"glicemia_basal"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-100","minimo":70,"maximo":100}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}},
+            {"parametro":"Glicemia 2 Horas","resultado":{"tipo":"number","nombre":"glicemia_2h"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-120","minimo":70,"maximo":120}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+
+
+       // 11. Curva De Tolerancia A La Glucosa 3 Muestras
 
        $examen = Examen::firstOrCreate(
             ['nombre' => 'Curva De Tolerancia A La Glucosa 3 Muestras'],
