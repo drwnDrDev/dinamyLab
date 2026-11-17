@@ -14,6 +14,7 @@ Reglas para todo el paquete:
 4. **Normas:** cita solo las que apliquen y **verifica su vigencia** antes de citarlas (sección 3). Si una norma te genera duda, márcala `[VALIDAR CON ASESOR LEGAL]`. Los documentos legales (contrato, política de datos) deben llevar la nota «Borrador sujeto a revisión jurídica».
 5. **Coherencia entre documentos:** los mismos tiempos (SLA, RPO, RTO, retención), roles y nombres en todos. Define esos valores una vez (sección 6) y reutilízalos.
 6. **Plantilla por laboratorio:** el proveedor tiene varios clientes (una instalación por laboratorio). Redacta cada documento como plantilla con los datos del laboratorio en variables (`{{LABORATORIO_RAZON_SOCIAL}}`, `{{LABORATORIO_NIT}}`, `{{SEDES}}`, `{{DOMINIO}}`…) y entrega además la versión diligenciada para el primer cliente si te damos sus datos.
+7. **Proveedor y firmas también en plantilla:** no preguntes por la naturaleza jurídica ni por quién firma. Usa `{{PROVEEDOR_NOMBRE_O_RAZON_SOCIAL}}`, `{{PROVEEDOR_TIPO_PERSONA}}` (natural o jurídica), `{{PROVEEDOR_NIT_O_CC}}`, `{{PROVEEDOR_REPRESENTANTE}}`, `{{PROVEEDOR_DIRECCION}}`, `{{PROVEEDOR_CORREO}}` y un bloque de firmas con nombre, documento, cargo y fecha para cada parte. Redacta el contrato de forma que sirva para persona natural o para sociedad (p. ej. «EL PROVEEDOR» como parte definida) sin reescribir cláusulas.
 
 ## 2. El producto
 
@@ -145,7 +146,7 @@ Dos piezas:
 
 Por laboratorio: temario por rol (con duración), acta de capacitación (fecha, lugar o medio, capacitador, temas, compromisos), lista de asistencia (nombre, documento, cargo, rol en el sistema, firma), evaluación corta de comprensión y constancia de entrega del manual y de la política de seguridad. El temario debe incluir manejo de datos sensibles y el plan de contingencia.
 
-## 6. Valores base a usar (propuesta; ajustar si te los cambiamos)
+## 6. Valores base a usar (confirmados el 2026-11-17)
 
 | Concepto | Valor propuesto | Comentario |
 |---|---|---|
@@ -167,7 +168,7 @@ Por laboratorio: temario por rol (con duración), acta de capacitación (fecha, 
 
 | Dato | Para |
 |---|---|
-| Proveedor: razón social o nombre, NIT o cédula, dirección, representante legal, correo y teléfono de soporte | Contrato, SLA, ficha |
+| Correo, WhatsApp y teléfono de soporte | SLA, ficha |
 | Proveedor de hosting, ubicación del centro de datos y si hay subencargados (correo, almacenamiento de backup) | Contrato, backup, datos |
 | Laboratorio: razón social, NIT, código de prestador (REPS), sedes, representante legal, dominio | Todos |
 | Precio, forma de pago, duración del contrato | Contrato |
@@ -178,7 +179,7 @@ Por laboratorio: temario por rol (con duración), acta de capacitación (fecha, 
 
 ## 8. Entregables y orden sugerido
 
-1. Tabla de valores de la sección 6 confirmada (una página) — todo lo demás depende de ella.
+1. Tabla de valores de la sección 6 en una página (ya confirmada) — todo lo demás la referencia.
 2. Contrato con anexo de transmisión de datos y términos de servicio.
 3. Política de tratamiento de datos y formato de autorización.
 4. Política de seguridad (incluye incidentes y bitácora).
