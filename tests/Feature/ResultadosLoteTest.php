@@ -104,7 +104,7 @@ class ResultadosLoteTest extends TestCase
                     [
                         'id' => $this->procedimientos[0]->id,
                         'resultados' => [
-                            $this->parametroNumero->id => '13.5',
+                            $this->parametroNumero->id => '55000',
                             $this->parametroTexto->id => '',
                         ],
                     ],
@@ -125,7 +125,7 @@ class ResultadosLoteTest extends TestCase
         $this->assertDatabaseHas('resultados', [
             'procedimiento_id' => $this->procedimientos[0]->id,
             'parametro_id' => $this->parametroNumero->id,
-            'resultado' => '13.5',
+            'resultado' => '55000',
         ]);
         $this->assertDatabaseHas('resultados', [
             'procedimiento_id' => $this->procedimientos[1]->id,
