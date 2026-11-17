@@ -352,7 +352,7 @@ class ExamenSeeder extends Seeder
             ['nombre' => 'Curva De Tolerancia A La Glucosa 3 Muestras'],
             [
                 'nombre' => 'Curva De Tolerancia A La Glucosa 3 Muestras',
-                'cup' => '903841',
+                'cup' => '903886',
                 'valor' => '75000.00',
                 'descripcion' => 'La prueba de tolerancia a la glucosa mide la capacidad del cuerpo para metabolizar la glucosa y es útil para diagnosticar diabetes y prediabetes.',
                 'nombre_alternativo' => null,
@@ -377,7 +377,7 @@ class ExamenSeeder extends Seeder
             ['nombre' => 'Curva De Tolerancia A La Glucosa 5 Muestras'],
             [
                 'nombre' => 'Curva De Tolerancia A La Glucosa 5 Muestras',
-                'cup' => '903841',
+                'cup' => '903889',
                 'valor' => '115000.00',
                 'descripcion' => 'La prueba de tolerancia a la glucosa mide la capacidad del cuerpo para metabolizar la glucosa y es útil para diagnosticar diabetes y prediabetes.',
                 'nombre_alternativo' => null,
