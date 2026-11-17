@@ -23,7 +23,7 @@ class CatalogoBaseSeeder extends Seeder
             EPSsedeer::class,
             FinalidadSeeder::class,
             CUPSeeder::class,
-            RelacionesCupSeeder::class,
+            //RelacionesCupSeeder::class,
             // AplicabilidadSexoCupSeeder NO se incluye: llama DB::rollBack() sin
             // beginTransaction() y, al fallar, revierte la transacción completa del
             // test (vacía paises y todo lo anterior). Nunca estuvo en DatabaseSeeder.
