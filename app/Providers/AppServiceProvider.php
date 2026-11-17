@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Empresa;
+use App\Models\Procedimiento;
 use App\Models\Sede;
+use App\Observers\ProcedimientoObserver;
 use App\Policies\EmpresaPolicy;
 use App\Policies\SedePolicy;
 use Illuminate\Support\ServiceProvider;
@@ -35,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Procedimiento::observe(ProcedimientoObserver::class);
+
         // Registrar políticas
         foreach ($this->policies as $model => $policy) {
             Gate::policy($model, $policy);
@@ -62,4 +66,3 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 }
-

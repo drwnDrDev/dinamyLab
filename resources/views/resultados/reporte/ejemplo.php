@@ -1,8 +1,18 @@
-<?php
+Attempt to read property "direccion" on null (View: /var/www/html/resources/views/ordenes/show.blade.php)
+
+  at tests/Feature/OrdenEdicionReporteTest.php:355
+    351▕     $this->user->givePermissionTo('ver_orden');
+    352▕ 
+    353▕     $response = $this->actingAs($this->user)
+    354▕         ->get(route('ordenes.show', $orden))
+  ➜ 355▕         ->assertOk()
+    356▕         ->assertSee('Examen remitido en ticket (CUP: 902299) (R)');
+    357▕ 
+    358▕     if ($verDestino) {
+    359▕         $response->assertSee('Destino exclusivo del personal');<?php
 
 /**
- * Datos ficticios para maquetar resultados/reporte.blade.php mientras el BE
- * entrega el service de IM-01. Siguen el contrato $reporte propuesto en
+ * Datos ficticios para maquetar resultados/reporte.blade.php. Siguen el contrato $reporte definido en
  * docs/CHECKLIST_DEUDA_TECNICA.md (IM-01 ⇄ IM-02).
  *
  * Ningún dato corresponde a una persona real.
@@ -193,9 +203,9 @@ $examenes = [
 
 $base = [
     'laboratorio' => [
-        'nombre_comercial' => 'Laboratorio Clínico Demo',
+        'razon_social' => 'Laboratorio Clínico Demo S.A.S.',
         'sede' => 'Sede Centro',
-        'nit' => '900.000.000-0',
+        'registro_medico' => '12345678',
         'telefonos' => ['601 000 0000', '300 000 0000'],
         'direccion' => 'Calle 00 # 00-00, Bogotá D.C.',
         'email' => 'resultados@laboratorio-demo.test',

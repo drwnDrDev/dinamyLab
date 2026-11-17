@@ -10,8 +10,10 @@ use App\Models\Parametro;
 use App\Models\Persona;
 use App\Models\Procedimiento;
 use App\Models\Resultado;
+use App\Models\ResultadoCambio;
 use App\Models\Sede;
 use App\Models\User;
+use App\Models\ValorReferencia;
 use Database\Seeders\PaisSeeder;
 use Database\Seeders\RolesYPermisosSeeder;
 use Database\Seeders\TestDataSeeder;
@@ -108,6 +110,55 @@ class ResultadosEdicionTest extends TestCase
         $this->assertDatabaseCount('resultado_cambios', 0);
     }
 
+    public function test_navega_entre_procedimientos_de_la_misma_orden(): void
+    {
+        $orden = $this->procedimiento->orden;
+        $examenSiguiente = Examen::factory()->create(['nombre' => 'Examen siguiente']);
+        $siguiente = Procedimiento::create([
+            'orden_id' => $orden->id,
+            'examen_id' => $examenSiguiente->id,
+            'sede_id' => $this->sede->id,
+            'fecha' => now()->addMinute(),
+            'diagnostico_principal' => 'Z017',
+            'codigo_finalidad' => '14',
+            'codigo_modalidad' => '01',
+            'codigo_via_ingreso' => '01',
+            'estado' => Estado::PROCESO->value,
+        ]);
+
+        $otraOrden = Orden::create([
+            'sede_id' => $this->sede->id,
+            'numero' => 1002,
+            'paciente_id' => $orden->paciente_id,
+            'total' => 0,
+            'user_id' => $this->user->id,
+        ]);
+        $procedimientoAjeno = Procedimiento::create([
+            'orden_id' => $otraOrden->id,
+            'examen_id' => Examen::factory()->create()->id,
+            'sede_id' => $this->sede->id,
+            'fecha' => now(),
+            'diagnostico_principal' => 'Z017',
+            'codigo_finalidad' => '14',
+            'codigo_modalidad' => '01',
+            'codigo_via_ingreso' => '01',
+            'estado' => Estado::PROCESO->value,
+        ]);
+
+        $adyacentes = $this->procedimiento->procedimientosAdyacentesEnOrden();
+
+        $this->assertNull($adyacentes['anterior']);
+        $this->assertSame($siguiente->id, $adyacentes['siguiente']->id);
+        $this->assertNotSame($procedimientoAjeno->id, $adyacentes['siguiente']->id);
+
+        $response = $this->actingAs($this->user)
+            ->get(route('procedimientos.show', $this->procedimiento));
+
+        $response->assertOk()
+            ->assertSee(route('procedimientos.show', $siguiente), false)
+            ->assertSee('Examen siguiente');
+    }
+
     public function test_guarda_el_historial_del_cambio_con_actor_fecha_y_motivo(): void
     {
         $response = $this->actingAs($this->user)
@@ -196,5 +247,112 @@ class ResultadosEdicionTest extends TestCase
             'resultado' => '12.5',
         ]);
         $this->assertDatabaseCount('resultado_cambios', 0);
+    }
+
+    private function empleadoEnSede(string $rol): User
+    {
+        $usuario = User::factory()->create([
+            'email' => \Illuminate\Support\Str::uuid().'@example.test',
+        ]);
+        $usuario->assignRole($rol);
+        $empleado = Empleado::factory()->create([
+            'user_id' => $usuario->id,
+            'empresa_id' => $this->sede->empresa_id,
+            'tipo_documento_id' => 1,
+        ]);
+        $empleado->sedes()->attach($this->sede->id);
+
+        return $usuario;
+    }
+
+    public function test_la_edicion_muestra_valor_actual_limites_e_historial(): void
+    {
+        ValorReferencia::create([
+            'parametro_id' => $this->parametro->id,
+            'demografia' => 'general',
+            'salida' => '12 - 16',
+            'min' => 12,
+            'max' => 16,
+        ]);
+        ResultadoCambio::create([
+            'procedimiento_id' => $this->procedimiento->id,
+            'resultado_id' => $this->resultado->id,
+            'parametro_id' => $this->parametro->id,
+            'usuario_id' => $this->user->id,
+            'parametro_nombre' => 'Hemoglobina',
+            'valor_anterior' => '11.0',
+            'valor_nuevo' => '12.5',
+            'observacion' => 'Repetición de la muestra.',
+            'usuario_nombre' => $this->user->name,
+        ]);
+
+        $this->actingAs($this->user)
+            ->get(route('resultados.edit', $this->procedimiento))
+            ->assertOk()
+            ->assertSee('data-original="12.5"', false)
+            ->assertSee('data-min="12"', false)
+            ->assertSee('data-max="16"', false)
+            ->assertSee('Historial de modificaciones (1)')
+            ->assertSee('Repetición de la muestra.')
+            ->assertSee('Revisar cambios');
+    }
+
+    public function test_la_edicion_reabre_la_revision_cuando_falta_el_motivo(): void
+    {
+        $this->actingAs($this->user)
+            ->from(route('resultados.edit', $this->procedimiento))
+            ->put(route('resultados.update', $this->procedimiento), [
+                'resultados' => [$this->parametro->id => '13.1'],
+            ]);
+
+        $this->actingAs($this->user)
+            ->withSession(['sede' => $this->sede])
+            ->get(route('resultados.edit', $this->procedimiento))
+            ->assertOk()
+            ->assertSee('data-abrir-revision="true"', false);
+    }
+
+    public function test_el_resultado_muestra_editar_y_el_aviso_de_guardado_al_prestador(): void
+    {
+        $this->actingAs($this->user)
+            ->followingRedirects()
+            ->put(route('resultados.update', $this->procedimiento), [
+                'observacion' => 'Corrección de transcripción del equipo.',
+                'resultados' => [$this->parametro->id => '13.1'],
+            ])
+            ->assertOk()
+            ->assertSee(route('resultados.edit', $this->procedimiento), false)
+            ->assertSee('Se guardaron 1 cambio(s) en los resultados.');
+    }
+
+    public function test_el_resultado_no_muestra_editar_al_agente(): void
+    {
+        $agente = $this->empleadoEnSede('agente');
+
+        $this->actingAs($agente)
+            ->get(route('resultados.show', $this->procedimiento))
+            ->assertOk()
+            ->assertDontSee(route('resultados.edit', $this->procedimiento), false);
+    }
+
+    public function test_el_reporte_del_examen_navega_al_siguiente_examen_de_la_orden(): void
+    {
+        $siguiente = Procedimiento::create([
+            'orden_id' => $this->procedimiento->orden_id,
+            'examen_id' => Examen::factory()->create(['nombre' => 'Examen siguiente'])->id,
+            'sede_id' => $this->sede->id,
+            'fecha' => now()->addMinute(),
+            'diagnostico_principal' => 'Z017',
+            'codigo_finalidad' => '14',
+            'codigo_modalidad' => '01',
+            'codigo_via_ingreso' => '01',
+            'estado' => Estado::PROCESO->value,
+        ]);
+
+        $this->actingAs($this->user)
+            ->get(route('resultados.show', $this->procedimiento))
+            ->assertOk()
+            ->assertSee(route('resultados.show', $siguiente), false)
+            ->assertSee('Siguiente: Examen siguiente');
     }
 }

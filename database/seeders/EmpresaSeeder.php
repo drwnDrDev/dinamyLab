@@ -18,6 +18,9 @@ class EmpresaSeeder extends Seeder
 
 
     $persona = Persona::create([
+            // Datos de demostración.
+            'grupo_sanguineo' => 'O',
+            'factor_rh' => 'positivo',
             'primer_nombre'=>'Claudia',
             'segundo_nombre'=>'Patricia',
             'primer_apellido'=>'Buitrago',
@@ -29,6 +32,9 @@ class EmpresaSeeder extends Seeder
             'pais_origen'=>'170'
         ]);
         $extranjero = Persona::create([
+            // Datos de demostración.
+            'grupo_sanguineo' => 'O',
+            'factor_rh' => 'positivo',
             'primer_nombre'=>'Ronaldo',
             'primer_apellido'=>'Nazario',
            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
@@ -60,7 +66,7 @@ class EmpresaSeeder extends Seeder
 
         $empresa = \App\Models\Empresa::create([
             'nit'=>'51934571-8',
-            'razon_social'=>'Laboratorio Claudia Buitrago',
+            'razon_social'=>'LABORATORIO CLINICO CLAUDIA PATRICIA BUITRAGO HERNANDEZ',
             'nombre_comercial'=>'Biotek',
 
         ]);
@@ -90,9 +96,9 @@ class EmpresaSeeder extends Seeder
 
 
         $sede = \App\Models\Sede::create([
-            'nombre'=>'Biotek Bosa',
+            'nombre'=>'Laboratorio',
             'codigo_prestador'=>'110010822701',
-            'logo'=>'biotek_logo.png',
+            'logo'=>'014.png',
             'empresa_id'=>$empresa->id,
 
         ]);
@@ -105,9 +111,9 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $sede2 = \App\Models\Sede::create([
-            'nombre'=>'IPS Bosa',
+            'nombre'=>'Toma de muestras',
             'codigo_prestador'=>'110010822703',
-            'logo'=>'ryc.png',
+            'logo'=>'015.png',
             'empresa_id'=>$empresa->id,
 
         ]);
@@ -152,6 +158,7 @@ class EmpresaSeeder extends Seeder
             'numero_documento'=>'51712439',
             'fecha_nacimiento'=>'1963-05-20',
             'user_id'=>5,
+            'firma'=>'firma_pilar.png',
             'empresa_id'=>$sanPablo->id,
 
         ]);
@@ -176,6 +183,9 @@ class EmpresaSeeder extends Seeder
         ]);
 
         $coordi =  Persona::create([
+            // Datos de demostración.
+            'grupo_sanguineo' => 'O',
+            'factor_rh' => 'positivo',
             'primer_nombre'=>'Diana',
             'segundo_nombre'=>'Carolina',
             'primer_apellido'=>'Arboleda',
@@ -188,9 +198,12 @@ class EmpresaSeeder extends Seeder
 
         ]);
         $agente =  Persona::create([
+            // Datos de demostración.
+            'grupo_sanguineo' => 'O',
+            'factor_rh' => 'positivo',
             'primer_nombre'=>'Ronald',
             'primer_apellido'=>'McDonald',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
+            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
             'sexo'=>'I',

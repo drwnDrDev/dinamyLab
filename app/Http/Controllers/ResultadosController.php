@@ -10,8 +10,12 @@ use App\Models\Procedimiento;
 use App\Services\ControlSede;
 use App\Services\EscogerReferencia;
 use App\Services\ActualizarResultados;
+use App\Services\ConstruirReporteResultados;
 use App\Models\Persona;
 use App\Models\Orden;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ResultadosController extends Controller
 {
@@ -46,42 +50,84 @@ class ResultadosController extends Controller
             ->withQueryString();
         return view('resultados.index', compact('resultados'));
     }
-    public function show(Procedimiento $procedimiento)
+    public function show(Procedimiento $procedimiento, ConstruirReporteResultados $construirReporte)
     {
         $this->autorizarSede(request(), $procedimiento);
 
-        // Carga el procedimiento con sus relaciones necesarias
         $procedimiento->load(['orden.paciente', 'resultado', 'sede']);
 
-        // Verifica si el procedimiento ya tiene resultados
         if ($procedimiento->resultado->isEmpty()) {
-            return redirect()->route('resultados.create', $procedimiento)
-                ->with('warning', 'No hay parámetros para este examen. Por favor, crea los resultados.');
-        }
-        $parametros = EscogerReferencia::obtenerResultados($procedimiento);
-        $cambios = $procedimiento->cambiosResultado;
+            $destino = request()->user()->hasRole('prestador')
+                ? 'resultados.create'
+                : 'procedimientos.show';
 
-        return view('resultados.show', compact('procedimiento', 'parametros', 'cambios'));
+            return redirect()->route($destino, $procedimiento)
+                ->with('warning', 'Resultados no encontrados para este procedimiento.');
+        }
+
+        $navegacion = $procedimiento->procedimientosAdyacentesEnOrden();
+        $reporte = $construirReporte->paraProcedimientos(
+            collect([$procedimiento]),
+            $procedimiento->orden
+        );
+        $cambios = $procedimiento->cambiosResultado;
+        $usuario = request()->user();
+        // Misma regla que las rutas de edición: EnsurePrestador + can:editar_resultado.
+        $puedeEditar = $usuario->hasRole('prestador')
+            && ! $usuario->hasRole('admin')
+            && $usuario->can('editar_resultado');
+
+        return view('resultados.reporte', [
+            'reporte' => $reporte,
+            'enPdf' => false,
+            'cambios' => $cambios,
+            'urlVolver' => route('resultados.reporte_orden', $procedimiento->orden),
+            'urlEditar' => $puedeEditar ? route('resultados.edit', $procedimiento) : null,
+            'navegacion' => $navegacion,
+        ]);
     }
 
-    public function reporteOrden(Orden $orden)
+    public function reporteOrden(Orden $orden, ConstruirReporteResultados $construirReporte)
     {
         ControlSede::autorizarOrden(request(), $orden);
-        $orden->load(['paciente.tipo_documento', 'sede.empresa']);
+        $reporte = $construirReporte->paraOrden($orden);
 
-        $procedimientos = Procedimiento::query()
-            ->where('orden_id', $orden->id)
-            ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
-            ->whereHas('resultado')
-            ->with(['orden.paciente.tipo_documento', 'examen', 'sede.empresa', 'empleado.user'])
-            ->orderBy('id')
-            ->get()
-            ->map(fn (Procedimiento $procedimiento) => [
-                'procedimiento' => $procedimiento,
-                'parametros' => EscogerReferencia::obtenerResultados($procedimiento),
-            ]);
+        return view('resultados.reporte', [
+            'reporte' => $reporte,
+            'enPdf' => false,
+            'urlVolver' => route('ordenes.show', $orden),
+            'urlPdf' => route('resultados.reporte_pdf', $orden),
+        ]);
+    }
 
-        return view('resultados.reporte_orden', compact('orden', 'procedimientos'));
+    public function reporteOrdenPdf(Orden $orden, ConstruirReporteResultados $construirReporte)
+    {
+        ControlSede::autorizarOrden(request(), $orden);
+        $reporte = $construirReporte->paraOrden($orden);
+
+        if ($reporte['total_examenes'] === 0) {
+            return redirect()->route('resultados.reporte_orden', $orden)
+                ->with('warning', 'Esta orden aún no tiene exámenes terminados con resultados para descargar.');
+        }
+
+        $contenidoPdf = Pdf::loadView('resultados.reporte', [
+            'reporte' => $reporte,
+            'enPdf' => true,
+        ])->setPaper('letter')->output();
+
+        Log::info('Reporte de resultados generado.', [
+            'usuario_id' => request()->user()?->id,
+            'orden_id' => $orden->id,
+            'sede_id' => $orden->sede_id,
+            'total_examenes' => $reporte['total_examenes'],
+        ]);
+
+        $numeroOrden = Str::slug((string) $orden->numero) ?: (string) $orden->id;
+
+        return response($contenidoPdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="resultados-orden-'.$numeroOrden.'.pdf"',
+        ]);
     }
 
     public function create(Procedimiento $procedimiento)
@@ -166,7 +212,7 @@ class ResultadosController extends Controller
         $this->autorizarSede(request(), $procedimiento);
 
         // Carga el procedimiento con sus relaciones necesarias
-        $procedimiento->load(['orden.paciente', 'resultado', 'sede', 'examen.parametros.opciones']);
+        $procedimiento->load(['orden.paciente.tipo_documento', 'resultado', 'sede', 'examen.parametros.opciones', 'cambiosResultado']);
 
         // Verifica si el procedimiento ya tiene resultados
         if ($procedimiento->resultado->isEmpty()) {
@@ -177,8 +223,11 @@ class ResultadosController extends Controller
         // Combina parámetros del examen con resultados en una sola colección
         $parametros = collect(EscogerReferencia::obtenerResultados($procedimiento));
 
-
-        return view('resultados.edit', compact('procedimiento', 'parametros'));
+        return view('resultados.edit', [
+            'procedimiento' => $procedimiento,
+            'parametros' => $parametros,
+            'cambios' => $procedimiento->cambiosResultado,
+        ]);
     }
     public function update(Request $request, Procedimiento $procedimiento, ActualizarResultados $actualizarResultados)
     {
@@ -212,49 +261,78 @@ class ResultadosController extends Controller
 
     public function historia(Persona $persona)
     {
-        $sede = request()->user()->hasRole('admin')
+        $esAdmin = request()->user()->hasRole('admin');
+        $sede = $esAdmin
             ? request()->session()->get('sede')
             : ControlSede::autorizarSedeActiva(request());
-        if (! $sede) {
+        if (! $sede && ! $esAdmin) {
             return redirect()->route('dashboard')
                 ->with('error', 'Selecciona una sede para imprimir el historial clínico.');
         }
         $ordenes = Orden::where('paciente_id', $persona->id)
-                       ->where('sede_id', $sede->id)
-                       ->orderBy('updated_at', 'desc')
-                       ->get();
+            ->when($sede, fn ($query) => $query->where('sede_id', $sede->id))
+            ->with(['procedimientos' => fn ($query) => $query
+                ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
+                ->whereHas('resultado')
+                ->with(['examen', 'empleado.user'])])
+            ->orderBy('updated_at', 'desc')
+            ->get();
         return view(
             'resultados.historia',
             compact('persona', 'ordenes')
         );
     }
 
-    public function historia_show(Request $request, Persona $persona)
+    public function print_resultado(Procedimiento $procedimiento)
     {
+        ControlSede::autorizarProcedimiento(request(), $procedimiento);
+        $procedimiento->load(['orden.paciente', 'resultado', 'sede', 'examen.parametros.opciones']);
+        $parametros = EscogerReferencia::obtenerResultados($procedimiento);
 
-        $sede = $request->user()->hasRole('admin')
+        return view('resultados.print_resultado', compact('procedimiento', 'parametros'));
+    }
+
+    public function historia_show(
+        Request $request,
+        Persona $persona,
+        ConstruirReporteResultados $construirReporte
+    ) {
+        $esAdmin = $request->user()->hasRole('admin');
+        $sede = $esAdmin
             ? $request->session()->get('sede')
             : ControlSede::autorizarSedeActiva($request);
-        if (! $sede) {
+        if (! $sede && ! $esAdmin) {
             return redirect()->route('dashboard')
                 ->with('error', 'Selecciona una sede para imprimir el historial clínico.');
         }
-        $procedimientos = Procedimiento::where('sede_id', $sede->id)
-            ->whereHas('orden', fn ($orden) => $orden->where('paciente_id', $persona->id))
-            ->whereIn('id', array_keys($request->except(['_token'])))
-            ->get()
-            ->map(
-            function ($procedimiento) {
-                ControlSede::autorizarProcedimiento(request(), $procedimiento);
-                return [
-                    'procedimiento' => $procedimiento,
-                    'resultado' => EscogerReferencia::obtenerResultados($procedimiento)
-                ];
-            }
-        );
 
-        return view(
-            'resultados.historia_show', compact('persona', 'procedimientos', 'sede')
-        );
+        $validated = $request->validate([
+            'procedimientos' => ['required', 'array', 'min:1'],
+            'procedimientos.*' => ['required', 'integer', 'distinct'],
+        ]);
+
+        $procedimientos = Procedimiento::when($sede, fn ($query) => $query->where('sede_id', $sede->id))
+            ->whereHas('orden', fn ($orden) => $orden->where('paciente_id', $persona->id))
+            ->whereIn('id', $validated['procedimientos'])
+            ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
+            ->whereHas('resultado')
+            ->with(['orden', 'examen', 'empleado.user'])
+            ->orderBy('id')
+            ->get();
+
+        if ($procedimientos->isEmpty()) {
+            return redirect()->route('resultados.historia', $persona)
+                ->with('warning', 'Selecciona procedimientos terminados con resultados para imprimir.');
+        }
+
+        $procedimientos->each(fn (Procedimiento $procedimiento) => ControlSede::autorizarProcedimiento($request, $procedimiento));
+        $reporte = $construirReporte->paraProcedimientos($procedimientos);
+
+        return view('resultados.reporte', [
+            'reporte' => $reporte,
+            'enPdf' => false,
+            'tituloReporte' => 'Historia clínica',
+            'urlVolver' => route('resultados.historia', $persona),
+        ]);
     }
 }

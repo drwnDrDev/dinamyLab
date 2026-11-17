@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Sede') }}
+            {{ 'Sede' }}
         </h2>
     </x-slot>
 <x-canva>
@@ -10,8 +10,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h1 class="text-2xl font-bold mb-4">{{ $sede->nombre }}</h1>
-                    <p><strong>Dirección:</strong> {{ $sede->direccion->direccion }} - {{ $sede->direccion->municipio->municipio }}</p>
-                    <p><strong>Ciudad:</strong> {{ $sede->direccion->municipio->departamento }}</p>
+                    <p><strong>Dirección:</strong> {{ $sede->direccion?->direccion }} - {{ $sede->direccion?->municipio?->municipio }}</p>
+                    <p><strong>Ciudad:</strong> {{ $sede->direccion?->municipio?->departamento }}</p>
                     <p><strong>Teléfono:</strong> {{ $sede->telefonos->pluck('numero')->implode(', ' ) }}</p>
                     <p><strong>Email:</strong> {{ $sede->emails->pluck('email')->implode(', ' ) }}</p>
                 </div>
@@ -22,7 +22,7 @@
     <section>
         <header>
                 <h2 class="text-lg font-medium text-gray-900">
-                    {{ __('Profesionales disponibles en esta sede') }}
+                    {{ 'Profesionales disponibles en esta sede' }}
                 </h2>
 
                 @foreach ($sede->empleados as $empleado)
@@ -33,13 +33,14 @@
     <section>
         <header>
                 <h2 class="text-lg font-medium text-gray-900">
-                    {{ __('Exams available at this location') }}
+                    {{ 'Exámenes disponibles en esta sede' }}
                 </h2>
         </header>
 
                 <div
                     id="tarifas-examenes-root"
                     data-sede-id="{{ $sede->id }}"
+                    data-can-edit="{{ auth()->user()->hasRole('admin') ? 'true' : 'false' }}"
                     class="mt-4"
                 ></div>
 

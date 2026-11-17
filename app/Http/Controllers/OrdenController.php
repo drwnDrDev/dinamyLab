@@ -159,7 +159,7 @@ class OrdenController extends Controller
                         'fecha' => now(),
                         'sede_id' => $sede->id,
                         'contacto_emergencia_id' => $contactoEmergencia? $contactoEmergencia->id : null, // ID del contacto de emergencia si existe
-                        'estado' => Estado::PROCESO, // Asumo que Estado::PROCESO es una constante o Enum
+                        'estado' => $request->boolean('pendiente_muestra') ? Estado::PENDIENTE->value : Estado::PROCESO->value, // Asumo que Estado::PROCESO es una constante o Enum
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
@@ -188,8 +188,20 @@ class OrdenController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Actualiza el progreso de una remisión de la orden.
      */
+    public function actualizarEstadoRemision(Request $request, Orden $orden, int $remision)
+    {
+        ControlSede::autorizarOrden($request, $orden);
+        $datos = $request->validate(['estado' => ['required', Rule::enum(Estado::class)]]);
+        DB::transaction(function () use ($orden, $remision, $datos) {
+            Orden::whereKey($orden->id)->lockForUpdate()->firstOrFail();
+            $orden->remisiones()->findOrFail($remision)->update($datos);
+        });
+
+        return redirect()->route('ordenes.show', $orden)->with('success', 'Estado de la remisión actualizado.');
+    }
+
     public function edit(Orden $orden)
     {
         ControlSede::autorizarOrden(request(), $orden);
@@ -237,6 +249,7 @@ class OrdenController extends Controller
             ],
             'remisiones.*.destino_sede_id' => ['nullable', 'integer', 'exists:sedes,id'],
             'remisiones.*.destino' => ['nullable', 'string', 'max:255'],
+            'remisiones.*.estado' => ['sometimes', \Illuminate\Validation\Rule::enum(\App\Estado::class)],
             'remisiones.*.eliminar' => ['nullable', 'boolean'],
             'nuevas_remisiones' => ['nullable', 'array'],
             'nuevas_remisiones.*.cup' => ['required', 'string', 'max:20'],
@@ -346,6 +359,7 @@ class OrdenController extends Controller
                 }
 
                 $remision->update([
+                    'estado' => $datos['estado'] ?? $remision->estado,
                     'destino_sede_id' => $destinoSede?->id,
                     'destino' => $destino,
                 ]);

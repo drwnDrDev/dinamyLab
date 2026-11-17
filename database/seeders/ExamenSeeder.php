@@ -345,6 +345,87 @@ class ExamenSeeder extends Seeder
             $processParam($item, $examen, $orden);
         }
 
+       // 10. Curva De Tolerancia A La Glucosa 2 Muestras
+
+       $examen = Examen::firstOrCreate(
+            ['nombre' => 'Curva De Tolerancia A La Glucosa 2 Muestras'],
+            [
+                'nombre' => 'Curva De Tolerancia A La Glucosa 2 Muestras',
+                'cup' => '903842',
+                'valor' => '50000.00',
+                'descripcion' => 'La prueba de tolerancia a la glucosa mide la capacidad del cuerpo para metabolizar la glucosa y es útil para diagnosticar diabetes y prediabetes.',
+                'nombre_alternativo' => null,
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Glicemia Basal","resultado":{"tipo":"number","nombre":"glicemia_basal"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-100","minimo":70,"maximo":100}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}},
+            {"parametro":"Glicemia 2 Horas","resultado":{"tipo":"number","nombre":"glicemia_2h"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-120","minimo":70,"maximo":120}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
+
+
+       // 11. Curva De Tolerancia A La Glucosa 3 Muestras
+
+       $examen = Examen::firstOrCreate(
+            ['nombre' => 'Curva De Tolerancia A La Glucosa 3 Muestras'],
+            [
+                'nombre' => 'Curva De Tolerancia A La Glucosa 3 Muestras',
+                'cup' => '903886',
+                'valor' => '75000.00',
+                'descripcion' => 'La prueba de tolerancia a la glucosa mide la capacidad del cuerpo para metabolizar la glucosa y es útil para diagnosticar diabetes y prediabetes.',
+                'nombre_alternativo' => null,
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Glicemia Basal","resultado":{"tipo":"number","nombre":"glicemia_basal"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-100","minimo":70,"maximo":100}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}},
+            {"parametro":"Glicemia 1 Hora","resultado":{"tipo":"number","nombre":"glicemia_1h"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"100-140","minimo":100,"maximo":140}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}},
+            {"parametro":"Glicemia 2 Horas","resultado":{"tipo":"number","nombre":"glicemia_2h"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-120","minimo":70,"maximo":120}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}}
+
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }   
+
+        $examen = Examen::firstOrCreate(
+            ['nombre' => 'Curva De Tolerancia A La Glucosa 5 Muestras'],
+            [
+                'nombre' => 'Curva De Tolerancia A La Glucosa 5 Muestras',
+                'cup' => '903889',
+                'valor' => '115000.00',
+                'descripcion' => 'La prueba de tolerancia a la glucosa mide la capacidad del cuerpo para metabolizar la glucosa y es útil para diagnosticar diabetes y prediabetes.',
+                'nombre_alternativo' => null,
+            ]
+        );
+        $parametrosYReferencias = json_decode('[
+            {"parametro":"Glicemia Basal","resultado":{"tipo":"number","nombre":"glicemia_basal"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-100","minimo":70,"maximo":100}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}},
+            {"parametro":"Glicemia 30 Minutos","resultado":{"tipo":"number","nombre":"glicemia_30min"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"120-170","minimo":120,"maximo":170}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}},
+            {"parametro":"Glicemia 1 Hora","resultado":{"tipo":"number","nombre":"glicemia_1h"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"100-140","minimo":100,"maximo":140}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}},
+            {"parametro":"Glicemia 2 Horas","resultado":{"tipo":"number","nombre":"glicemia_2h"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-120","minimo":70,"maximo":120}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}},
+            {"parametro":"Glicemia 3 Horas","resultado":{"tipo":"number","nombre":"glicemia_3h"},"unidades":"mg/dL","referencia":{"adultos":{"salida":"70-120","minimo":70,"maximo":120}}},
+            {"parametro":"observaciones","resultado":{"tipo":"textarea","nombre":"observacion"}}
+        ]', true);
+        $orden = 0;
+        foreach ($parametrosYReferencias as $item) {
+            $orden++;
+            $processParam($item, $examen, $orden);
+        }
+
         // ========================================
         // EXÁMENES ADICIONALES (Ya existentes)
         // ========================================
@@ -372,6 +453,7 @@ class ExamenSeeder extends Seeder
   array('parametros' => '[{"parametro": "Serología", "resultado": {"tipo": "text", "nombre": "resultado", "default": "NO REACTIVA"}}]','nombre_examen' => 'Serologia (Prueba no treponemica) VDRL','nombre_alternativo' => 'Serologia','descripcion' => 'comprueban la presencia o el nivel de anticuerpos específicos en la sangre','CUP' => '906915','valor' => '16000.00'),
   array('parametros' => '[{"parametro": "Fosa nasal derecha", "resultado": {"nombre": "poli_de", "tipo": "number"}, "unidades": "%", "grupo": "Polimorfonucleares"}, {"parametro": "Fosa nasal izquierda", "resultado": {"nombre": "poli_iz", "tipo": "number"}, "unidades": "%", "grupo": "Polimorfonucleares"}, {"parametro": "Fosa nasal derecha", "resultado": {"nombre": "mono_de", "tipo": "number"}, "unidades": "%", "grupo": "Mononucleares"}, {"parametro": "Fosa nasal izquierda", "resultado": {"nombre": "mono_iz", "tipo": "number"}, "unidades": "%", "grupo": "Mononucleares"}, {"parametro": "Fosa nasal derecha", "resultado": {"nombre": "eos_de", "tipo": "number"}, "unidades": "%", "grupo": "Eosinofilos"}, {"parametro": "Fosa nasal izquierda", "resultado": {"nombre": "eos_iz", "tipo": "number"}, "unidades": "%", "grupo": "Eosinofilos"}, {"parametro": "observaciones", "resultado": {"nombre": "observaciones", "tipo": "textarea"}, "grupo": null}]','nombre_examen' => 'Eosinofilos en moco nasal','nombre_alternativo' => 'Conteo y medición de células eosinofilos en moco nasal, respuesta unflamtoriaalergica','descripcion' => '','CUP' => '902219','valor' => '36000.00'),
   array('parametros' => '[{"parametro": "Antigeno específico de próstata", "subtitulo": "Prueba rápida semicuantitativa para (PSA) \\n Negativo menor a 3 ng/ml", "resultado": {"tipo": "select", "nombre": "psa", "items": ["positivo", "negativo"]}}, {"parametro": "observaciones", "resultado": {"tipo": "textarea", "nombre": "observacion", "items": ["Se sugiere realizar prueba cuantitativa"]}}]','nombre_examen' => 'Antigeno específico de próstata','nombre_alternativo' => 'PSA','descripcion' => 'Prueba rápida para detectar semicuantitativamente niveles de Antigeno Prostatico Especifico(PSA) en sangre suero o plasma','CUP' => '906610','valor' => '26000.00','sexo_aplicable' => 'M')
+  
 );
 
 // Función para reestructurar los parámetros

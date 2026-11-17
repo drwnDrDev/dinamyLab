@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="flex flex-wrap justify-evenly items-center mb-4">
             <h1 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
-                {{ __('Medical order') }}
+                {{ 'Orden médica' }}
             </h1>
             <x-primary-button href="{{ route('ordenes.create') }}" class="w-full sm:w-40">
-                {{ __('Create new order') }}
+                {{ 'Nueva orden' }}
             </x-primary-button>
         </div>
     </x-slot>

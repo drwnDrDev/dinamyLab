@@ -8,6 +8,9 @@ import StepperOrden from './StepperOrden';
 import useAxiosAuth from './hooks/useAxiosAuth';
 import ordenDataDefault from './ordenDataDefault';
 import { useOrderValidation } from './hooks/useOrdenValidation';
+import { toast } from '../lib/toast';
+
+const TOAST_ORDEN = 'crear-orden';
 
 const formatCOP = (value) =>
     new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
@@ -38,6 +41,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
         paciente_id: null,
         examenes: [],
         remisiones: [],
+        pendiente_muestra: false,
         cod_servicio: null,
         via_ingreso: '',
         cie_principal: null,
@@ -52,7 +56,6 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
     const [persona, setPersona] = useState(paciente || null);
     const [loading, setLoading] = useState(false);
     const [completeMessage, setCompleteMessage] = useState(false);
-    const [error, setError] = useState(null);
     const [formOrden, setFormOrden] = useState(initialFormState);
     const [currentStep, setCurrentStep] = useState(1);
     const [stepError, setStepError] = useState(null);
@@ -126,8 +129,8 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
     };
 
     const handleTablasRefUpdate = (e) => {
-        const { name, value } = e.target;
-        setFormOrden(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setFormOrden(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
         if (name === 'numero_orden') {
             setNumeroOrdenDuplicado(false);
             setErrorVerificacionNumero('');
@@ -170,7 +173,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
     };
 
     const handleNext = () => {
-        setError(null);
+        toast.dismiss(TOAST_ORDEN);
         const err = getStepError(currentStep);
         if (err) {
             setStepError(err);
@@ -182,7 +185,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
 
     const handlePrev = () => {
         setStepError(null);
-        setError(null);
+        toast.dismiss(TOAST_ORDEN);
         setCurrentStep(prev => Math.max(prev - 1, 1));
     };
 
@@ -190,7 +193,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
         e.preventDefault();
 
         if (!csrfLoaded) {
-            setError('Autenticación en progreso, intente de nuevo.');
+            toast.warning('Autenticación en progreso, intente de nuevo.', { key: TOAST_ORDEN });
             return;
         }
 
@@ -220,12 +223,12 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
 
         if (numeroOrdenDuplicado) {
             setCurrentStep(3);
-            setError('Ese número de orden ya fue usado en esta sede. Ingrese otro número antes de continuar.');
+            toast.error('Ese número de orden ya fue usado en esta sede. Ingrese otro número antes de continuar.', { key: TOAST_ORDEN });
             return;
         }
 
         setLoading(true);
-        setError(null);
+        toast.dismiss(TOAST_ORDEN);
 
         try {
             const response = await axiosInstance.post('/api/ordenes', formOrden);
@@ -254,9 +257,9 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
                             : 4;
 
                 setCurrentStep(paso);
-                setError(`No se pudo crear la orden. ${validationMessages.join(' ')}`);
+                toast.error(validationMessages.join(' '), { title: 'No se pudo crear la orden', key: TOAST_ORDEN });
             } else {
-                setError(err.response?.data?.message || 'Error al crear la orden. Intente nuevamente.');
+                toast.error(err.response?.data?.message || 'Error al crear la orden. Intente nuevamente.', { key: TOAST_ORDEN });
             }
         } finally {
             setLoading(false);
@@ -343,20 +346,6 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
                             </div>
                         )}
 
-                        {/* Banner de error de API */}
-                        {error && (
-                            <div
-                                className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm flex items-start gap-2"
-                                role="alert"
-                                aria-live="assertive"
-                            >
-                                <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                {error}
-                            </div>
-                        )}
-
                         {/* PASO 1: Paciente */}
                         {currentStep === 1 && (
                             persona ? (
@@ -377,6 +366,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
                                     persona={null}
                                     setPersona={handlePersonaUpdate}
                                     perfil="Paciente"
+                                    showTitle={false}
                                 />
                             )
                         )}
@@ -418,6 +408,7 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
                                     <h3 className="text-sm font-semibold text-titles mb-2">
                                         Exámenes ({formOrden.examenes.length}) y remisiones ({formOrden.remisiones.length})
                                     </h3>
+                                    <p className="mb-2 text-sm text-text">Estado inicial: {formOrden.pendiente_muestra ? 'Pendiente por muestra' : 'En proceso'}</p>
                                     <ul className="text-sm text-text space-y-1">
                                         {formOrden.examenes.map((ex, i) => (
                                             <li key={i} className="flex justify-between">

@@ -41,13 +41,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('administracion/sede/{sede}', [SedeController::class, 'elegirSede'])->name('elegir.sede');
 
+    Route::get('/personas/create', [PersonaController::class, 'create'])
+        ->middleware('can:crear_persona')
+        ->name('personas.create');
+
     Route::middleware('can:ver_persona')->group(function () {
         Route::get('/personas', [PersonaController::class, 'index'])->name('personas');
         Route::get('/personas/{persona}', [PersonaController::class, 'show'])->name('personas.show');
     });
 
     Route::middleware('can:crear_persona')->group(function () {
-        Route::get('/personas/create', [PersonaController::class, 'create'])->name('personas.create');
         Route::post('/personas/store', [PersonaController::class, 'store'])->name('personas.store');
     });
 
@@ -72,6 +75,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('can:editar_orden')->group(function () {
         Route::get('/ordenes-medicas/{orden}/edit', [OrdenController::class, 'edit'])->name('ordenes.edit');
+        Route::patch('/ordenes-medicas/{orden}/remisiones/{remision}/estado', [OrdenController::class, 'actualizarEstadoRemision'])->name('ordenes.remisiones.estado');
         Route::put('/ordenes-medicas/{orden}', [OrdenController::class, 'update'])->name('ordenes.update');
     });
 
@@ -96,19 +100,21 @@ Route::middleware('auth')->group(function () {
         Route::get('/resultados', [ResultadosController::class, 'index'])->name('resultados');
         Route::get('/ordenes-medicas/{orden}/reporte-resultados', [ResultadosController::class, 'reporteOrden'])
             ->name('resultados.reporte_orden');
+        Route::get('/resultados/orden/{orden}/pdf', [ResultadosController::class, 'reporteOrdenPdf'])
+            ->name('resultados.reporte_pdf');
         Route::get('/resultados/{procedimiento}/ver', [ResultadosController::class, 'show'])->name('resultados.show');
         Route::get('/resultados/{persona}/historia', [ResultadosController::class, 'historia'])->name('resultados.historia');
         Route::post('/resultados/{persona}/historia', [ResultadosController::class, 'historia_show'])->name('resultados.historia_show');
     });
 
-    Route::middleware('can:registrar_resultado')->group(function () {
+    Route::middleware([\App\Http\Middleware\EnsurePrestador::class, 'can:registrar_resultado'])->group(function () {
         Route::get('/resultados/{procedimiento}', [ResultadosController::class, 'create'])->name('resultados.create');
         Route::post('/resultados/{procedimiento}/store', [ResultadosController::class, 'store'])->name('resultados.store');
         Route::get('/examenes/{examen}/lote', [ExamenController::class, 'lote'])->name('examenes.lote');
         Route::post('/examenes/{examen}/lote/resultados', [ExamenController::class, 'guardarLote'])->name('examenes.lote.store');
     });
 
-    Route::middleware('can:editar_resultado')->group(function () {
+    Route::middleware([\App\Http\Middleware\EnsurePrestador::class, 'can:editar_resultado'])->group(function () {
         Route::get('/resultados/{procedimiento}/edit', [ResultadosController::class, 'edit'])->name('resultados.edit');
         Route::put('/resultados/{procedimiento}/update', [ResultadosController::class, 'update'])->name('resultados.update');
     });
@@ -126,14 +132,17 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:ver_persona')
         ->name('search');
 
+    Route::get('/admin/sedes/{sede}', [SedeController::class, 'show'])
+        ->whereNumber('sede')
+        ->middleware('can:ver_examen')->name('sedes.show');
+
     Route::middleware(['verified', 'role:admin'])->group(function () {
         Route::get('/caja', [AdministracionController::class, 'caja'])->name('caja');
-        Route::post('reportes/rips', [ProcedimientoController::class, 'json_rips'])->name('descargar.rips');
         Route::get('parametros', [App\Http\Controllers\ParametroController::class, 'index'])->name('parametros.index');
         Route::get('admin/empresa', [App\Http\Controllers\EmpresaController::class, 'show'])->name('empresa.show');
         Route::get('/admin/dashboard', [EmpleadoController::class, 'dashboard'])->name('admin.dashboard');
         Route::resource('/admin/empleados', EmpleadoController::class)->except(['index']);
-        Route::resource('/admin/sedes', SedeController::class)->except(['index']);
+        Route::resource('/admin/sedes', SedeController::class)->except(['index', 'show']);
         Route::get('/cups', [CodigoCupController::class, 'index'])->name('cups.index');
         Route::post('/cups/buscar', [CodigoCupController::class, 'search'])->name('cups.search');
         Route::get('/cups/{codigoCup}', [CodigoCupController::class, 'show'])->name('cups.show');
@@ -156,6 +165,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/facturas/resoluciones/{resolucion}', [ResolucionController::class, 'update'])->name('resoluciones.update');
         Route::delete('/facturas/resoluciones/{resolucion}', [ResolucionController::class, 'destroy'])->name('resoluciones.destroy');
     });
+
+    Route::post('reportes/rips', [ProcedimientoController::class, 'json_rips'])
+        ->middleware(['verified', 'can:ver_reportes'])
+        ->name('descargar.rips');
 
     Route::middleware('can:ver_facturas')->group(function () {
         Route::get('/facturas', [FacturaController::class, 'index'])->name('facturas');

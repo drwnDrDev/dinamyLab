@@ -41,6 +41,29 @@ class OrdenesApiTest extends TestCase
         session(['sede' => $this->sede]);
     }
 
+    public function test_el_checkbox_define_el_estado_inicial_de_examenes_y_remisiones(): void
+    {
+        $paciente = Persona::factory()->create();
+        $examen = Examen::factory()->create(['valor' => 100]);
+        foreach ([true, false] as $pendiente) {
+            $estado = $pendiente ? \App\Estado::PENDIENTE->value : \App\Estado::PROCESO->value;
+            $respuesta = $this->actingAs($this->user, 'sanctum')->postJson('/api/ordenes', [
+                'paciente_id' => $paciente->id,
+                'numero_orden' => $pendiente ? 'MUESTRA-1' : 'MUESTRA-2',
+                'fecha_orden' => now()->format('Y-m-d'),
+                'pendiente_muestra' => $pendiente,
+                'examenes' => [['id' => $examen->id, 'cantidad' => 2]],
+                'remisiones' => [[
+                    'cup' => '903895', 'nombre' => 'Creatinina', 'valor' => 20000, 'destino' => 'Laboratorio externo',
+                ]],
+            ])->assertCreated();
+            $orden = Orden::findOrFail($respuesta->json('data.id'));
+            $this->assertSame([$estado, $estado], $orden->procedimientos()->pluck('estado')->all());
+            $this->assertSame($estado, $orden->remisiones()->firstOrFail()->estado->value);
+            $this->assertNull($orden->terminada);
+        }
+    }
+
     public function test_can_create_orden_with_valid_data(): void
     {
         $paciente = Persona::factory()->create();

@@ -204,6 +204,7 @@ class ControlSedeTest extends TestCase
             'id' => $procedimiento->id,
             'empleado_id' => $this->empleado->id,
         ]);
+        $this->assertNotNull($procedimiento->orden->fresh()->terminada);
     }
 
     // ---- Guardar resultados (API) ----
@@ -251,5 +252,6 @@ class ControlSedeTest extends TestCase
             'id' => $procedimiento->id,
             'empleado_id' => $this->empleado->id,
         ]);
+        $this->assertNotNull($procedimiento->orden->fresh()->terminada);
     }
 }

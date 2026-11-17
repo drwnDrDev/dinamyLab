@@ -14,6 +14,12 @@ const DatosOrden = ({ formOrden, onUpdate, error }) => {
                     Información requerida para el reporte RIPS.
                 </p>
             </div>
+            <label className="mb-4 flex items-center gap-2 text-sm text-text">
+                <input type="checkbox" name="pendiente_muestra" checked={Boolean(formOrden.pendiente_muestra)} onChange={onUpdate} className="rounded border-borders text-primary focus:ring-primary" />
+                Pendiente por muestra
+            </label>
+            <p className="mb-4 text-sm text-gray-500">Si está marcado, los exámenes y remisiones quedarán pendientes de muestra. De lo contrario, iniciarán en proceso.</p>
+            {error?.pendiente_muestra && <p className="mb-4 text-sm text-red-600">{error.pendiente_muestra}</p>}
             <div className="grid grid-cols-2 gap-4">
                 <SelectField
                     label="Modalidad de Atención"

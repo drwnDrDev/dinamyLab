@@ -16,9 +16,11 @@
                 se usan los datos ficticios de resultados/reporte/ejemplo.php.
       $enPdf    true cuando lo renderiza DomPDF: activa la numeración "Página X de Y" y quita los
                 estilos de pantalla.
+      $urlEditar  enlace a resultados.edit; solo llega cuando el usuario puede corregir el resultado.
 --}}
 @php
     $enPdf = $enPdf ?? false;
+    $cambios = $cambios ?? collect();
     $reporte = $reporte ?? (function () use (&$modoEjemplo) {
         $modoEjemplo = $modoEjemplo ?? 'orden';
 
@@ -28,6 +30,11 @@
     $lab = $reporte['laboratorio'];
     $paciente = $reporte['paciente'];
     $orden = $reporte['orden'] ?? null;
+    $tituloReporte = $tituloReporte ?? ($orden ? 'Resultados de orden '.$orden['numero'] : 'Reporte de resultados');
+    $urlVolver = $urlVolver ?? null;
+    $urlPdf = $urlPdf ?? null;
+    $urlEditar = $urlEditar ?? null;
+    $navegacion = $navegacion ?? [];
 
     /*
      * Paginación determinista, en puntos (pt). DomPDF solo respeta page-break-inside: avoid si el
@@ -130,6 +137,10 @@
             ];
         }
     }
+
+    $bloquesPorOrden = collect($bloques)->groupBy(
+        fn (array $bloque) => $bloque['examen']['orden_id'] ?? $bloque['examen']['orden_numero'] ?? 'sin-orden'
+    );
 @endphp
 <!DOCTYPE html>
 <html lang="es">
@@ -207,7 +218,7 @@
             margin-top: 0.6mm;
         }
 
-        .lab-nit {
+        .lab-registro-medico {
             font-size: 8pt;
             color: #5b6b6e;
             margin-top: 0.4mm;
@@ -390,6 +401,10 @@
             font-size: 9pt;
         }
 
+        .fila td { overflow-wrap: break-word; word-wrap: break-word; }
+
+        .col-unidades, .col-referencia { padding-left: 2mm; }
+
         .fila .col-unidades,
         .fila .col-referencia {
             color: #3a4a4d;
@@ -462,26 +477,99 @@
             border-left: 1.4mm solid #cfe4e8;
         }
 
-        .remisiones th {
-            font-size: 6.8pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5pt;
-            color: #4b8f9b;
-            padding: 1.2mm 2mm;
-            border-top: 0.6pt solid #0d191c;
-            border-bottom: 0.6pt solid #0d191c;
-        }
-
-        .remisiones td {
-            padding: 1.1mm 2mm;
-            border-bottom: 0.4pt dotted #b9d3d8;
-        }
-
         .nota {
             font-size: 7pt;
             color: #5b6b6e;
             margin-top: 1mm;
+        }
+
+        .historial-cambios {
+            margin-top: 8mm;
+        }
+
+        .historial-cambios th,
+        .historial-cambios td {
+            padding: 1.5mm 2mm;
+            border-bottom: 0.4pt solid #cfe4e8;
+            vertical-align: top;
+        }
+
+        .historial-cambios th {
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .acciones-reporte {
+            display: flex;
+            justify-content: flex-end;
+            gap: 3mm;
+            margin-bottom: 6mm;
+        }
+
+        .acciones-reporte a,
+        .acciones-reporte button {
+            border: 0.5pt solid #4b8f9b;
+            background: #ffffff;
+            color: #0d191c;
+            padding: 2mm 4mm;
+            text-decoration: none;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .aviso-flash {
+            margin: 0 0 4mm;
+            padding: 2mm 3mm;
+            border-left: 1mm solid #4b8f9b;
+            background: #eef6f7;
+            color: #0d191c;
+        }
+
+        .aviso-warning {
+            border-left-color: #b45309;
+            background: #fff7ed;
+        }
+
+        .aviso-error {
+            border-left-color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        .orden-seccion + .orden-seccion {
+            page-break-before: always;
+            break-before: page;
+        }
+
+        .orden-seccion-encabezado {
+            margin-bottom: 4mm;
+            padding: 2mm 2.5mm;
+            border-top: 0.6pt solid #0d191c;
+            border-bottom: 0.6pt solid #cfe4e8;
+            font-size: 9pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .orden-seccion-encabezado span {
+            margin-left: 4mm;
+            font-size: 7pt;
+            font-weight: normal;
+            text-transform: none;
+            color: #5b6b6e;
+        }
+
+        .orden-seccion-sede {
+            margin: 0 0 3mm;
+            font-size: 7pt;
+            color: #5b6b6e;
+        }
+
+        @media print {
+            .acciones-reporte,
+            .aviso-flash,
+            .historial-cambios {
+                display: none;
+            }
         }
     </style>
     @unless ($enPdf)
@@ -536,19 +624,51 @@
     @endunless
 </head>
 <body>
+    @unless ($enPdf)
+        <nav class="acciones-reporte">
+            @if ($urlVolver)
+                <a href="{{ $urlVolver }}">Volver</a>
+            @endif
+            @if ($urlEditar)
+                <a href="{{ $urlEditar }}">Editar resultado</a>
+            @endif
+            @if (! $enPdf && ($navegacion['anterior'] ?? null))
+                <a href="{{ route('resultados.show', $navegacion['anterior']) }}">
+                    &larr; Anterior: {{ $navegacion['anterior']->examen->nombre }}
+                </a>
+            @endif
+            @if (! $enPdf && ($navegacion['siguiente'] ?? null))
+                <a href="{{ route('resultados.show', $navegacion['siguiente']) }}">
+                    Siguiente: {{ $navegacion['siguiente']->examen->nombre }} &rarr;
+                </a>
+            @endif
+            <button type="button" onclick="window.print()">Imprimir</button>
+            @if ($urlPdf)
+                <a href="{{ $urlPdf }}">Descargar PDF</a>
+            @endif
+        </nav>
+        {{-- Esta plantilla no usa el layout de la app: los flash (p. ej. tras editar) se muestran aquí. --}}
+        @foreach (['success' => 'status', 'info' => 'status', 'warning' => 'alert', 'error' => 'alert'] as $tipoAviso => $rolAviso)
+            @if (session()->has($tipoAviso))
+                <p class="aviso-flash aviso-{{ $tipoAviso }}" role="{{ $rolAviso }}">{{ session($tipoAviso) }}</p>
+            @endif
+        @endforeach
+    @endunless
     <header class="encabezado">
         <table>
             <tr>
                 @if (filled($lab['logo_src'] ?? null))
-                    <td class="marca-logo"><img src="{{ $lab['logo_src'] }}" alt="Logo de {{ $lab['nombre_comercial'] }}"></td>
+                    <td class="marca-logo"><img src="{{ $lab['logo_src'] }}" alt="Logo de {{ $lab['razon_social'] }}"></td>
                 @endif
                 <td class="marca-texto">
-                    <div class="lab-nombre">{{ $lab['nombre_comercial'] }}</div>
+                    <div class="lab-nombre">{{ $lab['razon_social'] }}</div>
                     <div class="lab-sede">{{ $lab['sede'] }}</div>
-                    <div class="lab-nit">NIT {{ $lab['nit'] }}</div>
+                    @if (filled($lab['registro_medico'] ?? null))
+                        <div class="lab-registro-medico">Registro médico {{ $lab['registro_medico'] }}</div>
+                    @endif
                 </td>
                 <td class="doc-meta">
-                    <div class="doc-titulo">Reporte de resultados</div>
+                    <div class="doc-titulo">{{ $tituloReporte }}</div>
                     @if ($orden)
                         <div class="doc-dato">Orden Nº <strong>{{ $orden['numero'] }}</strong></div>
                         <div class="doc-dato">Fecha de atención <strong>{{ $orden['fecha_atencion'] }}</strong></div>
@@ -608,37 +728,66 @@
     </footer>
 
     <main>
-        @foreach ($bloques as $bloque)
-            @include('resultados.reporte._examen', ['bloque' => $bloque])
-        @endforeach
-
-        @if (! empty($reporte['remisiones']))
-            <div class="bloque">
-                <div class="seccion-titulo">Exámenes remitidos</div>
-                <table class="remisiones" style="table-layout: fixed">
-                    <thead>
-                        <tr>
-                            <th style="width: 16%">CUP</th>
-                            <th style="width: 50%">Examen</th>
-                            <th style="width: 34%">Laboratorio de destino</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($reporte['remisiones'] as $remision)
-                            <tr>
-                                <td>{{ $remision['cup'] }}</td>
-                                <td>{{ $remision['nombre'] }}</td>
-                                <td>{{ $remision['destino'] }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <p class="nota">Los resultados de los exámenes remitidos se entregan por separado.</p>
-            </div>
+        @if (empty($bloques))
+            <p class="nota">No hay exámenes terminados con resultados para incluir en el reporte.</p>
+        @else
+            @foreach ($bloquesPorOrden as $bloquesOrden)
+                @php($primerExamenOrden = $bloquesOrden->first()['examen'])
+                <section class="orden-seccion">
+                    @if ($mostrarOrden)
+                        <div class="orden-seccion-encabezado">
+                            Orden Nº {{ $primerExamenOrden['orden_numero'] }}
+                            <span>Fecha de atención {{ $primerExamenOrden['fecha_atencion'] }}</span>
+                        </div>
+                    @endif
+                    @if (isset($primerExamenOrden['laboratorio']))
+                        <p class="orden-seccion-sede">
+                            {{ $primerExamenOrden['laboratorio']['razon_social'] }}
+                            · {{ $primerExamenOrden['laboratorio']['sede'] }}
+                            @if (filled($primerExamenOrden['laboratorio']['registro_medico'] ?? null))
+                                · Registro médico {{ $primerExamenOrden['laboratorio']['registro_medico'] }}
+                            @endif
+                        </p>
+                    @endif
+                    @foreach ($bloquesOrden as $bloque)
+                        @include('resultados.reporte._examen', ['bloque' => $bloque])
+                    @endforeach
+                </section>
+            @endforeach
         @endif
 
         @if ($hayFueraDeRango)
             <p class="nota">* Valor fuera del rango de referencia. La interpretación de los resultados corresponde al médico tratante.</p>
+        @endif
+
+        @if ($cambios->isNotEmpty())
+            <section class="historial-cambios">
+                <div class="seccion-titulo">Historial de modificaciones</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Parámetro</th>
+                            <th>Valor anterior</th>
+                            <th>Valor nuevo</th>
+                            <th>Modificado por</th>
+                            <th>Observación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($cambios as $cambio)
+                            <tr>
+                                <td>{{ $cambio->created_at->format('d/m/Y H:i') }}</td>
+                                <td>{{ $cambio->parametro_nombre }}</td>
+                                <td>{{ $cambio->valor_anterior ?? 'Vacío' }}</td>
+                                <td>{{ $cambio->valor_nuevo ?? 'Vacío' }}</td>
+                                <td>{{ $cambio->usuario_nombre }}</td>
+                                <td>{{ $cambio->observacion }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </section>
         @endif
     </main>
 </body>

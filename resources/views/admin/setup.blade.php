@@ -4,7 +4,7 @@
     </x-slot>
 <x-slot name="header">
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Configuración Inicial') }}
+        {{ 'Configuración Inicial' }}
     </h2>
 </x-slot>
 @vite('resources/js/app.jsx')

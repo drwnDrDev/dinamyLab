@@ -61,7 +61,7 @@
 
                                 </figure>
                                 <div class="pl-4 text-start">
-                                    <h2 class="font-semibold text-xl">{{$sede->empresa->nombre_comercial}}</h2>
+                                    <h2 class="font-semibold text-xl">{{$sede->empresa->razon_social}}</h2>
                                     <p class="">{{$sede->nombre}}</p>
                                     <p class="font-light">NIT. {{$sede->empresa->nit}}</p>
                                 </div>

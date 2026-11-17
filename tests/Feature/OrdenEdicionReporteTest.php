@@ -125,7 +125,20 @@ it('impide quitar un procedimiento terminado y conserva sus resultados', functio
 
 it('muestra el reporte agrupado de una orden', function () {
     $examen = Examen::factory()->create();
+    $this->sede->empresa->update([
+        'razon_social' => 'Laboratorio Legal S.A.S.',
+        'nombre_comercial' => 'Marca del Laboratorio',
+    ]);
     $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $orden->remisiones()->create([
+        'cup' => '902299',
+        'nombre' => 'Examen externo reservado',
+        'valor' => 25,
+        'destino' => 'Laboratorio externo reservado',
+    ]);
+    expect(app(\App\Services\ConstruirReporteResultados::class)->paraOrden($orden))
+        ->not->toHaveKey('remisiones');
+
     $procedimiento = $orden->procedimientos()->firstOrFail();
     $parametro = Parametro::create([
         'nombre' => 'Hemoglobina',
@@ -143,8 +156,300 @@ it('muestra el reporte agrupado de una orden', function () {
         ->get(route('resultados.reporte_orden', $orden))
         ->assertOk()
         ->assertSee("Resultados de orden {$orden->numero}")
+        ->assertSee('Laboratorio Legal S.A.S.')
+        ->assertDontSee('Marca del Laboratorio')
         ->assertSee($examen->nombre)
         ->assertSee('Hemoglobina')
+        ->assertDontSee('Examen externo reservado')
+        ->assertDontSee('Laboratorio externo reservado')
+        ->assertDontSee('Exámenes remitidos')
         ->assertSee('13.5')
         ->assertSee(route('resultados.show', $procedimiento));
+});
+
+it('reutiliza el contenido del reporte para resultados individuales e historia', function () {
+    $this->sede->empresa->update([
+        'razon_social' => 'Razón Social Legal S.A.S.',
+        'nombre_comercial' => 'Marca Comercial',
+    ]);
+    $examen = Examen::factory()->create(['nombre' => 'Examen individual']);
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $procedimiento = $orden->procedimientos()->firstOrFail();
+    $parametro = Parametro::create([
+        'nombre' => 'Resultado individual',
+        'slug' => 'resultado-individual',
+        'tipo_dato' => 'number',
+        'examen_id' => $examen->id,
+    ]);
+    Resultado::create([
+        'parametro_id' => $parametro->id,
+        'procedimiento_id' => $procedimiento->id,
+        'resultado' => '13.5',
+    ]);
+
+    $examenAdicional = Examen::factory()->create(['nombre' => 'Examen histórico']);
+    $ordenAdicional = Orden::create([
+        'sede_id' => $this->sede->id,
+        'numero' => 873,
+        'paciente_id' => $orden->paciente_id,
+        'user_id' => $this->user->id,
+        'total' => $examenAdicional->valor,
+    ]);
+    $procedimientoAdicional = $ordenAdicional->procedimientos()->create([
+        'examen_id' => $examenAdicional->id,
+        'fecha' => now(),
+        'sede_id' => $this->sede->id,
+        'diagnostico_principal' => 'Z017',
+        'codigo_finalidad' => '15',
+        'codigo_modalidad' => '01',
+        'codigo_via_ingreso' => '01',
+        'estado' => Estado::ENTREGADO->value,
+    ]);
+    $parametroAdicional = Parametro::create([
+        'nombre' => 'Resultado histórico',
+        'slug' => 'resultado-historico',
+        'tipo_dato' => 'number',
+        'examen_id' => $examenAdicional->id,
+    ]);
+    Resultado::create([
+        'parametro_id' => $parametroAdicional->id,
+        'procedimiento_id' => $procedimientoAdicional->id,
+        'resultado' => '21',
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('resultados.show', $procedimiento))
+        ->assertOk()
+        ->assertSee('Resultados de orden 872')
+        ->assertSee('Razón Social Legal S.A.S.')
+        ->assertDontSee('Marca Comercial')
+        ->assertSee('Resultado individual')
+        ->assertSee('13.5');
+
+    $response = $this->actingAs($this->user)
+        ->post(route('resultados.historia_show', $orden->paciente), [
+            'procedimientos' => [$procedimientoAdicional->id, $procedimiento->id],
+        ])
+        ->assertOk()
+        ->assertSee('Historia clínica')
+        ->assertSee('Resultado individual')
+        ->assertSee('13.5')
+        ->assertSee('Resultado histórico')
+        ->assertSee('Razón Social Legal S.A.S.')
+        ->assertDontSee('Marca Comercial')
+        ->assertSee('21')
+        ->assertSee('Orden Nº 872')
+        ->assertSee('Orden Nº 873')
+        ->assertSee('page-break-before: always');
+
+    expect(substr_count($response->getContent(), 'class="orden-seccion"'))->toBe(2);
+    expect(strpos($response->getContent(), 'Examen individual'))
+        ->toBeLessThan(strpos($response->getContent(), 'Examen histórico'));
+});
+
+it('genera un PDF con los resultados terminados de una orden', function () {
+    $examen = Examen::factory()->create();
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $procedimiento = $orden->procedimientos()->firstOrFail();
+    $parametro = Parametro::create([
+        'nombre' => 'Hemoglobina',
+        'slug' => 'hemoglobina',
+        'tipo_dato' => 'number',
+        'examen_id' => $examen->id,
+    ]);
+    Resultado::create([
+        'parametro_id' => $parametro->id,
+        'procedimiento_id' => $procedimiento->id,
+        'resultado' => '13.5',
+    ]);
+
+    $response = $this->actingAs($this->user)
+        ->get(route('resultados.reporte_pdf', $orden));
+
+    $response->assertOk()
+        ->assertHeader('content-type', 'application/pdf')
+        ->assertHeader('content-disposition', 'attachment; filename="resultados-orden-872.pdf"');
+
+    expect(substr($response->getContent(), 0, 5))->toBe('%PDF-');
+});
+
+it('muestra el registro médico con la cédula del empleado prestador de la empresa', function () {
+    $this->user->empleado->update([
+        'cargo' => \App\Cargo::PRESTADOR->value,
+        'numero_documento' => '12345678',
+    ]);
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+
+    $this->actingAs($this->user)
+        ->get(route('resultados.reporte_orden', $orden))
+        ->assertOk()
+        ->assertSee('Registro médico 12345678')
+        ->assertDontSee('NIT ');
+});
+
+it('impide descargar un reporte desde una sede no autorizada', function () {
+    $examen = Examen::factory()->create();
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $otraSede = Sede::factory()->create();
+    $this->withSession(['sede' => $otraSede]);
+
+    $this->actingAs($this->user)
+        ->get(route('resultados.reporte_pdf', $orden))
+        ->assertForbidden();
+});
+
+it('deniega la descarga a usuarios sin permiso para ver resultados', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $usuarioContable = User::factory()->create([
+        'email' => \Illuminate\Support\Str::uuid().'@example.test',
+    ]);
+    $usuarioContable->assignRole('contable');
+
+    $this->actingAs($usuarioContable)
+        ->get(route('resultados.reporte_pdf', $orden))
+        ->assertForbidden();
+});
+
+it('conserva las columnas de resultados de texto y carga firmas y logos por nombre de archivo', function () {
+    \Illuminate\Support\Facades\Storage::fake('public');
+    $imagen = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=');
+    $disco = \Illuminate\Support\Facades\Storage::disk('public');
+    \Illuminate\Support\Facades\Storage::fake('local');
+    \Illuminate\Support\Facades\Storage::disk('local')->put('firmas/profesional.png', $imagen);
+    $disco->put('logos/laboratorio.png', $imagen);
+    $this->sede->update(['logo' => 'laboratorio.png']);
+    $empleado = $this->user->empleado;
+    $empleado->update(['firma' => 'profesional.png']);
+    $examen = Examen::factory()->create();
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $procedimiento = $orden->procedimientos()->firstOrFail();
+    $procedimiento->update(['empleado_id' => $empleado->id]);
+    foreach (['text' => 'Aspecto', 'textarea' => 'Comentario'] as $tipo => $nombre) {
+        $parametro = Parametro::create([
+            'nombre' => $nombre,
+            'slug' => strtolower($nombre),
+            'tipo_dato' => $tipo,
+            'unidades' => 'unidad',
+            'examen_id' => $examen->id,
+        ]);
+        Resultado::create([
+            'parametro_id' => $parametro->id,
+            'procedimiento_id' => $procedimiento->id,
+            'resultado' => 'Transparente',
+        ]);
+    }
+
+    $servicio = app(\App\Services\ConstruirReporteResultados::class);
+    $reporte = $servicio->paraOrden($orden);
+    $uri = 'data:image/png;base64,'.base64_encode($imagen);
+    expect($reporte['laboratorio']['logo_src'])->toBe($uri);
+    expect($reporte['examenes'][0]['bacteriologo']['firma_src'])->toBe($uri);
+    expect($reporte['examenes'][0]['grupos'][0]['parametros'][0]['tipo'])->toBe('valor');
+    expect($reporte['examenes'][0]['grupos'][0]['parametros'][1]['tipo'])->toBe('texto');
+
+    $this->actingAs($this->user)->get(route('resultados.show', $procedimiento))
+        ->assertOk()->assertSee($uri, false)->assertSee('col-unidades', false);
+
+    $empleado->update(['firma' => 'firmas/profesional.png']);
+    expect($servicio->paraOrden($orden)['examenes'][0]['bacteriologo']['firma_src'])->toBe($uri);
+});
+
+it('reserva el destino de remisiones al personal y conserva el examen en el ticket', function (string $rol, bool $verDestino) {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $orden->remisiones()->create([
+        'cup' => '902299',
+        'nombre' => 'Examen remitido en ticket',
+        'valor' => 25,
+        'destino' => 'Destino exclusivo del personal',
+    ]);
+    $this->user->syncRoles([$rol]);
+    $this->user->givePermissionTo('ver_orden');
+
+    $response = $this->actingAs($this->user)
+        ->get(route('ordenes.show', $orden))
+        ->assertOk()
+        ->assertSee('Examen remitido en ticket (CUP: 902299) (R)');
+
+    if ($verDestino) {
+        $response->assertSee('Destino exclusivo del personal');
+    } else {
+        $response->assertDontSee('Destino exclusivo del personal');
+    }
+})->with([
+    ['prestador', true],
+    ['agente', true],
+    ['admin', true],
+    ['contable', false],
+    ['paciente', false],
+]);
+
+it('espera a las remisiones y reabre la orden cuando una vuelve a pendiente', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create(), Estado::TERMINADO->value);
+    expect($orden->fresh()->terminada)->not->toBeNull();
+    $remision = $orden->remisiones()->create([
+        'cup' => '903895', 'nombre' => 'Creatinina', 'valor' => 20000, 'destino' => 'Laboratorio externo',
+    ]);
+    expect($orden->fresh()->terminada)->toBeNull();
+    $remision->update(['estado' => Estado::TERMINADO]);
+    expect($orden->fresh()->terminada)->not->toBeNull();
+    $remision->update(['estado' => Estado::PROCESO]);
+    expect($orden->fresh()->terminada)->toBeNull();
+    $remision->delete();
+    expect($orden->fresh()->terminada)->not->toBeNull();
+});
+
+it('termina una orden de solo remisiones cuando todas finalizan', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $orden->procedimientos->each->delete();
+    $remision = $orden->remisiones()->create([
+        'cup' => '903895', 'nombre' => 'Creatinina', 'valor' => 20000, 'destino' => 'Laboratorio externo',
+    ]);
+    expect($orden->fresh()->terminada)->toBeNull();
+    $remision->update(['estado' => Estado::ANULADO]);
+    expect($orden->fresh()->terminada)->toBeNull();
+    $remision->update(['estado' => Estado::ENTREGADO]);
+    expect($orden->fresh()->terminada)->not->toBeNull();
+});
+
+it('permite controlar las remisiones desde el detalle y sincroniza el cierre', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create(), Estado::TERMINADO->value);
+    $remision = $orden->remisiones()->create([
+        'cup' => '903895', 'nombre' => 'Creatinina remitida', 'valor' => 20000, 'destino' => 'Laboratorio externo',
+    ]);
+    $url = route('ordenes.remisiones.estado', [$orden, $remision]);
+    $this->actingAs($this->user)->get(route('ordenes.show', $orden))
+        ->assertOk()->assertSee($url, false)->assertSee('0 de 1 finalizadas');
+
+    foreach ([Estado::MUESTRA, Estado::PROCESO, Estado::TERMINADO] as $estado) {
+        $this->patch($url, ['estado' => $estado->value])->assertRedirect(route('ordenes.show', $orden));
+        expect($remision->fresh()->estado)->toBe($estado);
+    }
+    expect($orden->fresh()->terminada)->not->toBeNull();
+    $this->get(route('ordenes.show', $orden))->assertSee('1 de 1 finalizadas');
+    $this->patch($url, ['estado' => Estado::PENDIENTE->value])->assertRedirect();
+    expect($orden->fresh()->terminada)->toBeNull();
+    $this->patch($url, ['estado' => 'inexistente'])->assertSessionHasErrors('estado');
+});
+
+it('rechaza cambiar una remision de otra orden o sede y exige permiso', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $otra = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $remision = $otra->remisiones()->create([
+        'cup' => '903895', 'nombre' => 'Creatinina', 'valor' => 20000, 'destino' => 'Laboratorio externo',
+    ]);
+    $this->actingAs($this->user)->patch(route('ordenes.remisiones.estado', [$orden, $remision]), [
+        'estado' => Estado::TERMINADO->value,
+    ])->assertNotFound();
+
+    $otra->update(['sede_id' => Sede::factory()->create()->id]);
+    $this->patch(route('ordenes.remisiones.estado', [$otra, $remision]), [
+        'estado' => Estado::TERMINADO->value,
+    ])->assertForbidden();
+
+    $otra->update(['sede_id' => $this->sede->id]);
+    $this->user->syncRoles(['paciente']);
+    $this->patch(route('ordenes.remisiones.estado', [$otra, $remision]), [
+        'estado' => Estado::TERMINADO->value,
+    ])->assertForbidden();
+    expect($remision->fresh()->estado)->toBe(Estado::PENDIENTE);
 });

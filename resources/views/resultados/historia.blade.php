@@ -19,10 +19,10 @@
                 </div>
                 @isset($orden->procedimientos)
                     @foreach($orden->procedimientos as $procedimiento)
-                    @if($procedimiento->estado === 'terminado')
+                    @if(in_array($procedimiento->estado, ['terminado', 'entregado'], true))
                         <div class="grid grid-cols-4 gap-4">
 
-                            <span><input type="checkbox" name="{{$procedimiento->id}}" id="{{$procedimiento->id}}"
+                            <span><input type="checkbox" name="procedimientos[]" value="{{$procedimiento->id}}" id="{{$procedimiento->id}}"
                                             class="mr-4">
                                 {{ $procedimiento->created_at->format('d-m-Y') }}
                             </span>

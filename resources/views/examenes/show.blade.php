@@ -7,11 +7,11 @@
       <h2 class="text-xl font-semibold">{{ $examen->nombre }}</h2>
       <h3 class="text-lg font-light text-gray-700 mt-0">({{ $examen->nombre_alternativo }})</h3>
     </div>
-    @can('registrar_resultado')
+    @if(auth()->user()->hasRole('prestador') && auth()->user()->can('registrar_resultado'))
       <a href="{{ route('examenes.lote', $examen) }}" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">
         Procesar Lotes
       </a>
-    @endcan
+    @endif
   </div>
 
 </x-slot>

@@ -1,12 +1,7 @@
 <x-app-layout>
-    @if(session('success'))
-    <div class="bg-green-100 text-green-800 p-4 rounded-md mb-4">
-        {{ session('success') }}
-    </div>
-    @endif
     <x-slot name="header">
         <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ __('Historia') }}
+            {{ 'Historia' }}
         </h2>
     </x-slot>
     <x-canva>
@@ -122,10 +117,10 @@
                 <table class="flex-1">
                     <thead>
                         <tr class="">
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Test')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Result')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Fecha'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Examen'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Estado'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Resultado'}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -136,9 +131,15 @@
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->orden_id }}</span></td>
                             <td class="px-3 py-4"><span class="w-60">{{ $procedimiento->examen->nombre }}</span></td>
                             <td class="px-3 py-4">
-                                <a href="{{ route('resultados.show', $procedimiento) }}">
-                                    <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
-                                </a>
+                                @can('ver_resultado')
+                                    <a href="{{ route('resultados.show', $procedimiento) }}">
+                                        <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
+                                    </a>
+                                @else
+                                    <a href="{{ route('procedimientos.show', $procedimiento) }}">
+                                        <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
+                                    </a>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach
@@ -163,10 +164,10 @@
                     <table class="flex-1">
                         <thead>
                             <tr class="">
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Order')}}</th>
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Procedure')}}</th>
-                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
+                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{'Fecha'}}</th>
+                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{'Orden'}}</th>
+                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{'Procedimiento'}}</th>
+                                <th class="p-2 border border-spacing-1 border-stone-900 text-text w-40 text-sm font-medium leading-normal">{{'Estado'}}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -174,7 +175,7 @@
 
                             <tr class="border-t border-borders hover:bg-secondary">
                                 <td colspan="4" class="p-0">
-                                    @can('registrar_resultado')
+                                    @if(auth()->user()->hasRole('prestador') && auth()->user()->can('registrar_resultado'))
                                         <a href="{{ route('resultados.create', $procedimiento) }}" class="flex w-full h-full cursor-pointer px-4 py-2 text-inherit no-underline">
                                             <span class="w-40">{{ $procedimiento->created_at->format('Y-m-d') }}</span>
                                             <span class="w-40 text-center">{{ $procedimiento->orden_id }}</span>
@@ -188,7 +189,7 @@
                                             <span class="w-60 text-center">{{ $procedimiento->examen->nombre }}</span>
                                             <span class="w-40 text-end">{{ $procedimiento->estado }}</span>
                                         </div>
-                                    @endcan
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach

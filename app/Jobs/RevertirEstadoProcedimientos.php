@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Estado;
+use App\Models\Orden;
 use App\Models\Procedimiento;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,7 +11,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
-use App\Estado; 
 
 class RevertirEstadoProcedimientos implements ShouldQueue
 {
@@ -29,20 +30,41 @@ class RevertirEstadoProcedimientos implements ShouldQueue
     public function handle(): void
     {
         $limite = Carbon::now()->subHours(24); // 24 horas atrás
-     
-        $revertidos = Procedimiento::where('estado', Estado::PROCESO)
+        $ordenesARevisar = Procedimiento::query()
+            ->where('estado', Estado::PROCESO->value)
             ->where('updated_at', '<=', $limite)
-            ->whereNull('resultados')
-            ->update(['estado' => 'pendiente']);
-        if($revertidos !== 0) {
+            ->whereDoesntHave('resultado')
+            ->pluck('orden_id');
+
+        $revertidos = Procedimiento::where('estado', Estado::PROCESO->value)
+            ->where('updated_at', '<=', $limite)
+            ->whereDoesntHave('resultado')
+            ->update(['estado' => Estado::PENDIENTE->value]);
+        if ($revertidos !== 0) {
             \Log::info("Se han revertido $revertidos procedimientos a 'pendiente'.");
         }
 
-        $terminados = Procedimiento::whereNotIn('estado', [Estado::TERMINADO, Estado::ENTREGADO, Estado::ANULADO])
-            ->whereNotNull('resultados')
-            ->update(['estado' => Estado::TERMINADO]);  
-        if($terminados !== 0) {
-                \Log::info("Procedimientos actualizados a 'terminado': $terminados");
-            }
+        $procedimientosPorResultados = Procedimiento::query()
+            ->whereNotIn('estado', [
+                Estado::TERMINADO->value,
+                Estado::ENTREGADO->value,
+                Estado::ANULADO->value,
+            ])
+            ->whereHas('resultado')
+            ->pluck('orden_id');
+
+        $ordenesARevisar = $ordenesARevisar->merge($procedimientosPorResultados)->unique();
+        $terminados = Procedimiento::whereNotIn('estado', [
+            Estado::TERMINADO->value,
+            Estado::ENTREGADO->value,
+            Estado::ANULADO->value,
+        ])
+            ->whereHas('resultado')
+            ->update(['estado' => Estado::TERMINADO->value]);
+        if ($terminados !== 0) {
+            \Log::info("Procedimientos actualizados a 'terminado': $terminados");
+        }
+
+        Orden::query()->whereKey($ordenesARevisar)->get()->each->sincronizarEstado();
     }
 }

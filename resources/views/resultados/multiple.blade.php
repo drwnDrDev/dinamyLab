@@ -18,7 +18,7 @@
             </figure>
             <div class="pl-4">
                 <p class="font-light">{{$procedimiento->sede->nombre}}</p>
-                <p class="font-semibold">{{$procedimiento->sede->empresa->nombre_comercial}}</p>
+                <p class="font-semibold">{{$procedimiento->sede->empresa->razon_social}}</p>
             </div>
         </section>
 

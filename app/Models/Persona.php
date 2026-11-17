@@ -24,7 +24,8 @@ class Persona extends Model
         'fecha_nacimiento',
         'sexo',
         'pais_origen',
-        'telefono',
+        'grupo_sanguineo',
+        'factor_rh',
     ];
     protected function casts(): array
     {

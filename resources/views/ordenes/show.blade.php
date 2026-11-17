@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ __('Orden Medica') }}
+            {{ 'Orden médica' }}
         </h2>
     </x-slot>
 
@@ -32,9 +32,12 @@
                     <a href="{{ route('resultados.reporte_orden', $orden) }}">
                         <x-secondary-button>Imprimir resultados terminados</x-secondary-button>
                     </a>
+                    <a href="{{ route('resultados.reporte_pdf', $orden) }}">
+                        <x-primary-button>Descargar reporte PDF</x-primary-button>
+                    </a>
                 @endcan
 
-                <x-secondary-button onclick="window.print()">{{__('Ticket')}}</x-secondary-button>
+                <x-secondary-button onclick="window.print()">{{'Comprobante'}}</x-secondary-button>
             </div>
         </div>
 
@@ -67,10 +70,10 @@
                 <table class="flex-1">
                     <thead>
                         <tr class="">
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Date')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Procedimiento')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Test')}}</th>
-                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{__('Status')}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Fecha'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Procedimiento'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Examen'}}</th>
+                            <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">{{'Estado'}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,14 +83,26 @@
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->fecha->format('d-m-Y H:i')   }}</span></td>
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->id }}</span></td>
                             <td class="px-3 py-4">
-                                <a class="w-60 text-primary underline" href="{{ route('resultados.show', $procedimiento) }}">
-                                    {{ $procedimiento->examen->nombre }}
-                                </a>
+                                @can('ver_resultado')
+                                    <a class="w-60 text-primary underline" href="{{ route('resultados.show', $procedimiento) }}">
+                                        {{ $procedimiento->examen->nombre }}
+                                    </a>
+                                @else
+                                    <a class="w-60 text-primary underline" href="{{ route('procedimientos.show', $procedimiento) }}">
+                                        {{ $procedimiento->examen->nombre }}
+                                    </a>
+                                @endcan
                             </td>
                             <td class="px-3 py-4">
-                                <a href="{{ route('resultados.show', $procedimiento) }}">
+                                @can('ver_resultado')
+                                    <a href="{{ route('resultados.show', $procedimiento) }}">
+                                        <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
+                                    </a>
+                                @else
+                                    <a href="{{ route('procedimientos.show', $procedimiento) }}">
                                     <span class="w-40 text-titles">{{ $procedimiento->estado }}</span>
-                                </a>
+                                    </a>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach
@@ -96,9 +111,13 @@
             </div>
         </div>
 
-        @if ($orden->remisiones->isNotEmpty())
+        @if (auth()->user()?->hasAnyRole(['prestador', 'agente', 'admin']) && $orden->remisiones->isNotEmpty())
         <div class="py-2">
             <h3 class="px-1 py-2 font-semibold text-titles">Remisiones</h3>
+            <p class="px-1 pb-2 text-sm text-text">
+                {{ $orden->remisiones->filter(fn ($remision) => in_array($remision->estado, [\App\Estado::TERMINADO, \App\Estado::ENTREGADO], true))->count() }} de {{ $orden->remisiones->count() }} finalizadas
+            </p>
+            @error('estado')<p class="px-1 pb-2 text-sm text-red-600">{{ $message }}</p>@enderror
             <div class="flex overflow-hidden rounded-xl border border-borders">
                 <table class="flex-1">
                     <thead>
@@ -106,6 +125,7 @@
                             <th class="px-4 py-3 text-left text-text text-sm font-medium">CUP</th>
                             <th class="px-4 py-3 text-left text-text text-sm font-medium">Examen / procedimiento</th>
                             <th class="px-4 py-3 text-left text-text text-sm font-medium">Destino</th>
+                            <th class="px-4 py-3 text-left text-text text-sm font-medium">Progreso</th>
                             <th class="px-4 py-3 text-right text-text text-sm font-medium">Valor</th>
                         </tr>
                     </thead>
@@ -115,6 +135,23 @@
                             <td class="px-3 py-4">{{ $remision->cup }}</td>
                             <td class="px-3 py-4">{{ $remision->nombre }}</td>
                             <td class="px-3 py-4">{{ $remision->destinoSede?->nombre ?? $remision->destino }}</td>
+                            <td class="px-3 py-4">
+                                @can('editar_orden')
+                                    <form method="POST" action="{{ route('ordenes.remisiones.estado', [$orden, $remision]) }}" class="flex flex-wrap items-center gap-2">
+                                        @csrf
+                                        @method('PATCH')
+                                        <label for="estado-remision-{{ $remision->id }}" class="sr-only">Estado de {{ $remision->nombre }}</label>
+                                        <select id="estado-remision-{{ $remision->id }}" name="estado" class="rounded-md border-borders text-sm">
+                                            @foreach (\App\Estado::cases() as $estado)
+                                                <option value="{{ $estado->value }}" @selected($remision->estado === $estado)>{{ ucfirst($estado->nombre()) }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="submit" class="rounded-md bg-primary px-3 py-2 text-sm text-white">Guardar</button>
+                                    </form>
+                                @else
+                                    <span>{{ ucfirst($remision->estado->nombre()) }}</span>
+                                @endcan
+                            </td>
                             <td class="px-3 py-4 text-right">${{ number_format($remision->valor, 2) }}</td>
                         </tr>
                         @endforeach
@@ -159,7 +196,7 @@
                 </div>
             </div>
             <div class="px-4 text-center">
-                <p class="font-medium">{{$orden->sede->direccion->direccion}}</p>
+                <p class="font-medium">{{$orden->sede->direccion?->direccion}}</p>
                 <p class="font-light"> Tels:
                     @php
                     $telefonos = $orden->sede->telefonos->slice(0, 2);
@@ -172,7 +209,7 @@
                         @endforeach
                 </p>
                 <p>
-                    {{$orden->sede->direccion->municipio->municipio}}
+                    {{$orden->sede->direccion?->municipio?->municipio}}
                 </p>
             </div>
         </div>

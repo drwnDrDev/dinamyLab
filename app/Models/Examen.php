@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Examen extends Model
 {
@@ -28,9 +30,9 @@ class Examen extends Model
             ->withTimestamps();
     }
 
-    public function procedimiento()
+    public function procedimientos(): HasMany
     {
-        return $this->belongsTo(Procedimiento::class);
+        return $this->hasMany(Procedimiento::class);
     }
 
     public function parametros()
@@ -57,9 +59,10 @@ class Examen extends Model
         return $this->morphMany(Tarifa::class, 'tarifable');
     }
 
-    public function categoria()
+    public function categorias(): BelongsToMany
     {
-        return $this->belongsTo(Categoria::class, 'categoria_id');
+        return $this->belongsToMany(Categoria::class, 'categoria_examen', 'examen_id', 'categoria_id')
+            ->withTimestamps();
     }
 
 

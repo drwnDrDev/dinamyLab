@@ -11,7 +11,7 @@ class SexoSeeder extends Seeder
     {
         foreach ([
             ['codigo' => 'F', 'nombre' => 'Femenino', 'cod_sexo' => '02'],
-            ['codigo' => 'I', 'nombre' => 'Indeterminado o Intersexual', 'cod_sexo' => '03'],
+            ['codigo' => 'I', 'nombre' => 'Indeterminado', 'cod_sexo' => '03'],
             ['codigo' => 'M', 'nombre' => 'Masculino', 'cod_sexo' => '01'],
         ] as $sexo) {
             Sexo::updateOrCreate(

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { toast } from "./lib/toast";
 
 function ExamenDetail({ examen, canEditExam, canEditDescription }) {
 
@@ -23,13 +24,15 @@ function ExamenDetail({ examen, canEditExam, canEditDescription }) {
         // Enviar al servidor
         axios.patch(`/api/examenes/${examen.id}/update`, { sexo_aplicable: nuevoSexo })
             .then(response => {
-                if (!response.data.success) {
-                    alert("Error al actualizar el sexo aplicable");
+                if (response.data.success) {
+                    toast.success("Sexo aplicable actualizado.");
+                } else {
+                    toast.error("Error al actualizar el sexo aplicable");
                 }
             })
             .catch(error => {
                 console.error("Error en la solicitud:", error);
-                alert("Ocurrió un error al actualizar");
+                toast.error("Ocurrió un error al actualizar");
             });
     };
 
@@ -52,13 +55,14 @@ function ExamenDetail({ examen, canEditExam, canEditDescription }) {
             .then(response => {
                 if (response.data.success) {
                     setNuevoValor(response.data.data.examen.valor);
+                    toast.success("Valor del examen actualizado.");
                 } else {
-                    alert("Error al actualizar el valor");
+                    toast.error("Error al actualizar el valor");
                 }
             })
             .catch(error => {
                 console.error("Error en la solicitud:", error);
-                alert("Ocurrió un error al actualizar el valor");
+                toast.error("Ocurrió un error al actualizar el valor");
             });
         setIsEditingValor(!isEditingValor);
     };
@@ -73,13 +77,15 @@ function ExamenDetail({ examen, canEditExam, canEditDescription }) {
 
         axios.patch(`/api/examenes/${examen.id}/update`, { activo: nuevoEstado })
             .then(response => {
-                if (!response.data.success) {
-                    alert("Error al actualizar el estado");
+                if (response.data.success) {
+                    toast.success(nuevoEstado ? "Examen activado." : "Examen desactivado.");
+                } else {
+                    toast.error("Error al actualizar el estado");
                 }
             })
             .catch(error => {
                 console.error("Error en la solicitud:", error);
-                alert("Ocurrió un error al actualizar el estado");
+                toast.error("Ocurrió un error al actualizar el estado");
             });
     };
     const ParametroCard = ({ parametro, totalParametros }) => {
@@ -107,12 +113,12 @@ function ExamenDetail({ examen, canEditExam, canEditDescription }) {
                 if (response.data.success) {
                     setNombreAlternativo(response.data.data.examen.nombre_alternativo);
                 } else {
-                    alert("Error al actualizar el nombre alternativo");
+                    toast.error("Error al actualizar el nombre alternativo");
                 }
             })
             .catch(error => {
                 console.error("Error en la solicitud:", error);
-                alert("Ocurrió un error al actualizar el nombre alternativo");
+                toast.error("Ocurrió un error al actualizar el nombre alternativo");
             });
 
             setNombreAlternativo(e.target.value);
@@ -125,13 +131,14 @@ function ExamenDetail({ examen, canEditExam, canEditDescription }) {
                 if (response.data.success) {
                     setDescripcion(response.data.data.examen.descripcion || "");
                     setIsEditingDescripcion(false);
+                    toast.success("Descripción actualizada.");
                 } else {
-                    alert("Error al actualizar la descripción");
+                    toast.error("Error al actualizar la descripción");
                 }
             })
             .catch(error => {
                 console.error("Error en la solicitud:", error);
-                alert("Ocurrió un error al actualizar la descripción");
+                toast.error("Ocurrió un error al actualizar la descripción");
             });
     };
 

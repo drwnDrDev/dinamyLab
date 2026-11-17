@@ -66,7 +66,7 @@
                     </div>
                     <p class="text-base lg:text-lg text-slate-600 dark:text-slate-300 max-w-md min-h-[3rem]">
                         <span id="typewriter"
-                              text="{{ __('Tu aliado en la gestión de tu laboratorio clínico') }}"
+                              text="{{ 'Tu aliado en la gestión de tu laboratorio clínico' }}"
                               class="font-medium"></span>
                     </p>
                 </header>
@@ -83,10 +83,10 @@
 
                     <div class="flex flex-col space-y-1 p-6 text-center">
                         <h2 class="font-semibold text-xl text-slate-900 dark:text-white">
-                            {{ __('Bienvenido') }}
+                            {{ 'Bienvenido' }}
                         </h2>
                         <p class="text-sm text-slate-500 dark:text-slate-400">
-                            {{ __('Ingresa tus credenciales para acceder') }}
+                            {{ 'Ingresa tus credenciales para acceder' }}
                         </p>
                     </div>
 
@@ -99,7 +99,7 @@
                             <!-- Correo -->
                             <div class="space-y-1.5">
                                 <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="email">
-                                    {{ __('Correo electrónico') }}
+                                    {{ 'Correo electrónico' }}
                                 </label>
                                 <input
                                     id="email"
@@ -123,7 +123,7 @@
                             <!-- Contraseña -->
                             <div class="space-y-1.5">
                                 <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="password">
-                                    {{ __('Contraseña') }}
+                                    {{ 'Contraseña' }}
                                 </label>
                                 <input
                                     id="password"
@@ -154,7 +154,7 @@
                                         name="remember"
                                     >
                                     <span class="ml-2 text-sm text-slate-600 dark:text-slate-400">
-                                        {{ __('Recordarme') }}
+                                        {{ 'Recordarme' }}
                                     </span>
                                 </label>
                             </div>
@@ -164,7 +164,7 @@
                                     <a class="text-sm text-[#0eb4d1] hover:text-[#0a9ab8] dark:text-[#0eb4d1]
                                               dark:hover:text-cyan-300 font-medium transition-colors duration-200"
                                        href="{{ route('password.request') }}">
-                                        {{ __('¿Olvidaste tu contraseña?') }}
+                                        {{ '¿Olvidaste tu contraseña?' }}
                                     </a>
                                 @endif
 
@@ -173,7 +173,7 @@
                                            bg-[#0eb4d1] hover:bg-[#0a9ab8] active:bg-[#088eaf]
                                            dark:bg-[#0eb4d1] dark:hover:bg-[#0a9ab8]
                                            transition-colors duration-200 font-medium">
-                                    {{ __('Ingresar') }}
+                                    {{ 'Ingresar' }}
                                 </x-primary-button>
                             </div>
                         </form>
@@ -185,17 +185,17 @@
 
         <!-- Footer compacto -->
         <footer class="py-2 text-center text-xs text-slate-500 dark:text-slate-400 shrink-0">
-            {{ __('Revisa nuestras políticas de privacidad') }}
+            {{ 'Revisa nuestras políticas de privacidad' }}
             <button onclick="document.getElementById('termsModal').showModal()"
                     class="text-[#0eb4d1] hover:text-[#0a9ab8] underline underline-offset-2
                            transition-colors duration-200 font-medium">
-                {{ __('Términos de Servicio') }}
+                {{ 'Términos de Servicio' }}
             </button>
-            {{ __('y') }}
+            {{ 'y' }}
             <button onclick="document.getElementById('privacyModal').showModal()"
                     class="text-[#0eb4d1] hover:text-[#0a9ab8] underline underline-offset-2
                            transition-colors duration-200 font-medium">
-                {{ __('Política de Privacidad') }}
+                {{ 'Política de Privacidad' }}
             </button>
         </footer>
 
@@ -204,7 +204,7 @@
             <div class="bg-white dark:bg-slate-900 rounded-2xl">
                 <header class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
                     <h2 class="text-xl font-semibold text-slate-900 dark:text-white">
-                        {{ __('Términos de Servicio') }}
+                        {{ 'Términos de Servicio' }}
                     </h2>
                     <button onclick="document.getElementById('termsModal').close()"
                             class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400
@@ -215,17 +215,17 @@
                     </button>
                 </header>
                 <div class="p-6 max-h-96 overflow-y-auto text-sm text-slate-700 dark:text-slate-300 space-y-4">
-                    <p>{{ __('Términos y Condiciones de Uso') }}</p>
-                    <p>{{ __('1. Uso de la Plataforma: Esta aplicación está diseñada para gestionar citas clínicas. El usuario se compromete a usar la plataforma únicamente con fines legales y conforme a estos términos.') }}</p>
-                    <p>{{ __('2. Responsabilidad del Usuario: El usuario es responsable de mantener la confidencialidad de sus credenciales y de todas las actividades realizadas bajo su cuenta.') }}</p>
-                    <p>{{ __('3. Limitación de Responsabilidad: No seremos responsables por daños directos, indirectos o consecuentes derivados del uso de esta aplicación.') }}</p>
+                    <p>{{ 'Términos y Condiciones de Uso' }}</p>
+                    <p>{{ '1. Uso de la Plataforma: Esta aplicación está diseñada para gestionar citas clínicas. El usuario se compromete a usar la plataforma únicamente con fines legales y conforme a estos términos.' }}</p>
+                    <p>{{ '2. Responsabilidad del Usuario: El usuario es responsable de mantener la confidencialidad de sus credenciales y de todas las actividades realizadas bajo su cuenta.' }}</p>
+                    <p>{{ '3. Limitación de Responsabilidad: No seremos responsables por daños directos, indirectos o consecuentes derivados del uso de esta aplicación.' }}</p>
                 </div>
                 <footer class="flex justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-800">
                     <button onclick="document.getElementById('termsModal').close()"
                             class="px-5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700
                                    bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300
                                    hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200 font-medium">
-                        {{ __('Cerrar') }}
+                        {{ 'Cerrar' }}
                     </button>
                 </footer>
             </div>
@@ -236,7 +236,7 @@
             <div class="bg-white dark:bg-slate-900 rounded-2xl">
                 <header class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
                     <h2 class="text-xl font-semibold text-slate-900 dark:text-white">
-                        {{ __('Política de Privacidad') }}
+                        {{ 'Política de Privacidad' }}
                     </h2>
                     <button onclick="document.getElementById('privacyModal').close()"
                             class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400
@@ -247,19 +247,19 @@
                     </button>
                 </header>
                 <div class="p-6 max-h-96 overflow-y-auto text-sm text-slate-700 dark:text-slate-300 space-y-4">
-                    <p>{{ __('Política de Privacidad') }}</p>
-                    <p>{{ __('Estamos comprometidos con la protección de su privacidad. Esta política describe cómo recopilamos, utilizamos y protegemos su información personal.') }}</p>
-                    <p>{{ __('1. Recopilación de Información: Recopilamos información que usted proporciona directamente, como nombre, email y datos de contacto necesarios para la gestión de citas.') }}</p>
-                    <p>{{ __('2. Uso de Información: Utilizamos su información para proporcionar, mantener y mejorar nuestros servicios, y para comunicarnos con usted.') }}</p>
-                    <p>{{ __('3. Protección de Datos: Implementamos medidas de seguridad técnicas y administrativas para proteger su información personal contra acceso no autorizado.') }}</p>
-                    <p>{{ __('4. Derechos del Usuario: Usted tiene derecho a acceder, corregir o eliminar su información personal contactándonos directamente.') }}</p>
+                    <p>{{ 'Política de Privacidad' }}</p>
+                    <p>{{ 'Estamos comprometidos con la protección de su privacidad. Esta política describe cómo recopilamos, utilizamos y protegemos su información personal.' }}</p>
+                    <p>{{ '1. Recopilación de Información: Recopilamos información que usted proporciona directamente, como nombre, email y datos de contacto necesarios para la gestión de citas.' }}</p>
+                    <p>{{ '2. Uso de Información: Utilizamos su información para proporcionar, mantener y mejorar nuestros servicios, y para comunicarnos con usted.' }}</p>
+                    <p>{{ '3. Protección de Datos: Implementamos medidas de seguridad técnicas y administrativas para proteger su información personal contra acceso no autorizado.' }}</p>
+                    <p>{{ '4. Derechos del Usuario: Usted tiene derecho a acceder, corregir o eliminar su información personal contactándonos directamente.' }}</p>
                 </div>
                 <footer class="flex justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-800">
                     <button onclick="document.getElementById('privacyModal').close()"
                             class="px-5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700
                                    bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300
                                    hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200 font-medium">
-                        {{ __('Cerrar') }}
+                        {{ 'Cerrar' }}
                     </button>
                 </footer>
             </div>

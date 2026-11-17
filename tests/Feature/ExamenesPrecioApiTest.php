@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\Convenio;
+use App\Models\Categoria;
 use App\Models\Examen;
 use App\Models\Sede;
 use App\Models\Tarifa;
@@ -23,19 +24,15 @@ class ExamenesPrecioApiTest extends TestCase
     {
         parent::setUp();
 
-        // I-11: el servicio ya está corregido, pero el endpoint obtenerPrecio no tiene ruta en
-        // routes/api.php. Si se publica: registrar la ruta, crear las tarifas con
-        // $tarifa->sedes()->attach() y enviar los parámetros en la URL (getJson recibe headers,
-        // no query params). Ver docs/CHECKLIST_DEUDA_TECNICA.md.
-        $this->markTestSkipped('I-11: endpoint obtenerPrecio sin ruta; pendiente de decidir si se publica.');
-
         // Ejecutar seeders necesarios
         $this->seed(\Database\Seeders\PaisSeeder::class);
         $this->seed(\Database\Seeders\TipoDocumentoSeeder::class);
         $this->seed(\Database\Seeders\TestDataSeeder::class);
+        $this->seed(\Database\Seeders\RolesYPermisosSeeder::class);
 
         // Crear usuario y datos de prueba
         $this->user = User::factory()->create();
+        $this->user->assignRole('agente');
         $this->examen = Examen::factory()->create(['valor' => 100000]);
         $this->convenio = Convenio::factory()->create();
         $this->sede = Sede::factory()->create();
@@ -51,18 +48,17 @@ class ExamenesPrecioApiTest extends TestCase
             'precio' => 80000,
             'tarifable_type' => 'App\Models\Examen',
             'tarifable_id' => $this->examen->id,
-            'sede_id' => $this->sede->id,
         ]);
+        $tarifa->sedes()->attach($this->sede->id);
 
         $this->convenio->tarifas()->attach($tarifa->id);
 
         $response = $this->actingAs($this->user, 'sanctum')->getJson(
-            '/api/examenes/precio',
-            [
+            '/api/examenes/precio?'.http_build_query([
                 'examen_id' => $this->examen->id,
                 'convenio_id' => $this->convenio->id,
                 'sede_id' => $this->sede->id,
-            ]
+            ])
         );
 
         $response->assertStatus(200)
@@ -86,12 +82,11 @@ class ExamenesPrecioApiTest extends TestCase
     public function test_obtener_precio_returns_precio_base()
     {
         $response = $this->actingAs($this->user, 'sanctum')->getJson(
-            '/api/examenes/precio',
-            [
+            '/api/examenes/precio?'.http_build_query([
                 'examen_id' => $this->examen->id,
                 'convenio_id' => $this->convenio->id,
                 'sede_id' => $this->sede->id,
-            ]
+            ])
         );
 
         $response->assertStatus(200)
@@ -104,17 +99,27 @@ class ExamenesPrecioApiTest extends TestCase
             ]);
     }
 
+    public function test_lista_de_examenes_incluye_sus_grupos(): void
+    {
+        $categoria = Categoria::create(['nombre' => 'Perfil metabólico']);
+        $categoria->examenes()->attach($this->examen);
+
+        $response = $this->actingAs($this->user, 'sanctum')->getJson('/api/examenes');
+
+        $response->assertOk()
+            ->assertJsonFragment(['nombre' => 'Perfil metabólico']);
+    }
+
     /**
      * Prueba: Valida que examen_id sea requerido
      */
     public function test_obtener_precio_requires_examen_id()
     {
         $response = $this->actingAs($this->user, 'sanctum')->getJson(
-            '/api/examenes/precio',
-            [
+            '/api/examenes/precio?'.http_build_query([
                 'convenio_id' => $this->convenio->id,
                 'sede_id' => $this->sede->id,
-            ]
+            ])
         );
 
         $response->assertStatus(422)
@@ -127,11 +132,10 @@ class ExamenesPrecioApiTest extends TestCase
     public function test_obtener_precio_requires_convenio_id()
     {
         $response = $this->actingAs($this->user, 'sanctum')->getJson(
-            '/api/examenes/precio',
-            [
+            '/api/examenes/precio?'.http_build_query([
                 'examen_id' => $this->examen->id,
                 'sede_id' => $this->sede->id,
-            ]
+            ])
         );
 
         $response->assertStatus(422)
@@ -144,11 +148,10 @@ class ExamenesPrecioApiTest extends TestCase
     public function test_obtener_precio_requires_sede_id()
     {
         $response = $this->actingAs($this->user, 'sanctum')->getJson(
-            '/api/examenes/precio',
-            [
+            '/api/examenes/precio?'.http_build_query([
                 'examen_id' => $this->examen->id,
                 'convenio_id' => $this->convenio->id,
-            ]
+            ])
         );
 
         $response->assertStatus(422)
@@ -161,12 +164,11 @@ class ExamenesPrecioApiTest extends TestCase
     public function test_obtener_precio_with_invalid_examen_id()
     {
         $response = $this->actingAs($this->user, 'sanctum')->getJson(
-            '/api/examenes/precio',
-            [
+            '/api/examenes/precio?'.http_build_query([
                 'examen_id' => 99999,
                 'convenio_id' => $this->convenio->id,
                 'sede_id' => $this->sede->id,
-            ]
+            ])
         );
 
         $response->assertStatus(422)
@@ -179,12 +181,11 @@ class ExamenesPrecioApiTest extends TestCase
     public function test_obtener_precio_returns_complete_structure()
     {
         $response = $this->actingAs($this->user, 'sanctum')->getJson(
-            '/api/examenes/precio',
-            [
+            '/api/examenes/precio?'.http_build_query([
                 'examen_id' => $this->examen->id,
                 'convenio_id' => $this->convenio->id,
                 'sede_id' => $this->sede->id,
-            ]
+            ])
         );
 
         $response->assertStatus(200)
@@ -214,18 +215,17 @@ class ExamenesPrecioApiTest extends TestCase
             'precio' => 90000,
             'tarifable_type' => 'App\Models\Examen',
             'tarifable_id' => $this->examen->id,
-            'sede_id' => $this->sede->id,
         ]);
+        $tarifa->sedes()->attach($this->sede->id);
 
         // No vincular tarifa al convenio, solo crear por sede
 
         $response = $this->actingAs($this->user, 'sanctum')->getJson(
-            '/api/examenes/precio',
-            [
+            '/api/examenes/precio?'.http_build_query([
                 'examen_id' => $this->examen->id,
                 'convenio_id' => $this->convenio->id,
                 'sede_id' => $this->sede->id,
-            ]
+            ])
         );
 
         $response->assertStatus(200)

@@ -8,6 +8,7 @@ use App\Models\Procedimiento;
 use App\Models\Resultado;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -65,7 +66,7 @@ class GuardarResultadosLote
                     }
 
                     $parametro = $parametros->get((int) $parametroId);
-                    $rules = ['value' => ['required', 'string', 'max:255']];
+                    $rules = ['value' => ['required', 'string']];
 
                     if ($parametro->tipo_dato === 'number') {
                         $rules['value'][] = 'numeric';
@@ -76,7 +77,9 @@ class GuardarResultadosLote
                     }
 
                     $validator = Validator::make(['value' => $valor], $rules);
-                    if ($validator->fails() || ($parametro->tipo_dato === 'number' && ! is_finite((float) $valor))) {
+                    if ($validator->fails()
+                        || (is_string($valor) && Str::length($valor) > 255)
+                        || ($parametro->tipo_dato === 'number' && ! is_finite((float) $valor))) {
                         throw ValidationException::withMessages([
                             "procedimientos.{$indice}.resultados.{$parametroId}" => 'El resultado no tiene un formato válido para este parámetro.',
                         ]);

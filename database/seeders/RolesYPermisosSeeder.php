@@ -57,7 +57,10 @@ class RolesYPermisosSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permiso, 'guard_name' => 'web']);
         }
 
-        Role::findByName('admin')->syncPermissions(Permission::all());
+        $permisosAdmin = Permission::all()->reject(
+            fn (Permission $permission) => in_array($permission->name, ['registrar_resultado', 'editar_resultado'], true)
+        );
+        Role::findByName('admin')->syncPermissions($permisosAdmin);
 
         Role::findByName('prestador')->syncPermissions([
             'ver_resultado',
@@ -70,10 +73,9 @@ class RolesYPermisosSeeder extends Seeder
         ]);
 
         Role::findByName('agente')->syncPermissions([
-            'ver_resultado',
-            'ver_persona', 'crear_persona', 'editar_persona', 'eliminar_persona',
-            'ver_orden',
-            'ver_facturas',
+            'ver_persona', 'crear_persona', 'editar_persona',
+            'ver_orden', 'crear_orden', 'editar_orden',
+            'ver_procedimiento', 'ver_resultado', 'ver_examen', 'ver_reportes',
         ]);
 
         Role::findByName('contable')->syncPermissions(['ver_facturas']);

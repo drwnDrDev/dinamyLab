@@ -32,6 +32,9 @@
         <button type="button" onclick="window.print()" class="rounded-md bg-primary px-4 py-2 text-white">
             Imprimir resultados
         </button>
+        <a href="{{ route('resultados.reporte_pdf', $orden) }}" class="rounded-md border border-primary px-4 py-2 text-primary">
+            Descargar PDF
+        </a>
     </div>
 
     <main class="mx-auto max-w-6xl bg-white p-4 text-black print:max-w-none print:p-0">
@@ -67,7 +70,7 @@
                                         @endif
                                     </figure>
                                     <div>
-                                        <h2 class="text-lg font-semibold">{{ $orden->sede->empresa->nombre_comercial }}</h2>
+                                        <h2 class="text-lg font-semibold">{{ $orden->sede->empresa->razon_social }}</h2>
                                         <p>{{ $orden->sede->nombre }} · NIT {{ $orden->sede->empresa->nit }}</p>
                                     </div>
                                 </div>

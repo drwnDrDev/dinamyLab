@@ -1,0 +1,86 @@
+{
+  "categorias": [
+    {
+      "nombre": "Perfil Lipidico",
+      "examenes": [
+        {
+          "nombre": "Colesterol Total",
+          "rango_referencia": null
+        },
+        {
+          "nombre": "Colesterol Hdl",
+          "rango_referencia": null
+        },
+        {
+          "nombre": "Colesterol Ldl",
+          "rango_referencia": null
+        },
+        {
+          "nombre": "Trigliceridos",
+          "rango_referencia": null
+        }
+      ]
+    },
+    {
+      "nombre": "Examenes De Manipulacion De Alimentos",
+      "examenes": [
+        {
+          "nombre": "Frotis De Garganta",
+          "rango_referencia": null
+        },
+        {
+          "nombre": "K O H Piel Y Uñas",
+          "rango_referencia": null
+        },
+        {
+          "nombre": "Coproanalisis/ Coprologico",
+          "rango_referencia": null
+        }
+      ]
+    },
+    {
+      "nombre": "Curva De Tolerancia A La Glucosa 3 Muestras",
+      "precio":75000,
+      
+      "parametros": [
+        {
+          "nombre": "Glicemia Basal",
+          "rango_referencia": "70-100"
+        },
+        {
+          "nombre": "Glicemia 1 Hora",
+          "rango_referencia": "100-140"
+        },
+        {
+          "nombre": "Glicemia 2 Horas",
+          "rango_referencia": "70-120"
+        }
+      ]
+    },
+    {
+      "nombre": "Curva De Tolerancia A La Glucosa 5 Muestras",
+      "examenes": [
+        {
+          "nombre": "Glicemia Basal",
+          "rango_referencia": "70-100"
+        },
+        {
+          "nombre": "Glicemia Media Hora",
+          "rango_referencia": "120-170"
+        },
+        {
+          "nombre": "Glicemia 1 Hora",
+          "rango_referencia": "100-140"
+        },
+        {
+          "nombre": "Glicemia 2 Horas",
+          "rango_referencia": "70-120"
+        },
+        {
+          "nombre": "Glicemia 3 Horas",
+          "rango_referencia": "70-100"
+        }
+      ]
+    }
+  ]
+}

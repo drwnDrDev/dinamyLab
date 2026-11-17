@@ -10,6 +10,16 @@ import DropdownComponent from './components/DropdownComponent';
 import Typewriter from './components/guest/Typewriter';
 import TarifasExamenesSede from './components/TarifasExamenesSede';
 import ResultadosLote from './components/resultados/ResultadosLote';
+import { toast } from './lib/toast';
+import { mountToasts } from './lib/toastDom';
+import { montarEdicionesResultados } from './lib/edicionResultadosDom';
+
+// Toasts: flash de Blade y window.toast() para el JS de las vistas.
+window.toast = toast;
+mountToasts();
+
+// Edición de resultados (resultados.edit): cambios resaltados, rango en vivo y diálogo de revisión.
+montarEdicionesResultados();
 
 // Renderizado condicional basado en la presencia de elementos en el DOM
 
@@ -51,7 +61,8 @@ if (document.getElementById('tarifas-examenes-root')) {
     const element = document.getElementById('tarifas-examenes-root');
     const sedeId = parseInt(element.getAttribute('data-sede-id') || '0', 10);
     const root = createRoot(element);
-    root.render(<TarifasExamenesSede sedeId={sedeId} />);
+    const canEdit = element.getAttribute('data-can-edit') === 'true';
+    root.render(<TarifasExamenesSede sedeId={sedeId} canEdit={canEdit} />);
 }
 
 if (document.getElementById('resultados-lote-root')) {

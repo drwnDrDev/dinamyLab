@@ -43,12 +43,14 @@ El cargador interpreta una lista de personas, muestra las coincidencias y deja e
 Una orden reúne al paciente, un acompañante opcional y los exámenes solicitados. El flujo valida los campos, comprueba los exámenes, calcula valores según tarifas (convenio+sede → sede → precio base) y genera un procedimiento por examen.
 
 El número de orden es texto. `SugerirNumeroOrden` propone el siguiente por sede y respeta prefijos y ceros a la izquierda.
+La orden se marca como completada al terminar, entregar o anular todos sus procedimientos; si se agrega o reabre uno, vuelve a pendiente.
 
 ### 3.4 Resultados e historial
 
 - **Captura por procedimiento** y **por lotes**: `GuardarResultadosLote` y la isla React `ResultadosLote` capturan un examen para varios procedimientos a la vez.
 - **Edición auditada**: `ActualizarResultados` valida por tipo de dato (número, fecha, opción), bloquea la fila y guarda en `resultado_cambios` el valor anterior, el valor nuevo, el usuario y una observación obligatoria.
-- **Reporte imprimible**: `resultados/show` tiene formato de impresión (encabezado, paciente, parámetros, pie). Se imprime o se guarda como PDF desde el navegador. DomPDF está instalado, pero **no existe un flujo de PDF en servidor**.
+- **Reporte imprimible/PDF**: orden, resultado individual e historia reutilizan el mismo contenido de reporte. La descarga de PDF está protegida por `ver_resultado`; la historia puede abarcar varias órdenes y separa cada orden en una página.
+- Solo `prestador` puede registrar o corregir resultados, y únicamente en una sede a la que pertenece. `admin` y `agente` pueden consultar e imprimir resultados; agente también puede consultar exámenes y descargar RIPS/reportes de su sede, pero no modificarlos.
 - La captura normal y la API todavía usan lógica distinta de la de los servicios nuevos.
 
 Como son datos clínicos, confirmar la persona y la orden antes de guardar o entregar resultados. Los valores, unidades y rangos de referencia deben validarlos los responsables del laboratorio.
@@ -108,25 +110,25 @@ La aplicación usa `spatie/laravel-permission` sobre `User` (sin `teams`), y ade
 
 | Rol | Permisos | Observación |
 |---|---|---|
-| `admin` | Todos los existentes al ejecutar el seeder | Amplio |
-| `prestador` | `ver_resultado`, `crear_persona`, `editar_persona`, `ver_persona`, `ver_orden`, `eliminar_persona`, `ver_cuentas`, `crear_cuenta`, `editar_cuenta`, `ver_examen`, `crear_examen`, `editar_examen`, `ver_empresa`, `ver_facturas` | `eliminar_persona` le da acceso a todo el grupo administrativo |
-| `agente` | `ver_resultado`, `crear_persona`, `editar_persona`, `ver_persona`, `ver_orden` | Sin facturas ni administración |
+| `admin` | Todos los existentes al ejecutar el seeder, excepto `registrar_resultado` y `editar_resultado` | Consulta global; no puede crear ni corregir resultados |
+| `prestador` | `ver_persona`, `crear_persona`, `editar_persona`, `eliminar_persona`, `ver_orden`, `crear_orden`, `editar_orden`, `eliminar_orden`, `ver_procedimiento`, `gestionar_procedimiento`, `eliminar_procedimiento`, `ver_resultado`, `registrar_resultado`, `editar_resultado`, `ver_examen`, `editar_descripcion_examen`, `ver_reportes` | Operaciones clínicas limitadas a su sede |
+| `agente` | `ver_persona`, `crear_persona`, `editar_persona`, `ver_orden`, `crear_orden`, `editar_orden`, `ver_procedimiento`, `ver_resultado`, `ver_examen`, `ver_reportes` | Consulta resultados, exámenes, reportes y RIPS en sedes donde trabaja; no puede modificarlos |
 | `contable` | `ver_facturas` | — |
 | `paciente` | Ninguno | El rol existe sin permisos |
 
 `ClienteSeeder` asigna `admin` al administrador del cliente y `DemoSeeder` asigna roles de demostración.
 
-Hay permisos que se consultan en el código pero que el seeder no crea ni asigna: `crear_sedes`, `editar_sedes`, `eliminar_sedes`, `editar_empresa`, `gestionar_citas`, `eliminar_orden_medica`.
+La orden se marca como completada cuando tiene al menos un procedimiento y todos están terminado, entregado o anulado. Si se agrega o reabre un procedimiento, vuelve a pendiente.
 
 ### 7.3 Dónde se aplica autorización hoy
 
-1. La mayoría de las rutas clínicas (personas, órdenes, procedimientos, resultados) solo exigen `auth`.
+1. Las rutas clínicas exigen el permiso de su acción; `ControlSede` limita a prestadores y agentes a su sede.
 2. Facturas y convenios exigen `auth`, `verified` y `can:ver_facturas`.
 3. Todo el grupo administrativo usa `can:eliminar_persona`: empresas, empleados, sedes, catálogos y `/migracion`.
 4. `EmpresaPolicy`, `SedePolicy` y `PreRegistroCitaPolicy` están registradas, pero `SedeController` no las invoca.
 5. `SedeController::elegirSede()` verifica la membresía en `empleado_sede` y responde 403 sin cambiar la sesión (C-05, 2026-11-03).
-6. `ResultadosController` (web) aplica el control de sede en `show`, `create`, `edit`, `update` y `store` (`create` y `store` se agregaron en C-05).
-7. La escritura de resultados por API (`Api\ResultadosController::store`) aplica el mismo control de sede y guarda como `empleado_id` al empleado autenticado, no al valor enviado (C-05). Todavía no exige un permiso específico (ver I-03).
+6. `ResultadosController` (web) aplica el control de sede en `show`, `create`, `edit`, `update` y `store`; la consulta y descarga exige `ver_resultado`.
+7. Las rutas web, por lotes y API para escribir resultados exigen explícitamente el rol `prestador` y su permiso de acción. También se rechaza al usuario con rol `admin`, incluso si acumula el rol `prestador`.
 
 El control está centralizado en `App\Services\ControlSede` y registra cada denegación en el log (usuario, acción e IDs, sin datos del paciente).
 8. `SedePolicy` compara la empresa del empleado, no `empleado_sede`.
@@ -136,8 +138,6 @@ El control está centralizado en `App\Services\ControlSede` y registra cada dene
 | Prioridad | Hallazgo | Acción esperada |
 |---|---|---|
 | **Crítico** | `GET /migracion` ejecuta `migrate:fresh --seed` (`routes/web.php:115`) y el rol `prestador` cumple su middleware | Retirar la ruta o moverla a un mecanismo de mantenimiento seguro |
-| Alto | Se puede elegir una sede sin pertenecer a ella | Responder 403 sin cambiar la sesión |
-| Alto | Las escrituras de resultados (`store` web y API) no aplican el control de sede | Aplicar el mismo control que `update` |
 | Alto | `can:eliminar_persona` protege todo el grupo administrativo | Dividir por acción y aprobar una matriz de roles y permisos |
 | Medio | `EmpresaPolicyTest` usa nombres de ruta que no existen (`sedes.*` en lugar de `admin.sedes.*`) y un test no tiene aserciones | Corregir la suite |
 
@@ -212,7 +212,7 @@ Orden sugerido:
 |---|---|
 | Personas, órdenes, procedimientos | Flujo principal operativo; faltan pruebas de permisos y errores de extremo a extremo |
 | Resultados: captura, lotes, edición auditada | Operativo y con tests; captura web y API sin unificar |
-| Reporte de resultados | Imprimible desde el navegador; sin PDF en servidor |
+| Reporte de resultados | Imprimible desde el navegador y descargable en PDF |
 | Búsqueda y paginación | En todos los listados web principales |
 | Aislamiento de clientes | Una instancia y una BD por cliente |
 | Edición web de personas | Incompleta (métodos vacíos) |
