@@ -22,11 +22,6 @@ Route::get('/', fn () => auth()->check()
     ? redirect()->to(route('dashboard', absolute: false))
     : view('welcome'));
 
-Route::get('/deploytests', function () {
-        Artisan::call('storage:link');
-    return 'Tests completed successfully 👌 CAUTION: DELETE THIS VIEW AND THE ROUTE AFTER TESTING. ⚠️';
-});
-
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/reprocesar', [ReprocesarController::class, 'showUploadForm'])->name('reprocesar.upload');
     Route::post('/reprocesar', [ReprocesarController::class, 'upload'])->name('reprocesar.upload.post');
