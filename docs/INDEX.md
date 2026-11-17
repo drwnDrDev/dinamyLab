@@ -19,6 +19,7 @@
 
 | Archivo | Para qué sirve |
 |---|---|
+| [ROADMAP_FORTIFY_TEAMS_EMPRESAS.md](./ROADMAP_FORTIFY_TEAMS_EMPRESAS.md) | Migración de Breeze a Fortify, membresías y roles por empresa con Spatie Teams, aislamiento de datos y despliegue. |
 | [superpowers/specs/2026-10-30-multitenant-design.md](./superpowers/specs/2026-10-30-multitenant-design.md) | Diseño del aislamiento y del despliegue por instancia. |
 | [superpowers/plans/2026-10-30-despliegue-multicliente.md](./superpowers/plans/2026-10-30-despliegue-multicliente.md) | Plan de trabajo del despliegue multicliente. Que una tarea esté listada no significa que esté terminada. |
 
