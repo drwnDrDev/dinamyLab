@@ -23,8 +23,7 @@ Route::get('/', fn () => auth()->check()
     : view('welcome'));
 
 Route::get('/deploytests', function () {
-    Artisan::call('migrate:fresh --seed');
-    Artisan::call('optimize:clear');
+        Artisan::call('storage:link');
     return 'Tests completed successfully 👌 CAUTION: DELETE THIS VIEW AND THE ROUTE AFTER TESTING. ⚠️';
 });
 
