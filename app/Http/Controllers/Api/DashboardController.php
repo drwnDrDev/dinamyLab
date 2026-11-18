@@ -26,6 +26,7 @@ class DashboardController extends Controller
         $procedimientosByExamen = $procedimientos->groupBy('examen_id')->map(function ($group) {
             return [
                 'examen' => $group->first()->examen->nombre,
+                
                 'count' => $group->count(),
             ];
         })->sortByDesc('count')->values();

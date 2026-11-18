@@ -34,7 +34,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         {{-- Procedimientos --}}
-        <div class="bg-gradient-to-br from-primary/10 to-primary/20dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-primary/5 border border-borders/40 dark:border-slate-700/50 p-5">
+        <a href="{{ route('procedimientos') }}" aria-label="Ver procedimientos" class="block hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 bg-gradient-to-br from-primary/10 to-primary/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-primary/5 border border-borders/40 dark:border-slate-700/50 p-5">
             <div class="flex items-start justify-between">
                 <div class="p-2.5 bg-primary/10 dark:bg-primary/20 rounded-xl">
                     <x-iconos.procedimientos :active="false" class="text-primary w-6 h-6" />
@@ -43,12 +43,12 @@
             </div>
             <div class="mt-4">
                 <p class="text-text dark:text-white font-semibold text-sm">Procedimientos</p>
-                <p class="text-titles text-xs mt-0.5">Total registrados</p>
+                <p class="text-titles text-xs mt-0.5">Total registrados · Ver procedimientos →</p>
             </div>
-        </div>
+        </a>
 
         {{-- Pacientes --}}
-        <div class="bg-gradient-to-br from-teal-500/10 to-teal-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-teal-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
+        <a href="{{ route('personas') }}" aria-label="Ver pacientes" class="block hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 bg-gradient-to-br from-teal-500/10 to-teal-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-teal-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
             <div class="flex items-start justify-between">
                 <div class="p-2.5 bg-teal-500/10 dark:bg-teal-500/20 rounded-xl">
                     <x-iconos.personas :active="false" class="text-teal-600 dark:text-teal-400 w-6 h-6" />
@@ -57,12 +57,12 @@
             </div>
             <div class="mt-4">
                 <p class="text-text dark:text-white font-semibold text-sm">Pacientes</p>
-                <p class="text-titles text-xs mt-0.5">Atendidos hoy</p>
+                <p class="text-titles text-xs mt-0.5">Atendidos hoy · Ver pacientes →</p>
             </div>
-        </div>
+        </a>
 
         {{-- En Proceso --}}
-        <div class="bg-gradient-to-br from-pink-500/10 to-pink-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-rose-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
+        <a href="{{ route('procedimientos') }}" aria-label="Ver procedimientos en proceso" class="block hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 bg-gradient-to-br from-pink-500/10 to-pink-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-rose-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
             <div class="flex items-start justify-between">
                 <div class="p-2.5 bg-rose-400/10 dark:bg-rose-400/20 rounded-xl">
                     <x-iconos.resultados :active="false" class="text-rose-400 w-6 h-6" />
@@ -71,9 +71,9 @@
             </div>
             <div class="mt-4">
                 <p class="text-text dark:text-white font-semibold text-sm">En Proceso</p>
-                <p class="text-titles text-xs mt-0.5">Pendientes de resultado</p>
+                <p class="text-titles text-xs mt-0.5">Pendientes de resultado · Ver procesos →</p>
             </div>
-        </div>
+        </a>
 
     </div>
 
@@ -91,7 +91,7 @@
 
         $pendientesByExamen = $procedimientosPendientes
             ->groupBy('examen_id')
-            ->map(fn($g) => ['examen' => $g->first()->examen->nombre, 'count' => $g->count()])
+            ->map(fn($g) => ['examen' => $g->first()->examen, 'count' => $g->count()])
             ->sortByDesc('count')
             ->values();
         $totalPendientes = $procedimientosPendientes->count();
@@ -146,16 +146,19 @@
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4">
                     @foreach($pendientesByExamen as $item)
                     @php $barPct = round($item['count'] / $maxPendiente * 100); @endphp
-                    <div>
-                        <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-sm text-text dark:text-white truncate max-w-[75%]">{{ $item['examen'] }}</span>
+                    <a href="{{ route('examenes.lote', $item['examen']) }}"
+                       aria-label="Procesar por lote: {{ $item['examen']->nombre }}"
+                       class="block rounded-lg p-2 -m-2 hover:bg-rose-50 dark:hover:bg-rose-950/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 transition-colors">
+                        <div class="flex items-center justify-between mb-1.5 gap-2">
+                            <span class="text-sm text-text dark:text-white truncate max-w-[75%]">{{ $item['examen']->nombre }}</span>
                             <span class="text-sm font-semibold text-rose-400">{{ $item['count'] }}</span>
                         </div>
                         <div class="h-2 w-full bg-rose-50 dark:bg-rose-950/20 rounded-full overflow-hidden">
                             <div class="h-full bg-gradient-to-r from-rose-300 to-rose-400 rounded-full"
                                  style="width: {{ $barPct }}%"></div>
                         </div>
-                    </div>
+                        <span class="block text-xs text-rose-500 dark:text-rose-300 mt-1.5">Procesar por lote →</span>
+                    </a>
                     @endforeach
                 </div>
                 @endif
@@ -239,7 +242,9 @@
                         <tbody class="divide-y divide-borders/30 dark:divide-slate-700/30">
                             @forelse ($ordenes as $orden)
                             <tr class="hover:bg-secondary/20 dark:hover:bg-slate-700/20 transition-colors duration-150">
-                                <td class="px-6 py-1 font-semibold text-text dark:text-white">#{{ $orden->numero }}</td>
+                                <td class="px-6 py-1 font-semibold text-text dark:text-white">
+                                    <a href="{{ route('ordenes.show', $orden) }}" class="text-primary hover:underline focus-visible:outline-primary" aria-label="Ver orden {{ $orden->numero }}">#{{ $orden->numero }}</a>
+                                </td>
                                 <td class="px-6 py-1 text-titles dark:text-slate-400 tabular-nums">{{ $orden->created_at->format('d/m/Y') }}</td>
                                 <td class="px-6 py-1 text-text dark:text-white capitalize">{{ $orden->paciente->primer_nombre }} {{ $orden->paciente->primer_apellido }}</td>
                                 <td class="px-6 py-1 text-center">
