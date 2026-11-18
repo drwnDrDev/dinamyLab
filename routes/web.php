@@ -30,6 +30,10 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/admin/actividad', [\App\Http\Controllers\ActividadController::class, 'index'])
+        ->middleware('role:admin')->name('actividad.index');
+    Route::post('/resultados/actividad/impresion', [\App\Http\Controllers\ActividadController::class, 'impresion'])
+        ->middleware(['can:ver_resultado', 'throttle:60,1'])->name('actividad.impresion');
     Route::get('/dashboard', [EmpleadoController::class, 'select'])
         ->middleware('can:ver_persona')
         ->name('dashboard');

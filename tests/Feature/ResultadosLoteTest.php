@@ -122,6 +122,13 @@ class ResultadosLoteTest extends TestCase
         $response->assertOk()
             ->assertJsonPath('cantidad', 2);
 
+        $evento = \App\Models\EventoActividad::where('evento', 'resultados.lote_procesado')->sole();
+        $this->assertEquals($this->user->id, $evento->usuario_id);
+        $this->assertEquals($this->sede->empresa_id, $evento->empresa_id);
+        $this->assertSame(2, $evento->detalles['cantidad']);
+        $this->assertSame(2, \App\Models\EventoActividad::where('evento', 'resultado.creado')->count());
+        $this->assertStringNotContainsString('55000', $evento->toJson());
+
         $this->assertDatabaseHas('resultados', [
             'procedimiento_id' => $this->procedimientos[0]->id,
             'parametro_id' => $this->parametroNumero->id,
@@ -169,6 +176,7 @@ class ResultadosLoteTest extends TestCase
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors('procedimientos');
+        $this->assertSame(0, \App\Models\EventoActividad::whereIn('evento', ['resultados.lote_procesado', 'resultado.creado'])->count());
         $this->assertDatabaseMissing('resultados', [
             'procedimiento_id' => $this->procedimientos[0]->id,
             'parametro_id' => $this->parametroNumero->id,

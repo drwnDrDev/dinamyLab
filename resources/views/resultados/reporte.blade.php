@@ -790,5 +790,29 @@
             </section>
         @endif
     </main>
+    @if (! $enPdf && ! empty($tokenImpresion))
+        <script>
+            // Incluye el botón y el atajo de impresión del navegador.
+            let registrandoImpresion = false;
+            window.addEventListener('beforeprint', () => {
+                if (registrandoImpresion) return;
+                registrandoImpresion = true;
+                fetch(@json(route('actividad.impresion')), {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    keepalive: true,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': @json(csrf_token()),
+                    },
+                    body: JSON.stringify({ token: @json($tokenImpresion) }),
+                }).then(response => {
+                    if (!response.ok) console.error('No se pudo registrar la solicitud de impresión.');
+                }).catch(() => console.error('No se pudo registrar la solicitud de impresión.'));
+            });
+            window.addEventListener('afterprint', () => { registrandoImpresion = false; });
+        </script>
+    @endif
 </body>
 </html>

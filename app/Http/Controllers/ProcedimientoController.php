@@ -139,6 +139,13 @@ class ProcedimientoController extends Controller
             ->groupBy('examen_id')
             ->orderByDesc('total_procedimientos')
             ->get();
+        \App\Services\RegistrarActividad::registrar('rips.reporte_consultado', $sede, [
+            'fecha_inicio' => $startDate->toDateString(),
+            'fecha_fin' => $endDate->toDateString(),
+            'cantidad_procedimientos' => (int) $procedimientos->sum('total_procedimientos'),
+            'alcance' => $sede ? 'sede' : 'instancia',
+        ], usarContextoSesion: $sede !== null);
+
         return view('procedimientos.rips', compact('procedimientos', 'sedes','startDate', 'endDate'));
     }
 
@@ -248,8 +255,15 @@ public function json_rips(Request $request)
         'tipoNota' => 'RS',
         'numNota' => date('Ym'),
         'usuarios' => $procedimientos,
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     $fileName = 'rips_'.date('YmdHis').'.json';
+
+    \App\Services\RegistrarActividad::registrar('rips.descargados', $sede, [
+        'fecha_inicio' => $fechaInicio->toDateString(),
+        'fecha_fin' => $fechaFin->toDateString(),
+        'cantidad_usuarios' => $procedimientos->count(),
+        'cantidad_procedimientos' => (int) $procedimientos->sum(fn ($usuario) => $usuario['servicios']['procedimientos']->count()),
+    ]);
 
     return response($json, 200)
         ->header('Content-Type', 'application/json')

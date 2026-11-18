@@ -81,6 +81,7 @@ class ResultadosController extends Controller
             'reporte' => $reporte,
             'enPdf' => false,
             'cambios' => $cambios,
+            'tokenImpresion' => ActividadController::tokenImpresion(collect([$procedimiento])),
             'urlVolver' => route('resultados.reporte_orden', $procedimiento->orden),
             'urlEditar' => $puedeEditar ? route('resultados.edit', $procedimiento) : null,
             'navegacion' => $navegacion,
@@ -97,6 +98,7 @@ class ResultadosController extends Controller
             'enPdf' => false,
             'urlVolver' => route('ordenes.show', $orden),
             'urlPdf' => route('resultados.reporte_pdf', $orden),
+            'tokenImpresion' => ActividadController::tokenImpresion($orden->procedimientos()->whereHas('resultado')->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])->get()),
         ]);
     }
 
@@ -121,6 +123,8 @@ class ResultadosController extends Controller
             'sede_id' => $orden->sede_id,
             'total_examenes' => $reporte['total_examenes'],
         ]);
+
+        \App\Services\RegistrarActividad::registrar('resultados.descargados', $orden, ['total_examenes' => $reporte['total_examenes']]);
 
         $numeroOrden = Str::slug((string) $orden->numero) ?: (string) $orden->id;
 
@@ -277,6 +281,8 @@ class ResultadosController extends Controller
                 ->with(['examen', 'empleado.user'])])
             ->orderBy('updated_at', 'desc')
             ->get();
+        \App\Services\RegistrarActividad::registrar('paciente.historia_consultada', $persona, ['origen' => 'resultados.historia']);
+
         return view(
             'resultados.historia',
             compact('persona', 'ordenes')
@@ -327,11 +333,16 @@ class ResultadosController extends Controller
 
         $procedimientos->each(fn (Procedimiento $procedimiento) => ControlSede::autorizarProcedimiento($request, $procedimiento));
         $reporte = $construirReporte->paraProcedimientos($procedimientos);
+        \App\Services\RegistrarActividad::registrar('paciente.historia_consultada', $persona, [
+            'origen' => 'resultados.historia_show',
+            'cantidad_procedimientos' => $procedimientos->count(),
+        ]);
 
         return view('resultados.reporte', [
             'reporte' => $reporte,
             'enPdf' => false,
             'tituloReporte' => 'Historia clínica',
+            'tokenImpresion' => ActividadController::tokenImpresion($procedimientos),
             'urlVolver' => route('resultados.historia', $persona),
         ]);
     }

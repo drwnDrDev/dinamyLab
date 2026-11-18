@@ -271,6 +271,12 @@ it('genera un PDF con los resultados terminados de una orden', function () {
         ->assertHeader('content-disposition', 'attachment; filename="resultados-orden-872.pdf"');
 
     expect(substr($response->getContent(), 0, 5))->toBe('%PDF-');
+    $this->assertDatabaseHas('eventos_actividad', [
+        'evento' => 'resultados.descargados',
+        'usuario_id' => $this->user->id,
+        'recurso_id' => $orden->id,
+        'sede_id' => $this->sede->id,
+    ]);
 });
 
 it('muestra el registro médico con la cédula del empleado prestador de la empresa', function () {
@@ -296,6 +302,7 @@ it('impide descargar un reporte desde una sede no autorizada', function () {
     $this->actingAs($this->user)
         ->get(route('resultados.reporte_pdf', $orden))
         ->assertForbidden();
+    $this->assertDatabaseMissing('eventos_actividad', ['evento' => 'resultados.descargados']);
 });
 
 it('deniega la descarga a usuarios sin permiso para ver resultados', function () {
@@ -308,6 +315,7 @@ it('deniega la descarga a usuarios sin permiso para ver resultados', function ()
     $this->actingAs($usuarioContable)
         ->get(route('resultados.reporte_pdf', $orden))
         ->assertForbidden();
+    $this->assertDatabaseMissing('eventos_actividad', ['evento' => 'resultados.descargados']);
 });
 
 it('conserva las columnas de resultados de texto y carga firmas y logos por nombre de archivo', function () {

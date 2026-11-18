@@ -41,6 +41,12 @@
         @endcan
 
         @role('admin')
+            <x-nav-link :href="route('actividad.index')" icono="reportes" :active="request()->routeIs('actividad.*')">
+                {{ 'Monitor de eventos' }}
+            </x-nav-link>
+        @endrole
+
+        @role('admin')
             <x-nav-link :href="route('caja')" icono="caja" :active="request()->routeIs('caja*')">
                 {{ 'Caja' }}
             </x-nav-link>

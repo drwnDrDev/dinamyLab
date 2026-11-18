@@ -104,6 +104,10 @@ class ActualizarResultados
                 $cambios++;
             }
 
+            if ($cambios > 0) {
+                RegistrarActividad::registrar('resultado.actualizado', $procedimiento, ['cantidad_cambios' => $cambios]);
+            }
+
             return $cambios;
         });
     }

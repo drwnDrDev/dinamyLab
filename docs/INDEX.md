@@ -6,6 +6,7 @@
 
 | Archivo | Para qué sirve |
 |---|---|
+| [MONITOR_EVENTOS.md](./MONITOR_EVENTOS.md) | Consulta administrativa de actividad: eventos, alcance de impresión/descarga, instalación y operación. |
 | [MANUAL.md](./MANUAL.md) | **Empezar aquí.** Funcionamiento de la aplicación, flujos, roles y permisos, hallazgos de autorización y estado por módulo. |
 | [ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md](./ARQUITECTURA_Y_VIABILIDAD_COMERCIAL.md) | Estado técnico, deuda, costos, pricing (incluye el borrador del Plan Emprendedor), tiempos y riesgos para propuestas comerciales. |
 | [CHECKLIST_DEUDA_TECNICA.md](./CHECKLIST_DEUDA_TECNICA.md) | Issues de deuda técnica por prioridad y viabilidad, con estado y comentarios (pendiente, a deprecar, omitido). |

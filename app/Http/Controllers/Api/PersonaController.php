@@ -58,6 +58,8 @@ class PersonaController extends Controller
             ], 404);
         }
 
+        \App\Services\RegistrarActividad::registrar('paciente.historia_consultada', $persona, ['origen' => 'api.personas.show']);
+
         return response()->json([
             'message' => 'Persona encontrada',
             'data' => $persona
@@ -109,6 +111,7 @@ class PersonaController extends Controller
         DB::transaction(function () use ($persona, $validated): void {
             $this->updatePersonaProperties($persona, $validated);
             $this->updateContactProperties($persona, $validated);
+            \App\Services\RegistrarActividad::registrar('paciente.actualizado', $persona, ['campos' => array_keys($validated)]);
         });
 
         $persona->load([

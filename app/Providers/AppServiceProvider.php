@@ -38,6 +38,20 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Procedimiento::observe(ProcedimientoObserver::class);
+        foreach ([\App\Models\Persona::class, \App\Models\Orden::class, \App\Models\Resultado::class] as $modelo) {
+            $modelo::observe(\App\Observers\ActividadObserver::class);
+        }
+        Event::listen(\Illuminate\Auth\Events\Login::class, function ($evento) {
+            \App\Services\RegistrarActividad::registrar('sesion.iniciada', $evento->user, [], $evento->user);
+        });
+        Event::listen(\Illuminate\Auth\Events\Logout::class, function ($evento) {
+            if ($evento->user) {
+                \App\Services\RegistrarActividad::registrar('sesion.cerrada', $evento->user, [], $evento->user);
+            }
+        });
+        Event::listen(\Illuminate\Auth\Events\Registered::class, function ($evento) {
+            \App\Services\RegistrarActividad::registrar('usuario.registrado', $evento->user, [], $evento->user);
+        });
 
         // Registrar políticas
         foreach ($this->policies as $model => $policy) {

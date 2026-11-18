@@ -115,6 +115,8 @@ class PersonaController extends Controller
 
 
 
+        \App\Services\RegistrarActividad::registrar('paciente.historia_consultada', $persona, ['origen' => 'personas.show']);
+
         return view('personas.show',compact('persona','procedimientos'));
     }
 
@@ -141,6 +143,8 @@ class PersonaController extends Controller
                 ['numero' => $validated['telefono']]
             );
         }
+
+        \App\Services\RegistrarActividad::registrar('paciente.actualizado', $persona, ['campos' => array_keys($validated)]);
 
         return redirect()->route('personas.show', $persona)->with('success', 'Paciente actualizado correctamente.');
     }

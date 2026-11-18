@@ -110,6 +110,12 @@ class GuardarResultadosLote
                 $procedimiento->save();
             }
 
+            RegistrarActividad::registrar('resultados.lote_procesado', $procedimientos->first(), [
+                'examen_id' => $examen->id,
+                'cantidad' => count($muestras),
+                'procedimientos' => $ids,
+            ]);
+
             return count($muestras);
         });
     }
