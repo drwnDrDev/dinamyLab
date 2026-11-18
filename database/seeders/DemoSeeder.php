@@ -19,7 +19,7 @@ class DemoSeeder extends Seeder
         $this->call(CatalogoBaseSeeder::class);
 
         $admin = User::factory()->create([
-            'name' => 'Carlos Ramirez',
+            'name' => 'Admin Genenral',
             'email' => 'admon@dinamycode.com',
             'password' => Hash::make('DinamycodeDC'),
         ]);
@@ -29,26 +29,20 @@ class DemoSeeder extends Seeder
             'password' => Hash::make('Danielito2006'),
         ]);
         $coordinador = User::factory()->create([
-            'name' => 'Juan Perez',
-            'email' => 'coordinador@dinamycode.com',
-            'password' => Hash::make('DinamycodeDC'),
+            'name' => 'Toma de muestras AM',
+            'email' => 'coordinador1@dinamycode.com',
+            'password' => Hash::make('BiotekBosa26'),
         ]);
         $empleado = User::factory()->create([
-            'name' => 'Pedro Perez',
-            'email' => 'info@dinamycode.com',
-            'password' => Hash::make('DinamycodeDC'),
-        ]);
-        $usuarioSanPablo = User::factory()->create([
-            'name' => 'Pilar Rocha',
-            'email' => 'pilar_rocha@dinamycode.com',
-            'password' => Hash::make('SanPabloL7'),
+            'name' => 'Toma de muestras PM',
+            'email' => 'coordinador2@dinamycode.com',
+            'password' => Hash::make('BiotekBosa20'),
         ]);
 
         $empleado->assignRole('agente');
         $admin->assignRole('admin');
-        $usuarioSanPablo->assignRole('prestador');
         $prestador->assignRole('prestador');
-        $coordinador->assignRole('contable');
+        $coordinador->assignRole('agente');
 
         $this->call(EmpresaSeeder::class);
     }

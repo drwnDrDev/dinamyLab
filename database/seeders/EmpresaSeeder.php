@@ -31,23 +31,9 @@ class EmpresaSeeder extends Seeder
             'sexo'=>'M',
             'pais_origen'=>'170'
         ]);
-        $extranjero = Persona::create([
-            // Datos de demostración.
-            'grupo_sanguineo' => 'O',
-            'factor_rh' => 'positivo',
-            'primer_nombre'=>'Ronaldo',
-            'primer_apellido'=>'Nazario',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
-            'numero_documento'=>'123466789',
-            'fecha_nacimiento'=>'1929-01-11',
-            'sexo'=>'M',
-             'pais_origen'=>'840'
-        ]);
+  
 
 
-        $extranjero->direccion()->create([
-            "pais_id" => "840"
-        ]);
         $persona->direccion()->create([
             'municipio_id'=>'11001',
             'direccion'=>'Diagonal 69 C sur # 78 C 36'
@@ -55,9 +41,7 @@ class EmpresaSeeder extends Seeder
         $persona->telefonos()->create([
             'numero'=>'3207001403',
         ]);
-        $persona->email()->create([
-            'email'=>'ronaldmcdonalds@dinamycode.com'
-        ]);
+
         $persona->redesSociales()->create([
             'nombre'=>'Linkedin',
             'url'=>'https://www.linkedin.com/in/claudia-buitrago-hernandez-123456789/',
@@ -70,12 +54,7 @@ class EmpresaSeeder extends Seeder
             'nombre_comercial'=>'Biotek',
 
         ]);
-        $sanPablo = \App\Models\Empresa::create([
-            'nit'=>'51712439-7',
-            'razon_social'=>'Laboratorio San Pablo',
-            'nombre_comercial'=>'Laboratorio San Pablo',
-        ]);
-
+   
 
         $empresa->telefonos()->create([
             'numero'=>'3207001403'
@@ -86,14 +65,7 @@ class EmpresaSeeder extends Seeder
             'direccion'=>'Diagonal 69 C sur # 78 C 36'
         ]);
 
-        $sanPablo->telefonos()->create([
-            'numero'=>'3124112971'
-        ]);
-        $sanPablo->direccion()->create([
-            'municipio_id'=>'11001',
-            'direccion'=>'Cl. 66 Sur #78L - 25 Local 3, Bosa, Bogotá D.C.'
-        ]);
-
+    
 
         $sede = \App\Models\Sede::create([
             'nombre'=>'Laboratorio',
@@ -118,9 +90,6 @@ class EmpresaSeeder extends Seeder
 
         ]);
 
-        $sede2->telefonos()->create(['numero'=>'3005705987']);
-        $sede2->telefonos()->create(['numero'=>'3103213025']);
-        $sede2->telefonos()->create(['numero'=>'6018088128']);
 
 
         $sede2->direccion()->create([
@@ -128,13 +97,7 @@ class EmpresaSeeder extends Seeder
             'direccion'=>'Tv 78L Nº 69C 10 sur'
         ]);
 
-        $sedeSanPablo = \App\Models\Sede::create([
-            'nombre'=>'Laboratorio San Pablo Bosa',
-            'codigo_prestador'=>'110013629101',
-            'logo'=>'sanpablo_logo.png',
-            'empresa_id'=>$sanPablo->id,
-
-        ]);
+  
 
         $empleado = \App\Models\Empleado::create([
             'cargo'=>'Bacteriologa',
@@ -152,24 +115,12 @@ class EmpresaSeeder extends Seeder
             'numero'=>'3207001403'
         ]);
 
-        $empeladoSanPablo = \App\Models\Empleado::create([
-            'cargo'=>'Bacteriologa',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
-            'numero_documento'=>'51712439',
-            'fecha_nacimiento'=>'1963-05-20',
-            'user_id'=>5,
-            'firma'=>'firma_pilar.png',
-            'empresa_id'=>$sanPablo->id,
 
-        ]);
-        $empeladoSanPablo->telefonos()->create([
-            'numero'=>'3124112971'
-        ]);
-
+ 
 
         $admon= \App\Models\Empleado::create([
             'cargo'=>'Administrador',
-            'firma'=>'ramirez.png',
+          
             'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'80920160',
             'fecha_nacimiento'=>'1985-08-08',
@@ -201,8 +152,8 @@ class EmpresaSeeder extends Seeder
             // Datos de demostración.
             'grupo_sanguineo' => 'O',
             'factor_rh' => 'positivo',
-            'primer_nombre'=>'Ronald',
-            'primer_apellido'=>'McDonald',
+            'primer_nombre'=>'agente',
+            'primer_apellido'=>'uno',
             'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
@@ -213,19 +164,18 @@ class EmpresaSeeder extends Seeder
 
         $empleado2 = \App\Models\Empleado::create([
 
-            'cargo'=>'contador',
+            'cargo'=>'secretaria',
            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
             'user_id'=>3,
-
             'empresa_id'=>1,
         ]);
 
         $empleado3 = \App\Models\Empleado::create([
 
             'cargo'=>'secretaria',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
+            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456',
             'fecha_nacimiento'=>'1989-11-12',
             'user_id'=>4,
@@ -233,26 +183,14 @@ class EmpresaSeeder extends Seeder
 
         ]);
 
-        $empleado3->telefonos()->create([
-            'numero'=>'350060000'
 
-        ]);
-        $empleado2->telefonos()->create([
-            'numero'=>'310060000'
-
-        ]);
-
-        $empleado2->direccion()->create([
-            'municipio_id'=>'11001',
-            'direccion'=>'Calle 80 I sur # 81 J 36'
-        ]);
-
+     
         // Relacionar empleados y sedes por tabla intermedia (muchos a muchos)
         $empleado2->sedes()->attach([$sede->id, $sede2->id]);
         $empleado->sedes()->attach([$sede->id, $sede2->id]);
         $empleado3->sedes()->attach($sede2->id);
         $admon->sedes()->attach([$sede2->id, $sede->id]);
-        $empeladoSanPablo->sedes()->attach($sedeSanPablo->id);
+        
 
 
     }
