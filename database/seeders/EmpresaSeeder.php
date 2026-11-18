@@ -6,6 +6,8 @@ namespace Database\Seeders;
 use App\Models\Persona;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class EmpresaSeeder extends Seeder
 {
@@ -105,7 +107,7 @@ class EmpresaSeeder extends Seeder
             'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'51934571',
             'fecha_nacimiento'=>'1969-01-11',
-            'user_id'=>2,
+            'user_id'=>user::where('email', 'cpbuitrago69@yahoo.com')->first()->id,
             'empresa_id'=>1,
 
         ]);
@@ -119,12 +121,11 @@ class EmpresaSeeder extends Seeder
  
 
         $admon= \App\Models\Empleado::create([
-            'cargo'=>'Administrador',
-          
+            'cargo'=>'Administrador de sistema',   
             'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'80920160',
             'fecha_nacimiento'=>'1985-08-08',
-            'user_id'=>1,
+            'user_id'=>user::where('email', 'admon@dinamycode.com')->first()->id,
             'empresa_id'=>1,
 
         ]);
@@ -133,42 +134,15 @@ class EmpresaSeeder extends Seeder
 
         ]);
 
-        $coordi =  Persona::create([
-            // Datos de demostración.
-            'grupo_sanguineo' => 'O',
-            'factor_rh' => 'positivo',
-            'primer_nombre'=>'Diana',
-            'segundo_nombre'=>'Carolina',
-            'primer_apellido'=>'Arboleda',
-            'segundo_apellido'=>'Hernandez',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
-            'numero_documento'=>'123456',
-            'fecha_nacimiento'=>'1989-11-12',
-            'sexo'=>'M',
-           'pais_origen'=>'170'
-
-        ]);
-        $agente =  Persona::create([
-            // Datos de demostración.
-            'grupo_sanguineo' => 'O',
-            'factor_rh' => 'positivo',
-            'primer_nombre'=>'agente',
-            'primer_apellido'=>'uno',
-            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
-            'numero_documento'=>'123456789',
-            'fecha_nacimiento'=>'1929-01-11',
-            'sexo'=>'I',
-            'pais_origen'=>'840'
-
-        ]);
+ 
 
         $empleado2 = \App\Models\Empleado::create([
 
             'cargo'=>'secretaria',
-           'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
+            'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456789',
             'fecha_nacimiento'=>'1929-01-11',
-            'user_id'=>3,
+            'user_id'=>user::where('email', 'coordinador1@dinamycode.com')->first()->id,
             'empresa_id'=>1,
         ]);
 
@@ -178,7 +152,7 @@ class EmpresaSeeder extends Seeder
             'tipo_documento_id' => \App\Models\TipoDocumento::idPorCodigoRips('CC'),
             'numero_documento'=>'123456',
             'fecha_nacimiento'=>'1989-11-12',
-            'user_id'=>4,
+            'user_id'=>user::where('email', 'coordinador2@dinamycode.com')->first()->id,
             'empresa_id'=>1,
 
         ]);
@@ -186,12 +160,11 @@ class EmpresaSeeder extends Seeder
 
      
         // Relacionar empleados y sedes por tabla intermedia (muchos a muchos)
-        $empleado2->sedes()->attach([$sede->id, $sede2->id]);
+        $empleado2->sedes()->attach([$sede2->id]);
         $empleado->sedes()->attach([$sede->id, $sede2->id]);
         $empleado3->sedes()->attach($sede2->id);
         $admon->sedes()->attach([$sede2->id, $sede->id]);
         
-
 
     }
 }
