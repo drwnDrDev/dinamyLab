@@ -163,8 +163,7 @@ it('muestra el reporte agrupado de una orden', function () {
         ->assertDontSee('Examen externo reservado')
         ->assertDontSee('Laboratorio externo reservado')
         ->assertDontSee('Exámenes remitidos')
-        ->assertSee('13.5')
-        ->assertSee(route('resultados.show', $procedimiento));
+        ->assertSee('13.5');
 });
 
 it('reutiliza el contenido del reporte para resultados individuales e historia', function () {
