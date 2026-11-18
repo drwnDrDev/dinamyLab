@@ -54,6 +54,11 @@ class ResultadosController extends Controller
     {
         $this->autorizarSede(request(), $procedimiento);
 
+        if (request()->user()->hasRole('agente') && ! $procedimiento->tieneResultadosPublicados()) {
+            return redirect()->route('dashboard')
+                ->with('warning', 'No tienes permisos para crear o completar resultados de este procedimiento.');
+        }
+
         $procedimiento->load(['orden.paciente', 'resultado', 'sede']);
 
         if ($procedimiento->resultado->isEmpty()) {

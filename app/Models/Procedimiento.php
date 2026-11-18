@@ -27,6 +27,12 @@ class Procedimiento extends Model
     ];
 
 
+    public function tieneResultadosPublicados(): bool
+    {
+        return in_array($this->estado, [\App\Estado::TERMINADO->value, \App\Estado::ENTREGADO->value], true)
+            && $this->resultado()->whereNotNull('resultado')->whereRaw("TRIM(resultado) <> ''")->exists();
+    }
+
     public function orden()
     {
         return $this->belongsTo(Orden::class);

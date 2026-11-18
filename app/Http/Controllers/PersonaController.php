@@ -110,6 +110,7 @@ class PersonaController extends Controller
                 ->whereIn('orden_id', $ordenesIds)
                 ->with(['orden', 'examen'])
                 ->get()
+                ->when(request()->user()->hasRole('agente'), fn ($items) => $items->filter(fn ($item) => $item->tieneResultadosPublicados()))
                 ->groupBy('estado');
         }
 

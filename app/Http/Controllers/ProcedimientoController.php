@@ -74,6 +74,16 @@ class ProcedimientoController extends Controller
     public function show(Procedimiento $procedimiento)
     {
         ControlSede::autorizarProcedimiento(request(), $procedimiento);
+
+        if (request()->user()->hasRole('agente')) {
+            if (! $procedimiento->tieneResultadosPublicados()) {
+                return redirect()->route('dashboard')
+                    ->with('warning', 'No tienes permisos para crear o completar resultados de este procedimiento.');
+            }
+
+            return redirect()->route('resultados.show', $procedimiento);
+        }
+
         $navegacion = $procedimiento->procedimientosAdyacentesEnOrden();
 
         return view('procedimientos.show', compact('procedimiento', 'navegacion'));
