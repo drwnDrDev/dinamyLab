@@ -78,6 +78,7 @@
                     </thead>
                     <tbody>
                         @foreach ($orden->procedimientos as $procedimiento)
+                        @continue(auth()->user()->hasRole('agente') && ! $procedimiento->tieneResultadosPublicados())
 
                         <tr class="border-t border-borders hover:bg-secondary">
                             <td class="px-3 py-4"><span class="w-40">{{ $procedimiento->fecha->format('d-m-Y H:i')   }}</span></td>

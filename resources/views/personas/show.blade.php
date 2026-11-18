@@ -153,6 +153,7 @@
             </div>
         </div>
 
+        @unless(auth()->user()->hasRole('agente'))
         <section class="otra_info  mt-6">
 
         <div class="flex border-b border-borders">
@@ -201,5 +202,6 @@
                 </div>
             </div>
         </section>
+        @endunless
     </x-canva>
 </x-app-layout>

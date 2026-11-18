@@ -561,6 +561,90 @@ class PermissionProfilesTest extends TestCase
         $this->assertNotNull($orden->fresh()->terminada);
     }
 
+    public function test_agente_es_redirigido_al_dashboard_con_alerta_si_el_resultado_esta_vacio_o_incompleto(): void
+    {
+        $examen = Examen::factory()->create();
+        $orden = $this->crearOrden(Persona::factory()->create(), $this->sede, $this->prestador);
+        $procedimiento = $this->crearProcedimiento($orden, $examen, $this->sede);
+        $parametro = Parametro::create([
+            'nombre' => 'Hemoglobina', 'slug' => 'permiso-agente-vacio',
+            'tipo_dato' => 'number', 'examen_id' => $examen->id,
+        ]);
+        $this->actingAs($this->agente)->withSession(['sede' => $this->sede]);
+
+        foreach ([Estado::PROCESO->value, Estado::TERMINADO->value, Estado::ENTREGADO->value] as $estado) {
+            $procedimiento->update(['estado' => $estado]);
+            foreach (['procedimientos.show', 'resultados.show'] as $ruta) {
+                $this->get(route($ruta, $procedimiento))->assertRedirect(route('dashboard'))
+                    ->assertSessionHas('warning', 'No tienes permisos para crear o completar resultados de este procedimiento.');
+            }
+        }
+        $resultado = Resultado::create([
+            'procedimiento_id' => $procedimiento->id, 'parametro_id' => $parametro->id, 'resultado' => '   ',
+        ]);
+        $this->get(route('procedimientos.show', $procedimiento))->assertRedirect(route('dashboard'));
+        $resultado->update(['resultado' => '13.5']);
+        $procedimiento->update(['estado' => Estado::PROCESO->value]);
+        $this->get(route('procedimientos.show', $procedimiento))->assertRedirect(route('dashboard'));
+        $this->get(route('resultados.show', $procedimiento))->assertRedirect(route('dashboard'));
+        $this->get(route('dashboard'))->assertOk()->assertSee('No tienes permisos para crear o completar resultados de este procedimiento.');
+    }
+
+    public function test_agente_solo_abre_el_reporte_de_resultados_publicados_y_no_el_formulario(): void
+    {
+        $examen = Examen::factory()->create();
+        $orden = $this->crearOrden(Persona::factory()->create(), $this->sede, $this->prestador);
+        $procedimiento = $this->crearProcedimiento($orden, $examen, $this->sede);
+        $parametro = Parametro::create([
+            'nombre' => 'Hemoglobina', 'slug' => 'permiso-agente-publicado',
+            'tipo_dato' => 'number', 'examen_id' => $examen->id,
+        ]);
+        Resultado::create([
+            'procedimiento_id' => $procedimiento->id, 'parametro_id' => $parametro->id, 'resultado' => '0',
+        ]);
+        $this->actingAs($this->agente)->withSession(['sede' => $this->sede]);
+        foreach ([Estado::TERMINADO->value, Estado::ENTREGADO->value] as $estado) {
+            $procedimiento->update(['estado' => $estado]);
+            $this->get(route('procedimientos.show', $procedimiento))->assertRedirect(route('resultados.show', $procedimiento));
+            $this->get(route('resultados.show', $procedimiento))->assertOk()
+                ->assertDontSee('Guardar Resultado')->assertDontSee('Editar resultado');
+        }
+        $otraSede = Sede::factory()->create();
+        $procedimiento->update(['sede_id' => $otraSede->id]);
+        $this->get(route('procedimientos.show', $procedimiento))->assertForbidden();
+    }
+
+    public function test_agente_no_ve_pendientes_en_ficha_ni_resultados_pendientes_en_orden(): void
+    {
+        $persona = Persona::factory()->create();
+        $orden = $this->crearOrden($persona, $this->sede, $this->prestador);
+        $pendiente = $this->crearProcedimiento($orden, Examen::factory()->create(), $this->sede);
+        $examen = Examen::factory()->create();
+        $publicado = $this->crearProcedimiento($orden, $examen, $this->sede);
+        $parametro = Parametro::create([
+            'nombre' => 'Hemoglobina', 'slug' => 'visibilidad-agente',
+            'tipo_dato' => 'number', 'examen_id' => $examen->id,
+        ]);
+        Resultado::create(['procedimiento_id' => $publicado->id, 'parametro_id' => $parametro->id, 'resultado' => '13.5']);
+        $publicado->update(['estado' => Estado::TERMINADO->value]);
+        $vacio = $this->crearProcedimiento($orden, Examen::factory()->create(), $this->sede);
+        $vacio->update(['estado' => Estado::TERMINADO->value]);
+
+        $this->actingAs($this->agente)->withSession(['sede' => $this->sede]);
+        foreach ([route('personas.show', $persona), route('ordenes.show', $orden)] as $ruta) {
+            $this->get($ruta)->assertOk()
+                ->assertDontSee('Examenes en Proceso')
+                ->assertDontSee('href="'.route('resultados.create', $pendiente).'"', false)
+                ->assertDontSee(route('resultados.show', $pendiente), false)
+                ->assertDontSee(route('procedimientos.show', $pendiente), false)
+                ->assertDontSee(route('resultados.show', $vacio), false)
+                ->assertSee(route('resultados.show', $publicado), false);
+        }
+        $this->actingAs($this->prestador)->get(route('personas.show', $persona))
+            ->assertOk()->assertSee('Examenes en Proceso')->assertSee(route('resultados.create', $pendiente), false);
+        $this->get(route('ordenes.show', $orden))->assertOk()->assertSee(route('resultados.show', $pendiente), false);
+    }
+
     private function userForRole(string $role): User
     {
         $user = User::factory()->create([
