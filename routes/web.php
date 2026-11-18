@@ -22,11 +22,6 @@ Route::get('/', fn () => auth()->check()
     ? redirect()->to(route('dashboard', absolute: false))
     : view('welcome'));
 
-Route::get('/deploytest', function () {   
-    Artisan::call('migrate:fresh --seed');
-    Artisan::call('optimize:clear');
-    return 'Deploy test successful';
-});
 
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
