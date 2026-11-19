@@ -30,11 +30,16 @@
     ================================================================ --}}
     <x-canva class="bg-transparent border-none shadow-none mt-4">
 
+    {{-- El rol agente (sin otros roles) ve las tarjetas sin enlace a módulos que no navega. --}}
+    @php
+        $soloAgente = auth()->user()->hasExactRoles('agente');
+    @endphp
+
     {{-- STAT CARDS --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         {{-- Procedimientos --}}
-        <a href="{{ route('procedimientos') }}" aria-label="Ver procedimientos" class="block hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 bg-gradient-to-br from-primary/10 to-primary/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-primary/5 border border-borders/40 dark:border-slate-700/50 p-5">
+        <a @unless($soloAgente) href="{{ route('procedimientos') }}" @endunless aria-label="Ver procedimientos" class="block hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 bg-gradient-to-br from-primary/10 to-primary/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-primary/5 border border-borders/40 dark:border-slate-700/50 p-5">
             <div class="flex items-start justify-between">
                 <div class="p-2.5 bg-primary/10 dark:bg-primary/20 rounded-xl">
                     <x-iconos.procedimientos :active="false" class="text-primary w-6 h-6" />
@@ -48,7 +53,7 @@
         </a>
 
         {{-- Pacientes --}}
-        <a href="{{ route('personas') }}" aria-label="Ver pacientes" class="block hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 bg-gradient-to-br from-teal-500/10 to-teal-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-teal-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
+        <a @unless($soloAgente) href="{{ route('personas') }}" @endunless aria-label="Ver pacientes" class="block hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 bg-gradient-to-br from-teal-500/10 to-teal-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-teal-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
             <div class="flex items-start justify-between">
                 <div class="p-2.5 bg-teal-500/10 dark:bg-teal-500/20 rounded-xl">
                     <x-iconos.personas :active="false" class="text-teal-600 dark:text-teal-400 w-6 h-6" />
@@ -62,7 +67,7 @@
         </a>
 
         {{-- En Proceso --}}
-        <a href="{{ route('procedimientos') }}" aria-label="Ver procedimientos en proceso" class="block hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 bg-gradient-to-br from-pink-500/10 to-pink-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-rose-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
+        <a @unless($soloAgente) href="{{ route('procedimientos') }}" @endunless aria-label="Ver procedimientos en proceso" class="block hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200 bg-gradient-to-br from-pink-500/10 to-pink-500/20 dark:bg-slate-800/70 rounded-2xl shadow-lg shadow-rose-900/5 border border-borders/40 dark:border-slate-700/50 p-5">
             <div class="flex items-start justify-between">
                 <div class="p-2.5 bg-rose-400/10 dark:bg-rose-400/20 rounded-xl">
                     <x-iconos.resultados :active="false" class="text-rose-400 w-6 h-6" />
@@ -146,7 +151,7 @@
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4">
                     @foreach($pendientesByExamen as $item)
                     @php $barPct = round($item['count'] / $maxPendiente * 100); @endphp
-                    <a href="{{ route('examenes.lote', $item['examen']) }}"
+                    <a @unless($soloAgente) href="{{ route('examenes.lote', $item['examen']) }}" @endunless
                        aria-label="Procesar por lote: {{ $item['examen']->nombre }}"
                        class="block rounded-lg p-2 -m-2 hover:bg-rose-50 dark:hover:bg-rose-950/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 transition-colors">
                         <div class="flex items-center justify-between mb-1.5 gap-2">

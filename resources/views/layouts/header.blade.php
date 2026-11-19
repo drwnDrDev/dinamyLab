@@ -24,7 +24,10 @@
                 </div>
             </div>
 
-            <!-- Mnesajes de session -->
+            <!-- Búsqueda global (no disponible para el rol agente: lleva a módulos que no usa) -->
+            @hasexactroles('agente')
+            <div class="flex-1"></div>
+            @else
             <div class="w-1/3 flex items-center justify-end">
                 <form class="py-3 w-full" action="{{ route('search') }}" method="post">
                     @csrf
@@ -51,6 +54,7 @@
                 </form>
 
             </div>
+            @endhasexactroles
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center gap-4">

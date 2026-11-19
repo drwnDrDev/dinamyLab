@@ -73,11 +73,11 @@
             <div class="flex min-w-0 flex-[1_1_260px] items-center gap-3">
                 <span class="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-secondary text-[15px] font-bold text-cyan-900 dark:bg-slate-800 dark:text-cyan-200" aria-hidden="true">{{ $paciente->iniciales }}</span>
                 <div class="min-w-0">
-                    @can('ver_persona')
+                    @if (auth()->user()->can('ver_persona') && ! auth()->user()->hasExactRoles('agente'))
                         <a href="{{ route('personas.show', $paciente) }}" class="text-base font-semibold text-text hover:text-primary-strong dark:text-slate-50">{{ $paciente->nombreCompleto() }}</a>
                     @else
                         <span class="text-base font-semibold">{{ $paciente->nombreCompleto() }}</span>
-                    @endcan
+                    @endif
                     <span class="block text-[13px] tabular-nums text-muted dark:text-slate-400">{{ $paciente->tipo_documento?->cod_rips }} {{ $paciente->numero_documento }}</span>
                 </div>
             </div>
