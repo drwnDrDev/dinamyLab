@@ -75,7 +75,10 @@ class ConstruirReporteResultados
             ? [
                 ...$laboratorioPrincipal,
                 'razon_social' => 'Reporte consolidado',
+                'nombre_tipo' => null,
+                'nombre_titular' => 'Reporte consolidado',
                 'sede' => 'Varias sedes',
+                'reps' => null,
                 'registro_medico' => '',
                 'telefonos' => [],
                 'direccion' => '',
@@ -144,6 +147,7 @@ class ConstruirReporteResultados
             ] : null,
             'fecha_emision' => now()->format('d-m-Y H:i'),
             'total_examenes' => count($examenes),
+            'varias_sedes' => $laboratoriosPorSede->count() > 1,
             'examenes' => $examenes,
         ];
     }
@@ -153,18 +157,48 @@ class ConstruirReporteResultados
         $sede->loadMissing('empresa');
         $empresa = $sede->empresa;
 
+        [$nombreTipo, $nombreTitular] = $this->partirRazonSocial((string) $empresa->razon_social);
+
         return [
             'razon_social' => $empresa->razon_social,
+            // Encabezado en dos líneas: "Laboratorio clínico" / "Dra. Nombre Apellido"
+            'nombre_tipo' => $nombreTipo,
+            'nombre_titular' => $nombreTitular,
             'sede' => $sede->nombre,
+            'reps' => $sede->codigo_prestador,
             'registro_medico' => $empresa->empleados()
                 ->where('cargo', Cargo::PRESTADOR->value)
                 ->orderBy('id')
-                ->value('numero_documento'),
+                ->value('numero_documento')
+                // Respaldo: el cargo es texto libre en muchas instancias; se usa el rol de acceso.
+                ?? $empresa->empleados()
+                    ->whereHas('user', fn ($usuario) => $usuario->role('prestador'))
+                    ->orderBy('id')
+                    ->value('numero_documento'),
             'telefonos' => $sede->telefonos()->pluck('numero')->all(),
             'direccion' => $sede->direccion()->first()?->direccion ?? '',
             'email' => $sede->emails()->first()?->email,
             'logo_src' => $this->imagenComoDataUri($sede->logo, 'logos'),
         ];
+    }
+
+    /**
+     * "LABORATORIO CLINICO CLAUDIA ..." => ['Laboratorio clínico', 'Dra. Claudia ...'].
+     * El título (Dra., Dr.) sale de config('instancias.cliente.titulo_profesional').
+     * Si la razón social no empieza por "Laboratorio clínico" se deja en una sola línea.
+     */
+    private function partirRazonSocial(string $razonSocial): array
+    {
+        $prefijo = 'LABORATORIO CLINICO ';
+
+        if (! Str::startsWith(Str::upper(Str::ascii($razonSocial)), $prefijo)) {
+            return [null, $razonSocial];
+        }
+
+        $titular = Str::title(Str::lower(trim(mb_substr($razonSocial, mb_strlen($prefijo)))));
+        $titulo = trim((string) config('instancias.cliente.titulo_profesional'));
+
+        return ['Laboratorio clínico', trim($titulo.' '.$titular)];
     }
 
     private function fueraDeRango(array $parametro): bool
