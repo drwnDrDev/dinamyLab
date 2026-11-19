@@ -35,7 +35,11 @@ class PersonaController extends Controller
             'eps' => 'nullable|string|max:255',
         ]);
         $busqueda = trim($filters['busqueda'] ?? '');
-        $query = Persona::query()->with(['direccion.municipio', 'afiliacionSalud']);
+        $query = Persona::query()
+            ->with(['direccion.municipio', 'afiliacionSalud', 'tipo_documento', 'sexoCatalogo'])
+            // Conteo y fecha de la última orden para el listado (solo agrega columnas al SELECT)
+            ->withCount('ordenes')
+            ->withMax('ordenes', 'created_at');
 
         if ($busqueda !== '') {
             $query->where(function ($query) use ($busqueda) {

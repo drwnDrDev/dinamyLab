@@ -1,90 +1,56 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ 'Procedimientos' }}
-        </h2>
-    </x-slot>
+    <x-index.page>
+        <x-index.header title="Procedimientos"
+            :subtitle="$procedimientos->total() === 1 ? '1 procedimiento en proceso' : $procedimientos->total().' procedimientos en proceso'" />
 
-    <x-canva>
+        <x-index.card>
+            <x-slot name="filters">
+                <x-index.filter-bar :action="route('procedimientos')">
+                    <x-index.search label="Buscar procedimientos" placeholder="Orden, documento, paciente o examen" />
+                </x-index.filter-bar>
+            </x-slot>
 
-        <form method="GET" action="{{ route('procedimientos') }}" class="py-3">
-            <label class="flex flex-col min-w-40 h-12 w-full">
-                <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
-                    <div
-                        class="text-titles flex border-none bg-secondary items-center justify-center pl-4 rounded-l-xl border-r-0"
-                        data-icon="MagnifyingGlass"
-                        data-size="24px"
-                        data-weight="regular">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                            <path
-                                d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
-                        </svg>
-                    </div>
-                    <input
-                        name="busqueda"
-                        value="{{ request('busqueda') }}"
-                        placeholder="Orden, documento, paciente o examen"
-                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text focus:outline-0 focus:ring-0 border-none bg-secondary focus:border-none h-full placeholder:text-titles px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                        />
-                </div>
-            </label>
-            <button type="submit" class="mt-2 rounded-lg bg-primary px-4 py-2 text-white">Buscar</button>
-            <a href="{{ route('procedimientos') }}" class="mt-2 inline-block rounded-lg border border-borders px-4 py-2 text-text">Limpiar</a>
-        </form>
-        <h2 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] py-5">Procedimientos recientes</h2>
+            @php
+                $abreCaptura = auth()->user()->hasRole('prestador') && auth()->user()->can('registrar_resultado');
+            @endphp
 
-        <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
-            <table class="flex-1">
-                <thead>
+            <x-index.table class="min-w-[560px]">
+                <x-slot name="head">
+                    <th scope="col">Examen</th>
+                    <th scope="col">Paciente</th>
+                    <th scope="col" class="w-24">Orden</th>
+                    <th scope="col" class="w-32">Fecha</th>
+                    <th scope="col" class="w-36">Estado</th>
+                    <th scope="col" class="w-10"><span class="sr-only">Abrir</span></th>
+                </x-slot>
 
-                    <tr class="bg-background">
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Fecha</th>
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Orden Médica</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Paciente</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Exámen</th>
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Estado</th>
+                @forelse ($procedimientos as $procedimiento)
+                    @php
+                        $url = $abreCaptura
+                            ? route('resultados.create', $procedimiento)
+                            : route('procedimientos.show', $procedimiento);
+                    @endphp
+                    <tr data-url="{{ $url }}" onclick="window.location.href=this.dataset.url">
+                        <td>
+                            <a href="{{ $url }}" class="font-semibold text-text hover:text-primary-strong dark:text-slate-50">{{ $procedimiento->examen->nombre }}</a>
+                        </td>
+                        <td>
+                            <span class="font-medium">{{ $procedimiento->orden->paciente->nombreCompleto() }}</span>
+                            <span class="cell-sub">{{ $procedimiento->orden->paciente->numero_documento }}</span>
+                        </td>
+                        <td class="tabular-nums text-slate-600 dark:text-slate-300">#{{ $procedimiento->orden->numero }}</td>
+                        <td class="tabular-nums text-slate-600 dark:text-slate-300">{{ $procedimiento->created_at->format('d/m/Y') }}</td>
+                        <td><x-status-badge :estado="$procedimiento->estado" /></td>
+                        <td class="text-right"><x-index.chevron /></td>
                     </tr>
-                </thead>
-                <tbody>
+                @empty
+                    <x-index.empty-row colspan="6">No se encontraron procedimientos en proceso.</x-index.empty-row>
+                @endforelse
+            </x-index.table>
 
-                        @if ($procedimientos->isEmpty())
-                            <tr>
-                                <td colspan="5" class="px-4 py-2 text-center text-titles text-sm font-normal leading-normal">
-                                    No se encontraron procedimientos en proceso.
-                                </td>
-                            </tr>
-
-                        @else
-                         @foreach ($procedimientos as $procedimiento)
-
-                        <tr data-url="{{ auth()->user()->hasRole('prestador') && auth()->user()->can('registrar_resultado') ? route('resultados.create', $procedimiento) : route('procedimientos.show', $procedimiento) }}" onclick="window.location.href=this.dataset.url" class="cursor-pointer border-t border-borders hover:bg-secondary">
-                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->created_at->format('Y-m-d') }}
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->orden->numero }}
-                            </td>
-                            <td class="px-4 py-2 w-60 text-sm font-normal leading-normal">
-                                {{ $procedimiento->orden->paciente->nombreCompleto() }}
-                            </td>
-                            <td class="px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->examen->nombre }}
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->estado }}
-                            </td>
-                        </tr>
-
-                            @endforeach
-                        @endif
-
-
-
-                </tbody>
-            </table>
-        </div>
-        {{ $procedimientos->links() }}
-
-    </x-canva>
-
+            <x-slot name="footer">
+                <x-index.pagination :paginator="$procedimientos" />
+            </x-slot>
+        </x-index.card>
+    </x-index.page>
 </x-app-layout>

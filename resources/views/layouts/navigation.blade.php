@@ -12,15 +12,37 @@
 
     <div class="flex flex-col gap-1 p-2 bg-background overflow-hidden">
 
+        {{-- Acceso rápido a nueva orden, disponible en todas las vistas --}}
+        @can('crear_orden')
+            <a href="{{ route('ordenes.create') }}" title="Nueva orden" aria-label="Nueva orden"
+                @class([
+                    'group inline-flex items-center rounded-2xl p-2 text-md font-semibold leading-5 text-nowrap transition duration-150 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                    'text-primary-strong dark:text-cyan-300',
+                    'bg-secondary' => request()->routeIs('ordenes.create'),
+                    'hover:bg-secondary' => ! request()->routeIs('ordenes.create'),
+                ])>
+                <span class="mr-4 inline-flex h-6 w-6 flex-none items-center justify-center rounded-lg bg-primary-strong text-white shadow-sm transition group-hover:bg-cyan-800 dark:bg-cyan-600">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+                </span>
+                Nueva orden
+            </a>
+            <div class="mx-1 my-1 border-t border-borders dark:border-slate-700" aria-hidden="true"></div>
+        @endcan
+
         <x-nav-link :href="route('inicio')" icono="panel" :active="request()->routeIs('inicio')">
             {{ 'Panel' }}
         </x-nav-link>
 
-        @can('ver_persona')
+        {{-- El rol agente (sin otros roles) solo navega por órdenes y resultados. Solo afecta el menú, no los permisos. --}}
+        @php
+        $soloAgente = auth()->user()->hasExactRoles('agente');
+    @endphp
+
+        @if (auth()->user()->can('ver_persona') && ! $soloAgente)
             <x-nav-link :href="route('personas')" icono="personas" :active="request()->routeIs('personas*')">
                 {{ 'Personas' }}
             </x-nav-link>
-        @endcan
+        @endif
 
         @can('ver_orden')
             <x-nav-link :href="route('ordenes')" icono="ordenes" :active="request()->routeIs('ordenes*')">
@@ -28,11 +50,11 @@
             </x-nav-link>
         @endcan
 
-        @can('ver_procedimiento')
+        @if (auth()->user()->can('ver_procedimiento') && ! $soloAgente)
             <x-nav-link :href="route('procedimientos')" icono="procedimientos" :active="request()->routeIs('procedimientos*')">
                 {{ 'Procedimientos' }}
             </x-nav-link>
-        @endcan
+        @endif
 
         @can('ver_resultado')
             <x-nav-link :href="route('resultados')" icono="resultados" :active="request()->routeIs('resultados*')">
@@ -60,7 +82,7 @@
         @endcan
 
 
-        @if(auth()->user()->hasRole('admin') || auth()->user()->can('ver_reportes'))
+        @if((auth()->user()->hasRole('admin') || auth()->user()->can('ver_reportes')) && ! $soloAgente)
             <x-nav-link :href="route('reportes')" icono="reportes" :active="request()->routeIs('reportes*')">
                 {{ 'Reportes' }}
             </x-nav-link>

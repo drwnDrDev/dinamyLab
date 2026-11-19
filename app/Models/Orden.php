@@ -66,6 +66,25 @@ class Orden extends Model
             $this->forceFill(['terminada' => null])->saveQuietly();
         }
     }
+    /**
+     * Indica si finalizar esta remisión completaría la orden, es decir, si todo lo demás
+     * (procedimientos y otras remisiones) ya está finalizado. Misma regla que sincronizarEstado().
+     */
+    public function remisionEsLoUltimoPendiente(OrdenRemision $remision): bool
+    {
+        $finales = [Estado::TERMINADO->value, Estado::ENTREGADO->value];
+        $esFinal = fn ($estado) => in_array($estado instanceof Estado ? $estado->value : $estado, $finales, true);
+
+        if ($esFinal($remision->estado)) {
+            return false;
+        }
+
+        return $this->procedimientos->every(fn ($procedimiento) => $esFinal($procedimiento->estado))
+            && $this->remisiones
+                ->reject(fn ($otra) => $otra->is($remision))
+                ->every(fn ($otra) => $esFinal($otra->estado));
+    }
+
     public function remisiones()
     {
         return $this->hasMany(OrdenRemision::class);

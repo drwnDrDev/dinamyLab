@@ -46,6 +46,8 @@ return [
         'nit' => env('CLIENTE_NIT', '000000000-0'),
         'sede' => env('CLIENTE_SEDE', 'Sede Principal'),
         'codigo_prestador' => env('CLIENTE_CODIGO_PRESTADOR', '0000000000'),
+        // Título del profesional en el encabezado del reporte (p. ej. "Dra."). Opcional.
+        'titulo_profesional' => env('CLIENTE_TITULO_PROFESIONAL'),
         'admin_email' => env('CLIENTE_ADMIN_EMAIL', 'admin@ejemplo.test'),
         'admin_password' => env('CLIENTE_ADMIN_PASSWORD', 'password'),
         'admin_documento' => env('CLIENTE_ADMIN_DOCUMENTO', '1000000000'),

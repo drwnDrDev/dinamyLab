@@ -353,3 +353,89 @@ input:autofill {
         page-break-inside: avoid;
     }
 }
+
+/* ==========================================================================
+   Componentes base compartidos (Blade y React)
+   Úsalos con className/class="btn btn-primary", "input", "badge badge-success"...
+   ========================================================================== */
+@layer components {
+    /* Botones */
+    .btn {
+        @apply inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-semibold transition-colors duration-150
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+            disabled:cursor-not-allowed disabled:opacity-50 dark:focus-visible:ring-offset-slate-900;
+    }
+    .btn-primary {
+        @apply bg-primary-strong text-white hover:bg-cyan-800 dark:hover:bg-cyan-600;
+    }
+    .btn-secondary {
+        @apply border border-borders bg-white font-medium text-text hover:bg-secondary
+            dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800;
+    }
+    .btn-sm {
+        @apply h-8 gap-1.5 rounded-md px-2.5 text-[13px];
+    }
+
+    /* Campos de formulario */
+    .input {
+        @apply h-10 w-full rounded-lg border-borders bg-white text-sm text-text placeholder:text-muted
+            focus:border-primary focus:ring-1 focus:ring-primary
+            dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400;
+    }
+
+    /* Etiquetas de estado */
+    .badge {
+        @apply inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-xs font-semibold;
+    }
+    .badge::before {
+        content: '';
+        @apply h-1.5 w-1.5 rounded-full bg-current opacity-70;
+    }
+    .badge-neutral { @apply bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200; }
+    .badge-info    { @apply bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-200; }
+    .badge-warning { @apply bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200; }
+    .badge-success { @apply bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200; }
+    .badge-danger  { @apply bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200; }
+
+    /* Selector con el color del estado (usar junto a badge-*) */
+    .estado-select {
+        @apply h-8 cursor-pointer rounded-full border-transparent py-0 pl-3 pr-8 text-[13px] font-semibold
+            focus:border-transparent focus:ring-2 focus:ring-primary;
+    }
+
+    /* Tarjeta de contenido */
+    .surface {
+        @apply overflow-hidden rounded-xl border border-borders bg-white shadow-sm
+            dark:border-slate-700 dark:bg-slate-900;
+    }
+
+    /* Tablas de listados */
+    .data-table {
+        @apply w-full border-collapse text-sm text-text dark:text-slate-100;
+    }
+    .data-table thead tr {
+        @apply bg-secondary/60 dark:bg-slate-800/60;
+    }
+    .data-table th {
+        @apply whitespace-nowrap px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted dark:text-slate-400;
+    }
+    .data-table td {
+        @apply px-3 py-2 align-middle;
+    }
+    /* En pantallas grandes la tabla respira un poco más */
+    @media (min-width: 1024px) {
+        .data-table th,
+        .data-table td {
+            @apply px-4;
+        }
+    }
+    .data-table tbody tr {
+        @apply border-t border-borders/70 dark:border-slate-800;
+    }
+    .data-table tbody tr[data-url] {
+        @apply cursor-pointer transition-colors hover:bg-secondary/50 dark:hover:bg-slate-800/60;
+    }
+    .data-table .cell-sub {
+        @apply block text-[13px] text-muted tabular-nums dark:text-slate-400;
+    }
+}

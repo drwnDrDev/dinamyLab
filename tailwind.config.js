@@ -22,10 +22,16 @@ export default {
             colors: {
                 text: 'rgb(13, 25, 28)',
                 background: 'rgb(248, 251, 252)',
-                primary: '#0eb4d1',
+                primary: {
+                    DEFAULT: '#0eb4d1',
+                    // Variante oscura para botones y fondos con texto blanco (contraste AA)
+                    strong: '#0e7490',
+                },
                 secondary: 'rgb(231, 242, 243)',
                 titles: 'rgb(75, 143, 155)',
                 borders: 'rgb(207, 228, 232)',
+                // Texto secundario con contraste suficiente sobre blanco
+                muted: '#52707a',
             },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
