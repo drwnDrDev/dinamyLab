@@ -36,7 +36,15 @@ class OrdenController extends Controller
             'estado' => 'nullable|in:pendiente,completada',
         ]);
         $busqueda = trim($filters['busqueda'] ?? '');
-        $query = Orden::with('paciente')
+        $query = Orden::with('paciente.tipo_documento')
+            // Exámenes de la orden y cuántos están listos (mismos estados finales que Orden::sincronizarEstado)
+            ->withCount([
+                'procedimientos',
+                'procedimientos as procedimientos_listos_count' => fn ($query) => $query->whereIn('estado', [
+                    Estado::TERMINADO->value,
+                    Estado::ENTREGADO->value,
+                ]),
+            ])
             ->when(! $request->user()->hasRole('admin'), fn ($query) => $query->where('sede_id', $sede->id));
 
         if ($busqueda !== '') {
