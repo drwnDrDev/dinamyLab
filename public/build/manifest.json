@@ -36,7 +36,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-DV8PmrLC.css",
+    "file": "assets/app-CFNhlRd8.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -66,7 +66,7 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-DXl0Jq_P.js",
+    "file": "assets/app-C7BO96rg.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
@@ -79,7 +79,7 @@
       "resources/js/components/guest/Typewriter.jsx"
     ],
     "css": [
-      "assets/app-DV8PmrLC.css"
+      "assets/app-CFNhlRd8.css"
     ],
     "assets": [
       "assets/rips-cargador-DoL-Xzn1.png"
