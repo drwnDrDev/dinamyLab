@@ -397,6 +397,12 @@ input:autofill {
     .badge-success { @apply bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200; }
     .badge-danger  { @apply bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200; }
 
+    /* Selector con el color del estado (usar junto a badge-*) */
+    .estado-select {
+        @apply h-8 cursor-pointer rounded-full border-transparent py-0 pl-3 pr-8 text-[13px] font-semibold
+            focus:border-transparent focus:ring-2 focus:ring-primary;
+    }
+
     /* Tarjeta de contenido */
     .surface {
         @apply overflow-hidden rounded-xl border border-borders bg-white shadow-sm

@@ -187,7 +187,7 @@ class OrdenController extends Controller
     public function show(Orden $orden)
     {
         ControlSede::autorizarOrden(request(), $orden);
-        $orden->load(['paciente','examenes','procedimientos', 'remisiones.destinoSede']);
+        $orden->load(['paciente.tipo_documento', 'examenes', 'procedimientos.examen', 'remisiones.destinoSede', 'sede']);
         if (!$orden) {
             return redirect()->route('ordenes')->with('error', 'Orden médica no encontrada');
         }
