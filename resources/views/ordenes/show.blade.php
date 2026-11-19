@@ -308,141 +308,113 @@
             })();
         </script>
     @endcan
-    <section class="Ticket hidden text-xs px-2 py-6 m-auto print:flex print:flex-wrap print:justify-between print:w-[80mm] print:bg-white">
-        <div class="w-full flex-col justify-center items-center gap-2 mb-4">
-            <div class="flex justify-center items-center">
-                <figure class="w-20 h-20 p-1">
-                    <img class="aspect-square object-cover w-full h-full rounded-md"
-                        src="{{ asset('storage/logos/'.$orden->sede->logo) }}" alt="{{$orden->sede->nombre }}">
-                </figure>
-                <div class="flex flex-col justify-center">
-                    <h2 class="font-semibold text-xl">{{$orden->sede->empresa->nombre_comercial}}</h2>
-                    <p class="font-light">{{$orden->sede->nombre}}</p>
-                    <p class="font-semibold">NIT: {{$orden->sede->empresa->nit}}</p>
-                </div>
+    {{-- Comprobante para impresora térmica de 80mm: solo se ve al imprimir. Solo negro (sin grises ni color). --}}
+    @php
+        $sedeTicket = $orden->sede;
+        $empresaTicket = $sedeTicket->empresa;
+        [$nombreTipoTicket, $nombreTitularTicket] = $empresaTicket->nombreEnLineas();
+        $direccionTicket = collect([$sedeTicket->direccion?->direccion, $sedeTicket->direccion?->municipio?->municipio])->filter()->implode(' · ');
+        $telefonosTicket = $sedeTicket->telefonos->pluck('numero')->unique()->take(2)->implode(' · ');
+        $telefonosPaciente = $orden->paciente->telefonos->pluck('numero')->unique()->implode(' · ');
+        $totalTicket = $orden->total - $orden->descuento;
+        $saldoTicket = $totalTicket - $orden->abono;
+    @endphp
+    <style>
+        @media print {
+            @page { margin: 0; }
+        }
+    </style>
+    <section class="Ticket mx-auto hidden w-[72mm] bg-white py-4 font-[Arial,Helvetica,sans-serif] text-[12px] leading-snug text-black print:block">
+        <div class="flex flex-col gap-0.5 text-center">
+            @if ($nombreTipoTicket)
+                <div class="text-[11px]">{{ $nombreTipoTicket }}</div>
+            @endif
+            <div class="text-[15px] font-bold leading-tight">{{ $nombreTitularTicket }}</div>
+            <div class="text-[11px] font-bold">NIT {{ $empresaTicket->nit }}</div>
+            <div class="text-[11px]">
+                @if (filled($empresaTicket->nombre_comercial)){{ $empresaTicket->nombre_comercial }} · @endif
+                Sede {{ $sedeTicket->nombre }}@if (filled($sedeTicket->codigo_prestador)) · REPS {{ $sedeTicket->codigo_prestador }}@endif
             </div>
-            <div class="px-4 text-center">
-                <p class="font-medium">{{$orden->sede->direccion?->direccion}}</p>
-                <p class="font-light"> Tels:
-                    @php
-                    $telefonos = $orden->sede->telefonos->slice(0, 2);
-                    @endphp
-                    @foreach ($telefonos as $index => $telefono)
-                    <span>{{ $telefono->numero }}</span>
-                    @if ($index < $telefonos->count() - 1)
-                        <span> | </span>
+            @if ($direccionTicket !== '')
+                <div class="text-[11px]">{{ $direccionTicket }}</div>
+            @endif
+            @if ($telefonosTicket !== '')
+                <div class="text-[11px]">Tel. {{ $telefonosTicket }}</div>
+            @endif
+        </div>
+
+        <div class="my-2.5 border-t border-dashed border-black"></div>
+
+        <div class="flex items-baseline justify-between text-[13px] font-bold">
+            <span>COMPROBANTE</span>
+            <span>Orden Nº {{ $orden->numero }}</span>
+        </div>
+        <div class="text-[11px]">
+            {{ $orden->created_at->format('d/m/Y H:i') }}@if ($orden->user) · Atendió: {{ $orden->user->name }}@endif
+        </div>
+
+        <div class="my-2.5 border-t border-dashed border-black"></div>
+
+        <div class="grid grid-cols-[58px_minmax(0,1fr)] gap-x-1.5 gap-y-0.5">
+            <span class="font-bold">Paciente</span><span>{{ $orden->paciente->nombreCompleto() }}</span>
+            <span class="font-bold">Doc.</span><span>{{ $orden->paciente->tipo_documento?->cod_rips }} {{ $orden->paciente->numero_documento }}</span>
+            <span class="font-bold">Tel.</span><span>{{ $telefonosPaciente !== '' ? $telefonosPaciente : 'Sin registro' }}</span>
+        </div>
+
+        <div class="my-2.5 border-t border-dashed border-black"></div>
+
+        <div class="mb-1 flex justify-between text-[11px] font-bold uppercase tracking-wide">
+            <span>Examen</span><span>Valor</span>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            @foreach ($orden->examenes as $examen)
+                @php($cantidad = (int) $examen->pivot->cantidad)
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                        <div>{{ $examen->nombre }}</div>
+                        @if ($cantidad > 1)
+                            <div class="text-[11px]">{{ $cantidad }} x <x-moneda :valor="$examen->valor" /></div>
                         @endif
-                        @endforeach
-                </p>
-                <p>
-                    {{$orden->sede->direccion?->municipio?->municipio}}
-                </p>
-            </div>
+                    </div>
+                    <x-moneda :valor="$examen->valor * $cantidad" class="whitespace-nowrap" />
+                </div>
+            @endforeach
+            @foreach ($orden->remisiones as $remision)
+                <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                        <div>{{ $remision->nombre }}</div>
+                        <div class="text-[11px]">Remisión · CUP {{ $remision->cup }}</div>
+                    </div>
+                    <x-moneda :valor="$remision->valor" class="whitespace-nowrap" />
+                </div>
+            @endforeach
         </div>
 
-        <div class="flex w-full justify-between items-center gap-2">
-            <div>
-                <h3><span class="font-normal">Fecha: </span>
-                    {{$orden->created_at->translatedFormat('d/m/Y')}}
-                </h3>
-            </div>
+        <div class="my-2.5 border-t border-dashed border-black"></div>
 
-            <div class="">
-                <h3><span class="font-semibold">Órden Nº: </span>
-                    {{$orden->numero}}
-                </h3>
-            </div>
+        <div class="flex flex-col gap-0.5">
+            @if ($orden->descuento > 0)
+                <div class="flex justify-between"><span>Subtotal</span><x-moneda :valor="$orden->total" /></div>
+                <div class="flex justify-between"><span>Descuento</span><span>−<x-moneda :valor="$orden->descuento" /></span></div>
+            @endif
+            <div class="flex justify-between font-bold"><span>Total</span><x-moneda :valor="$totalTicket" /></div>
+            <div class="flex justify-between"><span>Abonado</span><x-moneda :valor="$orden->abono" /></div>
         </div>
-        <div>
-            <p class="font-light"><span class="font-normal">Paciente: </span>
-                {{$orden->paciente->nombreCompleto()}}
-            </p>
-            <p class="font-light"><span class="font-normal">Identificación: </span>
-                {{$orden->paciente->tipo_documento->cod_rips}}{{$orden->paciente->numero_documento}}
-            </p>
-            <p class="font-light"><span class="font-normal">Tels: </span>
-                @if($orden->paciente->telefonos->isEmpty())
-                Sin Registro
+        <div class="mt-1.5 flex items-baseline justify-between border-y-2 border-black py-1.5">
+            <span class="text-[14px] font-bold">SALDO</span>
+            <span class="text-[16px] font-bold tabular-nums">
+                @if ($saldoTicket > 0)
+                    <x-moneda :valor="$saldoTicket" />
                 @else
-                @foreach($orden->paciente->telefonos as $telefono)
-                <span>{{ $telefono->numero}}</span>
-                @endforeach
+                    $0 · PAGADO
                 @endif
-            </p>
-            <br>
+            </span>
         </div>
-        <div>
-            <table>
-                <thead>
-                    <tr class="border-t border-text">
-                        <th class="p1 text-left text-text w-60 text-sm font-normal leading-normal">Examen</th>
-                        <th class="p1 text-left text-text w-16 text-sm font-normal leading-normal">Cant.</th>
-                        <th class="p1 text-left text-text w-40 text-sm font-normal leading-normal">Vlr</th>
-                        <th class="p1 text-left text-text w-40 text-sm font-normal leading-normal">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($orden->examenes as $examen)
-                    <tr>
-                        <td class="content-start p1 w-60 text-xs font-light leading-normal">
-                            {{ $examen->nombre }}
-                        </td>
-                        <td class="content-start p1 w-16 text-xs font-light leading-normal">
-                            {{ $examen->pivot->cantidad }}
-                        </td>
-                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
-                            {{ number_format($examen->valor) }}
-                        </td>
-                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
-                            {{ number_format($examen->valor*$examen->pivot->cantidad, 2) }}
-                        </td>
-                    </tr>
-                    @endforeach
-                    @foreach ($orden->remisiones as $remision)
-                    <tr>
-                        <td class="content-start p1 w-60 text-xs font-light leading-normal">
-                            {{ $remision->nombre }} (CUP: {{ $remision->cup }}) (R)
-                        </td>
-                        <td class="content-start p1 w-16 text-xs font-light leading-normal">1</td>
-                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
-                            {{ number_format($remision->valor, 2) }}
-                        </td>
-                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
-                            {{ number_format($remision->valor, 2) }}
-                        </td>
-                    </tr>
-                    @endforeach
-                    @if ($orden->descuento && $orden->descuento > 0)
-                    <tr>
-                        <td colspan="3" class="text-end font-semibold p-1 pl-4">Descuento</td>
-                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
-                            ${{ number_format($orden->descuento, 2) }}
-                        </td>
-                    </tr>
-                    @endif
-                    <tr>
-                        <td colspan="3" class="text-end font-semibold p-1 pl-4">Abono</td>
-                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
-                            ${{ number_format($orden->abono, 2) }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="text-end font-semibold p-1 pl-4">Saldo</td>
-                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
-                            ${{ number_format(($orden->total - $orden->descuento - $orden->abono), 2) }}
-                        </td>
-                    </tr>
-                    <tr class="border-t border-text">
-                        <td colspan="3" class="text-end font-semibold p-1 pl-4">Total</td>
-                        <td class="content-start p1 w-40 text-xs font-light leading-normal">
-                            ${{ number_format(($orden->total - $orden->descuento), 2) }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
+        <div class="mt-3.5 flex flex-col gap-1 text-center">
+            <div class="font-bold">Presente este comprobante para reclamar sus resultados.</div>
+            <div class="text-[11px]">Este documento no es una factura.</div>
+            <div class="mt-1.5 text-[10px]">Impreso {{ now()->format('d/m/Y H:i') }}</div>
         </div>
-        <div class="w-full flex flex-col justify-center items-center mt-4">
-            <p class="text-center uppercase">Este es un recibo de una orden de examenes. No es valido como factura.</p>
-            <p class="text-center">¡Presenta este recibo para reclamar los resultados!</p>
     </section>
 </x-app-layout>

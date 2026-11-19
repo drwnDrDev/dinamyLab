@@ -122,3 +122,29 @@ it('no avisa de completar la orden si aún quedan exámenes pendientes', functio
 
     expect($orden->fresh()->load('procedimientos', 'remisiones')->remisionEsLoUltimoPendiente($remision))->toBeFalse();
 });
+
+it('imprime el comprobante con la razón social destacada y el saldo', function () {
+    config(['instancias.cliente.titulo_profesional' => 'Dra.']);
+    // nombre_comercial no está en $fillable de Empresa.
+    $this->sede->empresa->forceFill([
+        'razon_social' => 'LABORATORIO CLINICO CLAUDIA PATRICIA BUITRAGO HERNANDEZ',
+        'nombre_comercial' => 'Biotek',
+    ])->save();
+    $orden = ordenDetalle($this, [Estado::PROCESO], ['abono' => 113000]);
+    $examen = Examen::factory()->create(['nombre' => 'Cuadro Hemático', 'valor' => 9000]);
+    $orden->examenes()->attach($examen->id, ['cantidad' => 2]);
+    $orden->remisiones()->create(['cup' => '906492', 'nombre' => 'TSH', 'valor' => 25000, 'destino' => 'Externo']);
+
+    $this->actingAs($this->user)->withSession(['sede' => $this->sede])
+        ->get(route('ordenes.show', $orden))
+        ->assertOk()
+        ->assertSeeInOrder(['Laboratorio clínico', 'Dra. Claudia Patricia Buitrago Hernandez', 'NIT', 'Biotek · ', 'Sede'])
+        ->assertSee('COMPROBANTE')
+        ->assertSee('Atendió: '.$this->user->name)
+        ->assertSee('2 x')
+        ->assertSee('$18.000')
+        ->assertSee('Remisión · CUP 906492')
+        ->assertSee('$0 · PAGADO')
+        ->assertSee('Presente este comprobante para reclamar sus resultados.')
+        ->assertDontSee('Órden Nº');
+});

@@ -417,7 +417,8 @@ it('reserva el destino de remisiones al personal y conserva el examen en el tick
     $response = $this->actingAs($this->user)
         ->get(route('ordenes.show', $orden))
         ->assertOk()
-        ->assertSee('Examen remitido en ticket (CUP: 902299) (R)');
+        ->assertSee('Examen remitido en ticket')
+        ->assertSee('Remisión · CUP 902299');
 
     if ($verDestino) {
         $response->assertSee('Destino exclusivo del personal');

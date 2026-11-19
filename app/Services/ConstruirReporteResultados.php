@@ -157,7 +157,7 @@ class ConstruirReporteResultados
         $sede->loadMissing('empresa');
         $empresa = $sede->empresa;
 
-        [$nombreTipo, $nombreTitular] = $this->partirRazonSocial((string) $empresa->razon_social);
+        [$nombreTipo, $nombreTitular] = $empresa->nombreEnLineas();
 
         return [
             'razon_social' => $empresa->razon_social,
@@ -180,25 +180,6 @@ class ConstruirReporteResultados
             'email' => $sede->emails()->first()?->email,
             'logo_src' => $this->imagenComoDataUri($sede->logo, 'logos'),
         ];
-    }
-
-    /**
-     * "LABORATORIO CLINICO CLAUDIA ..." => ['Laboratorio clínico', 'Dra. Claudia ...'].
-     * El título (Dra., Dr.) sale de config('instancias.cliente.titulo_profesional').
-     * Si la razón social no empieza por "Laboratorio clínico" se deja en una sola línea.
-     */
-    private function partirRazonSocial(string $razonSocial): array
-    {
-        $prefijo = 'LABORATORIO CLINICO ';
-
-        if (! Str::startsWith(Str::upper(Str::ascii($razonSocial)), $prefijo)) {
-            return [null, $razonSocial];
-        }
-
-        $titular = Str::title(Str::lower(trim(mb_substr($razonSocial, mb_strlen($prefijo)))));
-        $titulo = trim((string) config('instancias.cliente.titulo_profesional'));
-
-        return ['Laboratorio clínico', trim($titulo.' '.$titular)];
     }
 
     private function fueraDeRango(array $parametro): bool
