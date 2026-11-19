@@ -1,75 +1,50 @@
-<x-app-layout >
-    <x-slot name="header">
-        <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ 'Resultados' }}
-        </h2>
-    </x-slot>
-    <x-canva>
+<x-app-layout>
+    <x-index.page>
+        <x-index.header title="Resultados"
+            :subtitle="($resultados->total() === 1 ? '1 resultado terminado' : $resultados->total().' resultados terminados').' en las últimas 48 horas'" />
 
-        <form method="GET" action="{{ route('resultados') }}" class="mb-4 flex flex-wrap gap-3">
-            <input type="search" name="busqueda" value="{{ request('busqueda') }}"
-                placeholder="Orden, documento, paciente o examen"
-                class="min-w-60 flex-1 rounded-lg border-borders bg-background text-text">
-            <button type="submit" class="rounded-lg bg-primary px-4 py-2 text-white">Buscar</button>
-            <a href="{{ route('resultados') }}" class="rounded-lg border border-borders px-4 py-2 text-text">Limpiar</a>
-        </form>
+        <x-index.card>
+            <x-slot name="filters">
+                <x-index.filter-bar :action="route('resultados')">
+                    <x-index.search label="Buscar resultados" placeholder="Orden, documento, paciente o examen" />
+                </x-index.filter-bar>
+            </x-slot>
 
-        <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
-            <table class="flex-1">
-                <thead>
+            <x-index.table class="min-w-[560px]">
+                <x-slot name="head">
+                    <th scope="col">Examen</th>
+                    <th scope="col">Paciente</th>
+                    <th scope="col" class="w-24">Orden</th>
+                    <th scope="col" class="w-36">Terminado</th>
+                    <th scope="col" class="w-36">Estado</th>
+                    <th scope="col" class="w-10"><span class="sr-only">Abrir</span></th>
+                </x-slot>
 
-                    <tr class="bg-background">
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Fecha</th>
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Orden Médica</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Paciente</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Exámen</th>
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Estado</th>
+                @forelse ($resultados as $procedimiento)
+                    <tr data-url="{{ route('resultados.show', $procedimiento) }}" onclick="window.location.href=this.dataset.url">
+                        <td>
+                            <a href="{{ route('resultados.show', $procedimiento) }}" class="font-semibold text-text hover:text-primary-strong dark:text-slate-50">{{ $procedimiento->examen->nombre }}</a>
+                        </td>
+                        <td>
+                            <span class="font-medium">{{ $procedimiento->orden->paciente->nombreCompleto() }}</span>
+                            <span class="cell-sub">{{ $procedimiento->orden->paciente->numero_documento }}</span>
+                        </td>
+                        <td class="tabular-nums text-slate-600 dark:text-slate-300">#{{ $procedimiento->orden->numero }}</td>
+                        <td>
+                            <span class="tabular-nums text-slate-600 dark:text-slate-300">{{ $procedimiento->updated_at->format('d/m/Y') }}</span>
+                            <span class="cell-sub">{{ $procedimiento->updated_at->format('h:i a') }}</span>
+                        </td>
+                        <td><x-status-badge :estado="$procedimiento->estado" /></td>
+                        <td class="text-right"><x-index.chevron /></td>
                     </tr>
-                </thead>
-                <tbody>
+                @empty
+                    <x-index.empty-row colspan="6">No se encontraron resultados recientes.</x-index.empty-row>
+                @endforelse
+            </x-index.table>
 
-                        @if ($resultados->isEmpty())
-                            <tr>
-                                <td colspan="5" class="px-4 py-2 text-center text-titles text-sm font-normal leading-normal">
-                                    No se encontraron resultados recientes.
-                                </td>
-                            </tr>
-
-                        @else
-                         @foreach ($resultados as $procedimiento)
-
-                        <tr data-url="{{ route('resultados.show', $procedimiento) }}" onclick="window.location.href=this.dataset.url" class="cursor-pointer border-t border-borders hover:bg-secondary">
-                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->created_at->format('Y-m-d') }}
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->orden->numero }}
-                            </td>
-                            <td class="px-4 py-2 w-60 text-sm font-normal leading-normal">
-                                {{ $procedimiento->orden->paciente->nombreCompleto() }}
-                            </td>
-                            <td class="px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->examen->nombre }}
-                            </td>
-                            <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                                {{ $procedimiento->estado }}
-                            </td>
-                        </tr>
-
-                            @endforeach
-                        @endif
-
-
-
-                </tbody>
-            </table>
-        </div>
-        {{ $resultados->links() }}
-
-    </x-canva>
-
-
-
-
-
+            <x-slot name="footer">
+                <x-index.pagination :paginator="$resultados" />
+            </x-slot>
+        </x-index.card>
+    </x-index.page>
 </x-app-layout>
