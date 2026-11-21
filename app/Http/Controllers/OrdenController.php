@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Estado;
 use App\Models\Orden;
 use App\Models\Examen;
+use App\Models\IpsExterna;
 use App\Models\Persona;
 use App\Services\ElegirEmpresa;
 use App\Services\SugerirNumeroOrden;
 use App\Models\MetodoPago;
-use App\Models\Sede;
+use App\Models\ValorRemision;
 use App\Models\TipoDocumento;
 use App\Http\Requests\OrdenStoreRequest;
 use App\Models\ContactoEmergencia;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Procedimiento;
 use App\Services\ControlSede;
+use App\Services\PrepararRemision;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -79,9 +81,8 @@ class OrdenController extends Controller
                 ->with('error', 'Selecciona una sede antes de crear una orden médica.');
         }
         $examenes = Examen::all();
-        $sedes = Sede::query()->orderBy('nombre')->get(['id', 'nombre']);
         $orden_numero = SugerirNumeroOrden::paraSede($sede->id);
-        return view('ordenes.create', compact('examenes', 'orden_numero', 'persona', 'sedes'));
+        return view('ordenes.create', compact('examenes', 'orden_numero', 'persona'));
     }
 
     /**
@@ -188,7 +189,7 @@ class OrdenController extends Controller
     {
         ControlSede::autorizarOrden(request(), $orden);
         $orden->load([
-            'paciente.tipo_documento', 'paciente.telefonos', 'examenes', 'procedimientos.examen', 'remisiones.destinoSede', 'user',
+            'paciente.tipo_documento', 'paciente.telefonos', 'examenes', 'procedimientos.examen', 'remisiones.ipsExterna', 'user',
             // telefonos y direccion de Sede recurren a la empresa: no se pueden precargar.
             'sede.empresa',
         ]);
@@ -217,11 +218,11 @@ class OrdenController extends Controller
     public function edit(Orden $orden)
     {
         ControlSede::autorizarOrden(request(), $orden);
-        $orden->load(['paciente', 'examenes', 'procedimientos', 'remisiones.destinoSede']);
+        $orden->load(['paciente', 'examenes', 'procedimientos', 'remisiones.ipsExterna']);
         $examenes = Examen::query()->orderBy('nombre')->get(['id', 'nombre', 'valor']);
-        $sedes = Sede::query()->orderBy('nombre')->get(['id', 'nombre']);
+        $ipsExternas = IpsExterna::query()->orderBy('nombre')->get(['id', 'nombre']);
 
-        return view('ordenes.edit', compact('orden', 'examenes', 'sedes'));
+        return view('ordenes.edit', compact('orden', 'examenes', 'ipsExternas'));
     }
 
     /**
@@ -259,17 +260,12 @@ class OrdenController extends Controller
                 'integer',
                 Rule::exists('orden_remisiones', 'id')->where('orden_id', $orden->id),
             ],
-            'remisiones.*.destino_sede_id' => ['nullable', 'integer', 'exists:sedes,id'],
+            'remisiones.*.ips_externa_id' => ['nullable', 'integer', 'exists:ips_externas,id'],
             'remisiones.*.destino' => ['nullable', 'string', 'max:255'],
             'remisiones.*.estado' => ['sometimes', \Illuminate\Validation\Rule::enum(\App\Estado::class)],
             'remisiones.*.eliminar' => ['nullable', 'boolean'],
             'nuevas_remisiones' => ['nullable', 'array'],
-            'nuevas_remisiones.*.cup' => ['required', 'string', 'max:20'],
-            'nuevas_remisiones.*.nombre' => ['required', 'string', 'max:255'],
-            'nuevas_remisiones.*.valor' => ['required', 'numeric', 'min:0'],
-            'nuevas_remisiones.*.destino_sede_id' => ['nullable', 'integer', 'exists:sedes,id'],
-            'nuevas_remisiones.*.destino' => ['nullable', 'string', 'max:255'],
-        ]);
+        ] + PrepararRemision::reglas('nuevas_remisiones'));
 
         $idsExamenesEnviados = array_map('intval', array_keys($validated['examenes'] ?? []));
         if (array_diff($examenesActuales, $idsExamenesEnviados) !== [] || array_diff($idsExamenesEnviados, $examenesActuales) !== []) {
@@ -300,7 +296,7 @@ class OrdenController extends Controller
         }
 
         $remisionesEnviadas = collect($validated['remisiones'] ?? [])->keyBy('id');
-        $remisionesNuevas = $validated['nuevas_remisiones'] ?? [];
+        $remisionesNuevas = array_map(PrepararRemision::paraOrden(...), $validated['nuevas_remisiones'] ?? []);
 
         DB::transaction(function () use ($orden, $validated, $cantidades, $remisionesEnviadas, $remisionesNuevas) {
             $orden = Orden::query()->whereKey($orden->id)->lockForUpdate()->firstOrFail();
@@ -360,43 +356,35 @@ class OrdenController extends Controller
                     continue;
                 }
 
-                $destinoSede = ! empty($datos['destino_sede_id'])
-                    ? Sede::findOrFail($datos['destino_sede_id'])
+                $ipsExterna = ! empty($datos['ips_externa_id'])
+                    ? IpsExterna::findOrFail($datos['ips_externa_id'])
                     : null;
-                $destino = $destinoSede?->nombre ?? trim($datos['destino'] ?? '');
+                $destino = $ipsExterna?->nombre ?? trim($datos['destino'] ?? '');
                 if ($destino === '') {
                     throw ValidationException::withMessages([
                         "remisiones.{$remision->id}.destino" => 'Indique el profesional o la IPS de destino.',
                     ]);
                 }
 
+                $cambioDestino = $remision->ips_externa_id != $ipsExterna?->id
+                    || ($ipsExterna === null && $remision->destino !== $destino);
+                $tarifa = $cambioDestino && $ipsExterna
+                    ? ValorRemision::where('ips_externa_id', $ipsExterna->id)
+                        ->whereHas('remision', fn ($query) => $query->where('cup', $remision->cup))->first()
+                    : null;
                 $remision->update([
                     'estado' => $datos['estado'] ?? $remision->estado,
-                    'destino_sede_id' => $destinoSede?->id,
+                    'ips_externa_id' => $ipsExterna?->id,
                     'destino' => $destino,
+                    'valor_remision_id' => $cambioDestino ? $tarifa?->id : $remision->valor_remision_id,
+                    'valor_remitido' => $cambioDestino ? $tarifa?->valor_remitido : $remision->valor_remitido,
                 ]);
                 $totalRemisiones += (float) $remision->valor;
                 $cantidadRemisiones++;
             }
 
             foreach ($remisionesNuevas as $datos) {
-                $destinoSede = ! empty($datos['destino_sede_id'])
-                    ? Sede::findOrFail($datos['destino_sede_id'])
-                    : null;
-                $destino = $destinoSede?->nombre ?? trim($datos['destino'] ?? '');
-                if ($destino === '') {
-                    throw ValidationException::withMessages([
-                        'nuevas_remisiones' => 'Indique el profesional o la IPS de destino de cada remisión.',
-                    ]);
-                }
-
-                $orden->remisiones()->create([
-                    'cup' => $datos['cup'],
-                    'nombre' => $datos['nombre'],
-                    'valor' => $datos['valor'],
-                    'destino_sede_id' => $destinoSede?->id,
-                    'destino' => $destino,
-                ]);
+                $orden->remisiones()->create($datos);
                 $totalRemisiones += (float) $datos['valor'];
                 $cantidadRemisiones++;
             }

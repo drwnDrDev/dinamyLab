@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useExamenes } from './hooks/useExamenes';
 import TablaExamenes from './TablaExamenes';
 import ModalExamenes from './ModalExamenes';
+import SelectorRemisiones from './SelectorRemisiones';
 
 const formatCOP = (value) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
@@ -20,7 +21,6 @@ const DatosExamenes = ({
   onUpdate,
   remisiones,
   onRemisionesUpdate,
-  sedes = [],
   persona,
   onChangeValores,
 }) => {
@@ -28,6 +28,7 @@ const DatosExamenes = ({
   const disponibles = examenes?.data || [];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sexoPaciente] = useState(persona?.sexo || 'A');
+  const [mostrarCatalogoRemisiones, setMostrarCatalogoRemisiones] = useState(false);
   const [mostrarFormularioRemision, setMostrarFormularioRemision] = useState(false);
   const [busquedaCup, setBusquedaCup] = useState('');
   const [sugerenciasCup, setSugerenciasCup] = useState([]);
@@ -38,8 +39,6 @@ const DatosExamenes = ({
     cup: '',
     nombre: '',
     valor: '',
-    destinoTipo: sedes.length > 0 ? 'sede' : 'externo',
-    destinoSedeId: '',
     destinoExterno: '',
   });
 
@@ -115,12 +114,7 @@ const DatosExamenes = ({
       cup: remisionForm.cup.trim(),
       nombre: remisionForm.nombre.trim(),
       valor: Number(remisionForm.valor),
-      destino_sede_id: remisionForm.destinoTipo === 'sede'
-        ? Number(remisionForm.destinoSedeId)
-        : null,
-      destino: remisionForm.destinoTipo === 'sede'
-        ? sedes.find(sede => Number(sede.id) === Number(remisionForm.destinoSedeId))?.nombre
-        : remisionForm.destinoExterno.trim(),
+      destino: remisionForm.destinoExterno.trim(),
     };
 
     onRemisionesUpdate([...remisiones, remision]);
@@ -154,7 +148,7 @@ const DatosExamenes = ({
           <button
             type="button"
             className="inline-flex items-center gap-2 px-3 py-1.5 border border-primary text-primary text-sm font-medium rounded-md hover:bg-secondary transition-colors"
-            onClick={() => setMostrarFormularioRemision(prev => !prev)}
+            onClick={() => { setMostrarCatalogoRemisiones(prev => !prev); setMostrarFormularioRemision(false); }}
           >
             <PlusIcon />
             Agregar remisión
@@ -167,6 +161,12 @@ const DatosExamenes = ({
           <p className="text-sm">Aún no hay exámenes ni remisiones.</p>
           <p className="text-xs mt-1">Agrega un examen o registra una remisión.</p>
         </div>
+      )}
+
+      {mostrarCatalogoRemisiones && (
+        <SelectorRemisiones remisiones={remisiones} onUpdate={onRemisionesUpdate}
+          onClose={() => setMostrarCatalogoRemisiones(false)}
+          onManual={() => { setMostrarCatalogoRemisiones(false); setMostrarFormularioRemision(true); }} />
       )}
 
       {mostrarFormularioRemision && (
@@ -250,44 +250,12 @@ const DatosExamenes = ({
               className="mt-1 w-full border border-borders rounded-md px-3 py-2"
             />
           </label>
-          <label className="text-sm text-titles">
-            Remitir a
-            <select
-              value={remisionForm.destinoTipo}
-              onChange={event => setRemisionForm(prev => ({ ...prev, destinoTipo: event.target.value }))}
-              className="mt-1 w-full border border-borders rounded-md px-3 py-2"
-            >
-              {sedes.length > 0 && <option value="sede">Sede registrada</option>}
-              <option value="externo">Profesional o IPS externa</option>
-            </select>
+          <label className="text-sm text-titles md:col-span-2">
+            Nombre del profesional o IPS externa
+            <input required maxLength={255} value={remisionForm.destinoExterno}
+              onChange={event => setRemisionForm(prev => ({ ...prev, destinoExterno: event.target.value }))}
+              className="mt-1 w-full border border-borders rounded-md px-3 py-2" />
           </label>
-          {remisionForm.destinoTipo === 'sede' ? (
-            <label className="text-sm text-titles md:col-span-2">
-              Sede / IPS
-              <select
-                required
-                value={remisionForm.destinoSedeId}
-                onChange={event => setRemisionForm(prev => ({ ...prev, destinoSedeId: event.target.value }))}
-                className="mt-1 w-full border border-borders rounded-md px-3 py-2"
-              >
-                <option value="">Seleccione el destino</option>
-                {sedes.map(sede => (
-                  <option key={sede.id} value={sede.id}>{sede.nombre}</option>
-                ))}
-              </select>
-            </label>
-          ) : (
-            <label className="text-sm text-titles md:col-span-2">
-              Nombre del profesional o IPS externa
-              <input
-                required
-                maxLength={255}
-                value={remisionForm.destinoExterno}
-                onChange={event => setRemisionForm(prev => ({ ...prev, destinoExterno: event.target.value }))}
-                className="mt-1 w-full border border-borders rounded-md px-3 py-2"
-              />
-            </label>
-          )}
           <div className="md:col-span-2 flex justify-end gap-2">
             <button
               type="button"
