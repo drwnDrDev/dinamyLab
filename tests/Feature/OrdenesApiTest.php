@@ -119,9 +119,10 @@ class OrdenesApiTest extends TestCase
         ]);
     }
 
-    public function test_can_create_order_with_internal_and_external_remissions(): void
+    public function test_can_create_order_with_registered_and_manual_external_destinations(): void
     {
         $paciente = Persona::factory()->create();
+        $ips = \App\Models\IpsExterna::create(['nombre' => 'Laboratorio externo']);
 
         $response = $this->actingAs($this->user, 'sanctum')
             ->postJson('/api/ordenes', [
@@ -133,14 +134,14 @@ class OrdenesApiTest extends TestCase
                         'cup' => '890201',
                         'nombre' => 'Consulta externa',
                         'valor' => 45000,
-                        'destino_sede_id' => $this->sede->id,
-                        'destino' => $this->sede->nombre,
+                        'ips_externa_id' => $ips->id,
+                        'destino' => $ips->nombre,
                     ],
                     [
                         'cup' => '902210',
                         'nombre' => 'Estudio remitido',
                         'valor' => 25000,
-                        'destino_sede_id' => null,
+                        'ips_externa_id' => null,
                         'destino' => 'IPS Externa',
                     ],
                 ],
@@ -157,7 +158,7 @@ class OrdenesApiTest extends TestCase
         $this->assertDatabaseHas('orden_remisiones', [
             'orden_id' => $orden->id,
             'cup' => '890201',
-            'destino_sede_id' => $this->sede->id,
+            'ips_externa_id' => $ips->id,
             'valor' => 45000,
         ]);
         $this->assertDatabaseHas('orden_remisiones', [
@@ -227,6 +228,69 @@ class OrdenesApiTest extends TestCase
             'numero' => 'REM-003',
             'total' => 25100,
         ]);
+    }
+
+    public function test_catalog_remission_uses_server_data_and_preserves_the_chosen_price(): void
+    {
+        $this->seed(\Database\Seeders\ValorRemisionSeeder::class);
+        $tarifa = \App\Models\Remision::where('cup', '903871')->firstOrFail()->valores->first();
+        $paciente = Persona::factory()->create();
+
+        foreach ([null, 28000, 0] as $index => $precio) {
+            $datos = ['valor_remision_id' => $tarifa->id, 'cup' => 'FALSO', 'nombre' => 'Nombre falso',
+                'destino' => 'Destino falso', 'valor_remitido' => 1, 'ips_externa_id' => null];
+            if ($precio !== null) {
+                $datos['valor'] = $precio;
+            }
+            $respuesta = $this->actingAs($this->user, 'sanctum')->postJson('/api/ordenes', [
+                'paciente_id' => $paciente->id,
+                'numero_orden' => "CAT-{$index}",
+                'fecha_orden' => now()->format('Y-m-d'),
+                'remisiones' => [$datos],
+            ])->assertCreated();
+
+            $this->assertDatabaseHas('ordenes_medicas', ['id' => $respuesta->json('data.id'), 'total' => $precio ?? 25000]);
+            $this->assertDatabaseHas('orden_remisiones', [
+                'orden_id' => $respuesta->json('data.id'), 'cup' => '903871', 'nombre' => 'Amilasa en Suero',
+                'destino' => 'Idime', 'valor' => $precio ?? 25000, 'valor_remitido' => 10000,
+                'ips_externa_id' => $tarifa->ips_externa_id, 'valor_remision_id' => $tarifa->id,
+            ]);
+        }
+
+        $tarifa->update(['precio' => 99000, 'valor_remitido' => 55000]);
+        $this->assertDatabaseHas('orden_remisiones', ['valor_remision_id' => $tarifa->id, 'valor' => 25000, 'valor_remitido' => 10000]);
+        $this->actingAs($this->user, 'sanctum')->getJson('/api/orden/'.$respuesta->json('data.id'))
+            ->assertOk()->assertJsonPath('remisiones.0.ips_externa.nombre', 'Idime');
+    }
+
+    public function test_catalog_remission_rejects_invalid_tariffs_and_negative_prices(): void
+    {
+        $this->seed(\Database\Seeders\ValorRemisionSeeder::class);
+        $paciente = Persona::factory()->create();
+        $tarifa = \App\Models\ValorRemision::firstOrFail();
+
+        $this->actingAs($this->user, 'sanctum')->postJson('/api/ordenes', [
+            'paciente_id' => $paciente->id, 'numero_orden' => 'CAT-INVALIDA', 'fecha_orden' => now()->format('Y-m-d'),
+            'remisiones' => [['valor_remision_id' => 999999], ['valor_remision_id' => $tarifa->id, 'valor' => -1]],
+        ])->assertUnprocessable()->assertJsonValidationErrors(['remisiones.0.valor_remision_id', 'remisiones.1.valor']);
+        $this->assertDatabaseCount('ordenes_medicas', 0);
+    }
+
+    public function test_upgrade_removes_legacy_destination_without_losing_the_remission(): void
+    {
+        $orden = Orden::create([
+            'sede_id' => $this->sede->id, 'numero' => 'MIG-001', 'user_id' => $this->user->id,
+            'paciente_id' => Persona::factory()->create()->id, 'total' => 25000,
+        ]);
+        $remision = $orden->remisiones()->create(['cup' => '20261', 'nombre' => 'Gram', 'valor' => 25000, 'destino' => $this->sede->nombre]);
+        $migracion = require database_path('migrations/2026_11_20_000100_update_orden_remisiones_catalogo.php');
+        $migracion->down();
+        \Illuminate\Support\Facades\DB::table('orden_remisiones')->where('id', $remision->id)->update(['destino_sede_id' => $this->sede->id]);
+
+        $migracion->up();
+
+        $this->assertFalse(\Illuminate\Support\Facades\Schema::hasColumn('orden_remisiones', 'destino_sede_id'));
+        $this->assertDatabaseHas('orden_remisiones', ['id' => $remision->id, 'cup' => '20261', 'destino' => $this->sede->nombre, 'valor' => 25000]);
     }
 
     public function test_cannot_create_orden_without_authentication(): void

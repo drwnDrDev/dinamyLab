@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Estado;
 use Illuminate\Database\Eloquent\Model;
 
 class OrdenRemision extends Model
@@ -14,7 +15,9 @@ class OrdenRemision extends Model
         'cup',
         'nombre',
         'valor',
-        'destino_sede_id',
+        'valor_remision_id',
+        'ips_externa_id',
+        'valor_remitido',
         'destino',
     ];
 
@@ -34,8 +37,9 @@ class OrdenRemision extends Model
     protected function casts(): array
     {
         return [
-            'estado' => \App\Estado::class,
+            'estado' => Estado::class,
             'valor' => 'decimal:2',
+            'valor_remitido' => 'decimal:2',
         ];
     }
 
@@ -44,8 +48,13 @@ class OrdenRemision extends Model
         return $this->belongsTo(Orden::class);
     }
 
-    public function destinoSede()
+    public function ipsExterna()
     {
-        return $this->belongsTo(Sede::class, 'destino_sede_id');
+        return $this->belongsTo(IpsExterna::class);
+    }
+
+    public function valorRemision()
+    {
+        return $this->belongsTo(ValorRemision::class);
     }
 }

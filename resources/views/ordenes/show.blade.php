@@ -162,7 +162,7 @@
                         <li class="flex flex-wrap items-center gap-x-5 gap-y-2.5 px-4 py-3.5">
                             <div class="flex min-w-0 flex-[1_1_240px] flex-col gap-0.5">
                                 <span class="text-sm font-semibold">{{ $remision->nombre }}</span>
-                                <span class="text-[13px] text-muted dark:text-slate-400">CUP {{ $remision->cup }} · Destino: {{ $remision->destinoSede?->nombre ?? $remision->destino }}</span>
+                                <span class="text-[13px] text-muted dark:text-slate-400">CUP {{ $remision->cup }} · Destino: {{ $remision->destino }}</span>
                             </div>
 
                             @can('editar_orden')

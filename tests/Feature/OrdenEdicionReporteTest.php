@@ -92,6 +92,28 @@ it('permite editar examenes y destinos, y agregar examenes y remisiones', functi
     expect($orden->remisiones()->count())->toBe(2);
 });
 
+it('conserva la tarifa histórica al guardar y toma el costo correspondiente al cambiar de IPS', function () {
+    $this->seed(\Database\Seeders\ValorRemisionSeeder::class);
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create(['valor' => 100]));
+    $tarifas = \App\Models\Remision::where('cup', '901101')->firstOrFail()->valores()->orderBy('id')->get();
+    $tarifa = $tarifas[0];
+    $remision = $orden->remisiones()->create(\App\Services\PrepararRemision::paraOrden(['valor_remision_id' => $tarifa->id, 'valor' => 21000]));
+    $tarifa->update(['valor_remitido' => 12345]);
+
+    $this->actingAs($this->user)->get(route('ordenes.edit', $orden))->assertOk()
+        ->assertSee('IPS externa registrada')->assertDontSee('destino_sede_id');
+
+    foreach ([$tarifa->ips_externa_id, $tarifas[1]->ips_externa_id] as $indice => $ipsId) {
+        $this->put(route('ordenes.update', $orden), [
+            'examenes' => $orden->examenes->mapWithKeys(fn ($examen) => [$examen->id => 1])->all(),
+            'remisiones' => [['id' => $remision->id, 'ips_externa_id' => $ipsId]],
+        ])->assertRedirect(route('ordenes.show', $orden));
+        expect($remision->fresh()->valor)->toBe('21000.00');
+        expect($remision->fresh()->valor_remitido)->toBe('10000.00');
+        expect($remision->fresh()->valor_remision_id)->toBe($tarifas[$indice]->id);
+    }
+});
+
 it('impide quitar un procedimiento terminado y conserva sus resultados', function () {
     $examen = Examen::factory()->create();
     $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);

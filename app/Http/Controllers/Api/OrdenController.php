@@ -6,8 +6,8 @@ use App\Estado;
 use App\Http\Controllers\Controller;
 use App\Models\Examen;
 use App\Models\Orden;
-use App\Models\Sede;
 use App\Services\ControlSede;
+use App\Services\PrepararRemision;
 use App\Services\SugerirNumeroOrden;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,13 +55,8 @@ class OrdenController extends Controller
             'examenes.*.id' => 'required|exists:examenes,id',
             'examenes.*.cantidad' => 'required|integer|min:1',
             'remisiones' => 'sometimes|array',
-            'remisiones.*.cup' => 'required|string|max:20',
-            'remisiones.*.nombre' => 'required|string|max:255',
-            'remisiones.*.valor' => 'required|numeric|min:0',
-            'remisiones.*.destino_sede_id' => 'nullable|integer|exists:sedes,id',
-            'remisiones.*.destino' => 'required|string|max:255',
             'abono' => 'nullable|numeric|min:0',
-        ];
+        ] + PrepararRemision::reglas('remisiones');
 
         if (empty($request->input('remisiones'))) {
             $rules += [
@@ -75,7 +70,7 @@ class OrdenController extends Controller
 
         $validated = $request->validate($rules);
         $examenes = $validated['examenes'] ?? [];
-        $remisiones = $validated['remisiones'] ?? [];
+        $remisiones = array_map(PrepararRemision::paraOrden(...), $validated['remisiones'] ?? []);
 
         if ($examenes === [] && $remisiones === []) {
             throw ValidationException::withMessages([
@@ -169,7 +164,7 @@ class OrdenController extends Controller
         }
 
         ControlSede::autorizarOrden(request(), $orden);
-        $orden->load(['paciente', 'procedimientos.examen', 'remisiones.destinoSede']);
+        $orden->load(['paciente', 'procedimientos.examen', 'remisiones.ipsExterna']);
 
         return response()->json($orden);
     }

@@ -15,7 +15,7 @@ const TOAST_ORDEN = 'crear-orden';
 const formatCOP = (value) =>
     new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 
-const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefault }) => {
+const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
     const { axiosInstance, csrfLoaded } = useAxiosAuth();
     const [next_numero, setNextNumero] = useState(null);
     const [numeroOrdenDuplicado, setNumeroOrdenDuplicado] = useState(false);
@@ -376,7 +376,6 @@ const CrearOrdenComponent = ({ paciente, sedes = [], dataDefoult = ordenDataDefa
                             <DatosExamenes
                                 formExamenes={formOrden.examenes}
                                 remisiones={formOrden.remisiones}
-                                sedes={sedes}
                                 onUpdate={(nuevosExamenes) =>
                                     setFormOrden(prev => ({ ...prev, examenes: nuevosExamenes }))
                                 }
