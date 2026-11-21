@@ -1,5 +1,6 @@
 <?php
 
+use App\Cargo;
 use App\Estado;
 use App\Models\Empleado;
 use App\Models\Examen;
@@ -9,10 +10,13 @@ use App\Models\Persona;
 use App\Models\Resultado;
 use App\Models\Sede;
 use App\Models\User;
+use App\Services\ConstruirReporteResultados;
 use Database\Seeders\PaisSeeder;
 use Database\Seeders\RolesYPermisosSeeder;
 use Database\Seeders\TestDataSeeder;
 use Database\Seeders\TipoDocumentoSeeder;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     $this->seed(PaisSeeder::class);
@@ -136,7 +140,7 @@ it('muestra el reporte agrupado de una orden', function () {
         'valor' => 25,
         'destino' => 'Laboratorio externo reservado',
     ]);
-    expect(app(\App\Services\ConstruirReporteResultados::class)->paraOrden($orden))
+    expect(app(ConstruirReporteResultados::class)->paraOrden($orden))
         ->not->toHaveKey('remisiones');
 
     $procedimiento = $orden->procedimientos()->firstOrFail();
@@ -280,7 +284,7 @@ it('genera un PDF con los resultados terminados de una orden', function () {
 
 it('muestra el registro médico con la cédula del empleado prestador de la empresa', function () {
     $this->user->empleado->update([
-        'cargo' => \App\Cargo::PRESTADOR->value,
+        'cargo' => Cargo::PRESTADOR->value,
         'numero_documento' => '12345678',
     ]);
     $examen = Examen::factory()->create();
@@ -330,7 +334,7 @@ it('toma el registro médico del empleado con rol prestador si ningún cargo coi
     $this->user->empleado->update(['cargo' => 'Bacteriologa', 'numero_documento' => '51934571']);
     $orden = crearOrdenParaEdicion($this, Examen::factory()->create(), Estado::TERMINADO->value);
 
-    expect(app(\App\Services\ConstruirReporteResultados::class)->paraOrden($orden)['laboratorio']['registro_medico'])
+    expect(app(ConstruirReporteResultados::class)->paraOrden($orden)['laboratorio']['registro_medico'])
         ->toBe('51934571');
 });
 
@@ -349,7 +353,7 @@ it('impide descargar un reporte desde una sede no autorizada', function () {
 it('deniega la descarga a usuarios sin permiso para ver resultados', function () {
     $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
     $usuarioContable = User::factory()->create([
-        'email' => \Illuminate\Support\Str::uuid().'@example.test',
+        'email' => Str::uuid().'@example.test',
     ]);
     $usuarioContable->assignRole('contable');
 
@@ -360,11 +364,11 @@ it('deniega la descarga a usuarios sin permiso para ver resultados', function ()
 });
 
 it('conserva las columnas de resultados de texto y carga firmas y logos por nombre de archivo', function () {
-    \Illuminate\Support\Facades\Storage::fake('public');
-    $imagen = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=');
-    $disco = \Illuminate\Support\Facades\Storage::disk('public');
-    \Illuminate\Support\Facades\Storage::fake('local');
-    \Illuminate\Support\Facades\Storage::disk('local')->put('firmas/profesional.png', $imagen);
+    Storage::fake('public');
+    $imagen = pngTransparente();
+    $disco = Storage::disk('public');
+    Storage::fake('local');
+    Storage::disk('local')->put('firmas/profesional.png', $imagen);
     $disco->put('logos/laboratorio.png', $imagen);
     $this->sede->update(['logo' => 'laboratorio.png']);
     $empleado = $this->user->empleado;
@@ -388,19 +392,131 @@ it('conserva las columnas de resultados de texto y carga firmas y logos por nomb
         ]);
     }
 
-    $servicio = app(\App\Services\ConstruirReporteResultados::class);
+    $servicio = app(ConstruirReporteResultados::class);
     $reporte = $servicio->paraOrden($orden);
     $uri = 'data:image/png;base64,'.base64_encode($imagen);
     expect($reporte['laboratorio']['logo_src'])->toBe($uri);
-    expect($reporte['examenes'][0]['bacteriologo']['firma_src'])->toBe($uri);
+    expect($reporte['firma']['src'])->toStartWith('data:image/png;base64,');
+    expect($reporte['firma']['src'])->not->toBe($uri);
+    expect($reporte['examenes'][0]['bacteriologo']['firma_src'])->toBeNull();
+    expect($reporte['codigo_verificacion'])->toMatch('/^[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}$/');
     expect($reporte['examenes'][0]['grupos'][0]['parametros'][0]['tipo'])->toBe('valor');
     expect($reporte['examenes'][0]['grupos'][0]['parametros'][1]['tipo'])->toBe('texto');
 
     $this->actingAs($this->user)->get(route('resultados.show', $procedimiento))
-        ->assertOk()->assertSee($uri, false)->assertSee('col-unidades', false);
+        ->assertOk()->assertSee('col-unidades', false);
+
+    $html = $this->actingAs($this->user)->get(route('resultados.show', $procedimiento))->getContent();
+    expect(substr_count($html, 'class="pie-firma"'))->toBe(1);
+    expect($html)->toContain($reporte['firma']['src']);
+    expect($html)->toContain('Verificación');
+    expect($html)->toContain($reporte['codigo_verificacion']);
 
     $empleado->update(['firma' => 'firmas/profesional.png']);
-    expect($servicio->paraOrden($orden)['examenes'][0]['bacteriologo']['firma_src'])->toBe($uri);
+    expect($servicio->paraOrden($orden)['firma']['src'])->toStartWith('data:image/png;base64,');
+});
+
+it('renderiza la plantilla de ejemplo con la firma en el pie', function () {
+    $html = view('resultados.reporte', ['enPdf' => false])->render();
+
+    expect($html)->toContain('Verificación');
+    expect($html)->toContain('A1B2-C3D4-E5F6');
+    expect(substr_count($html, 'class="pie-firma"'))->toBe(1);
+});
+
+it('firma al cierre de cada grupo cuando hay varios profesionales', function () {
+    Storage::fake('public');
+    Storage::fake('local');
+    Storage::disk('local')->put('firmas/uno.png', pngTransparente(80, 30));
+    Storage::disk('local')->put('firmas/dos.png', pngTransparente(90, 30));
+
+    $empleadoUno = $this->user->empleado;
+    $empleadoUno->update(['firma' => 'uno.png']);
+
+    $usuarioDos = User::factory()->create([
+        'email' => Str::uuid().'@example.test',
+    ]);
+    $usuarioDos->assignRole('prestador');
+    $empleadoDos = Empleado::factory()->create([
+        'user_id' => $usuarioDos->id,
+        'empresa_id' => $this->sede->empresa_id,
+        'tipo_documento_id' => 1,
+        'firma' => 'dos.png',
+    ]);
+
+    $examen = Examen::factory()->create();
+    $parametro = Parametro::create([
+        'nombre' => 'Glucosa',
+        'slug' => 'glucosa',
+        'tipo_dato' => 'text',
+        'unidades' => 'mg/dL',
+        'examen_id' => $examen->id,
+    ]);
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $primero = $orden->procedimientos()->firstOrFail();
+    $primero->update(['empleado_id' => $empleadoUno->id]);
+    Resultado::create(['parametro_id' => $parametro->id, 'procedimiento_id' => $primero->id, 'resultado' => '100']);
+
+    $segundo = $orden->procedimientos()->create([
+        'examen_id' => $examen->id,
+        'fecha' => now(),
+        'sede_id' => $this->sede->id,
+        'diagnostico_principal' => 'Z017',
+        'codigo_finalidad' => '15',
+        'codigo_modalidad' => '01',
+        'codigo_via_ingreso' => '01',
+        'estado' => Estado::TERMINADO->value,
+        'empleado_id' => $empleadoUno->id,
+    ]);
+    Resultado::create(['parametro_id' => $parametro->id, 'procedimiento_id' => $segundo->id, 'resultado' => '101']);
+
+    $tercero = $orden->procedimientos()->create([
+        'examen_id' => $examen->id,
+        'fecha' => now(),
+        'sede_id' => $this->sede->id,
+        'diagnostico_principal' => 'Z017',
+        'codigo_finalidad' => '15',
+        'codigo_modalidad' => '01',
+        'codigo_via_ingreso' => '01',
+        'estado' => Estado::TERMINADO->value,
+        'empleado_id' => $empleadoDos->id,
+    ]);
+    Resultado::create(['parametro_id' => $parametro->id, 'procedimiento_id' => $tercero->id, 'resultado' => '102']);
+
+    $reporte = app(ConstruirReporteResultados::class)->paraOrden($orden);
+
+    expect($reporte['firma'])->toBeNull();
+    expect($reporte['examenes'])->toHaveCount(3);
+    expect($reporte['examenes'][0]['cierra_grupo'])->toBeFalse();
+    expect($reporte['examenes'][1]['cierra_grupo'])->toBeTrue();
+    expect($reporte['examenes'][2]['cierra_grupo'])->toBeTrue();
+    expect($reporte['examenes'][0]['bacteriologo']['firma_src'])->toBeNull();
+    expect($reporte['examenes'][1]['bacteriologo']['firma_src'])->toStartWith('data:image/png;base64,');
+    expect($reporte['examenes'][2]['bacteriologo']['firma_src'])->toStartWith('data:image/png;base64,');
+});
+
+it('genera el reporte sin firma si el archivo no existe', function () {
+    Storage::fake('local');
+    $empleado = $this->user->empleado;
+    $empleado->update(['firma' => 'no-existe.png']);
+
+    $examen = Examen::factory()->create();
+    $parametro = Parametro::create([
+        'nombre' => 'Glucosa',
+        'slug' => 'glucosa',
+        'tipo_dato' => 'text',
+        'unidades' => 'mg/dL',
+        'examen_id' => $examen->id,
+    ]);
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $procedimiento = $orden->procedimientos()->firstOrFail();
+    $procedimiento->update(['empleado_id' => $empleado->id]);
+    Resultado::create(['parametro_id' => $parametro->id, 'procedimiento_id' => $procedimiento->id, 'resultado' => '100']);
+
+    $reporte = app(ConstruirReporteResultados::class)->paraOrden($orden);
+
+    expect($reporte['firma']['src'])->toBeNull();
+    expect($reporte['firma']['nombre'])->toBe($this->user->name);
 });
 
 it('reserva el destino de remisiones al personal y conserva el examen en el ticket', function (string $rol, bool $verDestino) {

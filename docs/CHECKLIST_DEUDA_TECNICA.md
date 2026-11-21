@@ -190,6 +190,7 @@ Ya existen: `empresa.show` (solo lectura), `admin/sedes` y `admin/empleados` (si
 | `[x]` | IM-02 | FE | Plantilla `resultados/reporte.blade.php` en tablas con CSS compatible con DomPDF y las reglas de paginación | `resources/views/resultados/` | 8–10h | 🔴 | 2026-11-10: `reporte.blade.php`, `reporte/_examen`, `reporte/_parametro` y datos ficticios en `reporte/ejemplo.php`. Sirve para una orden, un examen o varios de distintas órdenes (historia). Contrato `$reporte` abajo |
 | `[~]` | IM-03 | FE | Botones "Descargar PDF" e "Imprimir" en el resultado y en la orden; migrar `resultados/show` y `resultados/historia_show` a `resultados.reporte`; retirar el layout `print:` de Tailwind cuando el PDF esté validado | `resultados/show.blade.php`, `resultados/historia_show.blade.php`, `ordenes/show.blade.php` | 3–4h | 🟡 | Decisión D-05 (imprimir solo algunos exámenes; `historia_show` ya lo hace). 2026-11-12: `show` y `historia_show` ya renderizan `resultados.reporte` con "Imprimir" (PR #64/#65) y la orden tiene "Descargar reporte PDF". Falta: PDF desde `show` e historia, y borrar las vistas sin uso `resultados/show.blade.php` y `historia_show.blade.php` |
 | `[x]` | IM-04 | BE | Tests: el PDF se genera (200 y `application/pdf`) y respeta la sede y los permisos | `tests/Feature/` | 2h | 🟡 | `OrdenEdicionReporteTest`: descarga, sede no autorizada y usuario sin permiso |
+| `[x]` | IM-05 | BE + FE | Firma compuesta con marca de agua y código de verificación reproducible; una firma por hoja en el caso normal | `app/Services/FirmaReporte.php`, `app/Services/CodigoVerificacionReporte.php`, `ConstruirReporteResultados`, `resources/views/resultados/` | 6–8h | 🟠 | 2026-11-20: la firma se aplana sobre blanco con GD y lleva la marca `ORDEN/HISTORIA · documento · código`; el código es un HMAC-SHA256 de 12 hex del contenido clínico. Con un solo profesional va en el pie fijo (una por hoja del PDF); con varios, al cierre de cada grupo consecutivo. Deterrente, no firma digital verificable. Clave: `REPORTE_VERIFICACION_KEY` o `APP_KEY` |
 
 **Contrato `$reporte` (IM-01 ⇄ IM-02, propuesto por FE el 2026-11-10).** La plantilla recibe `$reporte` y `$enPdf`; sin `$reporte` usa `resources/views/resultados/reporte/ejemplo.php`.
 
@@ -206,9 +207,12 @@ $reporte = [
     'paciente' => ['nombre', 'documento', 'sexo', 'edad', 'fecha_nacimiento'], // sexo en texto: Masculino/Femenino/Indeterminado
     'orden' => ['numero', 'fecha_atencion'] | null,  // null cuando el reporte mezcla órdenes (historia)
     'fecha_emision', 'total_examenes',
+    'codigo_verificacion' => 'XXXX-XXXX-XXXX',
+    'firma' => ['src' => ?string, 'nombre', 'documento'] | null, // firma en pie (un solo profesional)
     'examenes' => [[
         'nombre', 'orden_numero', 'fecha_validacion',
-        'bacteriologo' => ['nombre', 'documento', 'firma_src' => ?string], // firma en data URI
+        'cierra_grupo' => bool,          // varios profesionales: firma al cerrar el grupo
+        'bacteriologo' => ['nombre', 'documento', 'firma_src' => ?string], // data URI; null salvo cierre de grupo
         'grupos' => [[
             'nombre' => ?string,         // Parametro::grupo; null para parámetros sin grupo
             'parametros' => [[
@@ -227,8 +231,9 @@ Notas para el BE:
 - Render: `Pdf::loadView('resultados.reporte', ['reporte' => $reporte, 'enPdf' => true])->setPaper('letter')`.
 - La plantilla usa Helvetica (fuente base de PDF, Latin-1): tildes, ñ, µ y ³ salen bien; caracteres como ≤, ≥ o ⁶ no. Si los catálogos los tienen, cambiar a DejaVu Sans.
 - El pie muestra "Página N". Para "Página N de M", DomPDF necesita `$pdf->getDomPDF()->getCanvas()->page_text(...)` con `{PAGE_NUM}` y `{PAGE_COUNT}` desde el controller (`counter(pages)` no existe en DomPDF); si se hace, avisar a FE para quitar el número del HTML.
-- Paginación: un examen nunca se parte salvo que no quepa en una página; entonces se parte entre grupos (y, como último recurso, por filas) con "(continuación)" y la firma en el último trozo. Las alturas están calibradas en `reporte.blade.php` para carta con los márgenes actuales.
-- En el navegador (`$enPdf = false`) el encabezado y el pie salen una vez por documento: Chrome no repite bien los `position: fixed` al imprimir. El encabezado en cada página es del PDF.
+- Paginación: un examen nunca se parte salvo que no quepa en una página; entonces se parte entre grupos (y, como último recurso, por filas) con "(continuación)". Con un solo profesional la firma va en el pie fijo (una por hoja del PDF) y el bloque no reserva espacio para ella; con varios, cada grupo consecutivo firma en su último trozo.
+- La marca de agua de la firma y el código del pie se calculan sobre el contenido clínico; recalcular el código no depende de la fecha de emisión ni de las imágenes. La clave se configura en `REPORTE_VERIFICACION_KEY` (si falta, se usa `APP_KEY`).
+- En el navegador (`$enPdf = false`) el encabezado y el pie salen una vez por documento: Chrome no repite bien los `position: fixed` al imprimir. El encabezado y la firma en cada página son del PDF.
 
 ## NT — Notificaciones (toasts y correo)
 

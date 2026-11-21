@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -11,8 +14,8 @@
 |
 */
 
-pest()->extend(Tests\TestCase::class)
-    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature');
 
 /*
@@ -44,4 +47,20 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+function pngTransparente(int $ancho = 80, int $alto = 30): string
+{
+    $img = imagecreatetruecolor($ancho, $alto);
+    imagesavealpha($img, true);
+    imagefill($img, 0, 0, imagecolorallocatealpha($img, 0, 0, 0, 127));
+    if ($ancho > 10 && $alto > 10) {
+        imageline($img, 5, $alto - 5, $ancho - 5, 5, imagecolorallocate($img, 0, 0, 0));
+    }
+    ob_start();
+    imagepng($img);
+    $png = ob_get_clean();
+    imagedestroy($img);
+
+    return $png;
 }

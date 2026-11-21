@@ -13,6 +13,11 @@ use Illuminate\Support\Str;
 
 class ConstruirReporteResultados
 {
+    public function __construct(
+        private readonly FirmaReporte $firmaReporte,
+        private readonly CodigoVerificacionReporte $codigoVerificacion,
+    ) {}
+
     public function paraOrden(Orden $orden): array
     {
         $orden->loadMissing([
@@ -35,6 +40,8 @@ class ConstruirReporteResultados
     public function paraProcedimientos(Collection $procedimientos, ?Orden $orden = null): array
     {
         $ordenReporte = $orden;
+
+        $procedimientos = $procedimientos->values();
 
         $procedimientos->each(fn (Procedimiento $procedimiento) => $procedimiento->loadMissing([
             'orden.paciente.tipo_documento',
@@ -126,13 +133,13 @@ class ConstruirReporteResultados
                 'bacteriologo' => [
                     'nombre' => $empleado?->user?->name ?? 'Profesional no registrado',
                     'documento' => $empleado?->numero_documento ?? '',
-                    'firma_src' => $this->imagenComoDataUri($empleado?->firma, 'firmas'),
+                    'firma_src' => null,
                 ],
                 'grupos' => $grupos,
             ];
-        })->all();
+        })->values()->all();
 
-        return [
+        $reporte = [
             'laboratorio' => $laboratorioEncabezado,
             'paciente' => [
                 'nombre' => $persona->nombreCompleto(),
@@ -146,10 +153,57 @@ class ConstruirReporteResultados
                 'fecha_atencion' => $ordenReporte->created_at?->format('d-m-Y') ?? '',
             ] : null,
             'fecha_emision' => now()->format('d-m-Y H:i'),
+            'codigo_verificacion' => null,
             'total_examenes' => count($examenes),
             'varias_sedes' => $laboratoriosPorSede->count() > 1,
             'examenes' => $examenes,
         ];
+
+        $reporte['codigo_verificacion'] = $this->codigoVerificacion->generar($reporte);
+
+        $empleados = $procedimientos->pluck('empleado_id')->all();
+        $total = count($empleados);
+        $marca = ($ordenReporte ? 'ORDEN '.$ordenReporte->numero : 'HISTORIA')
+            .' · '.$reporte['paciente']['documento']
+            .' · '.$reporte['codigo_verificacion'];
+
+        foreach ($reporte['examenes'] as $indice => &$examen) {
+            $examen['cierra_grupo'] = $indice === $total - 1
+                || $empleados[$indice] !== $empleados[$indice + 1];
+        }
+        unset($examen);
+
+        $distintos = collect($empleados)->unique()->values();
+
+        if ($total === 0) {
+            $reporte['firma'] = null;
+        } elseif ($distintos->count() === 1) {
+            // Caso normal: una sola firma en el pie del documento, una por hoja del PDF.
+            $empleado = $procedimientos->first()?->empleado;
+
+            $reporte['firma'] = [
+                'src' => $this->firmaReporte->componer($empleado?->firma, $marca),
+                'nombre' => $empleado?->user?->name ?? 'Profesional no registrado',
+                'documento' => $empleado?->numero_documento ?? '',
+            ];
+        } else {
+            // Varios profesionales: se firma al cierre de cada grupo consecutivo.
+            $reporte['firma'] = null;
+
+            foreach ($reporte['examenes'] as $indice => &$examen) {
+                if (! $examen['cierra_grupo']) {
+                    continue;
+                }
+
+                $examen['bacteriologo']['firma_src'] = $this->firmaReporte->componer(
+                    $procedimientos[$indice]?->empleado?->firma,
+                    $marca,
+                );
+            }
+            unset($examen);
+        }
+
+        return $reporte;
     }
 
     private function datosSede(Sede $sede): array
