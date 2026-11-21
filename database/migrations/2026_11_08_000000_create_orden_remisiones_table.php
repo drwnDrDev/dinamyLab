@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('cup', 20);
             $table->string('nombre');
             $table->decimal('valor', 10, 2);
-            $table->foreignId('destino_sede_id')->nullable()->constrained('sedes')->nullOnDelete();
             $table->string('destino');
             $table->timestamps();
         });

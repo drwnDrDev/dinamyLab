@@ -1,26 +1,52 @@
-EXAMENES DE REMISION,PRECIO,
-FROTIS VAGINAL,25000
-FROTIS DE SECRESION URETRAL,25000
-HIV  ANTICUERPOS I Y II,50000
-HEPATITIS  C (HVC),50000
-ANTIGENO DE SUPERFICIE PARA HEPATITIS B ( HBs Ag),48000
-Anti-HBs (anticuerpos para hepatitis B),48000
-Cuadro hematico/ hemograma,20000
-Hemograma IV,35000
-Antigeno Especifico de Prostata (PSA),57000
-Gonadotropina corionica-Sub-unidad Betacuantitativa,40000
-Inmunoglobulina E,45000
-FROTIS DE SANGRE PERIFERICA,15000
-HORMONA ESTIMULANTE DEL TIROIDES,42000
-TIROXINA  (T4),42000
-TRIYODOTIRONINA (T3),45000
-PERFIL TIROIDEO (TSH, T3, T4),120000
-TIROXINA LIBRE  (T4 L),42000
-TIEMPO DE PROTROMBINA  (PT) INR,20000
-TIEMPO PARCIAL DE TROMBOPLASTINA (PTT),20000
-HEMOGLOBINA GLICOSILADA (HbA 1 C),40000
-CREATININA,20000
-TRANSAMINASA GLUTAMICO OXALACETICA(GOT) /ASAT,20000
-TRANSAMINASA GLUTAMICO PIRUVICA (GPT) / ALAT,20000
-FOSFATASA ALCALINA,25000
-UROCULTIVO,70000
+CUPS,examen ,valor,profesional  o IPS externa,Remision
+903871,Amilasa en Suero,25000,Idime,10000
+905468,Anticuerpos Antiperoxidasa TPO,60000,Colcan,30000
+906610,Antigeno epecifico de prostata (PSA),57000,Idime,20000
+906611,Antigeno epecifico de prostata fracion libre(PSA-L),75000,Idime,25000
+901101,Baciloscopia ZN 1 muestra,20000,idime - colcan,10000
+901111,Baciloscopia ZN 3 muestras,60000,idime - colcan,30000
+903809,Bilirribuinas,25000,idime,12000
+903606,Calcio,25000,idime,8000
+903813,Cloro,25000,idime,8000
+20261,Coloracion de Gram (fv-fsu-f garganta),25000,idime,
+901206,Coprocultivo,84000,Colcan,45000
+904812,Cortisol AM/PM,60000,idime,25000
+903820,Creatin Kinasa MB (cpk MB),35000,Idime,15000
+903821,Creatin Kinasa Total (cpk Total),35000,Idime,15000
+903895,Creatinina Suero ,20000,idime,5000
+901210,Cultivo de cualquier muestra ,84000,Colcan,45000
+903833,Fosfatasa Alcalina,25000,Idime,10000
+906256,Helicobacter Pylori Antigeno,90000,idime,45000
+902207,Hemograma I,20000,Pilar Cañon,10000
+902210,Hemograma IV ,35000,Idime,12000
+906223,Hepatis B anticuerpos (Anticuepos HBs),60000,idime,30000
+906332,Hepatitis B antigeno de superficie (HBsAg),70000,idime,40000
+904902,Hormona Estimulante Del Tioides (TSH),42000,idime,15000
+903841,Indice de resistencia a la insulina(HOMA),90000,idime,35000
+904704,Insulina basal ,45000,idime,25000
+904702,Insulina basal  y post carga  2 muestreas,105000,idime,65000
+903605,"Ionograma(cloro , potasio, sodio, calcio)",90000,idime,30000
+903856,Nitrogeno ureico (BUN),20000,idime,5000
+20262,Otros (serologia  II),50000,idime,20000
+903859,Potasio,25000,idime,8000
+903861,Proteinas Diferenciadas,25000,idime,10000
+903862,Proteinas en orina de 24 h ,25000,idime,10000
+907009,Sangre Oculta en heces,30000,idime,15000
+903872,Sodio,25000,idime,8000
+904601,Testosterona Libre,75000,idime,35000
+904602,Testosterona Total,75000,idime,35000
+902045,Tiempo de Protrombina (PT-INR),25000,Idime,8000
+902049,Tiempo de tromboplastina parcial (PTT),25000,idime,8000
+904920,Tiroglubulina Marcador CA,70000,Colcan,30000
+904921,Tiroxina Libre (T4- Libre),50000,idime,22000
+904922,Tiroxina total (T-4),45000,idime,20000
+903867,Transaminasa GOT(aspartato aminotrnsferasa),20000,Idime,10000
+903866,Transaminasa GPT (alanino aminotransferasa),20000,idime,10000
+906039,Treponnema pallidum (anticuerpos FTA),50000,idime,20000
+906131,Tripanosoma cruzy (anticuerpos IgG),80000,idime,40000
+904924,Triyodotironina libre (T-3L),50000,idime,25000
+904927,Triyodotironina reversa (T-3 reversa),14000,colcan,95000
+904925,Triyodotironina total (T-3),45000,idime,20000
+903437,Troponina 1,85000,Idime,45000
+901235,Urocultivo recuento de colonias antibiogrma,70000,Colcan,45000
+906242,Varicela Zoster Anticuerpos,60000,colcan,30000

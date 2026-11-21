@@ -130,16 +130,16 @@
                         <input type="hidden" name="remisiones[{{ $remision->id }}][id]" value="{{ $remision->id }}">
                         <p class="text-sm text-titles md:col-span-2">{{ $remision->nombre }} (CUP: {{ $remision->cup }}) — ${{ number_format($remision->valor, 2) }}</p>
                         <label class="text-sm text-titles md:col-span-2">
-                            Destino registrado
+                            IPS externa registrada
                             <select
-                                name="remisiones[{{ $remision->id }}][destino_sede_id]"
-                                data-destino-sede
+                                name="remisiones[{{ $remision->id }}][ips_externa_id]"
+                                data-ips-externa
                                 class="mt-1 w-full rounded-md border border-borders px-3 py-2"
                             >
-                                <option value="">Profesional o IPS externa</option>
-                                @foreach ($sedes as $sede)
-                                    <option value="{{ $sede->id }}" @selected(old("remisiones.{$remision->id}.destino_sede_id", $remision->destino_sede_id) == $sede->id)>
-                                        {{ $sede->nombre }}
+                                <option value="">Otro profesional o IPS externa</option>
+                                @foreach ($ipsExternas as $ipsExterna)
+                                    <option value="{{ $ipsExterna->id }}" @selected(old("remisiones.{$remision->id}.ips_externa_id", $remision->ips_externa_id) == $ipsExterna->id)>
+                                        {{ $ipsExterna->nombre }}
                                     </option>
                                 @endforeach
                             </select>
@@ -149,7 +149,7 @@
                             <input
                                 type="text"
                                 name="remisiones[{{ $remision->id }}][destino]"
-                                value="{{ old("remisiones.{$remision->id}.destino", $remision->destino_sede_id ? '' : $remision->destino) }}"
+                                value="{{ old("remisiones.{$remision->id}.destino", $remision->destino) }}"
                                 maxlength="255"
                                 class="mt-1 w-full rounded-md border border-borders px-3 py-2"
                             >
@@ -187,11 +187,11 @@
                                 <input required type="number" min="0" step="0.01" name="nuevas_remisiones[{{ $index }}][valor]" value="{{ old("nuevas_remisiones.{$index}.valor") }}" class="mt-1 w-full rounded-md border border-borders px-3 py-2">
                             </label>
                             <label class="text-sm text-titles">
-                                Sede de destino (opcional)
-                                <select name="nuevas_remisiones[{{ $index }}][destino_sede_id]" data-destino-sede class="mt-1 w-full rounded-md border border-borders px-3 py-2">
-                                    <option value="">Profesional o IPS externa</option>
-                                    @foreach ($sedes as $sede)
-                                        <option value="{{ $sede->id }}" @selected(old("nuevas_remisiones.{$index}.destino_sede_id") == $sede->id)>{{ $sede->nombre }}</option>
+                                IPS externa registrada (opcional)
+                                <select name="nuevas_remisiones[{{ $index }}][ips_externa_id]" data-ips-externa class="mt-1 w-full rounded-md border border-borders px-3 py-2">
+                                    <option value="">Otro profesional o IPS externa</option>
+                                    @foreach ($ipsExternas as $ipsExterna)
+                                        <option value="{{ $ipsExterna->id }}" @selected(old("nuevas_remisiones.{$index}.ips_externa_id") == $ipsExterna->id)>{{ $ipsExterna->nombre }}</option>
                                     @endforeach
                                 </select>
                             </label>
@@ -226,11 +226,11 @@
                             <input required type="number" min="0" step="0.01" name="nuevas_remisiones[__INDEX__][valor]" class="mt-1 w-full rounded-md border border-borders px-3 py-2">
                         </label>
                         <label class="text-sm text-titles">
-                            Sede de destino (opcional)
-                            <select name="nuevas_remisiones[__INDEX__][destino_sede_id]" data-destino-sede class="mt-1 w-full rounded-md border border-borders px-3 py-2">
-                                <option value="">Profesional o IPS externa</option>
-                                @foreach ($sedes as $sede)
-                                    <option value="{{ $sede->id }}">{{ $sede->nombre }}</option>
+                            IPS externa registrada (opcional)
+                            <select name="nuevas_remisiones[__INDEX__][ips_externa_id]" data-ips-externa class="mt-1 w-full rounded-md border border-borders px-3 py-2">
+                                <option value="">Otro profesional o IPS externa</option>
+                                @foreach ($ipsExternas as $ipsExterna)
+                                    <option value="{{ $ipsExterna->id }}">{{ $ipsExterna->nombre }}</option>
                                 @endforeach
                             </select>
                         </label>
@@ -292,7 +292,7 @@
             });
 
             document.addEventListener('change', event => {
-                if (!event.target.matches('[data-destino-sede]')) return;
+                if (!event.target.matches('[data-ips-externa]')) return;
                 const wrapper = event.target.closest('[data-remision-row]')?.querySelector('[data-destino-externo-wrapper]');
                 if (!wrapper) return;
                 const input = wrapper.querySelector('input');
@@ -341,7 +341,7 @@
                 }, 300);
             });
 
-            document.querySelectorAll('[data-destino-sede]').forEach(select => {
+            document.querySelectorAll('[data-ips-externa]').forEach(select => {
                 select.dispatchEvent(new Event('change', { bubbles: true }));
             });
         })();

@@ -38,6 +38,7 @@ class CatalogoBaseSeeder extends Seeder
             ExamenSeeder::class,
             ActualizarPreciosExamenesSeeder::class,
             ExamenCategoriaSeeder::class,
+            ValorRemisionSeeder::class,
         ]);
     }
 }

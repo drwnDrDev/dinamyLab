@@ -7,7 +7,6 @@ import CrearOrdenComponent from './components/CrearOrdenComponent'
 if (document.getElementById('react-crear-orden')) {
     const element = document.getElementById('react-crear-orden');
     const persona = JSON.parse(element.getAttribute('data-persona')) ?? null;
-    const sedes = JSON.parse(element.getAttribute('data-sedes') || '[]');
     const root = createRoot(element);
-    root.render(<CrearOrdenComponent paciente={persona} sedes={sedes} />);
+    root.render(<CrearOrdenComponent paciente={persona} />);
 }
