@@ -12,6 +12,7 @@ class ProcedimientosController extends Controller
     public function destroy(Request $request, Procedimiento $procedimiento)
     {
         ControlSede::autorizarProcedimiento($request, $procedimiento);
+        abort_if($procedimiento->bloqueadoPorRips(), 409, 'No se puede eliminar un procedimiento exportado a RIPS.');
         $procedimiento->delete();
 
         return response()->json(['message' => 'Procedimiento eliminado correctamente.'], 200);

@@ -480,7 +480,7 @@ class PermissionProfilesTest extends TestCase
         $this->assertNull($orden->fresh()->terminada);
 
         $segundo->update(['estado' => Estado::ANULADO->value]);
-        $this->assertNull($orden->fresh()->terminada);
+        $this->assertNotNull($orden->fresh()->terminada);
 
         $segundo->update(['estado' => Estado::TERMINADO->value]);
         $this->assertNotNull($orden->fresh()->terminada);
@@ -489,7 +489,7 @@ class PermissionProfilesTest extends TestCase
         $this->assertNull($orden->fresh()->terminada);
 
         $nuevo->update(['estado' => Estado::ANULADO->value]);
-        $this->assertNull($orden->fresh()->terminada);
+        $this->assertNotNull($orden->fresh()->terminada);
 
         $nuevo->update(['estado' => Estado::TERMINADO->value]);
         $this->assertNotNull($orden->fresh()->terminada);

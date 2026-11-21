@@ -24,6 +24,29 @@
                 </div>
             @endif
 
+            @if (auth()->user()->hasRole('admin'))
+                <section class="grid grid-cols-1 gap-4 rounded-lg border border-borders p-4 md:grid-cols-2">
+                    <label class="text-sm text-titles">
+                        Número de orden
+                        <input
+                            type="text"
+                            name="numero"
+                            maxlength="255"
+                            required
+                            value="{{ old('numero', $orden->numero) }}"
+                            class="mt-1 w-full rounded-md border border-borders px-3 py-2"
+                        >
+                    </label>
+                    <label class="text-sm text-titles">
+                        Estado de la orden
+                        <select name="estado_orden" required class="mt-1 w-full rounded-md border border-borders px-3 py-2">
+                            <option value="pendiente" @selected(old('estado_orden', $orden->terminada ? 'completada' : 'pendiente') === 'pendiente')>Pendiente</option>
+                            <option value="completada" @selected(old('estado_orden', $orden->terminada ? 'completada' : 'pendiente') === 'completada')>Completada</option>
+                        </select>
+                    </label>
+                </section>
+            @endif
+
             <section class="space-y-3">
                 <h3 class="text-lg font-semibold text-titles">Exámenes</h3>
                 <p class="text-sm text-text">Cambie la cantidad a cero para quitar un examen. Los procedimientos con resultados o terminados no se pueden quitar.</p>

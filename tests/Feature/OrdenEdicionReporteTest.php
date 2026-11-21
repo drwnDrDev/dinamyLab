@@ -114,6 +114,145 @@ it('conserva la tarifa histórica al guardar y toma el costo correspondiente al 
     }
 });
 
+it('permite al administrador cambiar el número y el estado de una orden', function () {
+    $examen = Examen::factory()->create();
+    $orden = crearOrdenParaEdicion($this, $examen);
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $this->actingAs($admin)
+        ->put(route('ordenes.update', $orden), [
+            'numero' => 'ADM-872',
+            'estado_orden' => 'completada',
+            'examenes' => [$examen->id => 1],
+            'abono' => 0,
+            'observaciones' => null,
+        ])
+        ->assertRedirect(route('ordenes.show', $orden));
+
+    expect($orden->fresh()->numero)->toBe('ADM-872')
+        ->and($orden->fresh()->terminada)->not->toBeNull();
+
+    $this->put(route('ordenes.update', $orden), [
+        'numero' => 'ADM-873',
+        'estado_orden' => 'pendiente',
+        'examenes' => [$examen->id => 1],
+        'abono' => 0,
+        'observaciones' => null,
+    ])->assertRedirect(route('ordenes.show', $orden));
+
+    expect($orden->fresh()->numero)->toBe('ADM-873')
+        ->and($orden->fresh()->terminada)->toBeNull();
+});
+
+it('permite al administrador eliminar una orden desde el detalle', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $this->actingAs($admin)->get(route('ordenes.show', $orden))
+        ->assertOk()
+        ->assertSee('Eliminar orden');
+
+    $this->delete(route('ordenes.destroy', $orden))
+        ->assertRedirect(route('ordenes'));
+    expect($orden->fresh())->toBeNull();
+});
+
+it('cuenta los procedimientos anulados como finalizados en el progreso de la orden', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create(), Estado::ANULADO->value);
+
+    expect($orden->fresh()->terminada)->not->toBeNull();
+
+    $this->actingAs($this->user)->get(route('ordenes.show', $orden))
+        ->assertOk()
+        ->assertSee('1 de 1 listos');
+});
+
+it('permite al prestador cambiar manualmente el estado de un procedimiento', function () {
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create(), Estado::PROCESO->value);
+    $procedimiento = $orden->procedimientos()->firstOrFail();
+
+    $this->actingAs($this->user)
+        ->patch(route('procedimientos.observaciones', $procedimiento), [
+            'estado' => Estado::ANULADO->value,
+            'observacion' => 'Procedimiento cancelado por el profesional',
+        ])
+        ->assertRedirect(route('procedimientos.show', $procedimiento));
+
+    expect($procedimiento->fresh()->estado)->toBe(Estado::ANULADO->value)
+        ->and($orden->fresh()->terminada)->not->toBeNull();
+});
+
+it('crea una copia CO con los procedimientos pendientes y bloquea los exportados a RIPS', function () {
+    $examen = Examen::factory()->create();
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    $terminado = $orden->procedimientos()->firstOrFail();
+    $entregado = $orden->procedimientos()->create([
+        'examen_id' => Examen::factory()->create()->id,
+        'fecha' => now(),
+        'sede_id' => $this->sede->id,
+        'diagnostico_principal' => 'Z017',
+        'codigo_finalidad' => '15',
+        'codigo_modalidad' => '01',
+        'codigo_via_ingreso' => '01',
+        'estado' => Estado::ENTREGADO->value,
+    ]);
+    $anulado = $orden->procedimientos()->create([
+        'examen_id' => Examen::factory()->create()->id,
+        'fecha' => now(),
+        'sede_id' => $this->sede->id,
+        'diagnostico_principal' => 'Z017',
+        'codigo_finalidad' => '15',
+        'codigo_modalidad' => '01',
+        'codigo_via_ingreso' => '01',
+        'estado' => Estado::ANULADO->value,
+    ]);
+    $pendiente = $orden->procedimientos()->create([
+        'examen_id' => Examen::factory()->create()->id,
+        'fecha' => now(),
+        'sede_id' => $this->sede->id,
+        'diagnostico_principal' => 'Z017',
+        'codigo_finalidad' => '15',
+        'codigo_modalidad' => '01',
+        'codigo_via_ingreso' => '01',
+        'estado' => Estado::PROCESO->value,
+    ]);
+
+    $response = $this->actingAs($this->user)->withSession(['sede' => $this->sede])
+        ->post(route('descargar.rips'), [
+            'sede_id' => $this->sede->id,
+            'fecha_inicio' => now()->startOfMonth()->toDateString(),
+            'fecha_fin' => now()->endOfMonth()->toDateString(),
+        ])->assertOk();
+    $servicios = json_decode($response->getContent(), true, flags: JSON_THROW_ON_ERROR)['usuarios'][0]['servicios']['procedimientos'];
+
+    expect($servicios)->toHaveCount(2)
+        ->and(collect($servicios)->pluck('codProcedimiento')->all())->toContain($entregado->examen->cup)
+        ->and(collect($servicios)->pluck('codProcedimiento')->all())->not->toContain($anulado->examen->cup)
+        ->and($terminado->fresh()->rips_procesado_at)->not->toBeNull()
+        ->and($entregado->fresh()->rips_procesado_at)->not->toBeNull()
+        ->and($anulado->fresh()->rips_procesado_at)->not->toBeNull();
+
+    $copia = Orden::where('orden_origen_id', $orden->id)->firstOrFail();
+    expect($copia->numero)->toBe('CO-'.$orden->numero)
+        ->and($copia->procedimientos)->toHaveCount(1)
+        ->and($copia->procedimientos->first()->estado)->toBe(Estado::PROCESO->value)
+        ->and($copia->procedimientos->first()->examen_id)->toBe($pendiente->examen_id);
+
+    $this->patch(route('procedimientos.observaciones', $terminado), [
+        'estado' => Estado::ANULADO->value,
+        'observacion' => 'Cambio posterior a exportación',
+    ])->assertStatus(409);
+    $this->delete(route('procedimientos.destroy', $entregado))->assertStatus(409);
+    $this->patch(route('procedimientos.observaciones', $anulado), [
+        'estado' => Estado::PROCESO->value,
+        'observacion' => 'Reactivar después de exportación',
+    ])->assertStatus(409);
+    $this->delete(route('ordenes.destroy', $orden))->assertStatus(409);
+    expect($orden->fresh())->not->toBeNull();
+});
+
 it('impide quitar un procedimiento terminado y conserva sus resultados', function () {
     $examen = Examen::factory()->create();
     $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
@@ -470,7 +609,7 @@ it('espera a las remisiones y reabre la orden cuando una vuelve a pendiente', fu
     expect($orden->fresh()->terminada)->not->toBeNull();
 });
 
-it('termina una orden de solo remisiones cuando todas finalizan', function () {
+it('termina una orden de solo remisiones cuando todas terminan, se entregan o se anulan', function () {
     $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
     $orden->procedimientos->each->delete();
     $remision = $orden->remisiones()->create([
@@ -478,7 +617,7 @@ it('termina una orden de solo remisiones cuando todas finalizan', function () {
     ]);
     expect($orden->fresh()->terminada)->toBeNull();
     $remision->update(['estado' => Estado::ANULADO]);
-    expect($orden->fresh()->terminada)->toBeNull();
+    expect($orden->fresh()->terminada)->not->toBeNull();
     $remision->update(['estado' => Estado::ENTREGADO]);
     expect($orden->fresh()->terminada)->not->toBeNull();
 });

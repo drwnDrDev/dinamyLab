@@ -15,6 +15,7 @@ use App\Models\Persona;
 use App\Models\Orden;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ResultadosController extends Controller
@@ -80,7 +81,8 @@ class ResultadosController extends Controller
         // Misma regla que las rutas de edición: EnsurePrestador + can:editar_resultado.
         $puedeEditar = $usuario->hasRole('prestador')
             && ! $usuario->hasRole('admin')
-            && $usuario->can('editar_resultado');
+            && $usuario->can('editar_resultado')
+            && $procedimiento->resultados_pdf_descargado_at === null;
 
         return view('resultados.reporte', [
             'reporte' => $reporte,
@@ -110,17 +112,34 @@ class ResultadosController extends Controller
     public function reporteOrdenPdf(Orden $orden, ConstruirReporteResultados $construirReporte)
     {
         ControlSede::autorizarOrden(request(), $orden);
-        $reporte = $construirReporte->paraOrden($orden);
+        [$reporte, $contenidoPdf] = DB::transaction(function () use ($orden, $construirReporte) {
+            $procedimientos = Procedimiento::query()
+                ->where('orden_id', $orden->id)
+                ->whereIn('estado', [Estado::TERMINADO->value, Estado::ENTREGADO->value])
+                ->whereHas('resultado')
+                ->lockForUpdate()
+                ->get();
+            $reporte = $construirReporte->paraOrden($orden);
+            if ($reporte['total_examenes'] === 0) {
+                return [$reporte, null];
+            }
 
-        if ($reporte['total_examenes'] === 0) {
+            $contenidoPdf = Pdf::loadView('resultados.reporte', [
+                'reporte' => $reporte,
+                'enPdf' => true,
+            ])->setPaper('letter')->output();
+
+            $procedimientos->each(fn (Procedimiento $procedimiento) => $procedimiento->forceFill([
+                'resultados_pdf_descargado_at' => now(),
+            ])->saveQuietly());
+
+            return [$reporte, $contenidoPdf];
+        });
+
+        if ($contenidoPdf === null) {
             return redirect()->route('resultados.reporte_orden', $orden)
                 ->with('warning', 'Esta orden aún no tiene exámenes terminados con resultados para descargar.');
         }
-
-        $contenidoPdf = Pdf::loadView('resultados.reporte', [
-            'reporte' => $reporte,
-            'enPdf' => true,
-        ])->setPaper('letter')->output();
 
         Log::info('Reporte de resultados generado.', [
             'usuario_id' => request()->user()?->id,
@@ -130,7 +149,6 @@ class ResultadosController extends Controller
         ]);
 
         \App\Services\RegistrarActividad::registrar('resultados.descargados', $orden, ['total_examenes' => $reporte['total_examenes']]);
-
         $numeroOrden = Str::slug((string) $orden->numero) ?: (string) $orden->id;
 
         return response($contenidoPdf, 200, [
@@ -167,6 +185,11 @@ class ResultadosController extends Controller
     public function store(Request $request, Procedimiento $procedimiento)
     {
     $this->autorizarSede($request, $procedimiento);
+    abort_if(
+        $procedimiento->bloqueadoPorRips() || $procedimiento->resultados_pdf_descargado_at !== null,
+        409,
+        'El procedimiento o sus resultados están bloqueados.'
+    );
 
     $procedimiento->fecha = $request->input('fecha_procedimiento', now()); // Actualiza la fecha del procedimiento con la fecha enviada o la fecha actual
     $procedimiento->save();
@@ -219,6 +242,7 @@ class ResultadosController extends Controller
     public function edit(Procedimiento $procedimiento)
     {
         $this->autorizarSede(request(), $procedimiento);
+        abort_if($procedimiento->resultados_pdf_descargado_at !== null, 409, 'Los resultados quedaron bloqueados después de descargar el PDF.');
 
         // Carga el procedimiento con sus relaciones necesarias
         $procedimiento->load(['orden.paciente.tipo_documento', 'resultado', 'sede', 'examen.parametros.opciones', 'cambiosResultado']);
@@ -241,6 +265,7 @@ class ResultadosController extends Controller
     public function update(Request $request, Procedimiento $procedimiento, ActualizarResultados $actualizarResultados)
     {
         $this->autorizarSede($request, $procedimiento);
+        abort_if($procedimiento->resultados_pdf_descargado_at !== null, 409, 'Los resultados quedaron bloqueados después de descargar el PDF.');
         $validated = $request->validate([
             'observacion' => ['required', 'string', 'max:1000'],
             'resultados' => ['required', 'array', 'min:1'],

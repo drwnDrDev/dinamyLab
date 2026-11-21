@@ -47,6 +47,11 @@ public function show($id)
     {
         // C-05: mismo control de sede que la edición web
         ControlSede::autorizarProcedimiento($request, $procedimiento);
+        abort_if(
+            $procedimiento->bloqueadoPorRips() || $procedimiento->resultados_pdf_descargado_at !== null,
+            409,
+            'El procedimiento o sus resultados están bloqueados.'
+        );
         // El empleado siempre es el autenticado; nunca el enviado por el cliente
         $empleadoId = $request->user()->empleado->id;
 

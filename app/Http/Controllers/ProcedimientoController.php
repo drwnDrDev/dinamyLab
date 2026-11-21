@@ -111,6 +111,7 @@ class ProcedimientoController extends Controller
     public function destroy(Procedimiento $procedimiento)
     {
         ControlSede::autorizarProcedimiento(request(), $procedimiento);
+        abort_if($procedimiento->bloqueadoPorRips(), 409, 'No se puede eliminar un procedimiento exportado a RIPS.');
         $procedimiento->delete();
 
         return redirect()->route('procedimientos')->with('success', 'Procedimiento eliminado correctamente.');
@@ -169,23 +170,29 @@ class ProcedimientoController extends Controller
     public function observaciones(Request $request, Procedimiento $procedimiento)
     {
         ControlSede::autorizarProcedimiento($request, $procedimiento);
-        $request->validate([
+        abort_if($procedimiento->bloqueadoPorRips(), 409, 'No se puede cambiar el estado de un procedimiento exportado a RIPS.');
+        $validated = $request->validate([
             'observacion' => 'required|string|max:255',
-            'estado' => 'required|in:pendiente de muestra,anulado',
+            'estado' => ['required', \Illuminate\Validation\Rule::enum(\App\Estado::class)],
         ]);
-        DB::transaction(function () use ($procedimiento, $request) {
-            $procedimiento->estado = $request->input('estado');
+        DB::transaction(function () use ($procedimiento, $validated) {
+            $procedimiento->estado = $validated['estado'];
             $procedimiento->save();
             $procedimiento->observaciones()->create([
-                'observacion' => $request->input('observacion'),
+                'observacion' => $validated['observacion'],
             ]);
         });
 
 
+        if (! $request->expectsJson()) {
+            return redirect()->route('procedimientos.show', $procedimiento)
+                ->with('success', 'Estado del procedimiento actualizado correctamente.');
+        }
+
         return response()->json([
             'message' => 'Observación actualizada correctamente',
             'estado' => $procedimiento->estado,
-            'observacion' => $request->input('observacion'),
+            'observacion' => $validated['observacion'],
         ]);
     }
 
@@ -201,71 +208,145 @@ public function json_rips(Request $request)
 
     $fechaInicio = Carbon::parse($validated['fecha_inicio'] ?? now()->startOfMonth())->startOfDay();
     $fechaFin = Carbon::parse($validated['fecha_fin'] ?? now()->endOfMonth())->endOfDay();
-    $procedimientos = Procedimiento::with([
-        'orden.paciente.tipo_documento',
-        'sede',
-        'examen',
-        'servicioHabilitado',
-        'diagnosticoPrincipal',
-        'diagnosticoRelacionado',
-    ])
-        ->whereBetween('fecha', [$fechaInicio, $fechaFin])
-        ->where('sede_id', $sede->id)
-        ->where('estado', 'terminado')
-        ->get()
-        ->groupBy('orden.paciente_id')
-        ->values()
-        ->map(function ($usuarios, $index) {
-            $paciente = $usuarios->first()->orden->paciente;
+    [$procedimientos, $json] = DB::transaction(function () use ($sede, $fechaInicio, $fechaFin) {
+        $procedimientosProcesados = Procedimiento::query()
+            ->with([
+                'orden.paciente.tipo_documento',
+                'sede',
+                'examen',
+                'servicioHabilitado',
+                'diagnosticoPrincipal',
+                'diagnosticoRelacionado',
+            ])
+            ->whereBetween('fecha', [$fechaInicio, $fechaFin])
+            ->where('sede_id', $sede->id)
+            ->whereIn('estado', [
+                \App\Estado::TERMINADO->value,
+                \App\Estado::ENTREGADO->value,
+                \App\Estado::ANULADO->value,
+            ])
+            ->whereNull('rips_procesado_at')
+            ->lockForUpdate()
+            ->get();
+        $procedimientosParaEnvio = $procedimientosProcesados->whereIn('estado', [
+            \App\Estado::TERMINADO->value,
+            \App\Estado::ENTREGADO->value,
+        ])->values();
+        Procedimiento::query()->whereKey($procedimientosProcesados->modelKeys())
+            ->update(['rips_procesado_at' => now()]);
 
-            return [
-                'tipoDocumentoIdentificacion' => $paciente->tipo_documento->cod_rips,
-                'numDocumentoIdentificacion' => $paciente->numero_documento,
-                'tipoUsuario' => '04',
-                'fechaNacimiento' => $paciente->fecha_nacimiento->format('Y-m-d'),
-                'codSexo' => $paciente->sexo,
-                'codPaisResidencia' => $paciente->cod_pais_residencia ?? '170',
-                'codMunicipioResidencia' => $paciente->cod_municipio_residencia ?? '11001',
-                'codZonaTerritorialResidencia' => $paciente->cod_zona_territorial_residencia ?? '01',
-                'incapacidad' => $paciente->incapacidad ?? 'NO',
-                'codPaisOrigen' => $paciente->cod_pais_origen ?? '170',
-                'consecutivo' => $index + 1,
-                'servicios' => [
-                    'procedimientos' => $usuarios->values()->map(function ($procedimiento, $index) {
-                        return [
-                            'codPrestador' => $procedimiento->sede->codigo_prestador,
-                            'fechaInicioAtencion' => $procedimiento->fecha->format('Y-m-d H:i'),
-                            'idMIPRES' => '',
-                            'numAutorizacion' => null,
-                            'codProcedimiento' => $procedimiento->examen->cup,
-                            'viaIngresoServicioSalud' => $procedimiento->codigo_via_ingreso,
-                            'modalidadGrupoServicioTecSal' => $procedimiento->codigo_modalidad,
-                            'grupoServicios' => $procedimiento->servicioHabilitado->codigo_grupo ?? '03',
-                            'codServicio' => $procedimiento->codigo_servicio,
-                            'finalidadTecnologiaSalud' => $procedimiento->codigo_finalidad,
-                            'tipoDocumentoIdentificacion' => 'CC',
-                            'numDocumentoIdentificacion' => '51934571',
-                            'codDiagnosticoPrincipal' => $procedimiento->diagnosticoPrincipal?->codigo,
-                            'codDiagnosticoRelacionado' => $procedimiento->diagnosticoRelacionado?->codigo,
-                            'codComplicacion' => null,
-                            'vrServicio' => 0,
-                            'conceptoRecaudo' => '05',
-                            'valorPagoModerador' => 0,
-                            'numFEVPagoModerador' => '',
-                            'consecutivo' => $index + 1,
-                        ];
-                    }),
-                ],
+        $procedimientos = $procedimientosParaEnvio
+            ->groupBy('orden.paciente_id')
+            ->values()
+            ->map(function ($usuarios, $index) {
+                $paciente = $usuarios->first()->orden->paciente;
+
+                return [
+                    'tipoDocumentoIdentificacion' => $paciente->tipo_documento->cod_rips,
+                    'numDocumentoIdentificacion' => $paciente->numero_documento,
+                    'tipoUsuario' => '04',
+                    'fechaNacimiento' => $paciente->fecha_nacimiento->format('Y-m-d'),
+                    'codSexo' => $paciente->sexo,
+                    'codPaisResidencia' => $paciente->cod_pais_residencia ?? '170',
+                    'codMunicipioResidencia' => $paciente->cod_municipio_residencia ?? '11001',
+                    'codZonaTerritorialResidencia' => $paciente->cod_zona_territorial_residencia ?? '01',
+                    'incapacidad' => $paciente->incapacidad ?? 'NO',
+                    'codPaisOrigen' => $paciente->cod_pais_origen ?? '170',
+                    'consecutivo' => $index + 1,
+                    'servicios' => [
+                        'procedimientos' => $usuarios->values()->map(function ($procedimiento, $index) {
+                            return [
+                                'codPrestador' => $procedimiento->sede->codigo_prestador,
+                                'fechaInicioAtencion' => $procedimiento->fecha->format('Y-m-d H:i'),
+                                'idMIPRES' => '',
+                                'numAutorizacion' => null,
+                                'codProcedimiento' => $procedimiento->examen->cup,
+                                'viaIngresoServicioSalud' => $procedimiento->codigo_via_ingreso,
+                                'modalidadGrupoServicioTecSal' => $procedimiento->codigo_modalidad,
+                                'grupoServicios' => $procedimiento->servicioHabilitado->codigo_grupo ?? '03',
+                                'codServicio' => $procedimiento->codigo_servicio,
+                                'finalidadTecnologiaSalud' => $procedimiento->codigo_finalidad,
+                                'tipoDocumentoIdentificacion' => 'CC',
+                                'numDocumentoIdentificacion' => '51934571',
+                                'codDiagnosticoPrincipal' => $procedimiento->diagnosticoPrincipal?->codigo,
+                                'codDiagnosticoRelacionado' => $procedimiento->diagnosticoRelacionado?->codigo,
+                                'codComplicacion' => null,
+                                'vrServicio' => 0,
+                                'conceptoRecaudo' => '05',
+                                'valorPagoModerador' => 0,
+                                'numFEVPagoModerador' => '',
+                                'consecutivo' => $index + 1,
+                            ];
+                        }),
+                    ],
+                ];
+            });
+
+        $json = json_encode([
+            'numDocumentoIdObligado' => '51934571',
+            'numFactura' => null,
+            'tipoNota' => 'RS',
+            'numNota' => date('Ym'),
+            'usuarios' => $procedimientos,
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+
+        $procedimientosParaEnvio->groupBy('orden_id')->each(function ($procedimientosOrden) {
+            $orden = $procedimientosOrden->first()->orden;
+            if ($orden->orden_origen_id !== null || str_starts_with((string) $orden->numero, 'CO-')) {
+                return;
+            }
+
+            $orden = $orden->newQuery()->whereKey($orden->id)->lockForUpdate()->firstOrFail();
+            if ($orden->ordenCopia()->exists()) {
+                return;
+            }
+
+            $estadosNoPendientes = [
+                \App\Estado::TERMINADO->value,
+                \App\Estado::ENTREGADO->value,
+                \App\Estado::ANULADO->value,
             ];
+            $pendientes = $orden->procedimientos()
+                ->whereNotIn('estado', $estadosNoPendientes)
+                ->whereNull('rips_procesado_at')
+                ->with('examen')
+                ->get();
+            if ($pendientes->isEmpty()) {
+                return;
+            }
+
+            $copia = $orden->replicate(['terminada', 'numero', 'orden_origen_id']);
+            $numeroOriginal = (string) $orden->numero;
+            $numeroCopia = 'CO-'.substr($numeroOriginal, 0, 252);
+            $sufijo = 1;
+            while (Orden::query()->where('sede_id', $orden->sede_id)->where('numero', $numeroCopia)->exists()) {
+                $sufijoNumero = '-'.$sufijo++;
+                $numeroCopia = 'CO-'.substr($numeroOriginal, 0, 252 - strlen($sufijoNumero)).$sufijoNumero;
+            }
+            $copia->forceFill([
+                'numero' => $numeroCopia,
+                'orden_origen_id' => $orden->id,
+                'terminada' => null,
+                'abono' => 0,
+                'total' => $pendientes->sum(fn ($procedimiento) => (float) $procedimiento->examen->valor),
+            ])->save();
+
+            $pendientes->groupBy('examen_id')->each(function ($procedimientos, $examenId) use ($copia) {
+                $copia->examenes()->attach($examenId, ['cantidad' => $procedimientos->count()]);
+            });
+
+            $pendientes->each(function (Procedimiento $procedimiento) use ($copia) {
+                $copiaProcedimiento = $procedimiento->replicate([
+                    'rips_procesado_at',
+                    'resultados_pdf_descargado_at',
+                ]);
+                $copiaProcedimiento->orden_id = $copia->id;
+                $copiaProcedimiento->save();
+            });
         });
 
-    $json = json_encode([
-        'numDocumentoIdObligado' => '51934571',
-        'numFactura' => null,
-        'tipoNota' => 'RS',
-        'numNota' => date('Ym'),
-        'usuarios' => $procedimientos,
-    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+        return [$procedimientos, $json];
+    });
     $fileName = 'rips_'.date('YmdHis').'.json';
 
     \App\Services\RegistrarActividad::registrar('rips.descargados', $sede, [

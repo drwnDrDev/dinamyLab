@@ -110,6 +110,20 @@ class ResultadosEdicionTest extends TestCase
         $this->assertDatabaseCount('resultado_cambios', 0);
     }
 
+    public function test_descargar_pdf_bloquea_la_edicion_de_los_resultados_incluidos(): void
+    {
+        $this->actingAs($this->user)->get(route('resultados.reporte_pdf', $this->procedimiento->orden))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
+
+        $this->assertNotNull($this->procedimiento->fresh()->resultados_pdf_descargado_at);
+        $this->get(route('resultados.edit', $this->procedimiento))->assertStatus(409);
+        $this->put(route('resultados.update', $this->procedimiento), [
+            'observacion' => 'Corrección posterior',
+            'resultados' => [$this->parametro->id => '13.1'],
+        ])->assertStatus(409);
+    }
+
     public function test_navega_entre_procedimientos_de_la_misma_orden(): void
     {
         $orden = $this->procedimiento->orden;

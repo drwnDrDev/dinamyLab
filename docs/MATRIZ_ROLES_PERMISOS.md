@@ -50,6 +50,7 @@ La descripción del examen vive en el catálogo global compartido. Se confirmó 
 | `ver_reportes` | Reporte de procedimientos y descarga RIPS; `admin` también puede acceder globalmente por rol |
 
 La orden se marca como completada cuando tiene al menos un procedimiento y todos están en estado `terminado`, `entregado` o `anulado`. Si se añade o reabre un procedimiento, vuelve a pendiente.
+El administrador también puede ajustar manualmente número y estado de las órdenes. `admin` y `prestador` pueden cambiar el estado de los procedimientos. Tras procesar una orden en RIPS, el estado y eliminación de sus procedimientos terminados, entregados o anulados quedan bloqueados; eliminar la orden completa también se impide si contiene alguno. RIPS omite los anulados y crea una copia `CO-` con los procedimientos pendientes de cada orden exportada.
 
 Además hay permisos heredados de áreas administrativas que se asignan solo al administrador (por ejemplo, permisos de empresa, sedes y cuentas). Los endpoints de mutación de catálogos usan rol `admin` de forma explícita.
 
@@ -59,7 +60,7 @@ Pacientes, órdenes y procedimientos se eliminan con `deleted_at`; no se borran 
 
 ## Pendientes funcionales detectados
 
-- Los métodos de creación/edición/borrado de procedimientos independientes no existían como CRUD completo. La creación de procedimientos ocurre al crear una orden; se protege el cambio de estado y se implementa el borrado lógico. No se inventó un flujo de edición de sus demás campos.
+- La creación de procedimientos ocurre al crear una orden; se protege el cambio de estado y se implementa el borrado lógico. No existe un flujo para editar los demás campos de un procedimiento.
 - La edición de una orden permite modificar observaciones y abono; la ruta existente para añadir exámenes también queda protegida con `editar_orden`.
 - `EmpleadoController` y algunos controladores de facturación/convenios contienen otras acciones vacías o bloqueadas por código previo. No se consideran permisos concedidos por el hecho de definir el perfil.
 - `GET /static-data-for-frontend` se conserva público porque entrega catálogos estáticos; no permite mutaciones ni datos de pacientes.

@@ -20,6 +20,7 @@ class Orden extends Model
         'abono',
         'user_id',
         'total',
+        'orden_origen_id',
     ];
 
     public function casts()
@@ -49,6 +50,7 @@ class Orden extends Model
         $estadosFinales = [
             Estado::TERMINADO->value,
             Estado::ENTREGADO->value,
+            Estado::ANULADO->value,
         ];
 
         $pendientes = $this->procedimientos()->where(function ($query) use ($estadosFinales) {
@@ -72,7 +74,7 @@ class Orden extends Model
      */
     public function remisionEsLoUltimoPendiente(OrdenRemision $remision): bool
     {
-        $finales = [Estado::TERMINADO->value, Estado::ENTREGADO->value];
+        $finales = [Estado::TERMINADO->value, Estado::ENTREGADO->value, Estado::ANULADO->value];
         $esFinal = fn ($estado) => in_array($estado instanceof Estado ? $estado->value : $estado, $finales, true);
 
         if ($esFinal($remision->estado)) {
@@ -88,6 +90,16 @@ class Orden extends Model
     public function remisiones()
     {
         return $this->hasMany(OrdenRemision::class);
+    }
+
+    public function ordenOrigen()
+    {
+        return $this->belongsTo(self::class, 'orden_origen_id');
+    }
+
+    public function ordenCopia()
+    {
+        return $this->hasOne(self::class, 'orden_origen_id');
     }
     public function examenes()
     {

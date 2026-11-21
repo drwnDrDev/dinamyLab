@@ -44,12 +44,14 @@ Una orden reúne al paciente, un acompañante opcional y los exámenes solicitad
 
 El número de orden es texto. `SugerirNumeroOrden` propone el siguiente por sede y respeta prefijos y ceros a la izquierda.
 La orden se marca como completada al terminar, entregar o anular todos sus procedimientos; si se agrega o reabre uno, vuelve a pendiente.
+`admin` puede cambiar manualmente el número y el estado de la orden, editarla y eliminarla. `admin` y `prestador` pueden cambiar manualmente el estado de los procedimientos; los estados terminado, entregado y anulado cuentan como finalizados para el progreso.
 
 ### 3.4 Resultados e historial
 
 - **Captura por procedimiento** y **por lotes**: `GuardarResultadosLote` y la isla React `ResultadosLote` capturan un examen para varios procedimientos a la vez.
 - **Edición auditada**: `ActualizarResultados` valida por tipo de dato (número, fecha, opción), bloquea la fila y guarda en `resultado_cambios` el valor anterior, el valor nuevo, el usuario y una observación obligatoria.
 - **Reporte imprimible/PDF**: orden, resultado individual e historia reutilizan el mismo contenido de reporte. La descarga de PDF está protegida por `ver_resultado`; la historia puede abarcar varias órdenes y separa cada orden en una página.
+- Después de descargar el PDF de una orden, los resultados que aparecen en él quedan bloqueados para edición.
 - Solo `prestador` puede registrar o corregir resultados, y únicamente en una sede a la que pertenece. `admin` y `agente` pueden consultar e imprimir resultados; agente también puede consultar exámenes y descargar RIPS/reportes de su sede, pero no modificarlos.
 - La captura normal y la API todavía usan lógica distinta de la de los servicios nuevos.
 
@@ -62,7 +64,7 @@ Como son datos clínicos, confirmar la persona y la orden antes de guardar o ent
 | **Citas y pre-registro** | Formulario público, código de confirmación, recepción. El correo de confirmación está pendiente (`TODO` en `PreRegistroCitaController`). Las rutas públicas no tienen rate limiting. |
 | **Convenios** | Formulario React montado vía Vite; usa `localStorage` para autocompletar. Probar el envío y la persistencia antes de depender de él. |
 | **Facturación** | Hay listado, detalle, medios de pago y resoluciones DIAN. **La creación está bloqueada**: `FacturaController.php:95` tiene un `dd()` antes de guardar. No presentarla como funcional. |
-| **RIPS** | Exportación JSON/CSV. Conserva valores de prueba en algunos puntos; validarla antes de un uso regulatorio. |
+| **RIPS** | La exportación JSON incluye procedimientos terminados o entregados, excluye los anulados y bloquea los estados terminales procesados, incluidos los anulados, para impedir cambiarlos o eliminarlos después de exportar. Si una orden exportada conserva procedimientos pendientes, crea una copia `CO-` con esos procedimientos. Conserva valores de prueba en algunos puntos; validarla antes de un uso regulatorio. |
 | **Catálogos CUPS / CIE-10** | Listados con búsqueda y paginación. |
 | **Sedes y usuarios** | Administración y selección de sede, roles con Spatie (ver §7). |
 

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class ActualizarResultados
 {
@@ -27,6 +28,9 @@ class ActualizarResultados
                 ->where('sede_id', $sedeId)
                 ->lockForUpdate()
                 ->firstOrFail();
+            if ($procedimiento->resultados_pdf_descargado_at !== null) {
+                throw new ConflictHttpException('Los resultados quedaron bloqueados después de descargar el PDF.');
+            }
 
             $parametros = Examen::findOrFail($procedimiento->examen_id)
                 ->parametros()

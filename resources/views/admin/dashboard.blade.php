@@ -28,11 +28,12 @@
                         <div class="flex flex-col gap-2">
                             <label for="estado">Estado</label>
                             <select name="estado" id="estado" class="border-2 border-gray-300 rounded-md">
-                                <option value="pendiente de muestra">Pendiente por muestra</option>
-                                <option value="anulado">Anulado</option>
+                                @foreach (\App\Estado::cases() as $estado)
+                                    <option value="{{ $estado->value }}" @selected($procedimiento->estado === $estado->value)>{{ ucfirst($estado->nombre()) }}</option>
+                                @endforeach
                             </select>
                             <label for="observacion">Observación</label>
-                            <textarea name="observacion" id="observacion" cols="30" rows="3" class="border-2 border-gray-300 rounded-md"></textarea>
+                            <textarea name="observacion" id="observacion" cols="30" rows="3" required class="border-2 border-gray-300 rounded-md"></textarea>
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Enviar</button>
                         </div>
                     </form>

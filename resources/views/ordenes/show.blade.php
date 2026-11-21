@@ -1,13 +1,13 @@
 <x-app-layout>
     @php
         $paciente = $orden->paciente;
-        $finales = [\App\Estado::TERMINADO->value, \App\Estado::ENTREGADO->value];
+        $finales = [\App\Estado::TERMINADO->value, \App\Estado::ENTREGADO->value, \App\Estado::ANULADO->value];
         $procedimientosVisibles = $orden->procedimientos
             ->reject(fn ($procedimiento) => auth()->user()->hasRole('agente') && ! $procedimiento->tieneResultadosPublicados())
             ->values();
         $examenesListos = $procedimientosVisibles->filter(fn ($procedimiento) => in_array($procedimiento->estado, $finales, true))->count();
         $avanceExamenes = $procedimientosVisibles->count() > 0 ? round($examenesListos / $procedimientosVisibles->count() * 100) : 0;
-        $remisionesFinalizadas = $orden->remisiones->filter(fn ($remision) => in_array($remision->estado, [\App\Estado::TERMINADO, \App\Estado::ENTREGADO], true))->count();
+        $remisionesFinalizadas = $orden->remisiones->filter(fn ($remision) => in_array($remision->estado, [\App\Estado::TERMINADO, \App\Estado::ENTREGADO, \App\Estado::ANULADO], true))->count();
         $totalOrden = $orden->total - $orden->descuento;
         $saldo = $totalOrden - $orden->abono;
     @endphp
@@ -41,6 +41,13 @@
                             Editar
                         </a>
                     @endcan
+                    @if (auth()->user()->hasRole('admin'))
+                        <form method="POST" action="{{ route('ordenes.destroy', $orden) }}" onsubmit="return confirm('¿Eliminar la orden #{{ $orden->numero }} y sus procedimientos?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-secondary text-red-700">Eliminar orden</button>
+                        </form>
+                    @endif
                     <button type="button" onclick="window.print()" class="btn btn-secondary">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2h14v20l-3-2-2 2-2-2-2 2-2-2-3 2Z"></path><path d="M9 7h6M9 11h6M9 15h4"></path></svg>
                         Comprobante
@@ -140,7 +147,12 @@
                             <span class="text-[13px] text-muted dark:text-slate-400">{{ $procedimiento->fecha->format('H:i') }}</span>
                         </td>
                         <td><x-status-badge :estado="$procedimiento->estado" /></td>
-                        <td class="text-right"><x-index.chevron /></td>
+                        <td class="text-right">
+                            @can('gestionar_procedimiento')
+                                <a href="{{ route('procedimientos.show', $procedimiento) }}" class="mr-2 text-xs font-semibold text-primary-strong hover:underline">Gestionar</a>
+                            @endcan
+                            <x-index.chevron />
+                        </td>
                     </tr>
                 @empty
                     <x-index.empty-row colspan="5">Esta orden no tiene exámenes del laboratorio.</x-index.empty-row>
@@ -251,7 +263,7 @@
         <script>
             // Remisiones: guarda al cambiar el estado; confirma solo si el cambio completa/reabre la orden o anula.
             (() => {
-                const finales = ['terminado', 'entregado'];
+                const finales = ['terminado', 'entregado', 'anulado'];
                 const tonos = {
                     'pendiente de muestra': 'badge-warning',
                     'toma muestra': 'badge-info',

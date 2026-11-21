@@ -23,7 +23,7 @@ class Procedimiento extends Model
         'codigo_finalidad',
         'codigo_modalidad',
         'codigo_via_ingreso',
-        'estado'
+        'estado',
     ];
 
 
@@ -31,6 +31,16 @@ class Procedimiento extends Model
     {
         return in_array($this->estado, [\App\Estado::TERMINADO->value, \App\Estado::ENTREGADO->value], true)
             && $this->resultado()->whereNotNull('resultado')->whereRaw("TRIM(resultado) <> ''")->exists();
+    }
+
+    public function bloqueadoPorRips(): bool
+    {
+        return $this->rips_procesado_at !== null
+            && in_array($this->estado, [
+                \App\Estado::TERMINADO->value,
+                \App\Estado::ENTREGADO->value,
+                \App\Estado::ANULADO->value,
+            ], true);
     }
 
     public function orden()
@@ -125,6 +135,8 @@ class Procedimiento extends Model
     }
     protected $casts = [
         'fecha' => 'datetime',
+        'rips_procesado_at' => 'datetime',
+        'resultados_pdf_descargado_at' => 'datetime',
     ];
 
 

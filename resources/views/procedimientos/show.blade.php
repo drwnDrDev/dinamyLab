@@ -11,6 +11,38 @@
         <div class="flex justify-around">
             <h2>Numero de orden <span class="font-semibold">{{$procedimiento->orden->numero}}</span></h2>
         </div>
+        @can('gestionar_procedimiento')
+            @if (! $procedimiento->bloqueadoPorRips())
+                <form action="{{ route('procedimientos.observaciones', $procedimiento) }}" method="POST" class="my-4 flex flex-wrap items-end gap-3 rounded-lg border border-borders p-4">
+                    @csrf
+                    @method('PATCH')
+                    <label class="min-w-52 flex-1 text-sm font-medium">
+                        Cambiar estado
+                        <select name="estado" required class="mt-1 w-full rounded-md border border-borders px-3 py-2">
+                            @foreach (\App\Estado::cases() as $estado)
+                                <option value="{{ $estado->value }}" @selected($procedimiento->estado === $estado->value)>{{ ucfirst($estado->nombre()) }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+                    <label class="min-w-52 flex-[2] text-sm font-medium">
+                        Observación
+                        <input name="observacion" required maxlength="255" class="mt-1 w-full rounded-md border border-borders px-3 py-2">
+                    </label>
+                    <button type="submit" class="btn btn-primary">Guardar estado</button>
+                </form>
+            @else
+                <p class="my-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">Este procedimiento fue exportado a RIPS y su estado está bloqueado.</p>
+            @endif
+        @endcan
+        @can('eliminar_procedimiento')
+            @unless ($procedimiento->bloqueadoPorRips())
+                <form action="{{ route('procedimientos.destroy', $procedimiento) }}" method="POST" class="my-3" onsubmit="return confirm('¿Eliminar este procedimiento?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="text-sm font-semibold text-red-700 underline">Eliminar procedimiento</button>
+                </form>
+            @endunless
+        @endcan
         @if ($navegacion['anterior'] || $navegacion['siguiente'])
             <nav class="my-4 flex flex-wrap items-center justify-between gap-3" aria-label="Navegar por los exámenes de la orden">
                 @if ($navegacion['anterior'])

@@ -45,6 +45,7 @@ class OrdenController extends Controller
                 'procedimientos as procedimientos_listos_count' => fn ($query) => $query->whereIn('estado', [
                     Estado::TERMINADO->value,
                     Estado::ENTREGADO->value,
+                    Estado::ANULADO->value,
                 ]),
             ])
             ->when(! $request->user()->hasRole('admin'), fn ($query) => $query->where('sede_id', $sede->id));
@@ -246,6 +247,17 @@ class OrdenController extends Controller
         $examenesActuales = $orden->examenes()->pluck('examenes.id')->all();
         $remisionesActuales = $orden->remisiones()->pluck('id')->all();
         $validated = $request->validate([
+            ...($request->user()->hasRole('admin') ? [
+                'numero' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('ordenes_medicas', 'numero')
+                        ->where('sede_id', $orden->sede_id)
+                        ->ignore($orden->id),
+                ],
+                'estado_orden' => ['required', Rule::in(['pendiente', 'completada'])],
+            ] : []),
             'observaciones' => ['nullable', 'string', 'max:1000'],
             'abono' => ['nullable', 'numeric', 'min:0'],
             'examenes' => $examenesActuales === [] ? ['nullable', 'array'] : ['required', 'array'],
@@ -319,6 +331,16 @@ class OrdenController extends Controller
                 }
 
                 if ($cantidad < $existentes->count()) {
+                    $procedimientoBloqueado = $existentes
+                        ->reject(fn ($procedimiento) => $terminados->contains('id', $procedimiento->id))
+                        ->filter(fn ($procedimiento) => $procedimiento->bloqueadoPorRips())
+                        ->first();
+                    if ($procedimientoBloqueado) {
+                        throw ValidationException::withMessages([
+                            "examenes.{$examenId}" => 'No se puede quitar un procedimiento que ya fue exportado a RIPS.',
+                        ]);
+                    }
+
                     $porQuitar = $existentes
                         ->reject(fn ($procedimiento) => $terminados->contains('id', $procedimiento->id))
                         ->take($existentes->count() - $cantidad);
@@ -407,9 +429,13 @@ class OrdenController extends Controller
             }
 
             $orden->update([
+                ...(isset($validated['numero']) ? ['numero' => $validated['numero']] : []),
                 'observaciones' => $validated['observaciones'] ?? null,
                 'abono' => $abono,
                 'total' => $total,
+                ...(isset($validated['estado_orden'])
+                    ? ['terminada' => $validated['estado_orden'] === 'completada' ? now() : null]
+                    : []),
             ]);
         });
 
@@ -430,6 +456,11 @@ class OrdenController extends Controller
     public function destroy(Orden $orden)
     {
         ControlSede::autorizarOrden(request(), $orden);
+        abort_if(
+            $orden->procedimientos()->get()->contains(fn (Procedimiento $procedimiento) => $procedimiento->bloqueadoPorRips()),
+            409,
+            'No se puede eliminar una orden con procedimientos exportados a RIPS.'
+        );
         DB::transaction(function () use ($orden) {
             $orden->procedimientos()->get()->each->delete();
             $orden->delete();
