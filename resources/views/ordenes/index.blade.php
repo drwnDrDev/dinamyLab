@@ -1,76 +1,77 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-wrap justify-evenly items-center mb-4">
-            <h1 class="text-text text-2xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
-                {{ 'Orden médica' }}
-            </h1>
-            <x-primary-button href="{{ route('ordenes.create') }}" class="w-full sm:w-40">
-                {{ 'Nueva orden' }}
-            </x-primary-button>
-        </div>
-    </x-slot>
-    <x-canva>
+    <x-index.page>
+        <x-index.header title="Órdenes médicas"
+            :subtitle="$ordenes->total() === 1 ? '1 orden' : $ordenes->total().' órdenes'">
+            @can('crear_orden')
+                <a href="{{ route('ordenes.create') }}" class="btn btn-primary">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+                    Nueva orden
+                </a>
+            @endcan
+        </x-index.header>
 
-        <section class="flex flex-wrap items-center justify-between mb-4 dark:text-slate-50 dark:bg-slate-950 p-4 rounded-xl">
-            <h2 class="font-semibold text-xl text-text leading-tight dark:text-yellow-100">Órdenes recientes</h2>
+        <x-index.card>
+            <x-slot name="filters">
+                <x-index.filter-bar :action="route('ordenes')">
+                    <x-index.search label="Buscar órdenes" placeholder="Número de orden, documento o nombre del paciente" />
+                    <x-index.select name="estado" label="Filtrar por estado">
+                        <option value="">Todos los estados</option>
+                        <option value="pendiente" @selected(request('estado') === 'pendiente')>Pendientes</option>
+                        <option value="completada" @selected(request('estado') === 'completada')>Completadas</option>
+                    </x-index.select>
+                </x-index.filter-bar>
+            </x-slot>
 
-            <form method="GET" action="{{ route('ordenes') }}" class="flex w-full flex-wrap gap-3 py-3">
-                <input type="search" name="busqueda" value="{{ request('busqueda') }}" placeholder="Número de orden, documento o nombre del paciente"
-                    class="min-w-60 flex-1 rounded-xl border-borders bg-background text-text placeholder:text-titles">
-                <select name="estado" class="rounded-xl border-borders bg-background text-text">
-                    <option value="">Todos los estados</option>
-                    <option value="pendiente" @selected(request('estado') === 'pendiente')>Pendientes</option>
-                    <option value="completada" @selected(request('estado') === 'completada')>Completadas</option>
-                </select>
-                <button type="submit" class="rounded-xl bg-primary px-4 py-2 text-white">Buscar</button>
-                <a href="{{ route('ordenes') }}" class="rounded-xl border border-borders px-4 py-2 text-text">Limpiar</a>
-            </form>
+            <x-index.table class="min-w-[560px]">
+                <x-slot name="head">
+                    <th scope="col" class="w-28">Orden</th>
+                    <th scope="col">Paciente</th>
+                    <th scope="col" class="w-48">Exámenes</th>
+                    <th scope="col" class="w-32">Fecha</th>
+                    <th scope="col" class="w-36">Estado</th>
+                    <th scope="col" class="w-10"><span class="sr-only">Abrir</span></th>
+                </x-slot>
 
-        </section>
-        <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background">
-            <table class="flex-1">
-                <thead>
-
-                    <tr class="bg-background">
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Fecha</th>
-                        <th class="px-4 py-3 text-left text-text w-32 text-sm font-medium leading-normal">Orden Médica</th>
-                        <th class="px-4 py-3 text-left text-text w-96 text-sm font-medium leading-normal">Paciente</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Estado</th>
-
+                @forelse ($ordenes as $orden)
+                    @php
+                        $total = $orden->procedimientos_count;
+                        $listos = $orden->procedimientos_listos_count;
+                        $avance = $total > 0 ? round($listos / $total * 100) : 0;
+                    @endphp
+                    <tr data-url="{{ route('ordenes.show', $orden) }}" onclick="window.location.href=this.dataset.url">
+                        <td>
+                            <a href="{{ route('ordenes.show', $orden) }}" class="font-semibold tabular-nums text-text hover:text-primary-strong dark:text-slate-50">#{{ $orden->numero }}</a>
+                        </td>
+                        <td>
+                            <span class="font-medium">{{ $orden->paciente->nombreCompleto() }}</span>
+                            <span class="cell-sub">{{ $orden->paciente->tipo_documento?->cod_rips }} {{ $orden->paciente->numero_documento }}</span>
+                        </td>
+                        <td>
+                            <span class="tabular-nums">{{ $total }} {{ $total === 1 ? 'examen' : 'exámenes' }}</span>
+                            <span class="text-[13px] text-muted dark:text-slate-400">· {{ $listos }} {{ $listos === 1 ? 'listo' : 'listos' }}</span>
+                            <span class="mt-1.5 block h-1 max-w-36 overflow-hidden rounded-full bg-secondary dark:bg-slate-800"
+                                role="progressbar" aria-label="Exámenes listos" aria-valuemin="0" aria-valuemax="{{ $total }}" aria-valuenow="{{ $listos }}">
+                                <span class="block h-1 rounded-full bg-primary-strong dark:bg-cyan-400" style="width: {{ $avance }}%"></span>
+                            </span>
+                        </td>
+                        <td class="tabular-nums text-slate-600 dark:text-slate-300">{{ $orden->created_at->format('d/m/Y') }}</td>
+                        <td>
+                            @if ($orden->terminada === null)
+                                <x-status-badge tone="warning">Pendiente</x-status-badge>
+                            @else
+                                <x-status-badge tone="success">Completada</x-status-badge>
+                            @endif
+                        </td>
+                        <td class="text-right"><x-index.chevron /></td>
                     </tr>
-                </thead>
-                <tbody>
-                    @forelse ($ordenes as $orden)
-                    <tr data-url="{{ route('ordenes.show', $orden) }}" onclick="window.location.href=this.dataset.url" class="border-t border-borders cursor-pointer hover:bg-secondary">
-                        <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                            {{ $orden->created_at->format('d-m-Y') }}
-                        </td>
-                        <td class="content-start px-4 py-2 w-32 text-titles text-sm font-normal leading-normal">
-                            <a href="{{route('ordenes.show',$orden)}}" class="text-titles">{{$orden->numero}}</a>
-                        </td>
-                        <td class="content-start px-4 py-2 w-96 text-sm font-normal leading-normal">
-                            {{ $orden->paciente->nombreCompleto() }}
-                        </td>
+                @empty
+                    <x-index.empty-row colspan="6">No se encontraron órdenes.</x-index.empty-row>
+                @endforelse
+            </x-index.table>
 
-                        <td class="content-start px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-                            <button
-                                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7f2f3]  font-medium leading-normal w-full">
-                                    <span class="truncate">{{ $orden->terminada==null ? 'Pendiente':'Completada' }}</span>
-                            </button>
-                        </td>
-
-                    </tr>
-
-
-                    @empty
-                    <tr><td colspan="4" class="px-4 py-6 text-center text-text">No se encontraron órdenes.</td></tr>
-                    @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-        {{ $ordenes->links() }}
-    </x-canva>
+            <x-slot name="footer">
+                <x-index.pagination :paginator="$ordenes" />
+            </x-slot>
+        </x-index.card>
+    </x-index.page>
 </x-app-layout>

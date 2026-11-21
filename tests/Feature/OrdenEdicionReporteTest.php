@@ -283,13 +283,55 @@ it('muestra el registro médico con la cédula del empleado prestador de la empr
         'cargo' => \App\Cargo::PRESTADOR->value,
         'numero_documento' => '12345678',
     ]);
+    $examen = Examen::factory()->create();
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+    Resultado::create([
+        'parametro_id' => Parametro::create([
+            'nombre' => 'Hemoglobina', 'slug' => 'hemoglobina', 'tipo_dato' => 'number', 'examen_id' => $examen->id,
+        ])->id,
+        'procedimiento_id' => $orden->procedimientos()->firstOrFail()->id,
+        'resultado' => '13.5',
+    ]);
+
+    $this->actingAs($this->user)
+        ->get(route('resultados.reporte_orden', $orden))
+        ->assertOk()
+        ->assertSee('RM 12345678')
+        ->assertDontSee('Registro médico')
+        ->assertDontSee('NIT ');
+});
+
+it('parte el nombre del laboratorio en dos líneas y muestra sede y REPS', function () {
+    config(['instancias.cliente.titulo_profesional' => 'Dra.']);
+    $this->sede->empresa->update(['razon_social' => 'LABORATORIO CLINICO CLAUDIA PATRICIA BUITRAGO HERNANDEZ']);
+    $this->sede->update(['nombre' => 'Laboratorio', 'codigo_prestador' => '110010822701']);
     $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
 
     $this->actingAs($this->user)
         ->get(route('resultados.reporte_orden', $orden))
         ->assertOk()
-        ->assertSee('Registro médico 12345678')
-        ->assertDontSee('NIT ');
+        ->assertSee('<div class="lab-tipo">Laboratorio clínico</div>', false)
+        ->assertSee('<div class="lab-nombre">Dra. Claudia Patricia Buitrago Hernandez</div>', false)
+        ->assertSeeInOrder(['Sede', 'Laboratorio', 'REPS 110010822701']);
+});
+
+it('usa una sola línea cuando la razón social no empieza por laboratorio clínico', function () {
+    $this->sede->empresa->update(['razon_social' => 'Biotek S.A.S.']);
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create());
+
+    $this->actingAs($this->user)
+        ->get(route('resultados.reporte_orden', $orden))
+        ->assertOk()
+        ->assertDontSee('class="lab-tipo"', false)
+        ->assertSee('<div class="lab-nombre">Biotek S.A.S.</div>', false);
+});
+
+it('toma el registro médico del empleado con rol prestador si ningún cargo coincide', function () {
+    $this->user->empleado->update(['cargo' => 'Bacteriologa', 'numero_documento' => '51934571']);
+    $orden = crearOrdenParaEdicion($this, Examen::factory()->create(), Estado::TERMINADO->value);
+
+    expect(app(\App\Services\ConstruirReporteResultados::class)->paraOrden($orden)['laboratorio']['registro_medico'])
+        ->toBe('51934571');
 });
 
 it('impide descargar un reporte desde una sede no autorizada', function () {
@@ -375,7 +417,8 @@ it('reserva el destino de remisiones al personal y conserva el examen en el tick
     $response = $this->actingAs($this->user)
         ->get(route('ordenes.show', $orden))
         ->assertOk()
-        ->assertSee('Examen remitido en ticket (CUP: 902299) (R)');
+        ->assertSee('Examen remitido en ticket')
+        ->assertSee('Remisión · CUP 902299');
 
     if ($verDestino) {
         $response->assertSee('Destino exclusivo del personal');

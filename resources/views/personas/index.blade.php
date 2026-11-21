@@ -1,99 +1,98 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-bold text-2xl text-text leading-tight">
-            {{ 'Pacientes' }}
-        </h2>
-    </x-slot>
-    <x-canva>
-        <div class="flex justify-end items-center mb-4">
-            <a href="{{ route('personas.create') }}" class="bg-primary text-white px-4 py-2 rounded hover:bg-titles">
-                Nuevo Paciente
-            </a>
-        </div>
+    <x-index.page>
+        <x-index.header title="Pacientes"
+            :subtitle="$personas->total() === 1 ? '1 paciente' : $personas->total().' pacientes'">
+            @can('crear_persona')
+                <a href="{{ route('personas.create') }}" class="btn btn-primary">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+                    Nuevo paciente
+                </a>
+            @endcan
+        </x-index.header>
 
-        <form method="GET" action="{{ route('personas') }}" class="mb-4 grid grid-cols-1 gap-3 md:grid-cols-5">
-            <label class="md:col-span-2">
-                <span class="sr-only">Buscar pacientes</span>
-                <input type="search" name="busqueda" value="{{ request('busqueda') }}" placeholder="Documento, nombres o apellidos"
-                    class="w-full rounded-lg border-borders bg-background text-text placeholder:text-titles">
-            </label>
-            <label>
-                <span class="sr-only">Filtrar por sexo</span>
-                <select name="sexo" class="w-full rounded-lg border-borders bg-background text-text">
-                    <option value="">Todos los sexos</option>
-                    @foreach (\App\Models\Sexo::opciones() as $codigo => $nombre)
-                        <option value="{{ $codigo }}" @selected(request('sexo') === $codigo)>{{ $nombre }}</option>
-                    @endforeach
-                </select>
-            </label>
-            <label>
-                <span class="sr-only">Filtrar por municipio</span>
-                <select name="municipio_id" class="w-full rounded-lg border-borders bg-background text-text">
-                    <option value="">Todos los municipios</option>
-                    @foreach ($municipios as $municipio)
-                        <option value="{{ $municipio->id }}" @selected((string) request('municipio_id') === (string) $municipio->id)>
-                            {{ $municipio->municipio }}
-                        </option>
-                    @endforeach
-                </select>
-            </label>
-            <label>
-                <span class="sr-only">Filtrar por EPS</span>
-                <select name="eps" class="w-full rounded-lg border-borders bg-background text-text">
-                    <option value="">Todas las EPS</option>
-                    @foreach ($eps as $nombreEps)
-                        <option value="{{ $nombreEps }}" @selected(request('eps') === $nombreEps)>{{ $nombreEps }}</option>
-                    @endforeach
-                </select>
-            </label>
-            <div class="flex gap-2 md:col-span-5">
-                <button type="submit" class="rounded-lg bg-primary px-4 py-2 text-white">Buscar y filtrar</button>
-                <a href="{{ route('personas') }}" class="rounded-lg border border-borders px-4 py-2 text-text">Limpiar</a>
-            </div>
-        </form>
+        <x-index.card>
+            <x-slot name="filters">
+                <x-index.filter-bar :action="route('personas')">
+                    <x-index.search label="Buscar pacientes" placeholder="Documento, nombres o apellidos" />
+                    <x-index.select name="sexo" label="Filtrar por sexo" width="flex-[0_1_160px]">
+                        <option value="">Todos los sexos</option>
+                        @foreach (\App\Models\Sexo::opciones() as $codigo => $nombre)
+                            <option value="{{ $codigo }}" @selected(request('sexo') === $codigo)>{{ $nombre }}</option>
+                        @endforeach
+                    </x-index.select>
+                    <x-index.select name="municipio_id" label="Filtrar por municipio">
+                        <option value="">Todos los municipios</option>
+                        @foreach ($municipios as $municipio)
+                            <option value="{{ $municipio->id }}" @selected((string) request('municipio_id') === (string) $municipio->id)>
+                                {{ $municipio->municipio }}
+                            </option>
+                        @endforeach
+                    </x-index.select>
+                    <x-index.select name="eps" label="Filtrar por EPS" width="flex-[0_1_160px]">
+                        <option value="">Todas las EPS</option>
+                        @foreach ($eps as $nombreEps)
+                            <option value="{{ $nombreEps }}" @selected(request('eps') === $nombreEps)>{{ $nombreEps }}</option>
+                        @endforeach
+                    </x-index.select>
+                </x-index.filter-bar>
+            </x-slot>
 
-        <div class="my-3 flex overflow-hidden rounded-xl border border-borders bg-background dark:bg-slate-950 dark:text-slate-50">
-            <table class="flex-1">
-                <thead>
+            <x-index.table class="min-w-[560px]">
+                <x-slot name="head">
+                    <th scope="col">Paciente</th>
+                    <th scope="col" class="w-44">Sexo · Edad</th>
+                    <th scope="col" class="w-44">Órdenes</th>
+                    <th scope="col" class="w-36"><span class="sr-only">Acciones</span></th>
+                </x-slot>
 
-                    <tr class="bg-background">
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Fecha de Registro</th>
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Número de Documento</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Nombres</th>
-                        <th class="px-4 py-3 text-left text-text w-60 text-sm font-medium leading-normal">Nacionalidad</th>
-                        <th class="px-4 py-3 text-left text-text w-40 text-sm font-medium leading-normal">Edad</th>
+                @forelse ($personas as $paciente)
+                    @php
+                        $sexo = $paciente->sexo_nombre;
+                        $sexoEdad = collect([
+                            $sexo !== 'No especificado' ? $sexo : null,
+                            $paciente->edad(),
+                        ])->filter()->implode(' · ');
+                        $ultimaOrden = $paciente->ordenes_max_created_at
+                            ? \Illuminate\Support\Carbon::parse($paciente->ordenes_max_created_at)
+                            : null;
+                    @endphp
+                    <tr data-url="{{ route('personas.show', $paciente) }}" onclick="window.location.href=this.dataset.url">
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-secondary text-xs font-bold text-cyan-900 dark:bg-slate-800 dark:text-cyan-200" aria-hidden="true">
+                                    {{ $paciente->iniciales }}
+                                </span>
+                                <div class="min-w-0">
+                                    <a href="{{ route('personas.show', $paciente) }}" class="font-semibold text-text hover:text-primary-strong dark:text-slate-50">
+                                        {{ $paciente->nombreCompleto() }}
+                                    </a>
+                                    <span class="cell-sub">{{ $paciente->tipo_documento?->cod_rips }} {{ $paciente->numero_documento }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-slate-600 dark:text-slate-300">{{ $sexoEdad !== '' ? $sexoEdad : '—' }}</td>
+                        <td>
+                            <span class="tabular-nums">{{ $paciente->ordenes_count }} {{ $paciente->ordenes_count === 1 ? 'orden' : 'órdenes' }}</span>
+                            <span class="cell-sub">{{ $ultimaOrden ? 'Últ. '.$ultimaOrden->format('d/m/Y') : 'Sin órdenes' }}</span>
+                        </td>
+                        <td class="whitespace-nowrap text-right">
+                            @can('crear_orden')
+                                <a href="{{ route('ordenes.create', $paciente) }}" class="btn btn-sm btn-secondary" onclick="event.stopPropagation()">
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+                                    Orden
+                                </a>
+                            @endcan
+                            <x-index.chevron class="ml-2" />
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @forelse ($personas as $paciente)
-                    <tr class="border-t border-borders">
-                        <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                            {{ $paciente->created_at->format('Y-m-d') }}
-                        </td>
-                        <td class="content-start px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-                            <a href="{{route('personas.show',$paciente)}}" class="text-titles hover:text-primary">{{$paciente->numero_documento}}</a>
-                        </td>
-                        <td class="content-start px-4 py-2 w-60 text-sm font-normal leading-normal">
-                            {{ $paciente->nombreCompleto() }}
-                        </td>
+                @empty
+                    <x-index.empty-row colspan="4">No se encontraron pacientes.</x-index.empty-row>
+                @endforelse
+            </x-index.table>
 
-                        <td class="flex flex-col gap-2 px-4 py-2 w-60 text-titles text-sm font-normal leading-normal">
-
-                            {{ $paciente->nacionalidad ? $paciente->nacionalidad : 'N/A' }}
-                        </td>
-                        <td class="px-4 py-2 w-40 text-titles text-sm font-normal leading-normal">
-
-                        </td>
-
-                    </tr>
-                    @empty
-                    <tr><td colspan="5" class="px-4 py-6 text-center text-text">No se encontraron pacientes.</td></tr>
-                    @endforelse
-
-                </tbody>
-            </table>
-        </div>
-        {{ $personas->links() }}
-    </x-canva>
-
+            <x-slot name="footer">
+                <x-index.pagination :paginator="$personas" />
+            </x-slot>
+        </x-index.card>
+    </x-index.page>
 </x-app-layout>

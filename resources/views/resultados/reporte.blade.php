@@ -205,6 +205,12 @@
             vertical-align: middle;
         }
 
+        .lab-tipo {
+            font-size: 10pt;
+            color: #3a4a4d;
+            letter-spacing: 0.4pt;
+        }
+
         .lab-nombre {
             font-size: 14pt;
             font-weight: bold;
@@ -661,11 +667,14 @@
                     <td class="marca-logo"><img src="{{ $lab['logo_src'] }}" alt="Logo de {{ $lab['razon_social'] }}"></td>
                 @endif
                 <td class="marca-texto">
-                    <div class="lab-nombre">{{ $lab['razon_social'] }}</div>
-                    <div class="lab-sede">{{ $lab['sede'] }}</div>
-                    @if (filled($lab['registro_medico'] ?? null))
-                        <div class="lab-registro-medico">Registro médico {{ $lab['registro_medico'] }}</div>
+                    @if (filled($lab['nombre_tipo'] ?? null))
+                        <div class="lab-tipo">{{ $lab['nombre_tipo'] }}</div>
                     @endif
+                    <div class="lab-nombre">{{ $lab['nombre_titular'] ?? $lab['razon_social'] }}</div>
+                    <div class="lab-sede">
+                        @if (($lab['sede'] ?? null) !== 'Varias sedes')Sede @endif{{ $lab['sede'] }}
+                        @if (filled($lab['reps'] ?? null)) &nbsp;·&nbsp; REPS {{ $lab['reps'] }}@endif
+                    </div>
                 </td>
                 <td class="doc-meta">
                     <div class="doc-titulo">{{ $tituloReporte }}</div>
@@ -743,9 +752,11 @@
                     @if (isset($primerExamenOrden['laboratorio']))
                         <p class="orden-seccion-sede">
                             {{ $primerExamenOrden['laboratorio']['razon_social'] }}
-                            · {{ $primerExamenOrden['laboratorio']['sede'] }}
+                            @if ($reporte['varias_sedes'] ?? false)
+                                · Sede {{ $primerExamenOrden['laboratorio']['sede'] }}
+                            @endif
                             @if (filled($primerExamenOrden['laboratorio']['registro_medico'] ?? null))
-                                · Registro médico {{ $primerExamenOrden['laboratorio']['registro_medico'] }}
+                                · RM {{ $primerExamenOrden['laboratorio']['registro_medico'] }}
                             @endif
                         </p>
                     @endif

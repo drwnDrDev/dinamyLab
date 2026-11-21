@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Empresa extends Model
 {
@@ -44,4 +45,25 @@ class Empresa extends Model
     }
 
 
+
+    /**
+     * Razón social en dos líneas para encabezados impresos:
+     * "LABORATORIO CLINICO CLAUDIA ..." => ['Laboratorio clínico', 'Dra. Claudia ...'].
+     * El título (Dra., Dr.) sale de config('instancias.cliente.titulo_profesional').
+     * Si la razón social no empieza por "Laboratorio clínico" se devuelve [null, razón social].
+     */
+    public function nombreEnLineas(): array
+    {
+        $razonSocial = (string) $this->razon_social;
+        $prefijo = 'LABORATORIO CLINICO ';
+
+        if (! Str::startsWith(Str::upper(Str::ascii($razonSocial)), $prefijo)) {
+            return [null, $razonSocial];
+        }
+
+        $titular = Str::title(Str::lower(trim(mb_substr($razonSocial, mb_strlen($prefijo)))));
+        $titulo = trim((string) config('instancias.cliente.titulo_profesional'));
+
+        return ['Laboratorio clínico', trim($titulo.' '.$titular)];
+    }
 }
