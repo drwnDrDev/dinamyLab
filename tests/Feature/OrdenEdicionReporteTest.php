@@ -156,7 +156,7 @@ it('permite al administrador eliminar una orden desde el detalle', function () {
 
     $this->delete(route('ordenes.destroy', $orden))
         ->assertRedirect(route('ordenes'));
-    expect($orden->fresh())->toBeNull();
+    $this->assertSoftDeleted($orden);
 });
 
 it('cuenta los procedimientos anulados como finalizados en el progreso de la orden', function () {

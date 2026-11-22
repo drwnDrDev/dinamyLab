@@ -17,7 +17,7 @@ class EmpresaFactory extends Factory
     public function definition(): array
     {
         return [
-            'razon_social' => fake()->company(),
+            'razon_social' => fake()->unique()->company(),
             'nit' => fake()->unique()->numerify('#########-#'),
         ];
     }
