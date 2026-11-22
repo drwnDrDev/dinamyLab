@@ -46,7 +46,7 @@
         </tbody>
     </table>
 
-    @if (! $enPie && $bloque['ultimo'] && ($examen['cierra_grupo'] ?? false))
+    @if (! $enPie && $bloque['ultimo'] && ($examen['cierra_grupo'] ?? false) && filled($examen['bacteriologo']['firma_src'] ?? null))
         @php($bacteriologo = $examen['bacteriologo'])
         <table class="firma">
             <tr>

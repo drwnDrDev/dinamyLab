@@ -495,6 +495,148 @@ it('firma al cierre de cada grupo cuando hay varios profesionales', function () 
     expect($reporte['examenes'][2]['bacteriologo']['firma_src'])->toStartWith('data:image/png;base64,');
 });
 
+it('calcula el cierre de grupo por orden cuando el reporte mezcla órdenes', function () {
+    Storage::fake('local');
+    Storage::disk('local')->put('firmas/uno.png', pngTransparente(80, 30));
+    Storage::disk('local')->put('firmas/dos.png', pngTransparente(90, 30));
+
+    $empleadoUno = $this->user->empleado;
+    $empleadoUno->update(['firma' => 'uno.png']);
+
+    $usuarioDos = User::factory()->create([
+        'email' => Str::uuid().'@example.test',
+    ]);
+    $usuarioDos->assignRole('prestador');
+    $empleadoDos = Empleado::factory()->create([
+        'user_id' => $usuarioDos->id,
+        'empresa_id' => $this->sede->empresa_id,
+        'tipo_documento_id' => 1,
+        'firma' => 'dos.png',
+    ]);
+
+    $examen = Examen::factory()->create();
+    $parametro = Parametro::create([
+        'nombre' => 'Glucosa',
+        'slug' => 'glucosa',
+        'tipo_dato' => 'text',
+        'unidades' => 'mg/dL',
+        'examen_id' => $examen->id,
+    ]);
+    $paciente = Persona::factory()->create();
+
+    $crearOrden = function (int $numero) use ($paciente): Orden {
+        return Orden::create([
+            'sede_id' => $this->sede->id,
+            'numero' => $numero,
+            'paciente_id' => $paciente->id,
+            'user_id' => $this->user->id,
+            'total' => 0,
+        ]);
+    };
+    $crearProcedimiento = function (Orden $orden, Empleado $empleado, string $resultado) use ($examen, $parametro) {
+        $procedimiento = $orden->procedimientos()->create([
+            'examen_id' => $examen->id,
+            'fecha' => now(),
+            'sede_id' => $this->sede->id,
+            'diagnostico_principal' => 'Z017',
+            'codigo_finalidad' => '15',
+            'codigo_modalidad' => '01',
+            'codigo_via_ingreso' => '01',
+            'estado' => Estado::TERMINADO->value,
+            'empleado_id' => $empleado->id,
+        ]);
+        Resultado::create([
+            'parametro_id' => $parametro->id,
+            'procedimiento_id' => $procedimiento->id,
+            'resultado' => $resultado,
+        ]);
+
+        return $procedimiento;
+    };
+
+    $ordenA = $crearOrden(872);
+    $ordenB = $crearOrden(873);
+
+    // Orden A: X, X, Y. Orden B: X, Y. La lista plana intercala las órdenes.
+    $a1 = $crearProcedimiento($ordenA, $empleadoUno, '100');
+    $b1 = $crearProcedimiento($ordenB, $empleadoUno, '101');
+    $a2 = $crearProcedimiento($ordenA, $empleadoUno, '102');
+    $b2 = $crearProcedimiento($ordenB, $empleadoDos, '103');
+    $a3 = $crearProcedimiento($ordenA, $empleadoDos, '104');
+
+    $reporte = app(ConstruirReporteResultados::class)
+        ->paraProcedimientos(collect([$a1, $b1, $a2, $b2, $a3]));
+
+    $porOrden = collect($reporte['examenes'])->groupBy('orden_numero');
+
+    expect($reporte['firma'])->toBeNull();
+    expect($porOrden->get(872)->pluck('cierra_grupo')->all())->toBe([false, true, true]);
+    expect($porOrden->get(873)->pluck('cierra_grupo')->all())->toBe([true, true]);
+    expect($porOrden->get(872)->pluck('bacteriologo.firma_src')->filter()->count())->toBe(2);
+    expect($porOrden->get(873)->pluck('bacteriologo.firma_src')->filter()->count())->toBe(2);
+});
+
+it('vuelve a firmar cuando el mismo profesional reaparece', function () {
+    Storage::fake('local');
+    Storage::disk('local')->put('firmas/uno.png', pngTransparente(80, 30));
+    Storage::disk('local')->put('firmas/dos.png', pngTransparente(90, 30));
+
+    $empleadoUno = $this->user->empleado;
+    $empleadoUno->update(['firma' => 'uno.png']);
+
+    $usuarioDos = User::factory()->create([
+        'email' => Str::uuid().'@example.test',
+    ]);
+    $usuarioDos->assignRole('prestador');
+    $empleadoDos = Empleado::factory()->create([
+        'user_id' => $usuarioDos->id,
+        'empresa_id' => $this->sede->empresa_id,
+        'tipo_documento_id' => 1,
+        'firma' => 'dos.png',
+    ]);
+
+    $examen = Examen::factory()->create();
+    $parametro = Parametro::create([
+        'nombre' => 'Glucosa',
+        'slug' => 'glucosa',
+        'tipo_dato' => 'text',
+        'unidades' => 'mg/dL',
+        'examen_id' => $examen->id,
+    ]);
+    $orden = crearOrdenParaEdicion($this, $examen, Estado::TERMINADO->value);
+
+    $crearProcedimiento = function (Empleado $empleado, string $resultado) use ($orden, $examen, $parametro) {
+        $procedimiento = $orden->procedimientos()->create([
+            'examen_id' => $examen->id,
+            'fecha' => now(),
+            'sede_id' => $this->sede->id,
+            'diagnostico_principal' => 'Z017',
+            'codigo_finalidad' => '15',
+            'codigo_modalidad' => '01',
+            'codigo_via_ingreso' => '01',
+            'estado' => Estado::TERMINADO->value,
+            'empleado_id' => $empleado->id,
+        ]);
+        Resultado::create([
+            'parametro_id' => $parametro->id,
+            'procedimiento_id' => $procedimiento->id,
+            'resultado' => $resultado,
+        ]);
+
+        return $procedimiento;
+    };
+
+    // X, Y, X: cada tramo consecutivo cierra con su propia firma.
+    $crearProcedimiento($empleadoUno, '100');
+    $crearProcedimiento($empleadoDos, '101');
+    $crearProcedimiento($empleadoUno, '102');
+
+    $reporte = app(ConstruirReporteResultados::class)->paraOrden($orden);
+
+    expect(collect($reporte['examenes'])->pluck('cierra_grupo')->all())->toBe([true, true, true]);
+    expect(collect($reporte['examenes'])->pluck('bacteriologo.firma_src')->filter()->count())->toBe(3);
+});
+
 it('genera el reporte sin firma si el archivo no existe', function () {
     Storage::fake('local');
     $empleado = $this->user->empleado;

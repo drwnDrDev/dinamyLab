@@ -44,3 +44,14 @@ it('genera un código aunque no haya exámenes', function () {
 
     expect($codigo)->toMatch('/^[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}$/');
 });
+
+it('no colapsa el código cuando el texto no es UTF-8 válido', function () {
+    $servicio = app(CodigoVerificacionReporte::class);
+
+    $codigoA = $servicio->generar(reporteParaCodigo("108\xB1"));
+    $codigoB = $servicio->generar(reporteParaCodigo("109\xB1"));
+
+    expect($codigoA)->toMatch('/^[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}$/');
+    expect($codigoA)->toBe($servicio->generar(reporteParaCodigo("108\xB1")));
+    expect($codigoA)->not->toBe($codigoB);
+});

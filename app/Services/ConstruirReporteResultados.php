@@ -161,17 +161,37 @@ class ConstruirReporteResultados
 
         $reporte['codigo_verificacion'] = $this->codigoVerificacion->generar($reporte);
 
-        $empleados = $procedimientos->pluck('empleado_id')->all();
+        $empleados = $procedimientos->pluck('empleado_id')
+            ->map(fn ($id) => $id === null ? null : (int) $id)
+            ->all();
         $total = count($empleados);
         $marca = ($ordenReporte ? 'ORDEN '.$ordenReporte->numero : 'HISTORIA')
             .' · '.$reporte['paciente']['documento']
             .' · '.$reporte['codigo_verificacion'];
 
-        foreach ($reporte['examenes'] as $indice => &$examen) {
-            $examen['cierra_grupo'] = $indice === $total - 1
-                || $empleados[$indice] !== $empleados[$indice + 1];
+        /*
+         * El reporte agrupa los exámenes por orden al renderizar, así que el cierre de grupo se
+         * calcula dentro de cada orden y no sobre la lista plana: una historia con órdenes
+         * intercaladas no debe dejar una sección entera sin firma.
+         */
+        foreach ($reporte['examenes'] as &$examen) {
+            $examen['cierra_grupo'] = false;
         }
         unset($examen);
+
+        $indicesPorOrden = [];
+        foreach ($reporte['examenes'] as $indice => $examen) {
+            $indicesPorOrden[$examen['orden_id'] ?? 'sin-orden'][] = $indice;
+        }
+
+        foreach ($indicesPorOrden as $indices) {
+            $ultimo = count($indices) - 1;
+
+            foreach ($indices as $posicion => $indice) {
+                $reporte['examenes'][$indice]['cierra_grupo'] = $posicion === $ultimo
+                    || $empleados[$indice] !== $empleados[$indices[$posicion + 1]];
+            }
+        }
 
         $distintos = collect($empleados)->unique()->values();
 

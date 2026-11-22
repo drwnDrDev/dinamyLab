@@ -45,7 +45,10 @@ class CodigoVerificacionReporte
             'examenes' => $examenes,
         ];
 
-        $json = json_encode($canonico, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '';
+        $json = json_encode(
+            $canonico,
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE,
+        ) ?: '';
         $codigo = strtoupper(substr(
             hash_hmac('sha256', $json, (string) config('reportes.clave_verificacion')),
             0,

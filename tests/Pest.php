@@ -49,12 +49,12 @@ function something()
     // ..
 }
 
-function pngTransparente(int $ancho = 80, int $alto = 30): string
+function pngTransparente(int $ancho = 80, int $alto = 30, bool $linea = true): string
 {
     $img = imagecreatetruecolor($ancho, $alto);
     imagesavealpha($img, true);
     imagefill($img, 0, 0, imagecolorallocatealpha($img, 0, 0, 0, 127));
-    if ($ancho > 10 && $alto > 10) {
+    if ($linea && $ancho > 10 && $alto > 10) {
         imageline($img, 5, $alto - 5, $ancho - 5, 5, imagecolorallocate($img, 0, 0, 0));
     }
     ob_start();

@@ -12,35 +12,65 @@ class FirmaReporte
 
     private const MAX_ALTO = 240;
 
+    private const MAX_PIXELES_ORIGEN = 4_000_000;
+
     private const MARGEN = 6;
+
+    /**
+     * Cache por petición: la firma compuesta no cambia mientras no cambien los bytes ni la marca.
+     *
+     * @var array<string, string>
+     */
+    private array $cache = [];
 
     /**
      * Compone la firma sobre un fondo blanco y le sobrepone la marca del reporte.
      */
     public function componer(?string $ruta, string $marca): ?string
     {
-        $contenido = $this->leer($ruta);
-
-        if ($contenido === null) {
-            return null;
-        }
-
-        $info = @getimagesizefromstring($contenido);
-        $mime = $info['mime'] ?? null;
-
-        if (! in_array($mime, ['image/png', 'image/jpeg'], true)) {
-            return null;
-        }
-
-        $origen = @imagecreatefromstring($contenido);
-
-        if (! $origen) {
-            return null;
-        }
-
+        $origen = null;
         $lienzo = null;
 
         try {
+            $contenido = $this->leer($ruta);
+
+            if ($contenido === null) {
+                Log::warning('No se encontró la firma del reporte.', ['ruta' => $ruta]);
+
+                return null;
+            }
+
+            $clave = sha1($contenido).sha1($marca);
+
+            if (isset($this->cache[$clave])) {
+                return $this->cache[$clave];
+            }
+
+            $info = @getimagesizefromstring($contenido);
+            $mime = $info['mime'] ?? null;
+
+            if (! in_array($mime, ['image/png', 'image/jpeg'], true)) {
+                Log::warning('La firma del reporte no es PNG/JPEG.', ['ruta' => $ruta, 'mime' => $mime]);
+
+                return null;
+            }
+
+            if (($info[0] ?? 0) * ($info[1] ?? 0) > self::MAX_PIXELES_ORIGEN) {
+                Log::warning('La firma del reporte excede el tamaño permitido.', [
+                    'ruta' => $ruta,
+                    'ancho' => $info[0] ?? null,
+                    'alto' => $info[1] ?? null,
+                ]);
+
+                return null;
+            }
+
+            $origen = @imagecreatefromstring($contenido);
+
+            if (! $origen) {
+                return null;
+            }
+
             [$ancho, $alto] = $this->dimensiones(imagesx($origen), imagesy($origen));
 
             $lienzo = imagecreatetruecolor($ancho + self::MARGEN * 2, $alto + self::MARGEN * 2);
@@ -64,17 +94,26 @@ class FirmaReporte
                 imagesy($origen)
             );
 
-            $this->marcar($lienzo, $marca);
+            if (! $this->marcar($lienzo, $marca)) {
+                return null;
+            }
 
             ob_start();
-            imagepng($lienzo);
-            $png = ob_get_clean();
+
+            try {
+                imagepng($lienzo);
+                $png = ob_get_clean();
+            } catch (\Throwable $e) {
+                ob_end_clean();
+
+                throw $e;
+            }
 
             if (! is_string($png) || $png === '') {
                 return null;
             }
 
-            return 'data:image/png;base64,'.base64_encode($png);
+            return $this->cache[$clave] = 'data:image/png;base64,'.base64_encode($png);
         } catch (\Throwable $e) {
             Log::warning('No se pudo componer la firma del reporte.', [
                 'error' => $e->getMessage(),
@@ -134,7 +173,7 @@ class FirmaReporte
         ];
     }
 
-    private function marcar(\GdImage $lienzo, string $marca): void
+    private function marcar(\GdImage $lienzo, string $marca): bool
     {
         $fuente = resource_path('fonts/DejaVuSans.ttf');
 
@@ -143,7 +182,7 @@ class FirmaReporte
                 'fuente' => $fuente,
             ]);
 
-            return;
+            return false;
         }
 
         $color = imagecolorallocatealpha($lienzo, 90, 90, 90, 105);
@@ -152,8 +191,16 @@ class FirmaReporte
 
         for ($y = 18; $y < $alto + 90; $y += 70) {
             for ($x = -80; $x < $ancho + 120; $x += 260) {
-                imagettftext($lienzo, 9, -30, $x, $y, $color, $fuente, $marca);
+                if (imagettftext($lienzo, 9, -30, $x, $y, $color, $fuente, $marca) === false) {
+                    Log::warning('No se pudo escribir la marca de agua de la firma.', [
+                        'fuente' => $fuente,
+                    ]);
+
+                    return false;
+                }
             }
         }
+
+        return true;
     }
 }

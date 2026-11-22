@@ -81,6 +81,11 @@
     $hayFueraDeRango = false;
 
     foreach ($reporte['examenes'] as $examen) {
+        $altoFirma = (! $enPie
+            && ($examen['cierra_grupo'] ?? false)
+            && filled($examen['bacteriologo']['firma_src'] ?? null))
+            ? $ALTO_FIRMA
+            : 0;
         $grupos = array_values(array_filter($examen['grupos'], fn ($g) => count($g['parametros']) > 0));
         foreach ($grupos as $g) {
             foreach ($g['parametros'] as $p) {
@@ -88,7 +93,7 @@
             }
         }
 
-        $total = $ALTO_ENCABEZADO_EXAMEN + $ALTO_FIRMA + array_sum(array_map($costoGrupo, $grupos));
+        $total = $ALTO_ENCABEZADO_EXAMEN + $altoFirma + array_sum(array_map($costoGrupo, $grupos));
 
         if ($total <= $ALTO_UTIL) {
             $trozos = [$grupos];
@@ -124,7 +129,7 @@
             $usado = $ALTO_ENCABEZADO_EXAMEN;
             $ultima = count($piezas) - 1;
             foreach ($piezas as $i => $pieza) {
-                $c = $costoGrupo($pieza) + ($i === $ultima ? $ALTO_FIRMA : 0);
+                $c = $costoGrupo($pieza) + ($i === $ultima ? $altoFirma : 0);
                 if ($actual && $usado + $c > $ALTO_UTIL) {
                     $trozos[] = $actual;
                     $actual = [];
