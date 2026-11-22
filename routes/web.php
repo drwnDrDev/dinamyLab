@@ -22,20 +22,6 @@ Route::get('/', fn () => auth()->check()
     ? redirect()->to(route('dashboard', absolute: false))
     : view('welcome'));
 
-Route::get('/admin/deploymigration', function () {
-
-    \Artisan::call('migrate');
-    \Artisan::call('db:seed', ['--class' => 'IpsExternaSeeder','--class' => 'RemisionSeeder','--class' => 'ValorRemisionSeeder']);
-    \Artisan::call('config:clear');
-    \Artisan::call('cache:clear');
-    \Artisan::call('route:clear');
-    \Artisan::call('view:clear');
-    \Artisan::call('optimize:clear');
-    return redirect()->back()->with('success', 'Migración ejecutada correctamente.');
-
-})->middleware(['auth', 'verified', 'role:admin'])->name('admin.deploymigration');
-
-
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/reprocesar', [ReprocesarController::class, 'showUploadForm'])->name('reprocesar.upload');
