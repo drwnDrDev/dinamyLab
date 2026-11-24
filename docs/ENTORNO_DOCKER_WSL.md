@@ -120,6 +120,29 @@ Tip: un alias en `~/.bashrc` ahorra escribir:
 alias art='docker compose exec app php artisan'
 ```
 
+### Generar el esquema de la BD
+
+Laravel ejecuta `mysqldump` dentro de `app`. La imagen PHP incorpora `mysql`
+y `mysqldump` desde la imagen oficial `mysql:8.4`, la misma versión que usa
+el servicio `db`; `pdo_mysql` por sí solo no instala estos comandos.
+
+Si tienes una imagen anterior y aparece `mysqldump: not found`, reconstruye
+la imagen y recrea los servicios que la usan:
+
+```bash
+docker compose build app
+docker compose up -d --no-deps app queue
+docker compose exec app mysqldump --version
+docker compose exec app php artisan schema:dump
+```
+
+El esquema se guarda en `database/schema/mysql-schema.sql` con la conexión
+predeterminada del proyecto. Para consolidar las migraciones, ejecuta
+`docker compose exec app php artisan schema:dump --prune`: después de generar
+el esquema, **elimina todos los archivos de `database/migrations`**. Revisa el
+volcado antes de usar esa opción y versiona el esquema junto con la eliminación
+de las migraciones.
+
 ### Reiniciar la BD desde cero
 
 ```bash
@@ -146,6 +169,7 @@ docker compose exec app php artisan migrate:fresh --seed
 |---------|----------|
 | `docker: command not found` en WSL | Activar la integración WSL en Docker Desktop y reabrir la terminal. |
 | `queue` en estado *Restarting* | Aún no corriste `migrate`. Ejecútalo y `docker compose restart queue`. |
+| `mysqldump: not found` al ejecutar `schema:dump` | Reconstruye la imagen PHP y recrea `app` y `queue` (ver «Generar el esquema de la BD»). |
 | Error de permisos en `storage/` o archivos creados como root | Tu UID no es 1000 (`id -u`). Agrega `UID=` y `GID=` con tus valores al `.env` y `docker compose up -d --build`. |
 | Puerto 8000 / 3307 / 5173 ocupado | Cambia `APP_PORT` o `FORWARD_DB_PORT` en `.env`, o apaga el proceso que lo usa (XAMPP). |
 | Estilos/JS no cargan, o cargan versiones viejas | Revisa `docker compose logs vite`. Si existe `public/hot` sin Vite corriendo, bórralo. |
