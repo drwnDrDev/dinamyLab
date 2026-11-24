@@ -3,6 +3,7 @@
 /vendor
 /storage/*.key
 /storage/pail
+/storage/app/private/backups/
 /public/hot
 .env
 .env.testing

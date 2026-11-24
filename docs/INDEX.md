@@ -13,6 +13,7 @@
 | [INFORME_VALORES_REFERENCIA.md](./INFORME_VALORES_REFERENCIA.md) | Cómo se almacenan, seleccionan y reportan los valores de referencia; qué pasa al cambiar `tipo_dato` y estrategias para flexibilizarlo. |
 | [ENTORNO_DOCKER_WSL.md](./ENTORNO_DOCKER_WSL.md) | Montar el entorno local con WSL 2 + Docker Compose. |
 | [DESPLIEGUE_INSTANCIAS.md](./DESPLIEGUE_INSTANCIAS.md) | Runbook de cPanel: una instancia por cliente, migraciones, operación. |
+| [BACKUPS_BD.md](./BACKUPS_BD.md) | Backups diarios de MySQL, retención, activación en Docker/cPanel y restauración. |
 | [CLAUDE.md](./CLAUDE.md) | Instrucciones internas para Claude Code; no es documentación de usuario. |
 
 ## Diseño y planes

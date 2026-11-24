@@ -86,6 +86,7 @@ Abre **http://localhost:8000**.
 | `web`    | nginx                      | `8000` (`APP_PORT`)      |
 | `app`    | PHP 8.5-FPM (Laravel)      | —                        |
 | `queue`  | `php artisan queue:work`   | —                        |
+| `scheduler` | Respaldos diarios y tareas programadas | —              |
 | `db`     | MySQL 8.4                  | `3307` (`FORWARD_DB_PORT`) |
 | `vite`   | Vite dev server + HMR      | `5173`                   |
 
@@ -120,6 +121,22 @@ Tip: un alias en `~/.bashrc` ahorra escribir:
 alias art='docker compose exec app php artisan'
 ```
 
+### Backups periódicos de la BD
+
+El servicio `scheduler` ejecuta un respaldo diario a las **02:00 de Bogotá** y
+conserva **14 días** en `storage/app/private/backups/`. Para activarlo y verificar
+una copia manual:
+
+```bash
+docker compose up -d scheduler
+docker compose exec scheduler php artisan schedule:list --timezone=America/Bogota
+docker compose exec scheduler php artisan db:backup
+```
+
+El equipo y Docker deben estar encendidos a la hora programada. La copia manual
+usa los mismos controles y retención. Configuración, manejo de fallos, copia
+externa y restauración en [BACKUPS_BD.md](./BACKUPS_BD.md).
+
 ### Generar el esquema de la BD
 
 Laravel ejecuta `mysqldump` dentro de `app`. La imagen PHP incorpora `mysql`
@@ -131,7 +148,7 @@ la imagen y recrea los servicios que la usan:
 
 ```bash
 docker compose build app
-docker compose up -d --no-deps app queue
+docker compose up -d --no-deps app queue scheduler
 docker compose exec app mysqldump --version
 docker compose exec app php artisan schema:dump
 ```
