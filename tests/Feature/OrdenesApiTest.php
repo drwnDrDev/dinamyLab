@@ -64,6 +64,38 @@ class OrdenesApiTest extends TestCase
         }
     }
 
+    public function test_una_remision_manual_se_reutiliza_y_actualizar_su_catalogo_conserva_las_ordenes_anteriores(): void
+    {
+        $datos = ['cup' => '999001', 'nombre' => 'Examen manual', 'valor' => 20000, 'destino' => 'IPS nueva'];
+        $seleccion = $this->actingAs($this->user, 'sanctum')->postJson('/api/remisiones', $datos)
+            ->assertCreated()->json('seleccion');
+        $paciente = Persona::factory()->create();
+        $ordenDatos = [
+            'paciente_id' => $paciente->id, 'numero_orden' => 'MANUAL-1',
+            'fecha_orden' => now()->format('Y-m-d'), 'remisiones' => [$seleccion],
+        ];
+        $ordenId = $this->postJson('/api/ordenes', $ordenDatos)->assertCreated()->json('data.id');
+
+        $nuevos = array_replace($datos, ['nombre' => 'Examen actualizado', 'valor' => 30000]);
+        $this->postJson('/api/remisiones', $nuevos)->assertConflict();
+        $nuevaSeleccion = $this->postJson('/api/remisiones', $nuevos + ['accion' => 'actualizar'])
+            ->assertOk()->json('seleccion');
+        $nuevaOrdenId = $this->postJson('/api/ordenes', array_replace($ordenDatos, [
+            'numero_orden' => 'MANUAL-2', 'remisiones' => [$nuevaSeleccion],
+        ]))->assertCreated()->json('data.id');
+
+        $this->assertDatabaseHas('orden_remisiones', [
+            'orden_id' => $ordenId, 'nombre' => 'Examen manual', 'valor' => 20000,
+            'destino' => 'IPS nueva', 'valor_remision_id' => $seleccion['valor_remision_id'],
+        ]);
+        $this->assertDatabaseHas('ordenes_medicas', ['id' => $ordenId, 'total' => 20000]);
+        $this->assertDatabaseHas('orden_remisiones', [
+            'orden_id' => $nuevaOrdenId, 'nombre' => 'Examen actualizado', 'valor' => 30000,
+        ]);
+        $this->assertDatabaseCount('remisiones', 1);
+        $this->assertDatabaseCount('valores_remision', 1);
+    }
+
     public function test_can_create_orden_with_valid_data(): void
     {
         $paciente = Persona::factory()->create();
