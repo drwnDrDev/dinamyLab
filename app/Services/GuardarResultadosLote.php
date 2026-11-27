@@ -61,7 +61,7 @@ class GuardarResultadosLote
                 }
 
                 foreach ($resultados as $parametroId => $valor) {
-                    if ($valor === null || $valor === '') {
+                    if (blank($valor)) {
                         continue;
                     }
 
@@ -87,11 +87,14 @@ class GuardarResultadosLote
                 }
             }
 
-            foreach ($muestras as $muestra) {
+            $muestrasConResultados = array_filter($muestras, fn ($muestra) => collect($muestra['resultados'] ?? [])
+                ->contains(fn ($valor) => filled($valor)));
+
+            foreach ($muestrasConResultados as $muestra) {
                 $procedimiento = $procedimientos->get((int) $muestra['id']);
 
                 foreach ($muestra['resultados'] ?? [] as $parametroId => $valor) {
-                    if ($valor === null || $valor === '') {
+                    if (blank($valor)) {
                         continue;
                     }
 
@@ -110,13 +113,16 @@ class GuardarResultadosLote
                 $procedimiento->save();
             }
 
-            RegistrarActividad::registrar('resultados.lote_procesado', $procedimientos->first(), [
-                'examen_id' => $examen->id,
-                'cantidad' => count($muestras),
-                'procedimientos' => $ids,
-            ]);
+            if ($muestrasConResultados !== []) {
+                $idsGuardados = array_values(array_map(fn ($muestra) => (int) $muestra['id'], $muestrasConResultados));
+                RegistrarActividad::registrar('resultados.lote_procesado', $procedimientos->get($idsGuardados[0]), [
+                    'examen_id' => $examen->id,
+                    'cantidad' => count($idsGuardados),
+                    'procedimientos' => $idsGuardados,
+                ]);
+            }
 
-            return count($muestras);
+            return count($muestrasConResultados);
         });
     }
 }

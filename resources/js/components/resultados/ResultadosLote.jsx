@@ -92,6 +92,9 @@ const ResultadosLote = ({ action, initialMuestras }) => {
 
     const todosSeleccionados = muestras.length > 0 && seleccionadas.length === muestras.length;
     const parametros = muestras[0]?.parametros ?? [];
+    const conResultados = seleccionadas.filter(id => Object.values(resultados[id] ?? {})
+        .some(valor => valor !== null && valor !== undefined && String(valor).trim() !== ''));
+    const vacias = seleccionadas.length - conResultados.length;
 
     const cambiarSeleccion = (id, checked) => {
         setSeleccionadas(actuales => checked
@@ -111,8 +114,9 @@ const ResultadosLote = ({ action, initialMuestras }) => {
 
     const guardar = async event => {
         event.preventDefault();
-        if (seleccionadas.length === 0 || guardando) return;
-        if (!window.confirm(`¿Confirma guardar resultados para ${seleccionadas.length} muestras? Los campos vacíos quedarán sin resultado y las muestras se marcarán como terminadas.`)) {
+        if (conResultados.length === 0 || guardando) return;
+        const avisoVacias = vacias > 0 ? ` Las ${vacias} muestras totalmente vacías permanecerán en proceso.` : '';
+        if (!window.confirm(`¿Confirma guardar y finalizar las ${conResultados.length} muestras con resultados?${avisoVacias}`)) {
             return;
         }
 
@@ -152,7 +156,7 @@ const ResultadosLote = ({ action, initialMuestras }) => {
             </header>
 
             <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100" role="note">
-                Los campos vacíos se omiten, pero las muestras seleccionadas se marcarán como terminadas al guardar.
+                Solo se finalizarán las muestras que tengan al menos un resultado. Las muestras totalmente vacías permanecerán en proceso.
             </div>
 
             {error && <p className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950 dark:text-red-200" role="alert">{error}</p>}
@@ -169,13 +173,14 @@ const ResultadosLote = ({ action, initialMuestras }) => {
                             <input
                                 type="checkbox"
                                 checked={todosSeleccionados}
+                                disabled={guardando}
                                 onChange={event => setSeleccionadas(event.target.checked ? muestras.map(muestra => muestra.id) : [])}
                                 className="rounded border-borders text-primary focus:ring-primary"
                             />
                             Seleccionar todas las muestras de esta página
                         </label>
                         <span className="text-sm text-text dark:text-gray-300">
-                            {seleccionadas.length} de {muestras.length} seleccionadas
+                            {seleccionadas.length} de {muestras.length} seleccionadas · {conResultados.length} con resultados
                         </span>
                     </div>
 
@@ -206,6 +211,7 @@ const ResultadosLote = ({ action, initialMuestras }) => {
                                                     <input
                                                         type="checkbox"
                                                         checked={seleccionada}
+                                                        disabled={guardando}
                                                         onChange={event => cambiarSeleccion(muestra.id, event.target.checked)}
                                                         className="mt-1 rounded border-borders text-primary focus:ring-primary"
                                                     />
@@ -216,6 +222,11 @@ const ResultadosLote = ({ action, initialMuestras }) => {
                                                         <span className="block text-xs text-text dark:text-gray-300">{muestra.fecha}</span>
                                                     </span>
                                                 </label>
+                                                <a href={muestra.url_anulacion} target="_blank" rel="noopener noreferrer"
+                                                    className="ml-6 mt-2 inline-block text-xs font-semibold text-primary hover:underline dark:text-cyan-300">
+                                                    {muestra.anulacion_pendiente ? 'Ver solicitud de anulación' : 'Solicitar anulación'}
+                                                    <span className="sr-only"> (abre otra pestaña)</span>
+                                                </a>
                                             </th>
                                             {parametros.map(parametro => {
                                                 const datosParametro = muestra.parametros.find(item => item.id === parametro.id) ?? parametro;
@@ -228,7 +239,7 @@ const ResultadosLote = ({ action, initialMuestras }) => {
                                                             parametro={datosParametro}
                                                             value={value}
                                                             onChange={event => cambiarResultado(muestra.id, parametro.id, event.target.value)}
-                                                            disabled={!seleccionada}
+                                                            disabled={!seleccionada || guardando}
                                                         />
                                                         {datosParametro.referencia && (
                                                             <span className="mt-1 block max-w-48 text-xs text-text dark:text-gray-300">
@@ -248,10 +259,10 @@ const ResultadosLote = ({ action, initialMuestras }) => {
                     <div className="flex justify-end">
                         <button
                             type="submit"
-                            disabled={seleccionadas.length === 0 || guardando || !csrfLoaded}
+                            disabled={conResultados.length === 0 || guardando || !csrfLoaded}
                             className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-titles disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            {guardando ? 'Guardando lote...' : `Guardar resultados (${seleccionadas.length})`}
+                            {guardando ? 'Guardando lote...' : `Guardar resultados (${conResultados.length})`}
                         </button>
                     </div>
                 </form>

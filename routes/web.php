@@ -16,6 +16,7 @@ use App\Http\Controllers\ResolucionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\SedeController;
+use App\Http\Controllers\SolicitudAnulacionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => auth()->check()
@@ -31,6 +32,14 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/anulaciones', [SolicitudAnulacionController::class, 'index'])
+        ->middleware('role:admin|prestador')->name('anulaciones.index');
+    Route::patch('/anulaciones/{solicitud}', [SolicitudAnulacionController::class, 'resolver'])
+        ->middleware('role:admin')->name('anulaciones.resolver');
+    Route::middleware([\App\Http\Middleware\EnsurePrestador::class, 'can:gestionar_procedimiento'])->group(function () {
+        Route::get('/procedimientos/{procedimiento}/solicitar-anulacion', [SolicitudAnulacionController::class, 'create'])->name('anulaciones.create');
+        Route::post('/procedimientos/{procedimiento}/solicitar-anulacion', [SolicitudAnulacionController::class, 'store'])->name('anulaciones.store');
+    });
     Route::get('/admin/actividad', [\App\Http\Controllers\ActividadController::class, 'index'])
         ->middleware('role:admin')->name('actividad.index');
     Route::post('/resultados/actividad/impresion', [\App\Http\Controllers\ActividadController::class, 'impresion'])

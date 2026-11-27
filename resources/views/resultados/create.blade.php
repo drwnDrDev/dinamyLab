@@ -5,6 +5,7 @@
     <x-slot name="header">
     </x-slot>
 <x-canva>
+        <div class="mb-4"><x-solicitar-anulacion :procedimiento="$procedimiento" /></div>
         
   <form action="{{ route('resultados.store', $procedimiento) }}" method="POST">
         <section class="grid grid-cols-2 py-2 border-t-[0.2px] border-b-[0.2px] border-borders w-full">

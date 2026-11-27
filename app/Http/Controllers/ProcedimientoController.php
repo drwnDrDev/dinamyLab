@@ -25,7 +25,7 @@ class ProcedimientoController extends Controller
             : ControlSede::autorizarSedeActiva($request);
         $filters = $request->validate(['busqueda' => 'nullable|string|max:100']);
         $busqueda = trim($filters['busqueda'] ?? '');
-        $procedimientos = Procedimiento::with(['orden.paciente', 'examen'])
+        $procedimientos = Procedimiento::with(['orden.paciente', 'examen', 'solicitudAnulacionPendiente'])
             ->when(! $request->user()->hasRole('admin'), fn ($query) => $query->where('sede_id', $sede->id))
             ->where('estado', 'en proceso')
             ->when($busqueda !== '', function ($query) use ($busqueda) {
@@ -175,12 +175,19 @@ class ProcedimientoController extends Controller
             'observacion' => 'required|string|max:255',
             'estado' => ['required', \Illuminate\Validation\Rule::enum(\App\Estado::class)],
         ]);
-        DB::transaction(function () use ($procedimiento, $validated) {
+        $procedimiento = DB::transaction(function () use ($request, $procedimiento, $validated) {
+            $procedimiento = Procedimiento::whereKey($procedimiento->id)->lockForUpdate()->firstOrFail();
+            ControlSede::autorizarProcedimiento($request, $procedimiento);
+            abort_if($procedimiento->bloqueadoPorRips(), 409, 'No se puede cambiar el estado de un procedimiento exportado a RIPS.');
+            abort_if(! $request->user()->hasRole('admin')
+                && ($validated['estado'] === \App\Estado::ANULADO->value || $procedimiento->estado === \App\Estado::ANULADO->value),
+                403, 'La anulación de un examen debe ser revisada por administración.');
             $procedimiento->estado = $validated['estado'];
             $procedimiento->save();
             $procedimiento->observaciones()->create([
                 'observacion' => $validated['observacion'],
             ]);
+            return $procedimiento;
         });
 
 

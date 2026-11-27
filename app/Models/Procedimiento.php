@@ -43,6 +43,24 @@ class Procedimiento extends Model
             ], true);
     }
 
+    public function puedeSolicitarAnulacion(): bool
+    {
+        return ! $this->trashed()
+            && in_array($this->estado, [\App\Estado::PENDIENTE->value, \App\Estado::MUESTRA->value, \App\Estado::PROCESO->value], true)
+            && $this->rips_procesado_at === null
+            && $this->resultados_pdf_descargado_at === null;
+    }
+
+    public function solicitudesAnulacion()
+    {
+        return $this->hasMany(SolicitudAnulacion::class);
+    }
+
+    public function solicitudAnulacionPendiente()
+    {
+        return $this->hasOne(SolicitudAnulacion::class)->where('estado', 'pendiente');
+    }
+
     public function orden()
     {
         return $this->belongsTo(Orden::class);
