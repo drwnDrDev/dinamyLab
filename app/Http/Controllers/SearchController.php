@@ -82,9 +82,8 @@ class SearchController extends Controller
 
     private function buscarExamenPorCup($query)
     {
-        $examenes = \App\Models\Examen::where('cup', $query)->get();
-        if ($examenes && $examenes->count() > 0) {
-            return view('examenes.index', compact('examenes'));
+        if (\App\Models\Examen::where('cup', $query)->exists()) {
+            return redirect()->route('examenes', ['busqueda' => $query]);
         }
         return null;
     }
@@ -116,17 +115,14 @@ class SearchController extends Controller
 
     private function buscarExamenPorNombre($query)
     {
-        $examenes = \App\Models\Examen::where('nombre', 'like', '%' . $query . '%')->get();
-        if ($examenes && $examenes->count() > 0) {
-            return view('examenes.index', compact('examenes'));
-        }
-        $examenes = \App\Models\Examen::where('nombre_alternativo', 'like', '%' . $query . '%')->get();
-        if ($examenes && $examenes->count() > 0) {
-            return view('examenes.index', compact('examenes'));
-        }
-        $examenes = \App\Models\Examen::where('descripcion', 'like', '%' . $query . '%')->get();
-        if ($examenes && $examenes->count() > 0) {
-            return view('examenes.index', compact('examenes'));
+        $hayCoincidencias = \App\Models\Examen::where(function ($examenes) use ($query) {
+            $examenes->where('nombre', 'like', "%{$query}%")
+                ->orWhere('nombre_alternativo', 'like', "%{$query}%")
+                ->orWhere('descripcion', 'like', "%{$query}%");
+        })->exists();
+
+        if ($hayCoincidencias) {
+            return redirect()->route('examenes', ['busqueda' => $query]);
         }
 
         return null;

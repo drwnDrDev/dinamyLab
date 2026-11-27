@@ -158,6 +158,61 @@ class VistasIndexTest extends TestCase
             ->assertSee('value="Coincidencia"', false);
     }
 
+    public function test_busqueda_general_muestra_examenes_por_nombre_alternativo_descripcion_y_cup(): void
+    {
+        $sinCoincidencia = Examen::factory()->create([
+            'nombre' => 'Examen ajeno', 'nombre_alternativo' => null, 'descripcion' => null,
+        ]);
+
+        foreach ([
+            ['nombre', 'Hemograma especial', 'Hemograma'],
+            ['nombre_alternativo', 'Control especial', 'con'],
+            ['descripcion', 'Perfil bioquimico', 'bioquimico'],
+            ['cup', null, null],
+        ] as [$campo, $valor, $busqueda]) {
+            $datos = ['nombre' => 'Otro examen', 'nombre_alternativo' => null, 'descripcion' => null];
+            if ($campo !== 'cup') {
+                $datos[$campo] = $valor;
+            }
+            $examen = Examen::factory()->create($datos);
+            $busqueda ??= $examen->cup;
+
+            $this->actingAs($this->admin)
+                ->withSession(['sede' => $this->sede])
+                ->followingRedirects()
+                ->post(route('search'), ['search' => $busqueda])
+                ->assertOk()
+                ->assertSee($examen->nombre)
+                ->assertSee($examen->cup)
+                ->assertSee('value="'.$busqueda.'"', false)
+                ->assertDontSee($sinCoincidencia->cup);
+        }
+    }
+
+    public function test_busqueda_general_pagina_examenes_sin_perder_el_termino(): void
+    {
+        Examen::factory()->count(26)->create([
+            'nombre' => 'Examen paginado', 'nombre_alternativo' => 'Control repetido', 'descripcion' => null,
+        ]);
+
+        $respuesta = $this->actingAs($this->admin)
+            ->withSession(['sede' => $this->sede])
+            ->followingRedirects()
+            ->post(route('search'), ['search' => 'con'])
+            ->assertOk();
+        $pagina = $respuesta->viewData('examenes');
+        $this->assertSame(26, $pagina->total());
+        $this->assertCount(25, $pagina->items());
+
+        $respuesta = $this->get($pagina->nextPageUrl())
+            ->assertOk()
+            ->assertSee('value="con"', false);
+        $pagina = $respuesta->viewData('examenes');
+        $this->assertSame(26, $pagina->total());
+        $this->assertSame(2, $pagina->currentPage());
+        $this->assertCount(1, $pagina->items());
+    }
+
     public function test_procedimientos_muestra_estado_como_etiqueta(): void
     {
         $orden = $this->crearOrden(Persona::factory()->create());
