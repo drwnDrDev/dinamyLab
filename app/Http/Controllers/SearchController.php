@@ -100,21 +100,15 @@ class SearchController extends Controller
 
     private function buscarPersonaPorNombre($query)
     {
-        $personas = \App\Models\Persona::where('primer_nombre', 'like', '%' . $query . '%')->get();
-        if ($personas && $personas->count() > 0) {
-            return view('personas.index', compact('personas'));
-        }
-        $personas = \App\Models\Persona::where('primer_apellido', 'like', '%' . $query . '%')->get();
-        if ($personas && $personas->count() > 0) {
-            return view('personas.index', compact('personas'));
-        }
-        $personas = \App\Models\Persona::where('segundo_nombre', 'like', '%' . $query . '%')->get();
-        if ($personas && $personas->count() > 0) {
-            return view('personas.index', compact('personas'));
-        }
-        $personas = \App\Models\Persona::where('segundo_apellido', 'like', '%' . $query . '%')->get();
-        if ($personas && $personas->count() > 0) {
-            return view('personas.index', compact('personas'));
+        $hayCoincidencias = \App\Models\Persona::where(function ($personas) use ($query) {
+            $personas->where('primer_nombre', 'like', "%{$query}%")
+                ->orWhere('segundo_nombre', 'like', "%{$query}%")
+                ->orWhere('primer_apellido', 'like', "%{$query}%")
+                ->orWhere('segundo_apellido', 'like', "%{$query}%");
+        })->exists();
+
+        if ($hayCoincidencias) {
+            return redirect()->route('personas', ['busqueda' => $query]);
         }
 
         return null;
