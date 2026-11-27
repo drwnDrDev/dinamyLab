@@ -80,9 +80,16 @@ class EmpleadoController extends Controller
             ControlSede::autorizarSedeActiva(request());
         }
         $empleado = Empleado::where('user_id', $usuario->id)->first();
-        $ordenes = $usuario->hasRole('admin') ? \App\Models\Orden::all() : \App\Models\Orden::whereHas('procedimientos', function ($query) use ($sede) {
-            $query->where('sede_id', $sede->id);
-        })->get()   ;
+        $ordenesQuery = \App\Models\Orden::with(['paciente', 'procedimientos']);
+        if (! $usuario->hasRole('admin')) {
+            $ordenesQuery->whereHas('procedimientos', function ($query) use ($sede) {
+                $query->where('sede_id', $sede->id);
+            });
+        }
+        $ordenes = $ordenesQuery->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate(5)
+            ->withQueryString();
         $procedimientos = $usuario->hasRole('admin') ? \App\Models\Procedimiento::all() :  \App\Models\Procedimiento::where('sede_id', $sede->id)->get();
 
         $procedimientosByExamen = $procedimientos->groupBy('examen_id')->map(function ($group) {
