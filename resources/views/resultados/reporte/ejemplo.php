@@ -1,15 +1,4 @@
-Attempt to read property "direccion" on null (View: /var/www/html/resources/views/ordenes/show.blade.php)
-
-  at tests/Feature/OrdenEdicionReporteTest.php:355
-    351▕     $this->user->givePermissionTo('ver_orden');
-    352▕ 
-    353▕     $response = $this->actingAs($this->user)
-    354▕         ->get(route('ordenes.show', $orden))
-  ➜ 355▕         ->assertOk()
-    356▕         ->assertSee('Examen remitido en ticket (CUP: 902299) (R)');
-    357▕ 
-    358▕     if ($verDestino) {
-    359▕         $response->assertSee('Destino exclusivo del personal');<?php
+<?php
 
 /**
  * Datos ficticios para maquetar resultados/reporte.blade.php. Siguen el contrato $reporte definido en
@@ -20,7 +9,6 @@ Attempt to read property "direccion" on null (View: /var/www/html/resources/view
  * Uso: require este archivo con $modoEjemplo = 'orden' (por defecto) o
  * 'historia' (exámenes de varias órdenes, sin `orden`).
  */
-
 $p = fn (string $nombre, ?string $resultado, ?string $unidades = null, ?string $referencia = null, bool $fuera = false, ?string $metodo = null) => [
     'nombre' => $nombre,
     'metodo' => $metodo,
@@ -62,6 +50,7 @@ $quimica = fn (string $nombre, string $parametro, string $resultado, string $uni
     'orden_numero' => $orden,
     'fecha_validacion' => '10-11-2026 10:42',
     'bacteriologo' => $bacteriologa,
+    'cierra_grupo' => false,
     'grupos' => [
         ['nombre' => null, 'parametros' => [
             $p($parametro, $resultado, $unidades, $referencia, $fuera, 'Enzimático colorimétrico'),
@@ -75,6 +64,7 @@ $examenes = [
         'orden_numero' => '2026-000154',
         'fecha_validacion' => '10-11-2026 09:15',
         'bacteriologo' => $bacteriologa,
+        'cierra_grupo' => false,
         'grupos' => [
             ['nombre' => 'Serie roja', 'parametros' => [
                 $p('Hemoglobina', '11.2', 'g/dL', '12.0 - 16.0', true),
@@ -115,6 +105,7 @@ $examenes = [
         'orden_numero' => '2026-000154',
         'fecha_validacion' => '10-11-2026 11:05',
         'bacteriologo' => $bacteriologo,
+        'cierra_grupo' => false,
         'grupos' => [
             ['nombre' => 'Examen físico', 'parametros' => [
                 $p('Color', 'Amarillo'),
@@ -153,6 +144,7 @@ $examenes = [
         'orden_numero' => '2026-000154',
         'fecha_validacion' => '10-11-2026 11:20',
         'bacteriologo' => $bacteriologo,
+        'cierra_grupo' => false,
         'grupos' => [
             ['nombre' => 'Examen macroscópico', 'parametros' => [
                 $p('Consistencia', 'Blanda'),
@@ -181,6 +173,7 @@ $examenes = [
         'orden_numero' => '2026-000154',
         'fecha_validacion' => '10-11-2026 09:30',
         'bacteriologo' => $bacteriologa,
+        'cierra_grupo' => false,
         'grupos' => [
             ['nombre' => null, 'parametros' => [
                 $p('Grupo sanguíneo', 'O', null, null, false, 'Aglutinación en tubo'),
@@ -193,6 +186,7 @@ $examenes = [
         'orden_numero' => '2026-000154',
         'fecha_validacion' => '10-11-2026 10:00',
         'bacteriologo' => $bacteriologo,
+        'cierra_grupo' => false,
         'grupos' => [
             ['nombre' => null, 'parametros' => [
                 $p('VDRL', 'No reactivo', null, 'No reactivo', false, 'Floculación'),
@@ -224,6 +218,12 @@ $base = [
         'fecha_nacimiento' => '15-03-1992',
     ],
     'fecha_emision' => '10-11-2026 14:30',
+    'codigo_verificacion' => 'A1B2-C3D4-E5F6',
+    'firma' => [
+        'src' => $bacteriologa['firma_src'],
+        'nombre' => $bacteriologa['nombre'],
+        'documento' => $bacteriologa['documento'],
+    ],
 ];
 
 if (($modoEjemplo ?? 'orden') === 'historia') {

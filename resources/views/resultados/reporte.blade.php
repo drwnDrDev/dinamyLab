@@ -37,19 +37,28 @@
     $navegacion = $navegacion ?? [];
 
     /*
+     * Pie de firma: en el caso normal (un solo profesional) la firma va en el pie fijo y el
+     * bloque de examen no reserva espacio para ella. Con varios profesionales la firma viaja
+     * al cierre de cada grupo y el pie queda sin firma.
+     */
+    $firmaReporte = $reporte['firma'] ?? null;
+    $enPie = $firmaReporte !== null;
+
+    /*
      * Paginación determinista, en puntos (pt). DomPDF solo respeta page-break-inside: avoid si el
      * bloque cabe en una página vacía; si no cabe lo parte donde caiga. Por eso cada bloque se
      * estima aquí y, si no cabe, el examen se parte entre grupos antes de llegar a DomPDF.
      * Medidas tomadas del PDF de ejemplo (carta, márgenes de @page 60/20 mm, filas de 8 pt).
-     * Si cambian los márgenes de @page, las fuentes o los paddings, recalibrar estos valores.
+     * Con firma en el pie el margen inferior es de 32 mm; sin firma, de 20 mm. Si cambian los
+     * márgenes de @page, las fuentes o los paddings, recalibrar estos valores.
      */
-    $ALTO_UTIL = 565 - 25;            // alto útil de la página menos un margen de seguridad
+    $ALTO_UTIL = $enPie ? 506 : (565 - 25); // alto útil de la página menos un margen de seguridad
     $ALTO_ENCABEZADO_EXAMEN = 42;     // título + fila de columnas
     $ALTO_GRUPO = 19;
     $ALTO_LINEA = 17;                 // fila de una línea
     $ALTO_LINEA_EXTRA = 10;           // cada línea adicional dentro de una fila
     $ALTO_METODO = 8;
-    $ALTO_FIRMA = 95;                 // firma + margen inferior del bloque
+    $ALTO_FIRMA = $enPie ? 0 : 95;    // firma + margen inferior del bloque
     $CARACTERES_NOMBRE = 34;          // caracteres en mayúscula por línea en la columna Parámetro
     $CARACTERES_TEXTO = 120;          // caracteres por línea en una fila de texto a todo el ancho
 
@@ -72,6 +81,11 @@
     $hayFueraDeRango = false;
 
     foreach ($reporte['examenes'] as $examen) {
+        $altoFirma = (! $enPie
+            && ($examen['cierra_grupo'] ?? false)
+            && filled($examen['bacteriologo']['firma_src'] ?? null))
+            ? $ALTO_FIRMA
+            : 0;
         $grupos = array_values(array_filter($examen['grupos'], fn ($g) => count($g['parametros']) > 0));
         foreach ($grupos as $g) {
             foreach ($g['parametros'] as $p) {
@@ -79,7 +93,7 @@
             }
         }
 
-        $total = $ALTO_ENCABEZADO_EXAMEN + $ALTO_FIRMA + array_sum(array_map($costoGrupo, $grupos));
+        $total = $ALTO_ENCABEZADO_EXAMEN + $altoFirma + array_sum(array_map($costoGrupo, $grupos));
 
         if ($total <= $ALTO_UTIL) {
             $trozos = [$grupos];
@@ -115,7 +129,7 @@
             $usado = $ALTO_ENCABEZADO_EXAMEN;
             $ultima = count($piezas) - 1;
             foreach ($piezas as $i => $pieza) {
-                $c = $costoGrupo($pieza) + ($i === $ultima ? $ALTO_FIRMA : 0);
+                $c = $costoGrupo($pieza) + ($i === $ultima ? $altoFirma : 0);
                 if ($actual && $usado + $c > $ALTO_UTIL) {
                     $trozos[] = $actual;
                     $actual = [];
@@ -151,7 +165,7 @@
     <style>
         /* Sin "size" aquí: DomPDF descarta la regla @page completa si la trae (el papel lo fija setPaper). */
         @page {
-            margin: 60mm 14mm 20mm 14mm;
+            margin: 60mm 14mm {{ $enPie ? '32mm' : '20mm' }} 14mm;
         }
 
         * { box-sizing: border-box; }
@@ -287,18 +301,54 @@
         /* ---------- Pie (repetido en cada página) ---------- */
         .pie {
             position: fixed;
-            bottom: -14mm;
+            bottom: {{ $enPie ? '-29mm' : '-14mm' }};
             left: 0;
             right: 0;
-            height: 10mm;
+            height: {{ $enPie ? '26mm' : '10mm' }};
             border-top: 0.5pt solid #cfe4e8;
             padding-top: 1.5mm;
             font-size: 7pt;
             color: #5b6b6e;
         }
 
+        .pie td {
+            vertical-align: bottom;
+        }
+
         .pie-contacto {
             text-align: left;
+        }
+
+        .pie-firma {
+            width: 60mm;
+            text-align: center;
+        }
+
+        .pie-firma-imagen {
+            height: 12mm;
+            max-width: 45mm;
+        }
+
+        .pie-firma-vacia {
+            height: 12mm;
+        }
+
+        .pie-firma-linea {
+            border-top: 0.5pt solid #0d191c;
+            padding-top: 0.8mm;
+            font-size: 8pt;
+            font-weight: bold;
+        }
+
+        .pie-firma-cargo {
+            font-size: 7pt;
+            color: #5b6b6e;
+        }
+
+        .pie-verificacion {
+            margin-top: 0.6mm;
+            font-size: 7pt;
+            color: #3a4a4d;
         }
 
         .pie-pagina {
@@ -728,7 +778,21 @@
                     @if (! empty($lab['telefonos']))Tel. {{ implode(' · ', $lab['telefonos']) }} &nbsp;|&nbsp; @endif
                     {{ $lab['direccion'] }}
                     @if (filled($lab['email'] ?? null)) &nbsp;|&nbsp; {{ $lab['email'] }}@endif
+                    @if (filled($reporte['codigo_verificacion'] ?? null))
+                        <div class="pie-verificacion">Verificación {{ $reporte['codigo_verificacion'] }}</div>
+                    @endif
                 </td>
+                @if ($firmaReporte)
+                    <td class="pie-firma">
+                        @if (filled($firmaReporte['src'] ?? null))
+                            <img class="pie-firma-imagen" src="{{ $firmaReporte['src'] }}" alt="Firma de {{ $firmaReporte['nombre'] }}">
+                        @else
+                            <div class="pie-firma-vacia"></div>
+                        @endif
+                        <div class="pie-firma-linea">{{ $firmaReporte['nombre'] }}</div>
+                        <div class="pie-firma-cargo">Bacteriólogo(a) · {{ $firmaReporte['documento'] }}</div>
+                    </td>
+                @endif
                 @if ($enPdf)
                     <td class="pie-pagina">Página <span class="numero"></span></td>
                 @endif
