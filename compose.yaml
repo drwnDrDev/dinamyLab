@@ -39,6 +39,18 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  scheduler:
+    image: dinamylab-php
+    command: php artisan schedule:work
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      app:
+        condition: service_started
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
   db:
     image: mysql:8.4
     environment:

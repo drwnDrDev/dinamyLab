@@ -141,9 +141,13 @@ Ejecutar una sola vez por cliente.
    | Tarea | Frecuencia | Comando |
    |---|---|---|
    | Cola | cada minuto | `cd ~/apps/<cliente> && php artisan queue:work --stop-when-empty --max-time=50` |
-   | Backup | diario | `cd ~/apps/<cliente> && mysqldump -u USUARIO -p'CLAVE' BD \| gzip > ~/backups/<cliente>-$(date +\%F).sql.gz` |
+   | Scheduler (incluye backup) | cada minuto | `cd ~/apps/<cliente> && php artisan schedule:run >> storage/logs/scheduler.log 2>&1` |
 
    La tarea de cola solo hace falta si `QUEUE_CONNECTION` no es `sync`.
+   El backup se ejecuta diariamente a las **02:00 de Bogotá**, conserva **14 días**
+   y usa las credenciales de Laravel. No dejar activo un cron adicional de
+   `mysqldump`. Rutas absolutas, configuración, copia manual y restauración en
+   [BACKUPS_BD.md](./BACKUPS_BD.md).
 
 9. **Verificación final.** `/up` → 200, `/login` → 200, login del admin →
    `/dashboard`, y acceder por el dominio del **otro** cliente → **503**.
