@@ -1,11 +1,13 @@
 // ExamenesSection.jsx
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useExamenes } from './hooks/useExamenes';
 import TablaExamenes from './TablaExamenes';
 import ModalExamenes from './ModalExamenes';
 import SelectorRemisiones from './SelectorRemisiones';
+import ModalRemisionExistente from './ModalRemisionExistente';
+import { toast } from '../lib/toast';
 
 const formatCOP = (value) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
@@ -23,6 +25,7 @@ const DatosExamenes = ({
   onRemisionesUpdate,
   persona,
   onChangeValores,
+  onGuardandoRemisionChange,
 }) => {
   const { examenes, loading } = useExamenes();
   const disponibles = examenes?.data || [];
@@ -30,6 +33,10 @@ const DatosExamenes = ({
   const [sexoPaciente] = useState(persona?.sexo || 'A');
   const [mostrarCatalogoRemisiones, setMostrarCatalogoRemisiones] = useState(false);
   const [mostrarFormularioRemision, setMostrarFormularioRemision] = useState(false);
+  const [guardandoRemision, setGuardandoRemision] = useState(false);
+  const guardandoRemisionRef = useRef(false);
+  const [errorRemision, setErrorRemision] = useState('');
+  const [conflictoRemision, setConflictoRemision] = useState(null);
   const [busquedaCup, setBusquedaCup] = useState('');
   const [sugerenciasCup, setSugerenciasCup] = useState([]);
   const [cargandoSugerenciasCup, setCargandoSugerenciasCup] = useState(false);
@@ -108,18 +115,50 @@ const DatosExamenes = ({
     onUpdate(nuevosExamenes);
   };
 
+  const guardarRemision = async (datos, accion) => {
+    if (guardandoRemisionRef.current) return;
+    guardandoRemisionRef.current = true;
+    setGuardandoRemision(true);
+    onGuardandoRemisionChange?.(true);
+    setErrorRemision('');
+
+    try {
+      const response = await axios.post('/api/remisiones', { ...datos, accion });
+      const remision = response.data.seleccion;
+      const yaAgregada = remisiones.some(item => item.cup === remision.cup);
+      onRemisionesUpdate(yaAgregada
+        ? remisiones.map(item => item.cup === remision.cup ? remision : item)
+        : [...remisiones, remision]);
+      setRemisionForm({ cup: '', nombre: '', valor: '', destinoExterno: '' });
+      setBusquedaCup('');
+      setMostrarSugerenciasCup(false);
+      setMostrarFormularioRemision(false);
+      setConflictoRemision(null);
+      toast.success(accion === 'conservar'
+        ? 'Remisión agregada con la información anterior.'
+        : 'Remisión guardada en el catálogo y agregada a la orden.');
+    } catch (error) {
+      if (error.response?.status === 409) {
+        setConflictoRemision({ nueva: datos, anterior: error.response.data.seleccion });
+      } else {
+        const mensajes = Object.values(error.response?.data?.errors || {}).flat();
+        setErrorRemision(mensajes.join(' ') || error.response?.data?.message || 'No fue posible guardar la remisión. Intenta de nuevo.');
+      }
+    } finally {
+      guardandoRemisionRef.current = false;
+      setGuardandoRemision(false);
+      onGuardandoRemisionChange?.(false);
+    }
+  };
+
   const handleAgregarRemision = (event) => {
     event.preventDefault();
-    const remision = {
+    guardarRemision({
       cup: remisionForm.cup.trim(),
       nombre: remisionForm.nombre.trim(),
       valor: Number(remisionForm.valor),
       destino: remisionForm.destinoExterno.trim(),
-    };
-
-    onRemisionesUpdate([...remisiones, remision]);
-    setRemisionForm(prev => ({ ...prev, cup: '', nombre: '', valor: '', destinoExterno: '' }));
-    setMostrarFormularioRemision(false);
+    });
   };
 
   const handleEliminarRemision = (index) => {
@@ -139,6 +178,7 @@ const DatosExamenes = ({
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
+            disabled={guardandoRemision}
             className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-white text-sm font-medium rounded-md hover:bg-titles transition-colors"
             onClick={() => setIsModalOpen(true)}
           >
@@ -147,8 +187,9 @@ const DatosExamenes = ({
           </button>
           <button
             type="button"
+            disabled={guardandoRemision}
             className="inline-flex items-center gap-2 px-3 py-1.5 border border-primary text-primary text-sm font-medium rounded-md hover:bg-secondary transition-colors"
-            onClick={() => { setMostrarCatalogoRemisiones(prev => !prev); setMostrarFormularioRemision(false); }}
+            onClick={() => { setMostrarCatalogoRemisiones(prev => !prev); setMostrarFormularioRemision(false); setErrorRemision(''); }}
           >
             <PlusIcon />
             Agregar remisión
@@ -166,111 +207,116 @@ const DatosExamenes = ({
       {mostrarCatalogoRemisiones && (
         <SelectorRemisiones remisiones={remisiones} onUpdate={onRemisionesUpdate}
           onClose={() => setMostrarCatalogoRemisiones(false)}
-          onManual={() => { setMostrarCatalogoRemisiones(false); setMostrarFormularioRemision(true); }} />
+          onManual={() => { setMostrarCatalogoRemisiones(false); setMostrarFormularioRemision(true); setErrorRemision(''); }} />
       )}
 
       {mostrarFormularioRemision && (
         <form
           onSubmit={handleAgregarRemision}
-          className="mb-5 grid grid-cols-1 md:grid-cols-2 gap-3 p-4 border border-secondary rounded-lg bg-white"
+          className="mb-5"
         >
-          <div className="relative text-sm text-titles md:col-span-2">
-            <label htmlFor="buscar-cup-remision">Buscar procedimiento por nombre o código CUP</label>
-            <input
-              id="buscar-cup-remision"
-              type="search"
-              autoComplete="off"
-              value={busquedaCup}
-              onChange={event => {
-                setBusquedaCup(event.target.value);
-                setSugerenciasCup([]);
-                setMostrarSugerenciasCup(true);
-              }}
-              onFocus={() => setMostrarSugerenciasCup(true)}
-              className="mt-1 w-full border border-borders rounded-md px-3 py-2"
-              placeholder="Escribe el nombre o código CUP"
-              aria-autocomplete="list"
-              aria-expanded={mostrarSugerenciasCup && sugerenciasCup.length > 0}
-            />
-            {mostrarSugerenciasCup && busquedaCup.trim().length >= 2 && (
-              <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-borders bg-white shadow-lg">
-                {cargandoSugerenciasCup && (
-                  <p className="px-3 py-2 text-gray-500" role="status">Buscando procedimientos...</p>
-                )}
-                {!cargandoSugerenciasCup && errorSugerenciasCup && (
-                  <p className="px-3 py-2 text-red-600" role="alert">{errorSugerenciasCup}</p>
-                )}
-                {!cargandoSugerenciasCup && !errorSugerenciasCup && sugerenciasCup.length === 0 && (
-                  <p className="px-3 py-2 text-gray-500">No se encontraron procedimientos.</p>
-                )}
-                {sugerenciasCup.map(cup => (
-                  <button
-                    key={cup.codigo}
-                    type="button"
-                    onMouseDown={event => event.preventDefault()}
-                    onClick={() => handleSeleccionarCup(cup)}
-                    className="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-secondary"
-                  >
-                    <span className="shrink-0 font-mono text-xs">{cup.codigo}</span>
-                    <span>{cup.nombre}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          <label className="text-sm text-titles">
-            CUP
-            <input
-              required
-              maxLength={20}
-              value={remisionForm.cup}
-              onChange={event => setRemisionForm(prev => ({ ...prev, cup: event.target.value }))}
-              className="mt-1 w-full border border-borders rounded-md px-3 py-2"
-            />
-          </label>
-          <label className="text-sm text-titles">
-            Nombre del examen o procedimiento
-            <input
-              required
-              maxLength={255}
-              value={remisionForm.nombre}
-              onChange={event => setRemisionForm(prev => ({ ...prev, nombre: event.target.value }))}
-              className="mt-1 w-full border border-borders rounded-md px-3 py-2"
-            />
-          </label>
-          <label className="text-sm text-titles">
-            Valor
-            <input
-              required
-              type="number"
-              min="0"
-              step="0.01"
-              value={remisionForm.valor}
-              onChange={event => setRemisionForm(prev => ({ ...prev, valor: event.target.value }))}
-              className="mt-1 w-full border border-borders rounded-md px-3 py-2"
-            />
-          </label>
-          <label className="text-sm text-titles md:col-span-2">
-            Nombre del profesional o IPS externa
-            <input required maxLength={255} value={remisionForm.destinoExterno}
-              onChange={event => setRemisionForm(prev => ({ ...prev, destinoExterno: event.target.value }))}
-              className="mt-1 w-full border border-borders rounded-md px-3 py-2" />
-          </label>
-          <div className="md:col-span-2 flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setMostrarFormularioRemision(false)}
-              className="px-3 py-2 text-sm text-gray-600"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-3 py-2 bg-primary text-white text-sm rounded-md hover:bg-titles"
-            >
-              Guardar remisión
-            </button>
-          </div>
+          <fieldset disabled={guardandoRemision} className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-3 p-4 border border-secondary rounded-lg bg-white">
+            <p className="text-sm text-gray-500 md:col-span-2">La remisión se guardará en el catálogo para reutilizarla en otras órdenes.</p>
+            <div className="relative text-sm text-titles md:col-span-2">
+              <label htmlFor="buscar-cup-remision">Buscar procedimiento por nombre o código CUP</label>
+              <input
+                id="buscar-cup-remision"
+                type="search"
+                autoComplete="off"
+                value={busquedaCup}
+                onChange={event => {
+                  setBusquedaCup(event.target.value);
+                  setSugerenciasCup([]);
+                  setMostrarSugerenciasCup(true);
+                }}
+                onFocus={() => setMostrarSugerenciasCup(true)}
+                className="mt-1 w-full border border-borders rounded-md px-3 py-2"
+                placeholder="Escribe el nombre o código CUP"
+                aria-autocomplete="list"
+                aria-expanded={mostrarSugerenciasCup && sugerenciasCup.length > 0}
+              />
+              {mostrarSugerenciasCup && busquedaCup.trim().length >= 2 && (
+                <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-borders bg-white shadow-lg">
+                  {cargandoSugerenciasCup && (
+                    <p className="px-3 py-2 text-gray-500" role="status">Buscando procedimientos...</p>
+                  )}
+                  {!cargandoSugerenciasCup && errorSugerenciasCup && (
+                    <p className="px-3 py-2 text-red-600" role="alert">{errorSugerenciasCup}</p>
+                  )}
+                  {!cargandoSugerenciasCup && !errorSugerenciasCup && sugerenciasCup.length === 0 && (
+                    <p className="px-3 py-2 text-gray-500">No se encontraron procedimientos.</p>
+                  )}
+                  {sugerenciasCup.map(cup => (
+                    <button
+                      key={cup.codigo}
+                      type="button"
+                      onMouseDown={event => event.preventDefault()}
+                      onClick={() => handleSeleccionarCup(cup)}
+                      className="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-secondary"
+                    >
+                      <span className="shrink-0 font-mono text-xs">{cup.codigo}</span>
+                      <span>{cup.nombre}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <label className="text-sm text-titles">
+              CUP
+              <input
+                required
+                maxLength={20}
+                value={remisionForm.cup}
+                onChange={event => setRemisionForm(prev => ({ ...prev, cup: event.target.value }))}
+                className="mt-1 w-full border border-borders rounded-md px-3 py-2"
+              />
+            </label>
+            <label className="text-sm text-titles">
+              Nombre del examen o procedimiento
+              <input
+                required
+                maxLength={255}
+                value={remisionForm.nombre}
+                onChange={event => setRemisionForm(prev => ({ ...prev, nombre: event.target.value }))}
+                className="mt-1 w-full border border-borders rounded-md px-3 py-2"
+              />
+            </label>
+            <label className="text-sm text-titles">
+              Valor
+              <input
+                required
+                type="number"
+                min="0"
+                max="99999999.99"
+                step="0.01"
+                value={remisionForm.valor}
+                onChange={event => setRemisionForm(prev => ({ ...prev, valor: event.target.value }))}
+                className="mt-1 w-full border border-borders rounded-md px-3 py-2"
+              />
+            </label>
+            <label className="text-sm text-titles md:col-span-2">
+              Nombre del profesional o IPS externa
+              <input required maxLength={255} value={remisionForm.destinoExterno}
+                onChange={event => setRemisionForm(prev => ({ ...prev, destinoExterno: event.target.value }))}
+                className="mt-1 w-full border border-borders rounded-md px-3 py-2" />
+            </label>
+            {errorRemision && !conflictoRemision && <p role="alert" className="text-sm text-red-600 md:col-span-2">{errorRemision}</p>}
+            <div className="md:col-span-2 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setMostrarFormularioRemision(false)}
+                className="px-3 py-2 text-sm text-gray-600"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="px-3 py-2 bg-primary text-white text-sm rounded-md hover:bg-titles"
+              >
+                {guardandoRemision ? 'Guardando remisión...' : 'Guardar remisión'}
+              </button>
+            </div>
+          </fieldset>
         </form>
       )}
 
@@ -297,6 +343,7 @@ const DatosExamenes = ({
                     <td className="px-3 py-2 text-right">
                       <button
                         type="button"
+                        disabled={guardandoRemision}
                         onClick={() => handleEliminarRemision(index)}
                         className="text-red-500 hover:text-red-700"
                         aria-label={`Eliminar remisión ${remision.nombre}`}
@@ -333,6 +380,17 @@ const DatosExamenes = ({
           onAgregarGrupo={handleAgregarGrupo}
           onClose={() => setIsModalOpen(false)}
           sexoPaciente={sexoPaciente}
+        />
+      )}
+
+      {conflictoRemision && (
+        <ModalRemisionExistente
+          anterior={conflictoRemision.anterior}
+          nueva={conflictoRemision.nueva}
+          guardando={guardandoRemision}
+          error={errorRemision}
+          onElegir={accion => guardarRemision(conflictoRemision.nueva, accion)}
+          onClose={() => { setConflictoRemision(null); setErrorRemision(''); }}
         />
       )}
     </section>

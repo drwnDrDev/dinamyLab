@@ -55,6 +55,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
 
     const [persona, setPersona] = useState(paciente || null);
     const [loading, setLoading] = useState(false);
+    const [guardandoRemision, setGuardandoRemision] = useState(false);
     const [completeMessage, setCompleteMessage] = useState(false);
     const [formOrden, setFormOrden] = useState(initialFormState);
     const [currentStep, setCurrentStep] = useState(1);
@@ -384,6 +385,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                                 }
                                 persona={persona}
                                 onChangeValores={handleValoresUpdate}
+                                onGuardandoRemisionChange={setGuardandoRemision}
                             />
                         )}
 
@@ -455,7 +457,7 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                         <button
                             type="button"
                             onClick={handlePrev}
-                            disabled={currentStep === 1}
+                            disabled={currentStep === 1 || guardandoRemision}
                             className="inline-flex items-center gap-2 px-4 py-2 border border-borders text-titles bg-white rounded-md text-sm font-medium hover:bg-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -468,7 +470,8 @@ const CrearOrdenComponent = ({ paciente, dataDefoult = ordenDataDefault }) => {
                             <button
                                 type="button"
                                 onClick={handleNext}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-titles transition-colors"
+                                disabled={guardandoRemision}
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-titles transition-colors disabled:opacity-50"
                             >
                                 Siguiente
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">

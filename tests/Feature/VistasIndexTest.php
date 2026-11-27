@@ -91,7 +91,7 @@ class VistasIndexTest extends TestCase
     public function test_pacientes_muestra_conteo_y_fecha_de_ultima_orden(): void
     {
         $conOrdenes = Persona::factory()->create();
-        $this->crearOrden($conOrdenes, now()->subDays(10));
+        $this->crearOrden($conOrdenes, now()->setDate(2026, 11, 5));
         $this->crearOrden($conOrdenes, now()->setDate(2026, 11, 15));
         $this->crearOrden($conOrdenes, now())->delete();
 
@@ -107,6 +107,110 @@ class VistasIndexTest extends TestCase
             ->assertSee('Últ. 15/11/2026')
             ->assertSee('Sin órdenes')
             ->assertSee(route('ordenes.create', $conOrdenes), false);
+    }
+
+    public function test_busqueda_general_muestra_pacientes_por_cualquiera_de_sus_nombres_y_apellidos(): void
+    {
+        $pacientes = collect();
+        foreach (['primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido'] as $campo) {
+            $pacientes->push(Persona::factory()->create(array_replace([
+                'primer_nombre' => 'Nombre', 'segundo_nombre' => 'Otro',
+                'primer_apellido' => 'Apellido', 'segundo_apellido' => 'Segundo',
+            ], [$campo => 'Coincidencia'])));
+        }
+        $sinCoincidencia = Persona::factory()->create(['primer_nombre' => 'Sin', 'segundo_nombre' => null,
+            'primer_apellido' => 'Resultado', 'segundo_apellido' => null]);
+        $this->crearOrden($pacientes->first(), now()->setDate(2026, 11, 15));
+
+        $respuesta = $this->actingAs($this->admin)
+            ->withSession(['sede' => $this->sede])
+            ->followingRedirects()
+            ->post(route('search'), ['search' => 'Coincidencia'])
+            ->assertOk()
+            ->assertSee('4 pacientes')
+            ->assertSee('Mostrando 1–4 de 4')
+            ->assertSee('Últ. 15/11/2026')
+            ->assertSee('1 orden')
+            ->assertDontSee($sinCoincidencia->numero_documento);
+
+        foreach ($pacientes as $paciente) {
+            $respuesta->assertSee($paciente->numero_documento);
+        }
+    }
+
+    public function test_busqueda_general_conserva_el_nombre_buscado_al_cambiar_de_pagina(): void
+    {
+        Persona::factory()->count(26)->create(['primer_nombre' => 'Coincidencia']);
+
+        $respuesta = $this->actingAs($this->admin)
+            ->withSession(['sede' => $this->sede])
+            ->followingRedirects()
+            ->get(route('search', ['search' => 'Coincidencia']))
+            ->assertOk()
+            ->assertSee('26 pacientes')
+            ->assertSee('Mostrando 1–25 de 26');
+        $siguiente = $respuesta->viewData('personas')->nextPageUrl();
+
+        $this->get($siguiente)
+            ->assertOk()
+            ->assertSee('26 pacientes')
+            ->assertSee('Mostrando 26–26 de 26')
+            ->assertSee('value="Coincidencia"', false);
+    }
+
+    public function test_busqueda_general_muestra_examenes_por_nombre_alternativo_descripcion_y_cup(): void
+    {
+        $sinCoincidencia = Examen::factory()->create([
+            'nombre' => 'Examen ajeno', 'nombre_alternativo' => null, 'descripcion' => null,
+        ]);
+
+        foreach ([
+            ['nombre', 'Hemograma especial', 'Hemograma'],
+            ['nombre_alternativo', 'Control especial', 'con'],
+            ['descripcion', 'Perfil bioquimico', 'bioquimico'],
+            ['cup', null, null],
+        ] as [$campo, $valor, $busqueda]) {
+            $datos = ['nombre' => 'Otro examen', 'nombre_alternativo' => null, 'descripcion' => null];
+            if ($campo !== 'cup') {
+                $datos[$campo] = $valor;
+            }
+            $examen = Examen::factory()->create($datos);
+            $busqueda ??= $examen->cup;
+
+            $this->actingAs($this->admin)
+                ->withSession(['sede' => $this->sede])
+                ->followingRedirects()
+                ->post(route('search'), ['search' => $busqueda])
+                ->assertOk()
+                ->assertSee($examen->nombre)
+                ->assertSee($examen->cup)
+                ->assertSee('value="'.$busqueda.'"', false)
+                ->assertDontSee($sinCoincidencia->cup);
+        }
+    }
+
+    public function test_busqueda_general_pagina_examenes_sin_perder_el_termino(): void
+    {
+        Examen::factory()->count(26)->create([
+            'nombre' => 'Examen paginado', 'nombre_alternativo' => 'Control repetido', 'descripcion' => null,
+        ]);
+
+        $respuesta = $this->actingAs($this->admin)
+            ->withSession(['sede' => $this->sede])
+            ->followingRedirects()
+            ->post(route('search'), ['search' => 'con'])
+            ->assertOk();
+        $pagina = $respuesta->viewData('examenes');
+        $this->assertSame(26, $pagina->total());
+        $this->assertCount(25, $pagina->items());
+
+        $respuesta = $this->get($pagina->nextPageUrl())
+            ->assertOk()
+            ->assertSee('value="con"', false);
+        $pagina = $respuesta->viewData('examenes');
+        $this->assertSame(26, $pagina->total());
+        $this->assertSame(2, $pagina->currentPage());
+        $this->assertCount(1, $pagina->items());
     }
 
     public function test_procedimientos_muestra_estado_como_etiqueta(): void

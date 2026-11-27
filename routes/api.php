@@ -44,6 +44,8 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
     Route::post('ordenes', [OrdenController::class, 'store'])->middleware('can:crear_orden');
     Route::get('remisiones', [\App\Http\Controllers\Api\RemisionesController::class, 'index'])
         ->middleware('can:crear_orden');
+    Route::post('remisiones', [\App\Http\Controllers\Api\RemisionesController::class, 'store'])
+        ->middleware('can:crear_orden');
     Route::patch('ordenes-medicas/{orden}', [OrdenController::class, 'add'])
         ->middleware('can:editar_orden')
         ->name('ordenes.add');

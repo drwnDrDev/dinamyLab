@@ -277,6 +277,8 @@
                     </table>
                 </div>
 
+                <x-index.pagination :paginator="$ordenes" />
+
             </div>
 
         </div>
