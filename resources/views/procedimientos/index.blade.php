@@ -40,7 +40,10 @@
                         </td>
                         <td class="tabular-nums text-slate-600 dark:text-slate-300">#{{ $procedimiento->orden->numero }}</td>
                         <td class="tabular-nums text-slate-600 dark:text-slate-300">{{ $procedimiento->created_at->format('d/m/Y') }}</td>
-                        <td><x-status-badge :estado="$procedimiento->estado" /></td>
+                        <td>
+                            <x-status-badge :estado="$procedimiento->estado" />
+                            <x-solicitar-anulacion :procedimiento="$procedimiento" class="mt-2 text-xs" onclick="event.stopPropagation()" />
+                        </td>
                         <td class="text-right"><x-index.chevron /></td>
                     </tr>
                 @empty

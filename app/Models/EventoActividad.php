@@ -27,6 +27,9 @@ class EventoActividad extends Model
         'resultados.descargados' => 'Descarga de resultados (PDF)',
         'resultados.impresion_solicitada' => 'Solicitud de impresión de resultados',
         'resultados.lote_procesado' => 'Procesamiento por lotes',
+        'procedimiento.anulacion_solicitada' => 'Solicitud de anulación de examen',
+        'procedimiento.anulacion_aprobada' => 'Aprobación de anulación de examen',
+        'procedimiento.anulacion_rechazada' => 'Rechazo de anulación de examen',
     ];
 
     protected function casts(): array

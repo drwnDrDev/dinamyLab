@@ -89,7 +89,7 @@ class ExamenController extends Controller
             ->where('sede_id', $sede->id)
             ->where('estado', Estado::PROCESO->value)
             ->whereDoesntHave('resultado')
-            ->with(['orden.paciente.tipo_documento'])
+            ->with(['orden.paciente.tipo_documento', 'solicitudAnulacionPendiente'])
             ->orderBy('fecha')
             ->paginate(25)
             ->withQueryString();
@@ -123,6 +123,8 @@ class ExamenController extends Controller
                 'paciente' => $paciente->nombreCompleto(),
                 'documento' => ($paciente->tipo_documento?->cod_rips ?? '').$paciente->numero_documento,
                 'fecha' => $procedimiento->fecha?->format('d/m/Y H:i'),
+                'url_anulacion' => route('anulaciones.create', $procedimiento),
+                'anulacion_pendiente' => $procedimiento->solicitudAnulacionPendiente !== null,
                 'parametros' => $parametros,
             ];
         })->values();
@@ -135,7 +137,7 @@ class ExamenController extends Controller
         $validated = $request->validate([
             'procedimientos' => ['required', 'array', 'min:1', 'max:25'],
             'procedimientos.*.id' => ['required', 'integer', 'distinct'],
-            'procedimientos.*.resultados' => ['required', 'array'],
+            'procedimientos.*.resultados' => ['present', 'array'],
             'procedimientos.*.resultados.*' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -152,20 +154,27 @@ class ExamenController extends Controller
             (int) $empleado->id,
             $validated['procedimientos']
         );
+        $omitidas = count($validated['procedimientos']) - $cantidad;
+        $mensaje = $cantidad > 0
+            ? "Resultados guardados para {$cantidad} muestras."
+            : 'No se guardaron resultados.';
+        if ($omitidas > 0) {
+            $mensaje .= " {$omitidas} muestras vacías permanecen en proceso.";
+        }
 
         if ($request->expectsJson()) {
-            $mensaje = "Resultados guardados para {$cantidad} muestras.";
             $request->session()->flash('success', $mensaje);
 
             return response()->json([
                 'message' => $mensaje,
                 'cantidad' => $cantidad,
+                'omitidas' => $omitidas,
                 'redirect' => route('examenes.lote', $examen),
             ]);
         }
 
         return redirect()->route('examenes.lote', $examen)
-            ->with('success', "Resultados guardados para {$cantidad} muestras.");
+            ->with('success', $mensaje);
     }
 
     /**

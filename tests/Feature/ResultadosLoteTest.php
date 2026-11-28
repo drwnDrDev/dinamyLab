@@ -187,6 +187,44 @@ class ResultadosLoteTest extends TestCase
         ]);
     }
 
+    public function test_solo_finaliza_las_muestras_con_datos_y_guarda_el_cero_como_resultado(): void
+    {
+        [$vacio, $conDatos] = $this->procedimientos;
+        $antes = $vacio->fresh()->getAttributes();
+
+        $this->actingAs($this->user)->postJson(route('examenes.lote.store', $this->examen), [
+            'procedimientos' => [
+                ['id' => $vacio->id, 'resultados' => [$this->parametroNumero->id => '', $this->parametroTexto->id => '   ']],
+                ['id' => $conDatos->id, 'resultados' => [$this->parametroNumero->id => '0', $this->parametroTexto->id => null]],
+            ],
+        ])->assertOk()->assertJsonPath('cantidad', 1)->assertJsonPath('omitidas', 1);
+
+        $this->assertSame($antes, $vacio->fresh()->getAttributes());
+        $this->assertNull($vacio->orden->fresh()->terminada);
+        $this->assertSame(Estado::TERMINADO->value, $conDatos->fresh()->estado);
+        $this->assertNotNull($conDatos->orden->fresh()->terminada);
+        $this->assertDatabaseCount('resultados', 1);
+        $this->assertDatabaseHas('resultados', ['procedimiento_id' => $conDatos->id, 'resultado' => '0']);
+        $evento = \App\Models\EventoActividad::where('evento', 'resultados.lote_procesado')->sole();
+        $this->assertSame(1, $evento->detalles['cantidad']);
+        $this->assertSame([$conDatos->id], $evento->detalles['procedimientos']);
+        $this->assertEquals($conDatos->id, $evento->recurso_id);
+    }
+
+    public function test_un_lote_totalmente_vacio_no_cambia_procedimientos_ni_registra_resultados(): void
+    {
+        $procedimiento = $this->procedimientos[0];
+        $antes = $procedimiento->fresh()->getAttributes();
+        foreach ([[], [$this->parametroNumero->id => null, $this->parametroTexto->id => '   ']] as $resultados) {
+            $this->actingAs($this->user)->postJson(route('examenes.lote.store', $this->examen), [
+                'procedimientos' => [['id' => $procedimiento->id, 'resultados' => $resultados]],
+            ])->assertOk()->assertJsonPath('cantidad', 0)->assertJsonPath('omitidas', 1);
+            $this->assertSame($antes, $procedimiento->fresh()->getAttributes());
+        }
+        $this->assertDatabaseCount('resultados', 0);
+        $this->assertSame(0, \App\Models\EventoActividad::whereIn('evento', ['resultados.lote_procesado', 'resultado.creado'])->count());
+    }
+
     public function test_rechaza_un_valor_numerico_no_valido_sin_cerrar_muestras(): void
     {
         $response = $this->actingAs($this->user)->postJson(

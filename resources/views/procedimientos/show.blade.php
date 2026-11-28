@@ -11,8 +11,9 @@
         <div class="flex justify-around">
             <h2>Numero de orden <span class="font-semibold">{{$procedimiento->orden->numero}}</span></h2>
         </div>
+        <div class="my-4"><x-solicitar-anulacion :procedimiento="$procedimiento" /></div>
         @can('gestionar_procedimiento')
-            @if (! $procedimiento->bloqueadoPorRips())
+            @if (! $procedimiento->bloqueadoPorRips() && ($procedimiento->estado !== \App\Estado::ANULADO->value || auth()->user()->hasRole('admin')))
                 <form action="{{ route('procedimientos.observaciones', $procedimiento) }}" method="POST" class="my-4 flex flex-wrap items-end gap-3 rounded-lg border border-borders p-4">
                     @csrf
                     @method('PATCH')
@@ -20,6 +21,7 @@
                         Cambiar estado
                         <select name="estado" required class="mt-1 w-full rounded-md border border-borders px-3 py-2">
                             @foreach (\App\Estado::cases() as $estado)
+                                @continue($estado === \App\Estado::ANULADO && ! auth()->user()->hasRole('admin'))
                                 <option value="{{ $estado->value }}" @selected($procedimiento->estado === $estado->value)>{{ ucfirst($estado->nombre()) }}</option>
                             @endforeach
                         </select>
@@ -30,8 +32,10 @@
                     </label>
                     <button type="submit" class="btn btn-primary">Guardar estado</button>
                 </form>
-            @else
+            @elseif ($procedimiento->bloqueadoPorRips())
                 <p class="my-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">Este procedimiento fue exportado a RIPS y su estado está bloqueado.</p>
+            @else
+                <p class="my-4 text-sm">Este examen fue anulado. Solo administración puede modificar su estado.</p>
             @endif
         @endcan
         @can('eliminar_procedimiento')

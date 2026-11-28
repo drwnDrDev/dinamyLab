@@ -68,6 +68,12 @@
             </x-nav-link>
         @endrole
 
+        @if (auth()->user()->hasAnyRole(['admin', 'prestador']))
+            <x-nav-link :href="route('anulaciones.index')" icono="procedimientos" :active="request()->routeIs('anulaciones.*')">
+                Anulaciones
+            </x-nav-link>
+        @endif
+
         @role('admin')
             <x-nav-link :href="route('caja')" icono="caja" :active="request()->routeIs('caja*')">
                 {{ 'Caja' }}
